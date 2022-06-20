@@ -1,8 +1,8 @@
 # 목차
-+ [HTML이란?](https://github.com/Iam-Sunghyun/TIL/edit/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html%EC%9D%B4%EB%9E%80)
-+ [HTML 문서의 구조](https://github.com/Iam-Sunghyun/TIL/edit/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html-%EB%AC%B8%EC%84%9C%EC%9D%98-%EA%B5%AC%EC%A1%B0)
-+ [HTML 시맨틱 요소(Sementic Elements)](https://github.com/Iam-Sunghyun/TIL/edit/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html-%EC%8B%9C%EB%A7%A8%ED%8B%B1-%EC%9A%94%EC%86%8Csementic-elements)
-+ [HTML 테이블(table)](https://github.com/Iam-Sunghyun/TIL/edit/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html-%ED%85%8C%EC%9D%B4%EB%B8%94table)
++ [HTML이란?](https://github.com/Iam-Sunghyun/TIL/blob/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html%EC%9D%B4%EB%9E%80)
++ [HTML 문서의 구조](https://github.com/Iam-Sunghyun/TIL/blob/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html-%EB%AC%B8%EC%84%9C%EC%9D%98-%EA%B5%AC%EC%A1%B0)
++ [HTML 시맨틱 요소(Sementic Elements)](https://github.com/Iam-Sunghyun/TIL/blob/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html-%EC%8B%9C%EB%A7%A8%ED%8B%B1-%EC%9A%94%EC%86%8Csementic-elements)
++ [HTML 테이블(table)](https://github.com/Iam-Sunghyun/TIL/blob/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html-%ED%85%8C%EC%9D%B4%EB%B8%94table)
 
 
 # HTML이란?
