@@ -1,10 +1,9 @@
-+ [HTML이란?](https://github.com/Iam-Sunghyun/javascript-algorithms/tree/main/src/data-structures/tree#%EC%9D%B4%EC%A7%84-%ED%8A%B8%EB%A6%ACbinary-tree)
-+ [HTML 문서의 구조](https://github.com/Iam-Sunghyun/javascript-algorithms/tree/main/src/data-structures/tree#%EC%9D%B4%EC%A7%84-%ED%8A%B8%EB%A6%ACbinary-tree)
-+ [HTML 시맨틱 요소(Sementic Elements)](https://github.com/Iam-Sunghyun/javascript-algorithms/tree/main/src/data-structures/tree#%EC%9D%B4%EC%A7%84-%ED%8A%B8%EB%A6%ACbinary-tree)
-+ [HTML 테이블(table)](https://github.com/Iam-Sunghyun/javascript-algorithms/tree/main/src/data-structures/tree#%EC%9D%B4%EC%A7%84-%ED%8A%B8%EB%A6%ACbinary-tree)
+# 목차
++ [HTML이란?](https://github.com/Iam-Sunghyun/TIL/edit/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html%EC%9D%B4%EB%9E%80)
++ [HTML 문서의 구조](https://github.com/Iam-Sunghyun/TIL/edit/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html-%EB%AC%B8%EC%84%9C%EC%9D%98-%EA%B5%AC%EC%A1%B0)
++ [HTML 시맨틱 요소(Sementic Elements)](https://github.com/Iam-Sunghyun/TIL/edit/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html-%EC%8B%9C%EB%A7%A8%ED%8B%B1-%EC%9A%94%EC%86%8Csementic-elements)
++ [HTML 테이블(table)](https://github.com/Iam-Sunghyun/TIL/edit/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html-%ED%85%8C%EC%9D%B4%EB%B8%94table)
 
-
-<br>
 
 # HTML이란?
 **HTML(hyper text markup language)** 은 1989~1990년 학술 논문의 구조를 표현하고, 초기 인터넷에 그 내용을 공유하기 위해 생겨난 **마크업 언어**이다. 태그를 이용해 구조를 지정한다.
@@ -26,8 +25,6 @@
 + https://www.javatpoint.com/html-vs-html5
 
 <br>
-<br>
-
 
 # HTML 문서의 구조
 ```<!DOCTYPE html> ..... </html>``` 까지 HTML문서 기본 골자를 **상용구(boilerplate)** 라고 한다.
@@ -74,7 +71,9 @@ HTML에는 크게 2가지 종류의 요소가 있다.
 
 **특수한 문자나 예약어를 표기하는데 사용**, 앰퍼센드(&)로 시작해 세미콜론(;)으로 끝난다.
 
-엔티티 코드 없이 예약어같은 것을 사용해도 출력엔 문제가 없을 수 있으나, 문서를 열었을 때는 에러가 표시될 수 있다. 따라서 특수 문자, 예약어에는 엔티티 코드를 사용한다.
+엔티티 코드 없이 예약어같은 것을 사용해도 출력엔 문제가 없을 수 있으나, 문서를 열었을 때는 에러가 표시될 수 있다.
+
+따라서 특수 문자, 예약어에는 엔티티 코드를 사용한다.
 
 <br>
 
@@ -83,8 +82,6 @@ HTML에는 크게 2가지 종류의 요소가 있다.
 + https://developer.mozilla.org/ko/docs/Learn/HTML/Introduction_to_HTML/Getting_started#html_%EB%AC%B8%EC%84%9C%EC%9D%98_%EA%B5%AC%EC%A1%B0
 + https://developer.mozilla.org/ko/docs/Web/HTML/Element
 
-**[HTML 테이블 tags, atrributes list]**  
-+ https://www.scaler.com/topics/html/table-attributes-in-html/
   
 **[엔티티 코드 리스트]**  
 + https://dev.w3.org/html5/html-author/charref
@@ -92,12 +89,12 @@ HTML에는 크게 2가지 종류의 요소가 있다.
 <br>
 
 
-
 # HTML 시맨틱 요소(Sementic Elements)
 
 말 그대로 **의미가 담겨있는 요소, 마크업을 뜻함**.
 
 HTML5 시맨틱 요소가 있기 전엔 ```<div> <span> <p>``` 등과 같은 태그로  구획을 구분했는데, 이러한 태그만으로는 그 의미나 기능을 알기 어렵다.
+
 
 ## 시맨틱 요소(태그)의 필요성
 
@@ -115,18 +112,23 @@ HTML5 시맨틱 요소가 있기 전엔 ```<div> <span> <p>``` 등과 같은 태
 + https://developer.mozilla.org/ko/docs/Glossary/Semantics#%EC%9D%98%EB%AF%B8%EB%A1%A0%EC%A0%81_%EC%9A%94%EC%86%8Celement%EB%93%A4
 
 <br>
-<br>
+
 
 # HTML 테이블(table)
 
-말 그대로 행과 열을 가진 2차원 표를 말함. 90년대~ 2000년대 초 지금보다 요소의 배치가 까다로웠을 시절 웹사이트 레이아웃(요소들을 배치하는 것)을 위해 사용되었음. 현재 이러한 방식으로 테이블을 사용하는 것은 best practice가 아니며 실제 표를 보여줘야 할 때나, 표 형식의 콘텐츠 배열이 필요할 때 사용함.
+말 그대로 행과 열을 가진 2차원 표를 말함. 
+
+90년대~ 2000년대 초 지금보다 요소의 배치가 까다로웠을 시절 웹사이트 레이아웃(요소들을 배치하는 것)을 위해 사용되었음. 
+
+현재 이러한 방식으로 테이블을 사용하는 것은 best practice가 아니며 실제 표를 보여줘야 할 때나, 표 형식의 콘텐츠 배열이 필요할 때 사용함.
+
 
 ## 테이블 요소의 콘텐츠
 
-```<caption>``` - 표의 제목을 설정한다.<br>
-```<th>``` - 테이블 헤더(테이블 칼럼(열) 제목)를  정의한다.<br>
-```<td>``` - 데이터를 포함하는 표의 셀을 정의함.<br>
-```<tr>``` - 테이블의 행을 의미한다.<br>
++ ```<caption>``` - 표의 제목을 설정한다.<br>
++ ```<th>``` - 테이블 헤더(테이블 칼럼(열) 제목)를  정의한다.<br>
++ ```<td>``` - 데이터를 포함하는 표의 셀을 정의함.<br>
++ ```<tr>``` - 테이블의 행을 의미한다.<br>
 
 ```<thead> <tfoot> <tbody>``` 와 같은 태그들은 논리적 섹션 구분용으로, 시맨틱 요소같은 역할을 한다(표가 복잡하다면 중요할 듯).
 
@@ -152,11 +154,12 @@ HTML5 시맨틱 요소가 있기 전엔 ```<div> <span> <p>``` 등과 같은 태
 </table>
 ```
 
-**[HTML 테이블]**
-
-+ https://developer.mozilla.org/ko/docs/Web/HTML/Element/table
-
 <br>
 
 
+**[HTML 테이블 태그, 속성 list]**  
+
++ https://www.scaler.com/topics/html/table-attributes-in-html/
+
++ https://developer.mozilla.org/ko/docs/Web/HTML/Element/table
 
