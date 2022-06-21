@@ -1,3 +1,8 @@
+# 목차
++ [HTML 폼(Form)](https://github.com/Iam-Sunghyun/TIL/blob/main/HTML/HTML%20%ED%8F%BC.md#html-%ED%8F%BCform)
++ [HTML 폼 유효성 검사](https://github.com/Iam-Sunghyun/TIL/blob/main/HTML/HTML%20%ED%8F%BC.md#html-%ED%8F%BC-%EC%9C%A0%ED%9A%A8%EC%84%B1-%EA%B2%80%EC%82%AC)
+
+
 # HTML 폼(Form)
 
 **HTML 폼(양식)** 이란 말 그대로 **입력 양식** 을 뜻하며, 사용자 입력을 위한 HTML 요소들을 담는 빈 요소(empty elements)이다. 
@@ -42,23 +47,18 @@ for 어트리뷰트에 요소의 id를 입력해 연결하거나, label 태그 �
 
 <br>
 
-## 체크박스 <input type="checkbox"  checked>, 라디오 버튼 <input type="radio" name="이름" id="id" value="서버 참조용 값">
+## 체크박스, 라디오 버튼 
 
-체크박스
+체크박스 - ```<input type="checkbox"  checked>``` 
 
-+ ```<input type="checkbox"  checked>``` 
 
-라디오 버튼
-
-+ ```<input type="radio" name="이름" id="id" value="서버 참조용 값">```
+라디오 버튼 - ```<input type="radio" name="이름" id="id" value="서버 참조용 값">```
 
 
 체크박스와 달리 라디오 버튼은 같은 name 값으로 버튼들을 그룹화하여 1가지 항목만 선택하게 할 수 있다.
 
-<br>
 
-
-## ```<select>``` <select><option value="example1">example1</option></select>
+## ```<select>``` 
 
 
 흔히 알고 있는 드롭다운 메뉴이다. 옵션 태그로 항목을 구성한다.
@@ -69,9 +69,7 @@ for 어트리뷰트에 요소의 id를 입력해 연결하거나, label 태그 �
 </select>
 ```
 
-<br>
-
-## ```<input type="range">``` <input type="range">
+## ```<input type="range">```
 ```
 input type="range" min="최소 값" max="최대 값" step="단위" value="최초 값" name="이름" id="id"
 ```
@@ -79,15 +77,15 @@ input type="range" min="최소 값" max="최대 값" step="단위" value="최초
 
 <br>
 
-## ```<textarea>``` <textarea rows="1">말 그대로 텍스트 영역</textarea>
-
+## ```<textarea>``` 
 ```
 <textarea name="이름" id="id" cols="최초 열" row="최초 행" placeholder="hint">
 ```
+텍스트를 입력 할 수 있는 영역을 생성한다.
 
 <br>
 
-## ```<button>``` <button>버튼</buttion>
+## ```<button>```
 
 폼 뿐만 아니라 어디에서나 사용 할 수 있는 버튼 요소. form 내부에서 사용 할 경우 ```<button>``` type의 기본 값은 "submit"으로, 클릭 시 action이 가리키는 위치로 폼 데이터를 전송한다. 
 일반적인 버튼으로 사용하고 싶다면 type="button" 해주면 된다.
@@ -125,8 +123,6 @@ EX) 특수 문자를 포함해야 되는 비밀번호, 아이디 최대 길이 �
 
 클라이언트 측에서 검사하는 경우도 있고, 서버 측에서 검사하는 경우도 있다.
 
-<br>
-
 ## 클라이언트 측 유효성 검사
 
 별도의 자바스크립트 코드 없이 사용 할 수 있는 HTML 빌트인 validation이다. 
@@ -143,5 +139,5 @@ url의 경우 검증하고 싶은 패턴을 정규표현식으로 지정 할 수
 
 <br>
 
-[클라이언트 측 유효성 검사] 
+**[클라이언트 측 유효성 검사]** 
 +  https://developer.mozilla.org/en-US/docs/Learn/Forms/Form_validation
