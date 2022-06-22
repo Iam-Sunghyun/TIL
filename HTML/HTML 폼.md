@@ -49,7 +49,7 @@ for 어트리뷰트에 요소의 id를 입력해 연결하거나, label 태그 �
 
 ## 체크박스, 라디오 버튼 
 
-체크박스 - ```<input type="checkbox"  checked>``` 
+체크박스 - ```<input type="checkbox" name="이름" id="id" checked>``` 
 
 
 라디오 버튼 - ```<input type="radio" name="이름" id="id" value="서버 참조용 값">```
@@ -125,11 +125,11 @@ EX) 특수 문자를 포함해야 되는 비밀번호, 아이디 최대 길이 �
 
 ## 클라이언트 측 유효성 검사
 
-별도의 자바스크립트 코드 없이 사용 할 수 있는 HTML 빌트인 validation이다. 
+별도의 자바스크립트 코드 없이 사용 할 수 있는 HTML 빌트인 validation 속성들이 있. 
 
 일부 입력 요소는 유효성 검사가 내장되어 있다. ex) input type="email", "tel" , "url" ....
 
-url의 경우 검증하고 싶은 패턴을 정규표현식으로 지정 할 수도 있다.
+pattern 속성을 통해 검증하고 싶은 패턴을 정규표현식으로 지정 할 수도 있다.
 
 + ```required``` - 속성을 명시하여 필수 입력 값으로 만든다.
 + ```minlength```, ```maxlength``` - 최소, 최대 입력 가능 값을 지정한다.
