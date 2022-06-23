@@ -25,7 +25,7 @@ HTML의 폼에는 체크박스, 라디오 버튼, 입력 텍스트 필드, 비�
 + ```type``` - 요소의 타입을 지정한다.<br>
 + ```id``` - 요소의 id를 지정한다.<br>
 + ```name``` - 폼 요소의 이름을 지정한다. name 속성은 폼(form)이 제출된 후 서버에서 폼 데이터(form data)를 참조하기 위해 사용되거나, 자바스크립트에서 요소를 참조하기 위해 사용된다.
-+ ```value``` - 폼 요소의 현재 값(입력된 값). name/value 속성은 name=value 형태로 짝이 되어 서버에 전송된다. 
++ ```value``` - 폼 요소의 값. name/value 속성은 name=value 형태로 짝이 되어 서버에 전송된다. 
 
 <br>
 
@@ -52,7 +52,7 @@ for 어트리뷰트에 요소의 id를 입력해 연결하거나, label 태그 �
 체크박스 - ```<input type="checkbox" name="이름" id="id" checked>``` 
 
 
-라디오 버튼 - ```<input type="radio" name="이름" id="id" value="서버 참조용 값">```
+라디오 버튼 - ```<input type="radio" name="이름" id="id" value="요소의 값">```
 
 
 체크박스와 달리 라디오 버튼은 같은 name 값으로 버튼들을 그룹화하여 1가지 항목만 선택하게 할 수 있다.
