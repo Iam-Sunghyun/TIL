@@ -159,7 +159,7 @@ HTML5 시맨틱 요소가 있기 전엔 ```<div> <span> <p>``` 등과 같은 태
 
 **[HTML 테이블 태그, 속성 list]**  
 
-+ https://www.scaler.com/topics/html/table-attributes-in-html/
++ https://developer.mozilla.org/ko/docs/Web/HTML/Element#%ED%91%9C_%EC%BD%98%ED%85%90%EC%B8%A0
 
 + https://developer.mozilla.org/ko/docs/Web/HTML/Element/table
 
