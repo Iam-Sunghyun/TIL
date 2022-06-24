@@ -90,7 +90,7 @@ CSS 속성 중에는 같은 주제를 가진 여러 공통 속성을 묶기 위�
 + https://developer.mozilla.org/ko/docs/Web/CSS/Shorthand_properties
 
 
-# 자주 사용하는 속성 몇 가지
+# 자주 사용하는 CSS 속성 몇 가지
 
 CSS는 어렵지 않지만, 사용 할 수 있는 속성들이 매우 방대하다.
 
@@ -146,7 +146,7 @@ color: rgb(R, G, B, A) , rgba(R, G, B, A)
 + https://developer.mozilla.org/ko/docs/Web/CSS/Reference
 
 
-## 텍스트 관련 속성
+# 텍스트 관련 속성
 
 ```text-align``` - 요소 내부에서의 텍스트 위치 정렬한다.
 
@@ -157,6 +157,27 @@ color: rgb(R, G, B, A) , rgba(R, G, B, A)
 ```line-height``` - 줄 간격을 조절한다.
 
 ```letter-spacing``` - 글자간 간격을 조절한다.
+
+## font-family 글꼴 집합 
+```
+p {
+  font-family: "Trebuchet MS", Verdana, sans-serif;
+}
+```
+텍스트의 글꼴을 지정하는 속성. 띄어쓰기가 있는 경우 따옴표로 묶는다.
+
+클라이언트 컴퓨터에서 사용 할 수 있는 폰트의 경우 적용되며 그렇지 않은 경우 브라우저 기본 폰트가 적용된다.
+
+예시에서 여러 폰트를 지정했는데 이것을 글꼴 스택 (font stack)이라 한다. 왼쪽부터 폰트를 적용 할 수 없는 경우 순차적으로 폰트 적용을 시도한다.
+
+
+### 웹 안전 글꼴?
+
+말 그대로 대부분의 운영체제에서 지원 되는 폰트를 말한다. 
+
+<br>
+
+대략적인 의미만 설명한 것들은 아래 링크 참조하자.
 
 <br>
 
