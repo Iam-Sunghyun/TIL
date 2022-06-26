@@ -113,9 +113,6 @@ margin: unset;
 
 + https://developer.mozilla.org/ko/docs/Web/CSS/CSS_Box_Model/Mastering_margin_collapsing
 
-
-<br>
-
 **[포이마 웹 박스 모델]**
 + https://poiemaweb.com/css3-box-model
 
@@ -125,7 +122,7 @@ margin: unset;
 
 # display 속성
 
-`display` 속성은 블록, 인라인 같은 요소 표시 방법을 설정 할 수 있는 레이아웃 정의에 중요한 속성이다.
+`display` 속성은 `block`, `inline`, `block-inline`같은 요소 표시 방법을 설정 할 수 있는 레이아웃 정의에 중요한 속성이다.
 
 다음은 자주 사용하는 속성 값들이다.
 
@@ -135,10 +132,6 @@ margin: unset;
 + `none` - 해당 요소를 화면에 표시하지 않는다 (공간조차 사라진다).
 
 <br>
-
-
-**[MDN display 속성]**
-+ https://developer.mozilla.org/ko/docs/Web/CSS/display
 
 ## CSS 요소 유형
 
@@ -201,6 +194,7 @@ display 속성으로 요소의 박스 유형을 설정 할 수 있다. `<span>`�
 **[inline 뒤 공백을 제거하는 법]**
 + https://css-tricks.com/fighting-the-space-between-inline-block-elements/
 
+<br>
 
 ## 표준 CSS 박스 모델, 대체 CSS 박스 모델
 
