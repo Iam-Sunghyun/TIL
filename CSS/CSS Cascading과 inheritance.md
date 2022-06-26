@@ -1,20 +1,19 @@
-# CSS 우선 순위(Specificity)
+# CSS Cascading
 
-CSS Specificity란 서로 충돌하는(동일한 속성) 스타일이 같은 요소에 적용됐을 때 우선 순위를 제어하는 규칙, 방법이다.
+CSS Cascading이란 CSS 스타일 적용 우선 순위를 제어하는 규칙, 방법이다.
 
-중요도를 순서대로 나열한 것은 다음과 같다.
+우선 순위에 영향을 주는 요소들을 중요도 순서대로 나열한 것은 다음과 같다.
 
 1. Importance - CSS가 선언된 위치에 따라서 우선순위가 달라진다.(순서와 다름)
 
-2. 우선 순위 (Specificity, 명시도, 특이도 등등) - 구체적 일수록(브라우저가 계산한 값에 따라)
- 우선 순위가 높다.
+2. Specificity (우선 순위, 명시도, 특이도 등등) - 구체적 일수록(브라우저가 계산한 값에 따라) 우선 순위가 높다.
 3. 소스 순서 - 선언된 순서에 따라 우선 순위가 적용된다. 즉, 나중에 선언된 스타일이 우선 적용된다.
 
-## 소스 순서와 우선 순위(specificity)
+## 소스 순서와 Specificity(명시도, 특이도)
 
-CSS의 C는 Cascading인데, 계단식, 폭포를 의미한다. speicificity가 동일한 선택자의 경우 마지막에 선언된 선택자의 스타일이 적용된다.
+CSS의 C는 Cascading인데, 계단식, 폭포를 의미한다. specificity가 동일한 선택자의 경우 마지막에 선언된 선택자의 스타일이 적용된다.
 
-하지만 어떤 경우는 더 이전에 선언된 스타일이 적용되는 경우도 있다. 사용된 선택자에 따라 specificity가 더 높게 계산되는 경우가 있기 때문이다. 
+더 이전에 선언된 스타일이 적용되는 경우도 있는데 사용 된 선택자에 따라 specificity가 더 높게 계산될 수 있기 때문이다. 
 
 브라우저는 선택자의 specificity를 4개의 자릿 수 값을 통해 계산한다. 다음은 선택자에 따른 점수를 나타낸 것 이다.
 
@@ -69,6 +68,8 @@ CSS의 C는 Cascading인데, 계단식, 폭포를 의미한다. speicificity가 
 
 사용자 스타일 시트는 말 그대로 사용자(클라이언트)가 설정한 스타일 시트를 말한다.
 
+**[W3C Cascade Sorting Order]**<br>
+https://www.w3.org/TR/css-cascade-4/#cascade-sort
 
 ## CSS 상속(Inheritance)
 
@@ -78,18 +79,31 @@ CSS의 C는 Cascading인데, 계단식, 폭포를 의미한다. speicificity가 
 
 상속되지 않는 속성도 있고, 일부 요소는 부모의 속성을 상속받지 않는 경우도 있다.
 
-상속을 제어하기 위한 속성 값에 대한 것은 아래 링크 참고.
+예를 들어 `color`는 상속되는 속성으로 자식 요소는 물론 자손 요소까지 적용된다. 하지만 `button ` 요소는 `color` 속성을 상속 받지 않는다.
+
+## 상속 제어 값
+
+`initial` - 해당 속성 값을 초기 값(default)으로 설정 한다.
+
+`inherit` - 해당 속성 값을 상위 요소의 속성 값과 동일하게 설정한다. 즉 부모 요소 속성을 상속 받는다.
+
+`unset` - 상속받는 속성이면 `inherit`하고 그렇지 않으면 `initial`처럼 작동한다.
+
+`revert` - 스타일 선언의 위치(순서와 다름)에 따라 달라진다.
+  
+  + 사용자 에이전트(브라우저) 스타일 선언 - `unset`과 동일하게 작동.
+  + 사용자 스타일 선언 - 브라우저의 default 스타일로 되돌린다.
+  + 작성자(개발자) 스타일 선언 - 사용자가 지정한 스타일로 롤백.
+
 
 <br>
 
-**[자주 사용하는 속성 상속 여부]** <br>
 
-https://poiemaweb.com/css3-inheritance-cascading
-
-**[CSS 상속 이해하기]** <br>
-https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/Cascade_and_inheritance#%EC%83%81%EC%86%8D_%EC%A0%9C%EC%96%B4%ED%95%98%EA%B8%B0
-
+**[CSS 상속 제어하기]**<br>
+https://www.w3.org/TR/css-cascade-4/#defaulting-keywords <br>
 
 **[계단식(Cascade) 및 상속(Inheritence)]** <br>
 https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/Cascade_and_inheritance
 
+**[자주 사용하는 속성 상속 여부]** <br>
+https://poiemaweb.com/css3-inheritance-cascading
