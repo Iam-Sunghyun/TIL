@@ -4,7 +4,7 @@ CSS(Cascading Style Sheets)란  글꼴, 글자 크기, 애니메이션, 색상 �
 
 보통 HTML 요소의 스타일을 결정하지만, XML(XML의 방언인 SVG, XHTML 포함)로 작성된 문서의 스타일을 설정하는데도 사용할 수 있다.
 
-### 문법 예
+## 문법 예
 하나의 CSS 선언은 선택자에 연결된 속성 세트로 구성된다.
 ```
 // h1 -> 선택자. 스타일을 적용할 HTML 요소를 말한다.
@@ -17,9 +17,10 @@ css 스타일의 속성을 2개 이상 지정 할 경우 반드시 세미콜론(
 
 그렇지 않으면 적용되지 않는다.
 
-**[MDN CSS]** 
+<br>
 
-+ https://developer.mozilla.org/ko/docs/Learn/CSS
+**[MDN CSS]**  <br>
+https://developer.mozilla.org/ko/docs/Learn/CSS
 
 # CSS 적용 방식
 
@@ -86,8 +87,8 @@ CSS 속성 중에는 같은 주제를 가진 여러 공통 속성을 묶기 위�
 
 <br>
 
-**[CSS 단축 속성]** 
-+ https://developer.mozilla.org/ko/docs/Web/CSS/Shorthand_properties
+**[CSS 단축 속성]** <br>
+https://developer.mozilla.org/ko/docs/Web/CSS/Shorthand_properties
 
 
 # 자주 사용하는 CSS 속성 몇 가지
@@ -119,34 +120,46 @@ CSS에서 색상을 지정하는 방식은 다음과 같다.
 선택적으로 알파(a)채널을 추가해 다음과 같이 투명도를 표현 할 수도 있다.
 
 16진수 표현과 함수형 표현이 있다.
-### 16진수 색 표현
+
+## 16진수 색 표현
 
 ```
-color: #ffff00;
+color: #ffff00;  // 요소 콘텐츠 색상 설정 속성
 color: #ffff00aa;(==#ff0a)  // a는 투명도를 나타내는 16진수
 ```
 16진수 표기법의 경우 왼쪽부터 2자리씩 빨강, 초록, 파랑을 의미한다. 십진수 0~255 범위를 16진수 0~ff로 표현한 것이다.
 
 각 색상 2자리가 같은 값일 경우 1자리로 생략하여 표현할 수 있다.
 
-### 함수형 색 표현
+## 함수형 색 표현
 
 ```
 color: rgb(R, G, B, A) , rgba(R, G, B, A)
 ```
+각 색상을 0~255 정수로, 알파 채널은 0~1사이 소수로 지정할 수 있다.
+
+## Opacity와 알파 채널
+
+```
+background-color: rgb(15, 15, 15, 0.2) , rgba(R, G, B, A)
+```
+
+함수형 색 표현(`rgb()`, `rgba()`), 16진수 표현(`#ffff00aa`)으로 특정 속성의 알파 채널 값, 즉 투명도를 설정할 수 있다.
+
+`opacity` 역시 투명도를 설정하는 속성으로 이 값을 지정할 경우 해당 요소뿐 아니라 자손 요소 모두 영향을 받는다(상속은 되지 않는다).
 
 자세한 것은 아래 링크를 참조하자.
 
 <br>
 
-**[CSS color]**
-+ https://developer.mozilla.org/ko/docs/Web/CSS/color_value
+**[CSS color]** <br>
+https://developer.mozilla.org/ko/docs/Web/CSS/color_value
 
-**[CSS 속성 참고서]**
-+ https://developer.mozilla.org/ko/docs/Web/CSS/Reference
+**[CSS 속성 참고서]** <br>
+https://developer.mozilla.org/ko/docs/Web/CSS/Reference
 
 
-# 텍스트 관련 속성
+# 자주 사용하는 텍스트 관련 속성
 
 ```text-align``` - 요소 내부에서의 텍스트 위치 정렬한다.
 
@@ -170,10 +183,14 @@ p {
 
 예시에서 여러 폰트를 지정했는데 이것을 글꼴 스택 (font stack)이라 한다. 왼쪽부터 폰트를 적용 할 수 없는 경우 순차적으로 폰트 적용을 시도한다.
 
+따라서 마지막에 지정하는 폰트는 대부분의 OS에 기본적으로 설치되어 있는 generic-font-family (Serif, Sans-serif, Mono space)를 지정하는 것이 일반적이다.
+
 
 ### 웹 안전 글꼴?
 
-말 그대로 대부분의 운영체제에서 지원 되는 폰트를 말한다. 
+대부분의 운영체제(윈도우, 맥, 가장 일반적인 리눅스 배포판, 안드로이드 및 iOS)에서 지원 되는 폰트를 말한다. 
+
+generic-family 폰트 중에서도 몇 가지를 특정한 것 인듯.
 
 <br>
 
@@ -181,5 +198,8 @@ p {
 
 <br>
 
-**[CSS 텍스트 스타일링]**
-+ https://developer.mozilla.org/ko/docs/Learn/CSS/Styling_text
+**[w3c css fonts]** <br>
+https://drafts.csswg.org/css-fonts/#generic-font-families
+
+**[CSS 텍스트 스타일링]** <br>
+https://developer.mozilla.org/ko/docs/Learn/CSS/Styling_text
