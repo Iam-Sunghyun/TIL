@@ -167,7 +167,7 @@ CSS에는 2가지 박스(인라인 박스, 블록 레벨 박스)가 있으며 �
 
 + ex) `<span>` `<a>` `<strong>` `<img>` `<br>` `<input>` `<select>` `<textarea>` `<button>`
 
-display 속성으로 요소의 박스 유형을 설정 할 수 있다. `<span>`의 경우 기본이 인라인 요소인데, `display: block;` 으로 블록 레벨 요소처럼 출력 되게 만들 수 있다.
+display 속성으로 요소의 박스 유형을 설정할 수 있다. `<span>`의 경우 기본이 인라인 요소인데, `display: block;` 으로 블록 레벨 요소처럼 출력 되게 만들 수 있다.
 
 주의 할 점은 **유형 자체를 변경하지는 않는다는 것**. 인라인 요소에 `display:block;` 적용해도 요소가 포함할 수 있는 요소와 요소가 포함될 수 있는 요소에는 영향을 주지 않는다(여전히 인라인은 블록 요소를 하위에 포함시키지 못함).
 
@@ -188,11 +188,11 @@ display 속성으로 요소의 박스 유형을 설정 할 수 있다. `<span>`�
   
 <br>
 
-**[CSS display 속성]**
-+ https://developer.mozilla.org/ko/docs/Web/CSS/display
+**[CSS display 속성]** <br>
+https://developer.mozilla.org/ko/docs/Web/CSS/display
 
-**[inline 뒤 공백을 제거하는 법]**
-+ https://css-tricks.com/fighting-the-space-between-inline-block-elements/
+**[inline 뒤 공백을 제거하는 법]** <br>
+https://css-tricks.com/fighting-the-space-between-inline-block-elements/
 
 <br>
 
@@ -200,7 +200,7 @@ display 속성으로 요소의 박스 유형을 설정 할 수 있다. `<span>`�
 
 표준 박스 모델에서 테두리는 ```width```, ```height```으로 정의된 콘텐츠 영역 밖에 생성 된다. 즉 실제 보여지는 박스 크기는 콘텐츠 영역 + 패딩 + 테두리를 합친 영역이 되는 것이다.
 
-```box-sizing: border-box;``` 속성을 사용할 경우 대체 박스 모델을 활성화 할 수 있다.
+```box-sizing: border-box;``` 속성을 사용할 경우 대체 박스 모델을 활성화할 수 있다.
 ```
 div { 
   border-color: red;
@@ -222,8 +222,9 @@ html {
 ```
 <br>
 
-**[CSS 테두리 박스 속성]**
+**[CSS 테두리 박스 속성]** <br>
 
 https://developer.mozilla.org/ko/docs/Web/CSS/border
 
-**[CSS 박스 모델]** https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/The_box_model#%EB%B8%94%EB%A1%9D_%EB%B0%8F_%EC%9D%B8%EB%9D%BC%EC%9D%B8_%EB%B0%95%EC%8A%A4
+**[CSS 박스 모델]** <br>
+https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/The_box_model#%EB%B8%94%EB%A1%9D_%EB%B0%8F_%EC%9D%B8%EB%9D%BC%EC%9D%B8_%EB%B0%95%EC%8A%A4

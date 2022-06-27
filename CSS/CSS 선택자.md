@@ -51,7 +51,7 @@ li.spacious {    // class가 spacious인 모든 li 요소
 ```
 ```id```와 비슷하게 요소를 식별하는 데 사용. 
 
-클래스는 ```id```와 달리 여러 요소에 사용해 그룹화 할 수 있다. 가장 자주 사용하는 듯.
+클래스는 ```id```와 달리 여러 요소에 사용해 그룹화할 수 있다. 가장 자주 사용하는 듯.
 
 
 ## 자손 선택자 " " (Descendant selectors), 후손 선택자
@@ -124,8 +124,8 @@ button:hover {
 
 <br>
 
-**[가상 클래스 목록]** 
-+ https://developer.mozilla.org/ko/docs/Web/CSS/Pseudo-classes
+**[가상 클래스 목록]** <br>
+https://developer.mozilla.org/ko/docs/Web/CSS/Pseudo-classes
   
 
 ## 가상 요소, 유사 요소(Pseudo element)
@@ -151,10 +151,10 @@ input[type="text"] {
 
 <br>
 
-**[Attribute selectors]** 
-+ https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors
+**[Attribute selectors]** <br>
+https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors
 
 
-**[CSS 선택자 ]**
-+ https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/Selectors
+**[CSS 선택자 ]** <br>
+https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/Selectors
 
