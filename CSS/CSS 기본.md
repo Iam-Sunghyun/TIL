@@ -75,7 +75,7 @@ HTML 요소의 style 속성에 직접 css을 선언하는 방식.
 ```
 <br>
 
-# 단축 속성?
+# 단축 속성(Shorthand properties)
 
 단축 속성은 관련된 서로 다른 여러 가지 CSS 속성의 값을 지정할 수 있는 CSS 속성을 말한다.
 
@@ -138,6 +138,12 @@ color: rgb(R, G, B, A) , rgba(R, G, B, A)
 ```
 각 색상을 0~255 정수로, 알파 채널은 0~1사이 소수로 지정할 수 있다.
 
+<br>
+
+**[CSS color]** <br>
+https://developer.mozilla.org/ko/docs/Web/CSS/color_value
+
+
 ## Opacity와 알파 채널
 
 ```
@@ -146,14 +152,11 @@ background-color: rgb(15, 15, 15, 0.2) , rgba(R, G, B, A)
 
 함수형 색 표현(`rgb()`, `rgba()`), 16진수 표현(`#ffff00aa`)으로 특정 속성의 알파 채널 값, 즉 투명도를 설정할 수 있다.
 
-`opacity` 역시 투명도를 설정하는 속성으로 이 값을 지정할 경우 해당 요소뿐 아니라 자손 요소 모두 영향을 받는다(상속은 되지 않는다).
+`opacity` 역시 투명도를 설정하는 속성으로 0~1사이 값으로 설정한다. 이 값을 지정할 경우 해당 요소뿐 아니라 자손 요소 모두 영향을 받는다(상속은 되지 않는다).
 
 자세한 것은 아래 링크를 참조하자.
 
 <br>
-
-**[CSS color]** <br>
-https://developer.mozilla.org/ko/docs/Web/CSS/color_value
 
 **[CSS 속성 참고서]** <br>
 https://developer.mozilla.org/ko/docs/Web/CSS/Reference
@@ -190,7 +193,7 @@ p {
 
 대부분의 운영체제(윈도우, 맥, 가장 일반적인 리눅스 배포판, 안드로이드 및 iOS)에서 지원 되는 폰트를 말한다. 
 
-generic-family 폰트 중에서도 몇 가지를 특정한 것 인듯.
+generic-font-family 중에서도 몇 가지를 특정한 것 인듯.
 
 <br>
 
@@ -203,3 +206,4 @@ https://drafts.csswg.org/css-fonts/#generic-font-families
 
 **[CSS 텍스트 스타일링]** <br>
 https://developer.mozilla.org/ko/docs/Learn/CSS/Styling_text
+
