@@ -25,7 +25,12 @@ matrix(scaleX(), skewY(), skewX(), scaleY(), translateX(), translateY());
 
 ## 3D 트랜스폼 함수
 
-`perspective()` - 사용자와 z=0 평면 사이의 거리를 설정하여 3D 환경을 만든다. 즉 3D 관점에서 사용자와의 거리를 조정하는 것. `perspective()`가 `transform` 속성의 일부라면 항상 제일 앞에 위치해야 한다.
+3D 트랜스폼의 경우 먼저 `perspective()`(원근감)을 설정해 3D로 만들어주어야 한다.
+
+
+`perspective()` - 사용자와 z=0 평면 사이의 거리에 `<length>`값을 설정하여 3D 환경을 만든다. 즉 3D 관점에서 사용자와의 거리를 조정하는 것. `perspective()`가 `transform` 속성의 일부라면 항상 제일 앞에 위치해야 한다.
+
+2D, 3D 모든 Transform function은 아래 링크 참조.
 
 <!-- rotate3d(x,y,z,angle)
 rotateX(angle)
