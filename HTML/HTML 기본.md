@@ -14,15 +14,23 @@
 
 ## HTML과 HTML5의 차이점?
 
-**HTML5는 HTML을 정의하는 가장 발전된 표준**. 즉 최신 형태의 HTML으로 다양한 최신 웹 서비스를 위한 기능들을 포함한다. (오디오, 비디오, 3D그래픽, 웹 스토리지, Javascript API 등)
+**HTML5는 HTML을 정의하는 가장 발전된 표준**. 즉 최신 형태의 HTML으로 다양한 최신 웹 서비스를 위한 기능들을 포함하는 용어이다. (시맨틱 태그, 오디오, 비디오, 3D그래픽, 웹 스토리지, Javascript API 등)
+
+이전에는 W3C와 WHATWG가 협력하여 HTML, DOM 표준을 개발해 왔으나, 2019년부로 WHATWG가 개발하고 있다.
+
+
 
 <br>
 
-**[HTML과 HTML5 차이]**
+**[둘로 나뉜 웹 표준, 하나로 합쳐진다]** <BR>
 
-+ https://www.scaler.com/topics/difference-between-html-and-html5/
+https://zdnet.co.kr/view/?no=20190531184644
 
-+ https://www.javatpoint.com/html-vs-html5
+**[HTML과 HTML5 차이]** <BR>
+
+https://www.scaler.com/topics/difference-between-html-and-html5/ <BR>
+
+https://www.javatpoint.com/html-vs-html5
 
 <br>
 
@@ -77,32 +85,43 @@ HTML에는 크게 2가지 종류의 요소가 있다.
 
 <br>
 
-**[HTML 문서의 구조]**
+**[HTML 문서의 구조]**<br>
 
-+ https://developer.mozilla.org/ko/docs/Learn/HTML/Introduction_to_HTML/Getting_started#html_%EB%AC%B8%EC%84%9C%EC%9D%98_%EA%B5%AC%EC%A1%B0
-+ https://developer.mozilla.org/ko/docs/Web/HTML/Element
+https://developer.mozilla.org/ko/docs/Learn/HTML/Introduction_to_HTML/Getting_started#html_%EB%AC%B8%EC%84%9C%EC%9D%98_%EA%B5%AC%EC%A1%B0<br>
+https://developer.mozilla.org/ko/docs/Web/HTML/Element
 
   
-**[엔티티 코드 리스트]**  
-+ https://dev.w3.org/html5/html-author/charref
+**[엔티티 코드 리스트]**  <br>
+https://dev.w3.org/html5/html-author/charref<br>
 
 <br>
 
+## Emmet 플러그인
+
+축약 명령어로 마크업 만들 수 있는 확장 프로그램. vscode에는 내장되어 있음
+
+**[Emmet Cheat Sheet]** <br>
+https://docs.emmet.io/cheat-sheet/
+
+<br>
 
 # HTML 시맨틱 요소(Sementic Elements)
 
 말 그대로 **의미가 담겨있는 요소, 마크업을 뜻함**.
 
-HTML5 시맨틱 요소가 있기 전엔 ```<div> <span> <p>``` 등과 같은 태그로  구획을 구분했는데, 이러한 태그만으로는 그 의미나 기능을 알기 어렵다.
+HTML5 시맨틱 요소가 있기 전엔 ```<div> <span> <p>``` 등과 같은 태그로 구획을 구분했는데, 이러한 태그만으로는 그 의미나 기능을 알기 어렵다.
 
 
 ## 시맨틱 요소(태그)의 필요성
 
-1. 크롤링 프로그램과 같은 다른 프로그램을 사용해 페이지에 접근 할 경우 태그로 원하는 콘텐츠의 위치를 쉽고 빠르게 특정할 수 있다.
+### 1. 검색 엔진 최적화(Search Engine Optimization)
+검색 엔진과 같은 크롤링 프로그램들이 HTML 문서의 태그를 기반으로 내용을 분석하여 검색 키워드의 우선순위를 판별한다고 한다. 구조적인 의미가 담긴 시맨틱 요소를 사용하므로서 검색엔진이 문서를 탐색하는데 편의를 제공한다.
 
-2. 스크린 리더 같은 접근성을 위한 도구를 사용하는 사람들이 페이지를 탐색할 때 표지판이 되어줄 수 있다.
+### 2. 웹 접근성
+스크린 리더 같은 접근성을 위한 도구를 사용하는 사람들이 페이지를 탐색할 때 표지판이 되어줄 수 있다.
 
-3. 페이지의 요소들이 의미로 구분되기 때문에 가독성이 좋다.
+### 3.가독성
+페이지의 요소들이 의미로 구분되기 때문에 가독성이 좋다.
 
 결론적으로 **접근성**과 **가독성**에 좋고 **SEO(Search Engine Optimization)에 있어서 필수**이다.
 
@@ -118,7 +137,7 @@ HTML5 시맨틱 요소가 있기 전엔 ```<div> <span> <p>``` 등과 같은 태
 
 말 그대로 행과 열을 가진 2차원 표를 말함. 
 
-90년대~ 2000년대 초 지금보다 요소의 배치가 까다로웠을 시절 웹사이트 레이아웃(요소들을 배치하는 것)을 위해 사용되었음. 
+90년대~ 2000년대 초 지금보다 요소의 배치가 까다로웠던 시절 웹사이트 레이아웃(요소들을 배치하는 것)을 위해 사용되기도 했다고 한다. 
 
 현재 이러한 방식으로 테이블을 사용하는 것은 best practice가 아니며 실제 표를 보여줘야 할 때나, 표 형식의 콘텐츠 배열이 필요할 때 사용함.
 
@@ -162,4 +181,7 @@ HTML5 시맨틱 요소가 있기 전엔 ```<div> <span> <p>``` 등과 같은 태
 + https://developer.mozilla.org/ko/docs/Web/HTML/Element#%ED%91%9C_%EC%BD%98%ED%85%90%EC%B8%A0
 
 + https://developer.mozilla.org/ko/docs/Web/HTML/Element/table
+
+
+
 
