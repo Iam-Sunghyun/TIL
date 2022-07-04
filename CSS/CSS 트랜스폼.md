@@ -6,7 +6,7 @@
 
 애니메이션 효과를 더 추가하고자 한다면 트랜지션, 에니메이션과 함께 사용한다.
 
-`transform` 속성은 키워드 `none` 또는 하나 이상의 `<transform-function>` 값을 사용해 지정할 수 있다.
+`transform` 속성은 키워드 `none` 또는 하나 이상의 `<transform-function>`을 지정해 트랜스폼할 수 있다.
 
 
 ## 2D 트랜스폼 함수 (`<transform-function>`)

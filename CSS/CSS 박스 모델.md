@@ -1,8 +1,10 @@
 # CSS 박스 모델
 
-CSS에 포함되는 모든 HTML 요소들은 박스 형태로 이루어져 있다.
+HTML 문서를 출력할 때, 브라우저의 렌더링 엔진은 HTML 요소들을 하나의 박스로 표현한다.
 
-브라우저는 박스 모델의 크기(dimension)와 프로퍼티(색, 배경, 모양 등), 위치를 근거로 하여 렌더링을 실행한다.
+즉, HTML 요소들은 박스 형태로 이루어져 있고 CSS는 박스의 크기, 위치, 속성(property)과 같은 출력 스타일을 결정하는데 이 박스 형태의 영역을 **박스 모델(box model)**이라고 한다. 
+
+<img src="https://github.com/Iam-Sunghyun/TIL/blob/main/CSS/img/css-box-model.png" width="350" height="250">  
 
 CSS 박스 모델의 구성과 제어하기 위한 속성은 다음과 같다.
 
@@ -10,6 +12,10 @@ CSS 박스 모델의 구성과 제어하기 위한 속성은 다음과 같다.
 + 패딩 박스 - ```padding```
 + 테두리 박스 - ```border```
 + 여백 박스 - ```margin```
+
+```
+요소(elements)는 HTML 문서의 논리적 구성요소 관점의 용어이고, 태그(tag)는 문서 작성 관점에서, 박스(box)는 출력스타일(CSS) 관점에서 사용하는 용어로 모두 같은 대상에 대한 표현이다.
+```
 
 ## 콘텐츠(Contents)
 
@@ -23,7 +29,7 @@ div {
 
 ## 테두리(Border)
 
-```border``` 단축 속성을 통해 제어하며, 하위 속성으로는 ```border-width```, ```border-color```, ```border-style```이 있다. 이 3가지 하위 속성도 4면의 값을 설정 할 수 있는 단축 속성으로 예시는 링크 참조
+```border``` 단축 속성을 통해 제어하며, 하위 속성으로는 ```border-width```, ```border-color```, ```border-style```이 있다. 이 3가지 하위 속성도 4면의 값을 설정 할 수 있는 단축 속성으로 예시는 링크 참조.
 ```
 /* 너비(width) | 스타일(style) | 색(color) */
 border: medium dashed green;
@@ -44,10 +50,12 @@ border: unset;
 
 <br>
 
-**[CSS border-radius]**
-+ https://developer.mozilla.org/ko/docs/Web/CSS/border-radius
+**[CSS border-radius]** <br>
+https://developer.mozilla.org/ko/docs/Web/CSS/border-radius
 
+**[CSS 테두리 박스 속성]** <br>
 
+https://developer.mozilla.org/ko/docs/Web/CSS/border
 
 ## 패딩(Padding)
 
@@ -109,20 +117,22 @@ margin: unset;
 
 <br>
 
-**[여백 상쇄가 발생하는 경우]**
+**[여백 상쇄가 발생하는 경우]** <br>
 
-+ https://developer.mozilla.org/ko/docs/Web/CSS/CSS_Box_Model/Mastering_margin_collapsing
+https://developer.mozilla.org/ko/docs/Web/CSS/CSS_Box_Model/Mastering_margin_collapsing
 
-**[포이마 웹 박스 모델]**
-+ https://poiemaweb.com/css3-box-model
+<br>
 
-**[MDN 박스 모델]**
-+ https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/The_box_model
+**[포이마 웹 박스 모델]** <br>
+https://poiemaweb.com/css3-box-model
+
+**[MDN 박스 모델]** <br>
+https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/The_box_model
 
 
 # display 속성
 
-`display` 속성은 `block`, `inline`, `block-inline`같은 요소 표시 방법을 설정 할 수 있는 레이아웃 정의에 중요한 속성이다.
+`display` 속성은 `block`, `inline`, `block-inline`같은 요소 출력 방법을 설정 할 수 있는 레이아웃 정의에 중요한 속성이다.
 
 다음은 자주 사용하는 속성 값들이다.
 
@@ -133,11 +143,14 @@ margin: unset;
 
 <br>
 
-## CSS 요소 유형
+**[CSS display 속성]** <br>
+https://developer.mozilla.org/ko/docs/Web/CSS/display
+
+## CSS 박스 유형
 
 CSS에는 2가지 박스(인라인 박스, 블록 레벨 박스)가 있으며 다음과 같은 차이가 있다.
 
-### 블록 레벨 박스
+### 블록 레벨 박스(블록 레벨 요소의 박스 모델)
 
 + 박스의 너비는 상위 콘테이너 너비만큼 채워진다(콘텐츠 영역 크기를 줄여도 상위 요소 너비 만큼 여백(margin)이 채워진다).
 
@@ -151,7 +164,7 @@ CSS에는 2가지 박스(인라인 박스, 블록 레벨 박스)가 있으며 �
 
 + ex) `<div>` `<h1~6>` `<p>` `<ol>` `<ul>` `<li>` `<hr>` `<table>` `<form>`
 
-### 박스의 외부 디스플레이 유형이 inline일 경우
+### 인라인 박스 (인라인 요소의 박스 모델)
 
 + content의 너비만큼 가로폭을 차지한다.
 
@@ -188,8 +201,6 @@ display 속성으로 요소의 박스 유형을 설정할 수 있다. `<span>`�
   
 <br>
 
-**[CSS display 속성]** <br>
-https://developer.mozilla.org/ko/docs/Web/CSS/display
 
 **[inline 뒤 공백을 제거하는 법]** <br>
 https://css-tricks.com/fighting-the-space-between-inline-block-elements/
@@ -198,7 +209,7 @@ https://css-tricks.com/fighting-the-space-between-inline-block-elements/
 
 ## 표준 CSS 박스 모델, 대체 CSS 박스 모델
 
-표준 박스 모델에서 테두리는 ```width```, ```height```으로 정의된 콘텐츠 영역 밖에 생성 된다. 즉 실제 보여지는 박스 크기는 콘텐츠 영역 + 패딩 + 테두리를 합친 영역이 되는 것이다.
+표준 박스 모델(CSS 박스 모델의 기본값 => content-box)에서 ```width```, ```height```는 콘텐츠 박스의 크기만 정의한다. 패딩과 테두리는 콘텐츠 박스 밖에 생성 된다.
 
 ```box-sizing: border-box;``` 속성을 사용할 경우 대체 박스 모델을 활성화할 수 있다.
 ```
@@ -209,7 +220,7 @@ div {
   box-sizing: border-box;
 }
 ```
-대체 박스 모델은 테두리가 콘텐츠 영역 내부에 위치하게 된다. 즉 테두리 박스, 패딩을 포함한 영역이 ```width```, ```height``` 값이 되도록 조정한다.
+대체 박스 모델(border-box)은 ```width```, ```height```로 지정한 크기가 패딩과 테두리를 포함한다. 
 
 모든 요소에 대체 박스 모델을 적용하고 싶다면 다음과 같이 선언하면 된다.
 ```
@@ -222,9 +233,9 @@ html {
 ```
 <br>
 
-**[CSS 테두리 박스 속성]** <br>
+**[MDN box-sizing]** <br>
+https://developer.mozilla.org/ko/docs/Web/CSS/box-sizing
 
-https://developer.mozilla.org/ko/docs/Web/CSS/border
 
 **[CSS 박스 모델]** <br>
-https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/The_box_model#%EB%B8%94%EB%A1%9D_%EB%B0%8F_%EC%9D%B8%EB%9D%BC%EC%9D%B8_%EB%B0%95%EC%8A%A4
+https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/The_box_model

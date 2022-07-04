@@ -101,7 +101,7 @@ CSS는 어렵지 않지만, 사용 할 수 있는 속성들이 매우 방대하�
 
 ```color``` - 텍스트 색상 변경.
 
-```background``` - 색상, 이미지, 원점, 크기, 반복 등 여러 배경 스타일을 한 번에 지정. background 관련 속성들의 단축 속성
+```background``` - 색상, 이미지, 원점, 크기, 반복 등 여러 배경 스타일을 한 번에 지정. background 관련 속성들의 단축 속성.
 
 ```background-color``` - 배경색만을 변경하기 위한 background의 하위 속성.
 
@@ -158,6 +158,9 @@ background-color: rgb(15, 15, 15, 0.2) , rgba(R, G, B, A)
 
 <br>
 
+**[MDN Opacity 속성]** <br>
+https://developer.mozilla.org/ko/docs/Web/CSS/opacity
+
 **[CSS 속성 참고서]** <br>
 https://developer.mozilla.org/ko/docs/Web/CSS/Reference
 
@@ -186,7 +189,7 @@ p {
 
 예시에서 여러 폰트를 지정했는데 이것을 글꼴 스택 (font stack)이라 한다. 왼쪽부터 폰트를 적용 할 수 없는 경우 순차적으로 폰트 적용을 시도한다.
 
-따라서 마지막에 지정하는 폰트는 대부분의 OS에 기본적으로 설치되어 있는 generic-font-family (Serif, Sans-serif, Mono space)를 지정하는 것이 일반적이다.
+따라서 마지막에 지정하는 폰트는 대부분의 OS에 기본적으로 설치되어 있는 일반 글꼴 모음, generic-font-family (Serif, Sans-serif, Mono space)를 지정하는 것이 일반적이다.
 
 
 ### 웹 안전 글꼴?
@@ -202,7 +205,7 @@ generic-font-family 중에서도 몇 가지를 특정한 것 인듯.
 <br>
 
 **[w3c css fonts]** <br>
-https://drafts.csswg.org/css-fonts/#generic-font-families
+https://www.w3.org/TR/2018/REC-css-fonts-3-20180920/
 
 **[CSS 텍스트 스타일링]** <br>
 https://developer.mozilla.org/ko/docs/Learn/CSS/Styling_text
