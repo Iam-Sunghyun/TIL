@@ -91,7 +91,7 @@ CSS 속성 중에는 같은 주제를 가진 여러 공통 속성을 묶기 위�
 https://developer.mozilla.org/ko/docs/Web/CSS/Shorthand_properties
 
 
-# 자주 사용하는 CSS 속성 몇 가지
+## 자주 사용하는 CSS 속성 몇 가지
 
 CSS는 어렵지 않지만, 사용 할 수 있는 속성들이 매우 방대하다.
 
@@ -101,11 +101,18 @@ CSS는 어렵지 않지만, 사용 할 수 있는 속성들이 매우 방대하�
 
 ```color``` - 텍스트 색상 변경.
 
-```background``` - 색상, 이미지, 원점, 크기, 반복 등 여러 배경 스타일을 한 번에 지정. background 관련 속성들의 단축 속성.
+```background``` - background 관련 속성들의 단축 속성 색상, 이미지, 원점, 크기, 반복 등 여러 배경 스타일을 한 번에 지정할 수 있다.
 
 ```background-color``` - 배경색만을 변경하기 위한 background의 하위 속성.
 
-## CSS 색상 지정하는 방식
+단축 속성을 통해 값을 지정할 경우 요소 배경이미지 크기를 설정하는 `background-size` 속성은 `/`문자를 구분자로 `background-position` 뒤에 위치해야 적용된다(ex) center/80% , center/cover) 
+
+이외에도 `background`속성은 다양한 하위 속성이 있고, 실제로 많이 쓰이는 것도 있으므로 링크를 참조할 것. 
+
+**[MDN background]** <br>
+https://developer.mozilla.org/ko/docs/Web/CSS/background
+
+# CSS 색상 지정하는 방식
 
 CSS에서 색상을 지정하는 방식은 다음과 같다.
 
@@ -183,29 +190,31 @@ p {
   font-family: "Trebuchet MS", Verdana, sans-serif;
 }
 ```
-텍스트의 글꼴을 지정하는 속성. 띄어쓰기가 있는 경우 따옴표로 묶는다.
+텍스트의 글꼴을 지정하는 속성. 폰트 이름에 공백이 있는 경우 따옴표로 묶는다.
 
 클라이언트 컴퓨터에서 사용 할 수 있는 폰트의 경우 적용되며 그렇지 않은 경우 브라우저 기본 폰트가 적용된다.
 
 예시에서 여러 폰트를 지정했는데 이것을 글꼴 스택 (font stack)이라 한다. 왼쪽부터 폰트를 적용 할 수 없는 경우 순차적으로 폰트 적용을 시도한다.
 
-따라서 마지막에 지정하는 폰트는 대부분의 OS에 기본적으로 설치되어 있는 일반 글꼴 모음, generic-font-family (Serif, Sans-serif, Mono space)를 지정하는 것이 일반적이다.
+따라서 마지막에 지정하는 폰트는 대부분의 OS에 기본적으로 설치되어 있는 일반 글꼴 모음, generic-font-family(Serif, Sans-serif, Mono space, cursive, fantasy)를 지정하는 것이 일반적이다(cursive, fantasy 글꼴은 없을 가능성이 있다).
 
 
 ### 웹 안전 글꼴?
 
 대부분의 운영체제(윈도우, 맥, 가장 일반적인 리눅스 배포판, 안드로이드 및 iOS)에서 지원 되는 폰트를 말한다. 
 
-generic-font-family 중에서도 몇 가지를 특정한 것 인듯.
+generic-font-family 하위에서 몇 가지를 특정한 것 인듯.
+
+<br>
+자세한 것은 아래 링크 참조하자.
 
 <br>
 
-대략적인 의미만 설명한 것들은 아래 링크 참조하자.
+**[웹 안전 글꼴 리스트]** <br>
+https://www.cssfontstack.com/
 
-<br>
-
-**[w3c css fonts]** <br>
-https://www.w3.org/TR/2018/REC-css-fonts-3-20180920/
+**[poiemaweb 폰트와 텍스트]** <br>
+https://poiemaweb.com/css3-font-text
 
 **[CSS 텍스트 스타일링]** <br>
 https://developer.mozilla.org/ko/docs/Learn/CSS/Styling_text

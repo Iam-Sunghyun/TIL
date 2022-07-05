@@ -132,7 +132,7 @@ https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/The_box_model
 
 # display 속성
 
-`display` 속성은 `block`, `inline`, `block-inline`같은 요소 출력 방법을 설정 할 수 있는 레이아웃 정의에 중요한 속성이다.
+`display` 속성은 `block`, `inline`, `block-inline`같은 키워드로 출력되는 요소의 박스 형식을 설정할 수 있는 레이아웃 정의에 중요한 속성이다.
 
 다음은 자주 사용하는 속성 값들이다.
 
@@ -145,6 +145,20 @@ https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/The_box_model
 
 **[CSS display 속성]** <br>
 https://developer.mozilla.org/ko/docs/Web/CSS/display
+
+
+## visibility 속성
+
+`visibility` 속성은 문서의 레이아웃을 변경하지 않고 요소를 보이게 하거나 숨길 수 있다. `visibility`로 `<table>`의 행이나 열을 숨길 수도 있다.
+
+```
+/* visibility 값 */
+visibility: visible;
+visibility: hidden; // 레이아웃은 사라지지 않고 숨김.
+visibility: collapse;
+```
+
+`display: none;`의 경우 레이아웃에서도 사라지지만 `visibility: hidden;`은 출력은 숨기지만 레이아웃은 유지된다.
 
 ## CSS 박스 유형
 
@@ -239,3 +253,17 @@ https://developer.mozilla.org/ko/docs/Web/CSS/box-sizing
 
 **[CSS 박스 모델]** <br>
 https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/The_box_model
+
+
+# 박스 그림자 효과 box-shadow
+
+box-shadow CSS 속성은 요소의 테두리를 감싼 그림자 효과를 추가한다.
+
+사용 예시는 다음과 같다.
+
+```
+/* offset-x | offset-y | blur-radius | spread-radius | color */
+box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+```
+**[MDN box-shadow]** <br>
+https://developer.mozilla.org/ko/docs/Web/CSS/box-shadow

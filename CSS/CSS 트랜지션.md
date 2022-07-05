@@ -17,8 +17,10 @@ transition: [대상 속성1] [duration] [timing function] [delay] ....
 
 <br>
 
-* 트랜지션 설정 시 특정 속성을 명시하는게 좋다고 함. 속성이 여러 개일 경우 예상 못한 전환이 발생할 수 있기 때문.
+### 자잘한 팁
 
+* 트랜지션 설정 시 특정 속성을 명시하는게 좋다고 함. 속성이 여러 개일 경우 예상 못한 전환이 발생할 수 있기 때문.
+* 호버(hover) 시 위치 이동 효과를 주고싶은 경우 margin에 offset을 주는 것 보다 transform이 퍼포먼스가 좋다고 함.
 
 <!-- # 트랜지션 타이밍 함수(Transition Timing Function) -->
 
