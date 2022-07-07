@@ -174,7 +174,7 @@ https://developer.mozilla.org/ko/docs/Web/CSS/Reference
 
 # 자주 사용하는 텍스트 관련 속성
 
-```text-align``` - 요소 내부에서의 텍스트 위치 정렬한다.
+```text-align``` - 블록 요소나 표의 칸 상자 내부 콘텐츠의 가로 정렬을 설정한다.
 
 ```font-weight``` - 글자 굵기 설정. 몇몇 폰트들은 normal(400)이나 bold(700)만 가능하다.
 
