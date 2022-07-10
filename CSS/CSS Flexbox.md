@@ -156,9 +156,9 @@ flex: 2 2 10%;
 **[MDN Flexbox]** <br>
 https://developer.mozilla.org/ko/docs/Web/CSS/CSS_Flexible_Box_Layout
 
-### 이미지 출처
+**[heropy.blog Flexbox]** <br>
+https://heropy.blog/2018/11/24/css-flexible-box/
+
+**이미지 출처** <br>
 https://d2.naver.com/helloworld/8540176
 
-
-
-<!-- 미디어 쿼리 - 반응형 웹 사이트를 위해 매우 중요한 속성 -->
