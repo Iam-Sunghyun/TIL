@@ -91,7 +91,7 @@ CSS 속성 중에는 같은 주제를 가진 여러 공통 속성을 묶기 위�
 https://developer.mozilla.org/ko/docs/Web/CSS/Shorthand_properties
 
 
-## 자주 사용하는 CSS 속성 몇 가지
+# 자주 사용하는 CSS 속성 몇 가지
 
 CSS는 어렵지 않지만, 사용 할 수 있는 속성들이 매우 방대하다.
 
@@ -199,16 +199,81 @@ p {
 따라서 마지막에 지정하는 폰트는 대부분의 OS에 기본적으로 설치되어 있는 일반 글꼴 모음, generic-font-family(Serif, Sans-serif, Mono space, cursive, fantasy)를 지정하는 것이 일반적이다(cursive, fantasy 글꼴은 없을 가능성이 있다).
 
 
-### 웹 안전 글꼴?
+## 웹 안전 글꼴?
 
 대부분의 운영체제(윈도우, 맥, 가장 일반적인 리눅스 배포판, 안드로이드 및 iOS)에서 지원 되는 폰트를 말한다. 
 
 generic-font-family 하위에서 몇 가지를 특정한 것 인듯.
 
 <br>
-자세한 것은 아래 링크 참조하자.
+
+# Reset CSS
+
+여러 브라우저마다 고유의 CSS 기본 스타일이 있는데 이로인해 웹 페이지가 다르게 출력될 수 있다.
+
+
+따라서 reset 코드를 스타일 시트에 적용하여 브라우저들의 default 스타일을 초기화 해줄 필요가 있다.
+
+다음은 에릭마이어의 CSS Reset 코드이다.
+
+```
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+```
+
+CSS reset 코드는 이외에도 다양한 것이 있다. 아래 링크 참조
 
 <br>
+
+**[Reset CSS]** <br>
+https://velog.io/@teo/2022-CSS-Reset-%EB%8B%A4%EC%8B%9C-%EC%8D%A8%EB%B3%B4%EA%B8%B0 <br>
+https://meyerweb.com/eric/tools/css/reset/
 
 **[웹 안전 글꼴 리스트]** <br>
 https://www.cssfontstack.com/
