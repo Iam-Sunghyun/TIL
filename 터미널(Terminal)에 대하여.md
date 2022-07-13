@@ -22,10 +22,12 @@
 |`cd`|디렉토리 이동|
 |`touch`|빈 파일 생성|
 |`ls`|디렉토리 목록 확인|
+|`pwd`|현재 디렉토리 절대경로 확인|
 |`mkdir`|새 디렉토리 생성|
 |`rm`|파일, 디렉토리 삭제|
 |`cp`|파일 복사|
 |`mv`|파일 이동 및 이름 변경|
+|`~`|홈 디렉토리|
 
 <br>
 
@@ -64,21 +66,26 @@ cmd, 윈도우 파워쉘과 리눅스, 맥 명령어가 일부 다른 듯. 윈�
 ## 쉘(shell)?
 
 
-쉘은 터미널에서 실행되는 소프트웨어로 쉽게 말해 터미널을 통해 사용자가 입력하는 명령어를 전달 받아 기계어로 변역하여 커널에 전달하는 역할을 하는 명령어 해석기를 말한다.
+쉘은 터미널에서 실행되는 소프트웨어로 쉽게 말해 터미널을 통해 사용자가 입력하는 명령어를 전달 받아 기계어로 변역하여 커널에 전달,실행하는 명령어 해석기를 말한다.
 
-터미널은 곧 명령을 입력하는 쉘을 실행하기 위한 토대라고 볼 수 있으며 운영 체제 주변의 가장 바깥쪽 계층이기 때문에 쉘(shell, 껍데기)이라는 이름이 붙었다.
+사용자와 운영 체제의 내부(커널) 사이의 인터페이스로 운영 체제 주변의 가장 바깥쪽 계층에 위치하기 때문에 쉘(shell, 껍데기)이라는 이름이 붙었다.
 
 다양한 종류의 쉘들이 있고 바꿔서 사용할 수 있으며, 각각 사용하는 이유가 다 따로 있다(bash, zshell 가장 많이 사용한다고 함).
 
 <br>
 
 **[커널, 쉘과 터미널 차이]**<br>
+https://superuser.com/questions/144666/what-is-the-difference-between-shell-console-and-terminal<br>
+
 https://hanamon.kr/%ED%84%B0%EB%AF%B8%EB%84%90-%EC%BD%98%EC%86%94-%EC%89%98-%EB%AA%85%EB%A0%B9%EC%A4%84terminal-console-shell-command-line%EC%9D%98-%EC%B0%A8%EC%9D%B4-2/ <br>
+
 https://kimwooseok.com/cs/2021/07/22/CS-Kernel/ <br>
 
 **[쉘 (Shell) 의 정의와 종류]** <br>
 https://ko.wikipedia.org/wiki/%EC%85%B8  <br>
+
 https://en.wikipedia.org/wiki/Shell_(computing)  <br>
+
 https://unabated.tistory.com/entry/LinuxUnix쉘-Shell-의-정의와-종류 
 
 ## 커맨드라인 인터페이스(CLI)
