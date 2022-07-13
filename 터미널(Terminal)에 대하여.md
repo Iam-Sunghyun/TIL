@@ -4,13 +4,18 @@
 
 컴퓨터가 훨씬 컸던 시절 컴퓨터에 연결해 데이터의 입력 및 표시를 처리하는 전자 통신 하드웨어 장치였으며 이러한 물리적 터미널을 콘솔(console)이라고도 불렀다.
 ```
-터미널은 통신 프로세스의 종료를 나타내는 ‘terminate’에서 유래한 전자적 관점의 용어이다. 유닉스시대의 터미널은 전신기(teleprinter) 스타일의 타자기를 의미하며, 읽기 및 쓰기 이외의 여러 추가 명령(ioctls)을 구현하는 하드웨어 기기였다.
+터미널은 통신 프로세스의 종료를 나타내는 ‘terminate’에서 유래한 전자적 관점의 용어이다. 
+유닉스시대의 터미널은 전신기(teleprinter) 스타일의 타자기를 의미하며 
+읽기 및 쓰기 이외의 여러 추가 명령(ioctls)을 구현하는 하드웨어 기기였다.
+- https://kimwooseok.com/cs/2021/07/22/CS-Kernel/
 ```
-지금은 물리 장치가 아닌 텍스트로 명령어를 실행해 컴퓨터와 상호작용 할 수 있는 명령어 입출력 환경을 말한다. 정확히는 **UNIX 계열(리눅스, macOS 포함) 운영체제에서 명령어를 입력하기 위한 CLI를 말하며 쉘을 실행하기 위한 wrapper 역할을 한다.**
+지금은 물리 장치가 아닌 텍스트로 명령어를 실행해 컴퓨터와 상호작용 할 수 있는 명령어 입출력 환경을 말한다. 
+
+정확히는 **UNIX 계열(리눅스, macOS 포함) 운영체제에서 명령어를 입력하기 위한 CLI를 말하며 쉘을 실행하기 위한 wrapper 역할을 한다.**
 
 <!-- **윈도우에선 파워 쉘, cmd(명령 프롬프트)가 터미널과 같은 개념.** -->
 
-## 터미널 명령어 일부
+### 유닉스 쉘 명령어 일부
 
 |명령어|기능|
 |:---:|:---:|
@@ -35,7 +40,6 @@ https://www.hostinger.com/tutorials/linux-commands<br>
 cmd, 윈도우 파워쉘과 리눅스, 맥 명령어가 일부 다른 듯. 윈도우엔 쉘이 없는것인가?
 -> 유닉스 계열 운영체제(리눅스 맥os)는 유닉스 쉘(bash shell, z shell 등)이 내장되어있다. -->
 
-
 # 터미널과 같은 CLI를 알아야하는 이유?
 
 1. 작업 속도. 능숙하게 다룬다면 한번의 명령어 입력으로 여러 명령을 실행할 수도 있다(여러개의 파일을 한번에 생성한다던지 등). 이것보다 좀 더 주된 이유는 다음에 있다.
@@ -44,10 +48,12 @@ cmd, 윈도우 파워쉘과 리눅스, 맥 명령어가 일부 다른 듯. 윈�
 
 3. 여러 백엔드 소프트웨어(DB, Node, Express 등)들이 터미널과 같은 CLI를 기반으로 동작한다. 
 
-
+ 
 # 헷갈리는 용어 간단 정리
 
-아래는 모두 비슷한 개념에 대한 용어들이긴 하지만 동일한 용어는 아니다.
+아래는 모두 비슷한 개념에 대한 용어들이긴 하지만 동일한 용어는 아니다. 
+
+또한 일부는 간단해보이지만 차이를 완벽하게 이해하려면 꽤나 깊게 파야되는 내용들이다.
 
 ## 파워 쉘(power shell), 명령 프롬프트(cmd)
 
@@ -71,7 +77,8 @@ https://hanamon.kr/%ED%84%B0%EB%AF%B8%EB%84%90-%EC%BD%98%EC%86%94-%EC%89%98-%EB%
 https://kimwooseok.com/cs/2021/07/22/CS-Kernel/ <br>
 
 **[쉘 (Shell) 의 정의와 종류]** <br>
-https://en.wikipedia.org/wiki/Shell_(computing) <br>
+https://ko.wikipedia.org/wiki/%EC%85%B8  <br>
+https://en.wikipedia.org/wiki/Shell_(computing)  <br>
 https://unabated.tistory.com/entry/LinuxUnix쉘-Shell-의-정의와-종류 
 
 ## 커맨드라인 인터페이스(CLI)
@@ -86,7 +93,7 @@ Bash는 Bourne 셸의 무료 소프트웨어 대체품으로 GNU 프로젝트를
 **[bash 위키피디아]** <br>
 https://en.wikipedia.org/wiki/Bash_(Unix_shell)
 
-## 프롬프트
+## 프롬프트(prompt)
 터미널에서 키보드의 입력을 확인하고 편집할 수 있는 한 줄의 공간을 '프롬프트(Prompt)' 라고 하며, 사용자의 명령 입력 대기 상태를 나타내는 표시(커서)를 말하기도 한다.
 
 
@@ -95,9 +102,6 @@ https://en.wikipedia.org/wiki/Bash_(Unix_shell)
 git bash도 유닉스 쉘의 한 종류...
 윈도우에서 git bash를 사용하는 이유 
 https://www.atlassian.com/git/tutorials/git-bash -->
-
-
-
 
 
 
