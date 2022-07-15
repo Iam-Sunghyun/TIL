@@ -23,7 +23,7 @@
 }
 ```
 
-+ 미디어 쿼리가 도입되는 지점을 **분기점(breakpoints)** 이라고 하는데, 개발자 도구(dev tools)를 통해 인기 있는 기기들의 해상도를 확인하거나 직접 크기를 변경하면서 쿼리가 적용되는 지점을 확인할 수 있다.
++ 미디어 쿼리가 도입되는 지점을 **분기점(breakpoints, 중단점)** 이라고 하는데, 개발자 도구(dev tools)를 통해 인기 있는 기기들의 해상도를 확인하거나 직접 크기를 변경하면서 쿼리가 적용되는 지점을 확인할 수 있다.
   
 # 미디어 유형
 
@@ -35,9 +35,9 @@
 @media speech - 음성 합성장치 대상 
 ```
 
-# 미디어 특성
+# 미디어 특성(조건)
 
-다음은 가장 많이 사용하는 특징들 몇가지이다. 이 외에도 매우 많은 특성들이 있으니 아래 링크 참조할 것.
+다음은 가장 많이 사용하는 특성들 몇가지이다. 이 외에도 매우 많은 특성들이 있으니 아래 링크 참조할 것.
 ```
 min-width: 800px       - 화면 너비 800px 이상일 경우 적용
 max-width: 500px       - 화면 너비 500px 이하일 경우 적용
@@ -72,10 +72,11 @@ only - 쿼리가 일치할 때만 해당
 
 <br>
 
-**[@media feature]** <br>
-
+**[poiemaweb 반응형 웹 디자인]** <br>
 https://poiemaweb.com/css3-responsive-web-design
 
-**[@media 사용 방법, features]** <br>
-https://developer.mozilla.org/ko/docs/Web/CSS/Media_Queries/Using_media_queries
+**[MDN 반응형 웹 디자인]** <br>
+https://developer.mozilla.org/ko/docs/Learn/CSS/CSS_layout/Responsive_Design
 
+**[MDN 미디어 쿼리]** <br>
+https://developer.mozilla.org/ko/docs/Web/CSS/Media_Queries/Using_media_queries
