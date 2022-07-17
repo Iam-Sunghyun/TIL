@@ -7,13 +7,17 @@ Node.js에는 CommonJS, ECMAScript 모듈(ESM) 두가지 모듈 시스템이 있
 
 ## ESM
 
-JavaScript 표준 모듈화 시스템으로 비동기로 동작하며 import, export, export default문을 사용한다. 
+JavaScript 표준 모듈화 시스템으로 비동기로 동작하며 `import`, `export`, `export default`문을 사용한다. 
 
 ESM 파일에는 클래스처럼 strict mode가 적용된다.
 
 ### import, export
 ```
 // addTwo.mjs  
+export function addTwo(num) {
+  return num + 2;
+}
+// or
 function addTwo(num) {
   return num + 2;
 }
@@ -26,14 +30,22 @@ import { addTwo } from './addTwo.mjs';
 // Prints: 6
 console.log(addTwo(4));
 ```
-모듈에서 하나만을 export할 때는 default 키워드를 사용할 수 있다. default 키워드를 사용하는 경우 var, let, const는 사용할 수 없다.
+모듈에서 하나만을 export할 때는 `export default` 키워드를 사용할 수 있다. default 키워드를 사용하는 경우 중괄호 없이 모듈을 import 한다.
 
 ### export default 
 ```
+// app.js
 export default function (x) {
   return x * x;
 }
--------------------------------------------
+----------------------------------
+import square from 'app.js'
+
+console.log(square(5)); // 25
+```
+
+default 키워드를 사용하는 경우 var, let, const는 사용할 수 없다.
+```
 // lib.mjs
 export default () => {};  // => OK
 
@@ -46,10 +58,17 @@ export default const foo = () => {};
 <script type="module" src="lib.mjs"></script>
 <script type="module" src="app.mjs"></script>
 ```
+**[ES6 모듈 내보내고 가져오기]** <BR>
+https://ko.javascript.info/import-export#ref-4122 <BR>
 
 ## Commonjs(CJS)
 
-Node.js의 기본 모듈화 시스템이다. 동기 방식으로 동작하며 module.exports, exports, require문 사용한다.
+Node.js의 기본 모듈화 시스템이다. 동기 방식으로 동작하기 떄문에 서버 사이드에서 사용하기 좋다.(흠..)
+
+`module.exports`, `exports`, `require`문을 사용한다.
+
+`module.exports`는 모듈에서 내보낼 객체이고, `exports`는 `module.exports`의 축약어로 `module.exports` 객체를 참조하고 있는 키워드이다. 
+
 ```
 // app.mjs
 const circle = require('./circle.js');
@@ -69,7 +88,7 @@ const mySquare = new Square(2);
 console.log(`The area of mySquare is ${mySquare.area()}`);
 --------------------------------------------
 // square.js
-// Assigning to exports will not modify module, must use module.exports
+// 이 경우 exports에 할당하면 지역변수가 되어버린다. 따라서 module.exports에 직접 할당할 것.
 module.exports = class Square {
   constructor(width) {
     this.width = width;
@@ -81,15 +100,32 @@ module.exports = class Square {
 };
 ```
 
+조심해야 할 것은 클래스같은 하나의 객체, 값을 exports하고 싶을때 `module.exports`에 할당하지 않고 `exports`에 할당하게 되면 모듈화 되지 않고 그 모듈안에 exports란 이름의 지역변수가 되어 버린다. 
+
+따라서 하나의 객체, 값을 exports하고 싶으면 반드시 `module.exports` 객체에 직접 할당 할 것.
+```
+exports = { a: 'a', b: 'b'} // (x)
+module.exports = { a: 'a', b: 'b'} // (O)
+--------
+exports = (name) => `Hi ${name} 👋`; (x)
+module.exports = (name) => `Hi ${name} 👋`; (O)
+```
+
 Node.js가 모듈을 결정하는 방법은 아래 링크 참조.
 
+<!--EMS #CJS 어떤걸 써야 할까??????-->
+
+
+
+https://yceffort.kr/2020/08/commonjs-esmodules
 <br>
 
 **[Node.js 모듈 시스템 결정 방법]** <br>
 https://nodejs.org/api/packages.html#determining-module-system <br>
 
 **[CommonJS exports, module.exports 차이]** <br>
-https://cotak.tistory.com/103 <br>
+https://dydals5678.tistory.com/97<br>
+https://pawelgrzybek.com/the-difference-between-module-exports-and-exports-in-node-js/
 
 
 # 모듈화 필요성
