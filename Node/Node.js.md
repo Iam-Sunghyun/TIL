@@ -7,6 +7,7 @@ Node.js에 대해서 아주 간단하게 요약 정리 해본다.
 **Non-blocking I/O와 단일 스레드 이벤트 루프**를 통한 **높은 Request 처리 성능**으로
 I/O가 빈번히 발생하는 SPA(Single Page Application)에 적합하다 하지만 CPU 사용률이 높은 앱에선 비추.
 
+
 ### Node로 만들 수 있는 것들..!
 
 + 웹 서버
@@ -87,8 +88,11 @@ try {
 
 <br>
 
-### [Node.js 공식 웹사이트]<br>
-https://nodejs.org/ko/
+### [Node.js npm 정리 잘된 사이트]
+https://nodejs.dev/learn
+
+### [Node.js 웹사이트 docs]<br>
+https://nodejs.org/dist/latest-v16.x/docs/api/
 
 ### [Stack Share 노드를 사용하는 서비스들]
 https://stackshare.io/nodejs
@@ -101,10 +105,26 @@ https://www.sharedit.co.kr/posts/6211
 Node의 프레임워크 Express -->
 
 
-# Node.js 특징 몇가지
+## Node.js 특징 몇가지
 자바스크립트 Deep Dive에서 본 것처럼 호스트 API가 다르다. 즉 Node에선 DOM API, alert() 메서드같은 브라우저 API가 제공되지 않는다. 하지만 Node에서만 제공되는 내장 API가 있다.
 
 
-### nvm?(Node Version Manager) 노드 버전 관리자
+## nvm(Node Version Manager) 노드 버전 관리자
 
+노드 버전 관리자(nvm)을 이용해 여러 버전의 Node.js와 npm을 설치하고 전환할 수 있다.
+
+OSX, Linux 버전
++ nvm
++ N
+  
+windows 버전
++ nodist
++ nvm-windows
+
+<BR>
+
+### [NPM Docs]
+https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+
+### [geeksforgeeks nvm]
 https://www.geeksforgeeks.org/how-to-update-node-js-and-npm-to-next-version/
