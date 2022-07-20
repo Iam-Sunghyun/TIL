@@ -208,7 +208,7 @@ NPM(Node Package Manger) 이란?
 
 + 명령줄 인터페이스(CLI)로 아주 간단하게 패키지들을 설치하고 관리할 수 있다.
 
-`npm install`로 패키지를 설치하면 해당 디렉토리에 `node_modules` 폴더, `package.json`, `package-lock.json` 파일이 생성된다.
+`npm install`로 패키지를 설치하면 해당 디렉토리에 `node_modules` 폴더, `package.json`, `package-lock.json` 파일이 생성된다(npm init없이 생성된 경우 `package.json`에 프로젝트 이름, 라이센스 기타 메타 데이터들은 생성되지 않았다.).
 
 ## `node_modules` 
 
@@ -272,6 +272,11 @@ npm install -g <package-name>
 ```
 macOS의 경우  -  /usr/local/lib/node_modules
 윈도우의 경우  -  c:\Users\%USERNAME%\AppData\Roaming\npm\node_modules
+```
+
++ powershell로 전역 설치한 모듈을 실행하면 보안 정책 위반이 뜬다. 따라서 다음과 같은 명령어로 보안 수준을 변경시켜 주었다.
+```
+Set-ExecutionPolicy -Scope CurrentUser Unrestricted
 ```
 
 <!-- 특정 디렉토리에서 'npm link 패키지명'을 사용해 전역 패키지에 접근할 수 있다.  -->
