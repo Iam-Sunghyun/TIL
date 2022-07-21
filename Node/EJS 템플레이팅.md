@@ -1,0 +1,141 @@
+# 템플레이팅(templating)이란?
+하나의 템플릿안에 데이터(변수), 조건문이나 반복문같은 로직을 삽입하여 HTML 일부를 반복 사용하는 것을 말한다(마치 문자열 안에 템플릿 리터럴로 표현식을 지정해놓은 것처럼). -> **재사용성↑ 유지보수 용이**
+
+예를 들면 페이지에 회원가입, 로그인 버튼이 있는 부분에 로그인 후에는 로그아웃 버튼 하나만 표시되는 것과 같이 조건에 따라 로직을 만들고, 그에 맞는 HTML 응답 페이지를 만들어내는 것.
+
+이러한 방식을 사용하면 **동적인 HTML페이지를 좀 더 쉽게 디자인할 수 있다**.
+
+### 템플릿?
+
+웹 맥락에서 템플릿은 하나의 양식화 된 페이지, 만들어진 틀(HTML)을 말한다. 크게 다를 것 없이 템플릿 엔진의 태그나 코드나 삽입 된 HTML 문서를 템플릿 파일, 템플릿이라고 이해하면 될 듯.
+
+<br>
+
+### [템플릿이란?] <br>
+https://www.techtarget.com/whatis/definition/template
+
+## 템플릿 엔진
+
+템플릿 엔진을 사용하면 애플리케이션에서 템플릿 파일을 사용할 수 있다.
+
+인기있는 템플릿 엔진으로는 EJS, Pug, Mustache, Handlebars와 같은 것들이 있으며 문법이 약간씩 다르다.
+
+클라이언트 사이드 템플릿 엔진 - Pug, Mustache
+서버 사이드 템플릿 엔진 - EJS, Handlebars
+
+### [express와 호환되는 템플릿 엔진 목록] <br>
+https://expressjs.com/en/resources/template-engines.html
+
+### [서버 사이드, 클라이언트 사이드 템플릿 엔진] <br>
+https://velog.io/@hi_potato/Template-Engine-Template-Engine <br>
+
+https://usefultoknow.tistory.com/entry/%ED%85%9C%ED%94%8C%EB%A6%BF-%EC%97%94%EC%A7%84Template-Engine-%EC%9D%B4%EB%9E%80
+
+
+# EXPRESS에서 EJS(Embedded javascript)로 템플릿 구성하기
+
+EJS는 인기있는 express 템플릿 엔진 중 하나로 자바스크립트 구문을 사용하기 때문에 사용하기 익숙하다.
+
+express가 템플릿 파일을 렌더링하려면 다음과 같은 설정이 필요하다.
+
++ `views` - 템플릿이 있는 디렉토리. 기본 값은 ./views이다.<br> 
++ `view engine` - 사용할 템플릿 엔진.<br> 
+  
+```
+// 템플릿이 있는 디렉토리 설정. __dirname은 현재 파일이 있는 디렉토리를 말한다
+app.set('views', __dirname + '/views');
+
+// EJS 템플릿 엔진 모듈 로드
+app.set('view engine', 'ejs' );
+
+// render() 함수로 렌더링할 템플릿 설정
+app.get('/', (req, res) => {
+  res.render('home');
+})
+```
+<!-- 템플릿과 view의 차이점은? 템플릿 파일 안에 반복 사용하기 위한 부분 즉, ejs의 경우 <%= %>같은 태그로 감싼 부분을 view라고 하는듯?? 흠 -->
+
++ `app.set(title, value)` - 말 그대로 `title`에 값을 설정하는 것. `views`, `view engine` 말고도 여러가지 값들이 있다.
+
++ `res.render(view , locals , callback)` <br>
+`res.render()`로 `view`를 렌더링하고 렌더링 된 HTML 문자열을 클라이언트에 보낸다.
+만약 `view engine`이 설정되어 있지 않으면 템플릿의 확장자를 명시해줘야 한다(ex) 'home.ejs').
+
+
++ ` __dirname` - 현재 실행하는 파일의 절대경로를 말한다.
+
+## EJS 태그
+
+템플릿 안에서 html이 아니라는 것을 명시하기 위한 것. 
+
+`<%= %>` - 템플릿에 값을 출력한다.
+`<% %>` - 태그 안에 자바스크립트를 임베드하되 템플릿에는 출력되진 않는다. 제어 흐름용.
+
+https://ejs.co/#install
+
+# EXPRESS 앱에서 템플릿으로 정보 전달하기
+
+다음은 난수를 생성하여 웹 페이지에 보여주는 템플릿 일부이다.
+```
+// random.ejs
+<body>
+  <h1> Random number! <%= rand %></h1>
+</body>
+--------------------------------------------
+// index.js 
+app.get('/random', (req, res) => {
+  const random = Math.floor(Math.random() * 10001);
+  res.render('random', { rand: random });
+});
+```
+코드의 `<%= %>` 태그 안에는 `rand`라는 변수 값이 들어가있다. 
+
+`res.render()`로 렌더링할 템플릿을 지정할 때, 2번째 인수로 { 변수명: 값 , ... } 형태의 객체를 통해 템플릿 안에서 사용할 변수를 전달할 수 있다.
+
+예시 코드는 매우 간단하지만 복잡하고 많은 연산이 필요한 경우 코드 분리를 위해 필수적 일듯.
+
+<!-- ejs는 클라이언트 사이드 렌더링의 일환인가? -> 서버에서 요청에 따라 템플릿 렌더링하고 렌더링 된 html문서를 클라이언트에 응답 -> 서버 사이드 렌더링이다.-->
+
+## EJS 조건문, 루프
+
+`<% %>` 태그는 값을 직접 출력하진 않고 조건문이나 반복문처럼 제어 흐름을 설정하는 데 사용한다. 
+
+### 조건문
+```
+<body>
+  <h1>Random number! <%= rand %></h1>
+  <% if (rand % 2 === 0 ) { %>          
+  <h2><%= rand %> is even number</h2>   
+  <% } else { %>
+  <h2><%= rand %> is odd number</h2>
+  <% } %>
+</body>
+```
+여러줄의 경우 가독성이 좋진 않은 듯. `<%= %>` 태그로 아래와 같이 표현할 수도 있다.
+```
+<body>
+  <h1>Random number! <%= rand %></h1>
+  <h2>That number is <%= rand % 2 === 0 ? 'even' : 'odd' %></h2>
+</body>
+```
+
+### 반복문
+반복문을 사용해 배열의 요소를 `li`로 표현하는 예시이다.
+데이터 출력 부분은 `<%= %>` 사용하였다.
+```
+<body>
+  <h1>All the Cats</h1>
+  <ul>
+    <% for(let cat of cats) { %>
+      <li> <%= cat %> </li>
+    <% } %>
+  </ul>
+</body>
+```
+
+
+<!-- 정적 에셋?파일? 사용하기
+
+파일 분할
+
+EJS 루프, 조건문 -->
