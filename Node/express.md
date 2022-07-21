@@ -11,20 +11,45 @@ http://expressjs.com/
 
 미들웨어 함수란 쉽게말해 요청에 대한 응답을 위해 중간에서 처리를 수행하는 함수로, 요청에 대한 핸들러 함수라고 보면 된다.
 
-아래 예시에서 2번째 인수로 전달되는 콜백함수가 미들웨어 함수이다.
+아래 예시에서 2번째 부터 전달되는 콜백함수가 미들웨어 함수이다.
+
+미들웨어 함수는 여러개를 전달할 수 있다.
+
 ```
-// '/' 경로로 get 요청이 발생했을 때 미들웨어 함수가 실행된다.
+// '/' 경로로 get 요청이 발생했을 때 미들웨어 함수가 실행된다. 
 app.get('/', (req, res, next) => {...});
 
-// port에 연결 및 요청 수신 대기(서버 실행)
-app.listen(port, () => {
+// 포트 3000에 연결 및 요청 수신 대기(서버 실행)
+app.listen('3000', () => {
   // 대기 중 서버 콘솔 메시지
   console.log(`Exapmle app listening on port ${port}`);
 });
 ```
-### [middleware란?]
-https://psyhm.tistory.com/8
 
+next()를 사용하면 후속 handler 함수로 제어를 전달할 수 있다.
+
+```
+app.all('/', (req, res, next) => {
+  console.log('[All]');
+  next(); // 후속 핸들러에게 컨트롤을 패스한다.
+});
+
+app.get('/', (req, res, next) => {
+  console.log('[GET 1] next 함수에 의해 후속 핸들러에게 response가 전달된다.');
+  next();
+}, (req, res, next) => {
+  console.log('[GET 2] next 함수에 의해 후속 핸들러에게 response가 전달된다.');
+  next();
+}, (req, res) => res.send('Hello from GET /'));
+
+app.post('/', (req, res, next) => {
+  console.log('[POST 1] next 함수에 의해 후속 핸들러에게 response가 전달된다.');
+  next();
+}, (req, res, next) => {
+  console.log('[POST 2] next 함수에 의해 후속 핸들러에게 response가 전달된다.');
+  next();
+}, (req, res) => res.send('Hello from POST /'));
+```
 
 ## 요청(response), 응답(request) 객체
 
@@ -34,35 +59,41 @@ https://psyhm.tistory.com/8
 
 `res` - 요청 대상에게 응답하기 위한 응답 객체.<br>
 
+### [middleware란?]
+https://psyhm.tistory.com/8
+
 
 # 라우팅(routing)
 
-라우팅은 클라이언트의 요청에 대해 애플리케이션이 응답하는 방법을 결정하는 것을 말한다. 즉 요청에 따른 처리 방법을 설정하는 것이라 보면 될 듯.
+라우팅은 특정 클라이언트의 요청에 대해 애플리케이션이 응답하는 방법을 결정하는 것을 말한다. 즉 요청 메서드, uri에 따른 처리 방법을 설정하는 것. 
 
 ### ex)
 ```
+// /dogs 경로에 get 요청에 대한 응답 라우트
 app.get('/dogs', (req, res) => {
   res.send(`<h1>Here is Response to get /dogs</h1>`);
 });
 
+// /dogs 경로에 post 요청에 대한 응답 라우트
 app.post('/dogs', (req, res) => {
   res.send(`<h1>Here is Response to post /dogs</h1>`);
 });
 
-// 모든 get 요청에 대한 응답. 주의할 것은 코드 맨 앞에 위치할 경우 다른 get 요청 라우팅은 무시된다.
+// 경로, 메서드 상관없이 모든 get 요청에 대한 응답. 주의할 것은 코드 맨 앞에 위치할 경우 다른 get 요청 라우트는 무시된다.
 app.get('*', (req, res) => {
   res.send(`<h1>Here is Response</h1>`);
 });
 ```
 
-## 경로 매개변수(path parameter)
 
-요청 url에 경로 패턴을 설정하고, 콜론(:)뒤 값이 변수가 되어 패턴상 매치되는 문자열을 저장하는 매개변수를 말한다.
+# 경로 매개변수(path parameter)
 
-요청 uri를 식별할 때 사용되며 `req.params` 프로퍼티에 저장된다.
+경로 패턴을 설정하고, 콜론(:)뒤에 문자열이 변수가 되어 요청 uri에서 매치되는 부분의 문자열을 저장하는 매개변수.
+
+요청 uri을 식별할 때 사용되며 `req.params` 프로퍼티에 저장된다.
 
 ```
-localhost:3000/dogs/cocker 요청 시
+// localhost:3000/dogs/cocker 요청 시
 
 // param1에는 cocker가 저장된다.
 app.get('/dogs/:param1', (req, res) => {
@@ -71,9 +102,9 @@ app.get('/dogs/:param1', (req, res) => {
 });
 ```
 
-## 쿼리 스트링(query string)
+# 쿼리 스트링(query string)
 
-쿼리 스트링은 요청 url에서 ? 구분자 뒤에 오는 문자열들로, 
+쿼리 스트링은 요청 uri에서 ? 구분자 뒤에 오는 문자열들로, 
 클라이언트가 서버에 요청 데이터를 전달하는 방법 중 하나이다.
 
 HTML 폼 값이나 링크에 따라 전달되는 내용이 다를 수 있다.
@@ -88,15 +119,21 @@ app.get('/search', (req, res) => {
   if (!q) res.send('invalid query');
   res.send(`Search for: ${q}`);
 });
-
 ----------------
 Search for: 10
 ----------------
+
 // localhost:3000/search?ekw=100 요청 시
 ----------------
 invalid query
 ----------------
 ```
+### [MDN express] <br>
+
+https://developer.mozilla.org/ko/docs/Learn/Server-side/Express_Nodejs
+
+### [poiemaweb Express-basics] <br>
+https://poiemaweb.com/express-basics
 
 
 ### 유용한 도구 nodemon
