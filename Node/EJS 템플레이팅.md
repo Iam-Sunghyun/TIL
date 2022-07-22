@@ -68,9 +68,12 @@ app.get('/', (req, res) => {
 
 템플릿 안에서 html이 아니라는 것을 명시하기 위한 것. 
 
-`<%= %>` - 템플릿에 값을 출력한다.
-`<% %>` - 태그 안에 자바스크립트를 임베드하되 템플릿에는 출력되진 않는다. 제어 흐름용.
+`<%= %>` - 템플릿에 값을 출력한다. <BR>
+`<% %>` - 태그 안에 자바스크립트를 임베드하되 템플릿에는 출력되진 않는다. 제어 흐름용.<BR>
 
+그 외에 정보는 공식 사이트 참조.
+
+### [EJS 공식 사이트]
 https://ejs.co/#install
 
 # EXPRESS 앱에서 템플릿으로 정보 전달하기
@@ -134,8 +137,44 @@ app.get('/random', (req, res) => {
 ```
 
 
-<!-- 정적 에셋?파일? 사용하기
+# express에서 정적 파일 사용하기
+
+정적 파일이란 말 그대로 변하지 않는 파일로 미리 저장되어있는 이미지, 동영상, CSS, Javascript과 같은 것들이 대표적인 static 파일이다.
+
+express에 내장된 `express.static()` 미들웨어로 정적 파일을 사용할 수 있다.
+
+## express.static(root, [options])
+
+정적 파일이 있는 루트 디렉토리를 설정한다. 템플릿 내에서 `css`, `js`같은 파일을 연결할 때 기준 디렉토리가 된다.
+```
+app.static(express.static('CSS'));
+```
+아래와 같이 여러 개의 디렉토리로 설정하면 설정한 디렉토리를 모두 탐색한다. 
+```
+CSS
+ /img
+ /font
+ /others
+app.static(express.static('CSS'));
+app.static(express.static('CSS/img'));
+app.static(express.static('CSS/font'));
+app.static(express.static('CSS/others'));
+```
+그런데 위와 같은 상대 경로는 `express.static()`를 실행하는 파일이 있는 위치가 아닌 곳에서 실행하게 되면 정적 파일 폴더를 못찾을 수도 있다.
+
+따라서 다음과 같이 절대 경로를 지정해주는 것이 안전하다.
+```
+app.use(express.static(path.join(__dirname, 'CSS')));
+or
+app.use(express.static(__dirname + '/CSS'));
+```
+
+### [Express에서 정적 파일 제공]
+http://expressjs.com/en/starter/static-files.html
+
+
+
+# 부트스트랩과 express 연동
+
 
 파일 분할
-
-EJS 루프, 조건문 -->
