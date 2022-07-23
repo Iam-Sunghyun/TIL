@@ -1,10 +1,13 @@
-# Express
+# Express 프레임워크
 
-### express란?
+### Express란?
 
 Express.js, 또는 간단히 익스프레스는 Node.js를 위한 웹 프레임워크의 하나로, MIT 허가서로 라이선스되는 자유-오픈 소스 소프트웨어로 출시되었다. Node.js로 웹 애플리케이션, API 개발을 위해 설계되었다. Node.js의 사실상의 표준 서버 프레임워크로 불리고 있다. - 위키백과
 
+간단히 nodejs 서버 개발을 위한 다양한 기능을 제공하는 프레임워크이다.
+
 ### [Expressjs.com]
+
 http://expressjs.com/
 
 # 미들웨어 함수(middel ware function)
@@ -16,7 +19,16 @@ http://expressjs.com/
 미들웨어 함수는 여러개를 전달할 수 있다.
 
 ```
-// '/' 경로로 get 요청이 발생했을 때 미들웨어 함수가 실행된다. 
+// app.use('경로', function()) => 메서드 상관 없이 경로에 대한 모든 요청에 미들웨어 함수로 응답한다.
+// 아래의 예시에서 설정한 app.use('/abcd', ...) 경로는 app.all('/abcd/*', ...)과 일치한다.
+// 즉, app.use('/abcd', ...) === "/abcd", "/abcd/images", "/abcd/images/news/.." 등등 이므로 /abcd 하위의 경로를 식별할 수 없다.
+// 따라서 세세한 uri 식별을 위해선 app.all()을 사용하는 것을 권장.
+app.use('/abcd', function (req, res, next) {
+  next();
+});
+
+
+// '/' 경로로 get 요청이 발생했을 때 미들웨어 함수가 실행된다.
 app.get('/', (req, res, next) => {...});
 
 // 포트 3000에 연결 및 요청 수신 대기(서버 실행)
@@ -60,14 +72,15 @@ app.post('/', (req, res, next) => {
 `res` - 요청 대상에게 응답하기 위한 응답 객체.<br>
 
 ### [middleware란?]
-https://psyhm.tistory.com/8
 
+https://psyhm.tistory.com/8
 
 # 라우팅(routing)
 
-라우팅은 특정 클라이언트의 요청에 대해 애플리케이션이 응답하는 방법을 결정하는 것을 말한다. 즉 요청 메서드, uri에 따른 처리 방법을 설정하는 것. 
+라우팅은 특정 클라이언트의 요청에 대해 애플리케이션이 응답하는 방법을 결정하는 것을 말한다. 즉 요청 메서드, uri에 따른 처리 방법을 설정하는 것.
 
 ### ex)
+
 ```
 // /dogs 경로에 get 요청에 대한 응답 라우트
 app.get('/dogs', (req, res) => {
@@ -79,12 +92,11 @@ app.post('/dogs', (req, res) => {
   res.send(`<h1>Here is Response to post /dogs</h1>`);
 });
 
-// 경로, 메서드 상관없이 모든 get 요청에 대한 응답. 주의할 것은 코드 맨 앞에 위치할 경우 다른 get 요청 라우트는 무시된다.
+// 모든 경로에 get 요청에 대한 응답. 주의할 것은 코드 맨 앞에 위치할 경우 다른 get 요청 라우트는 무시된다.
 app.get('*', (req, res) => {
   res.send(`<h1>Here is Response</h1>`);
 });
 ```
-
 
 # 경로 매개변수(path parameter)
 
@@ -104,13 +116,13 @@ app.get('/dogs/:param1', (req, res) => {
 
 # 쿼리 스트링(query string)
 
-쿼리 스트링은 요청 uri에서 ? 구분자 뒤에 오는 문자열들로, 
+쿼리 스트링은 요청 uri에서 ? 구분자 뒤에 오는 문자열들로,
 클라이언트가 서버에 요청 데이터를 전달하는 방법 중 하나이다.
 
 HTML 폼 값이나 링크에 따라 전달되는 내용이 다를 수 있다.
 
 주로 데이터 필터링할 때 사용되며 `req.query` 프로퍼티에 저장된다.
- 
+
 ```
 // localhost:3000/search?q=10 요청 시
 
@@ -128,17 +140,19 @@ Search for: 10
 invalid query
 ----------------
 ```
+
 ### [MDN express] <br>
 
 https://developer.mozilla.org/ko/docs/Learn/Server-side/Express_Nodejs
 
 ### [poiemaweb Express-basics] <br>
-https://poiemaweb.com/express-basics
 
+https://poiemaweb.com/express-basics
 
 ### 유용한 도구 nodemon
 
 서버를 재시작하지 않아도 변경사항을 감지하여 자동으로 재시작 해주는 프로그램.
 
 ### [nodemon] <br>
+
 https://www.npmjs.com/package/nodemon
