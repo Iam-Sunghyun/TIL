@@ -1,5 +1,6 @@
 # 템플레이팅(templating)이란?
-하나의 템플릿안에 데이터(변수), 조건문이나 반복문같은 로직을 삽입하여 HTML 일부를 반복 사용하는 것을 말한다(마치 문자열 안에 템플릿 리터럴로 표현식을 지정해놓은 것처럼). -> **재사용성↑ 유지보수 용이**
+
+요청마다 다른 페이지를 구성하는 게 아닌, 하나의 템플릿안에 데이터(변수), 조건문이나 반복문같은 로직을 삽입하여 HTML 일부를 반복 사용하는 것을 말한다(마치 문자열 안에 템플릿 리터럴로 표현식을 삽입해놓은 것처럼). -> **재사용성↑ 유지보수 용이**
 
 예를 들면 페이지에 회원가입, 로그인 버튼이 있는 부분에 로그인 후에는 로그아웃 버튼 하나만 표시되는 것과 같이 조건에 따라 로직을 만들고, 그에 맞는 HTML 응답 페이지를 만들어내는 것.
 
@@ -7,11 +8,12 @@
 
 ### 템플릿?
 
-웹 맥락에서 템플릿은 하나의 양식화 된 페이지, 만들어진 틀(HTML)을 말한다. 크게 다를 것 없이 템플릿 엔진의 태그나 코드나 삽입 된 HTML 문서를 템플릿 파일, 템플릿이라고 이해하면 될 듯.
+웹 맥락에서 템플릿은 하나의 양식화 된 페이지, 재사용할 수 있는 미리 만들어놓은 페이지(HTML)를 말한다. 크게 다를 것 없이 여기서도 템플릿 엔진의 태그나 코드나 삽입 된 HTML 문서를 템플릿 파일, 템플릿이라고 이해하면 될 듯.
 
 <br>
 
 ### [템플릿이란?] <br>
+
 https://www.techtarget.com/whatis/definition/template
 
 ## 템플릿 엔진
@@ -24,23 +26,24 @@ https://www.techtarget.com/whatis/definition/template
 서버 사이드 템플릿 엔진 - EJS, Handlebars
 
 ### [express와 호환되는 템플릿 엔진 목록] <br>
+
 https://expressjs.com/en/resources/template-engines.html
 
 ### [서버 사이드, 클라이언트 사이드 템플릿 엔진] <br>
+
 https://velog.io/@hi_potato/Template-Engine-Template-Engine <br>
 
 https://usefultoknow.tistory.com/entry/%ED%85%9C%ED%94%8C%EB%A6%BF-%EC%97%94%EC%A7%84Template-Engine-%EC%9D%B4%EB%9E%80
 
-
 # EXPRESS에서 EJS(Embedded javascript)로 템플릿 구성하기
 
-EJS는 인기있는 express 템플릿 엔진 중 하나로 자바스크립트 구문을 사용하기 때문에 사용하기 익숙하다.
+EJS는 인기있는 express 템플릿 엔진 중 하나로 자바스크립트 구문을 사용하기 때문에 사용하기 쉽다.
 
 express가 템플릿 파일을 렌더링하려면 다음과 같은 설정이 필요하다.
 
-+ `views` - 템플릿이 있는 디렉토리. 기본 값은 ./views이다.<br> 
-+ `view engine` - 사용할 템플릿 엔진.<br> 
-  
+- `views` - 템플릿이 있는 디렉토리. 기본 값은 ./views이다.<br>
+- `view engine` - 사용할 템플릿 엔진.<br>
+
 ```
 // 템플릿이 있는 디렉토리 설정. __dirname은 현재 파일이 있는 디렉토리를 말한다
 app.set('views', __dirname + '/views');
@@ -53,20 +56,20 @@ app.get('/', (req, res) => {
   res.render('home');
 })
 ```
+
 <!-- 템플릿과 view의 차이점은? 템플릿 파일 안에 반복 사용하기 위한 부분 즉, ejs의 경우 <%= %>같은 태그로 감싼 부분을 view라고 하는듯?? 흠 -->
 
-+ `app.set(title, value)` - 말 그대로 `title`에 값을 설정하는 것. `views`, `view engine` 말고도 여러가지 값들이 있다.
+- `app.set(title, value)` - 말 그대로 `title`에 값을 설정하는 것. `views`, `view engine` 말고도 여러가지 값들이 있다.
 
-+ `res.render(view , locals , callback)` <br>
-`res.render()`로 `view`를 렌더링하고 렌더링 된 HTML 문자열을 클라이언트에 보낸다.
-만약 `view engine`이 설정되어 있지 않으면 템플릿의 확장자를 명시해줘야 한다(ex) 'home.ejs').
+- `res.render(view , locals , callback)` <br>
+  `res.render()`로 `view`를 렌더링하고 렌더링 된 HTML 문자열을 클라이언트에 보낸다.
+  만약 `view engine`이 설정되어 있지 않으면 템플릿의 확장자를 명시해줘야 한다(ex) 'home.ejs').
 
-
-+ ` __dirname` - 현재 실행하는 파일의 절대경로를 말한다.
+- ` __dirname` - 현재 실행하는 파일의 절대경로를 말한다.
 
 ## EJS 태그
 
-템플릿 안에서 html이 아니라는 것을 명시하기 위한 것. 
+템플릿 안에서 html이 아니라는 것을 명시하기 위한 것.
 
 `<%= %>` - 템플릿에 값을 출력한다. <BR>
 `<% %>` - 태그 안에 자바스크립트를 임베드하되 템플릿에는 출력되진 않는다. 제어 흐름용.<BR>
@@ -74,24 +77,27 @@ app.get('/', (req, res) => {
 그 외에 정보는 공식 사이트 참조.
 
 ### [EJS 공식 사이트]
+
 https://ejs.co/#install
 
 # EXPRESS 앱에서 템플릿으로 정보 전달하기
 
 다음은 난수를 생성하여 웹 페이지에 보여주는 템플릿 일부이다.
+
 ```
 // random.ejs
 <body>
   <h1> Random number! <%= rand %></h1>
 </body>
 --------------------------------------------
-// index.js 
+// index.js
 app.get('/random', (req, res) => {
   const random = Math.floor(Math.random() * 10001);
   res.render('random', { rand: random });
 });
 ```
-코드의 `<%= %>` 태그 안에는 `rand`라는 변수 값이 들어가있다. 
+
+코드의 `<%= %>` 태그 안에는 `rand`라는 변수 값이 들어가있다.
 
 `res.render()`로 렌더링할 템플릿을 지정할 때, 2번째 인수로 { 변수명: 값 , ... } 형태의 객체를 통해 템플릿 안에서 사용할 변수를 전달할 수 있다.
 
@@ -101,20 +107,23 @@ app.get('/random', (req, res) => {
 
 ## EJS 조건문, 루프
 
-`<% %>` 태그는 값을 직접 출력하진 않고 조건문이나 반복문처럼 제어 흐름을 설정하는 데 사용한다. 
+`<% %>` 태그는 값을 직접 출력하진 않고 조건문이나 반복문처럼 제어 흐름을 설정하는 데 사용한다.
 
 ### 조건문
+
 ```
 <body>
   <h1>Random number! <%= rand %></h1>
-  <% if (rand % 2 === 0 ) { %>          
-  <h2><%= rand %> is even number</h2>   
+  <% if (rand % 2 === 0 ) { %>
+  <h2><%= rand %> is even number</h2>
   <% } else { %>
   <h2><%= rand %> is odd number</h2>
   <% } %>
 </body>
 ```
+
 여러줄의 경우 가독성이 좋진 않은 듯. `<%= %>` 태그로 아래와 같이 표현할 수도 있다.
+
 ```
 <body>
   <h1>Random number! <%= rand %></h1>
@@ -123,8 +132,10 @@ app.get('/random', (req, res) => {
 ```
 
 ### 반복문
+
 반복문을 사용해 배열의 요소를 `li`로 표현하는 예시이다.
 데이터 출력 부분은 `<%= %>` 사용하였다.
+
 ```
 <body>
   <h1>All the Cats</h1>
@@ -136,7 +147,6 @@ app.get('/random', (req, res) => {
 </body>
 ```
 
-
 # express에서 정적 파일 사용하기
 
 정적 파일이란 말 그대로 변하지 않는 파일로 미리 저장되어있는 이미지, 동영상, CSS, Javascript과 같은 것들이 대표적인 static 파일이다.
@@ -146,23 +156,30 @@ express에 내장된 `express.static()` 미들웨어로 정적 파일을 사용�
 ## express.static(root, [options])
 
 정적 파일이 있는 루트 디렉토리를 설정한다. 템플릿 내에서 `css`, `js`같은 파일을 연결할 때 기준 디렉토리가 된다.
+
 ```
-app.static(express.static('CSS'));
+// 경로없이 콜백함수만 전달한 경우 모든 요청에 콜백 실행
+app.use(express.static('CSS'));
 ```
-아래와 같이 여러 개의 디렉토리로 설정하면 설정한 디렉토리를 모두 탐색한다. 
+
+아래와 같이 여러 개의 디렉토리로 설정하면 설정한 디렉토리를 모두 탐색한다.
+
 ```
 CSS
  /img
  /font
  /others
-app.static(express.static('CSS'));
-app.static(express.static('CSS/img'));
-app.static(express.static('CSS/font'));
-app.static(express.static('CSS/others'));
+--------------------------------
+app.use(express.static('CSS'));
+app.use(express.static('CSS/img'));
+app.use(express.static('CSS/font'));
+app.use(express.static('CSS/others'));
 ```
+
 그런데 위와 같은 상대 경로는 `express.static()`를 실행하는 파일이 있는 위치가 아닌 곳에서 실행하게 되면 정적 파일 폴더를 못찾을 수도 있다.
 
 따라서 다음과 같이 절대 경로를 지정해주는 것이 안전하다.
+
 ```
 app.use(express.static(path.join(__dirname, 'CSS')));
 or
@@ -170,11 +187,56 @@ app.use(express.static(__dirname + '/CSS'));
 ```
 
 ### [Express에서 정적 파일 제공]
+
 http://expressjs.com/en/starter/static-files.html
 
+<!-- # 정적 파일 사용 - 부트스트랩과 express 연동 -->
 
+# include로 파일 분할(포함)
 
-# 부트스트랩과 express 연동
+포함이라고도 부르는 이유는 말 그대로 템플릿 안에 또 다른 템플릿을 포함시키는 것이기 때문.
 
+공통된 부분을 하나의 템플릿으로 구성하고 필요에 따라 다른 템플릿에 `<%- inlcude('path') %>`로 추가하여 재사용성을 높인다.
 
-파일 분할
+```
+// partials/head.ejs
+<link rel="stylesheet" href="/bootstrap.min.css" />
+<link rel="stylesheet" href="/style.css" />
+<script src="/bootstrap.min.js"></script>
+<title>HomePage</title>
+
+// example.ejs
+<head>
+<%- include('partials/head');  %>
+</head>
+<body>
+  .
+  .
+  .
+</body>
+```
+
+`include`를 사용하면 공통 부분을 분리하여 필요한 위치에 포함만 시켜주면 되므로 매번 복사해줄 필요도 없어진다. 또한 코드를 분리하여 복잡도를 줄이고 유지보수도 용이해져 유용하다.
+
+`<%- %>` 태그 - 공식 홈페이지 문서에 따르면 '이스케이프 처리되지 않은 값을 템플릿에 출력합니다'라고 되어있다.
+
+콘텐츠를 문자열로 취급할 때 이스케이프 된다고 표현한다. 한 예로 이스케이프 시퀀스는 예약어를 문자열로 취급시키는 문자열을 말하는 것이다.
+
+아무튼 값을 출력하기 위한 `<%= %>` 태그의 경우 HTML을 이스케이프 처리하여 문자열로 취급해 문자 그대로 출력되는데, `<%- %>` 태그는 HTML을 이스케이프 처리하지 않고 HTML로 취급하여 출력한다.
+
+### ex)
+
+```
+/// partials/footer.ejs
+<footer class="footer">
+  <h1>this is footer</h1>
+</footer>
+---------------------------------
+<%- include('partials/footer'); %>
+>> this is footer
+
+<%= include('partials/footer'); %>
+>> <footer class="footer"> <h1>this is footer</h1> </footer>
+```
+
+따라서 `inlcude()`로 템플릿을 포함시킬 때는 `<%- %>` 태그를 사용해줘야 한다.
