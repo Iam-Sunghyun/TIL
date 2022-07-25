@@ -76,10 +76,6 @@ app.get('/', (req, res) => {
 
 그 외에 정보는 공식 사이트 참조.
 
-### [EJS 공식 사이트]
-
-https://ejs.co/#install
-
 # EXPRESS 앱에서 템플릿으로 정보 전달하기
 
 다음은 난수를 생성하여 웹 페이지에 보여주는 템플릿 일부이다.
@@ -158,7 +154,7 @@ express에 내장된 `express.static()` 미들웨어로 정적 파일을 사용�
 정적 파일이 있는 루트 디렉토리를 설정한다. 템플릿 내에서 `css`, `js`같은 파일을 연결할 때 기준 디렉토리가 된다.
 
 ```
-// 경로없이 콜백함수만 전달한 경우 모든 요청에 콜백 실행
+// 경로없이 미들웨어 함수만 전달한 경우 모든 요청에 함수 실행
 app.use(express.static('CSS'));
 ```
 
@@ -240,3 +236,7 @@ http://expressjs.com/en/starter/static-files.html
 ```
 
 따라서 `inlcude()`로 템플릿을 포함시킬 때는 `<%- %>` 태그를 사용해줘야 한다.
+
+### [EJS 공식 사이트]
+
+https://ejs.co/#install

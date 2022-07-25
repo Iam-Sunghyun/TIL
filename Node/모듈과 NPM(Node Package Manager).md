@@ -60,6 +60,10 @@ export default const foo = () => {};
 <script type="module" src="lib.mjs"></script>
 <script type="module" src="app.mjs"></script>
 ```
+
+nodejs에서 esm을 사용하려면 `package.json`파일에 `"type"="module"`을 넣어줘야 한다.
+
+
 **[ES6 모듈 내보내고 가져오기]** <BR>
 https://ko.javascript.info/import-export#ref-4122 <BR>
 
