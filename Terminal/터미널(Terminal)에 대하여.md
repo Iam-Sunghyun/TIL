@@ -106,18 +106,19 @@ CLI는 명령줄 인터페이스(Commandlind Interface, 명령어 인터페이�
 
 Bash는 Bourne 셸의 무료 소프트웨어 대체품으로 GNU 프로젝트를 위해 Brian Fox가 작성한 Unix 셸 및 명령 언어를 말한다. <br>
 
-**[bash 위키피디아]** <br>
-https://en.wikipedia.org/wiki/Bash_(Unix_shell)
+**[microsoft docs]** <br>
+https://docs.microsoft.com/ko-kr/learn/modules/bash-introduction/1-what-is-bash
 
 ## 프롬프트(prompt)
 터미널에서 키보드의 입력을 확인하고 편집할 수 있는 한 줄의 공간을 '프롬프트(Prompt)' 라고 하며, 사용자의 명령 입력 대기 상태를 나타내는 표시(커서)를 말하기도 한다.
 
+<br>
 
-<!-- ## Git Bash
+### [git bash??]
 
-git bash도 유닉스 쉘의 한 종류...
-윈도우에서 git bash를 사용하는 이유 
-https://www.atlassian.com/git/tutorials/git-bash -->
+https://www.atlassian.com/git/tutorials/git-bash <br>
+
+https://www.gitkraken.com/blog/what-is-git-bash
 
 
 
