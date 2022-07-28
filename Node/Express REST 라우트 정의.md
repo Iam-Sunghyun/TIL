@@ -14,14 +14,14 @@
 
 ## POST
 
-- POST 요청 시 데이터를 HTTP body에 저장해 전달하기 때문에 요청시 전송하는 데이터 크기나 유형에 좀 더 유연하다.
+- POST 요청 시 데이터를 HTTP body에 저장해 전달하기 때문에 요청시 전송하는 데이터 크기나 유형에 좀 더 유연하다(보통  HTML 폼을 통해 서버에 전송한다).
 - 또한 데이터가 URL에 노출되지 않기 때문에 GET보다 보안에 유리하다.
 <!-- 회원가입, 로그인, 댓글 등 개인정보 필요한 경우 사용하는 듯). -->
 - 서버에 리소스/데이터를 생성하거나 업데이트하는데 사용한다.
 - 요청 내용이 브라우저 히스토리에 저장되지 않는다.
 - 요청 내용이 브라우저 캐시에 저장되지 않는다.
 
-<!-- ### post 요청 데모 -->
+<!-- PUT, PTACH, DELETE... -->
 
 ### [GET POST 차이]
 
@@ -61,6 +61,10 @@ app.use(express.urlencoded({ extended: true })) // request body에서 암호화�
 
 파싱은 body-parser을 기반으로 수행된다.
 
+### [q 라이브러리 vs querystring 라이브러리 파싱 데이터 차이]
+
+https://intrepidgeeks.com/tutorial/qs-library-vs-querystring-library
+
 ## HTTP GET 메소드에서 Content-Type
 
 HTTP 메소드에서 GET 방식은 데이터가 쿼리 스트링으로 보내지기 때문에 Content-Type이 존재하지 않는다(실제로 확인해보니 GET 요청 헤더에는 Content-Type이 없었다).
@@ -76,20 +80,39 @@ axios를 사용해 클라이언트가 서버에서 API요청 시 Content-Type를
 ### [MDN HTTP]
 https://developer.mozilla.org/ko/docs/Web/HTTP/Methods/GET
 
-### [q 라이브러리 vs querystring 라이브러리 파싱 데이터 차이]
-
-https://intrepidgeeks.com/tutorial/qs-library-vs-querystring-library
 
 ### [페이로드란]
 
 https://ko.wikipedia.org/wiki/%ED%8E%98%EC%9D%B4%EB%A1%9C%EB%93%9C_(%EC%BB%B4%ED%93%A8%ED%8C%85)
 
-<!-- # REST에 대하여
-https://www.codecademy.com/article/what-is-rest
 
-폼(form)과 Express
+# REST API
+
+REST API란 REST 아키텍처의 조건을 준수한 애플리케이션의 API를 말한다.
+
+아래는 RESTful API의 한 예로 기본적인 CRUD를 위한 API이다
+
+### ex)
+```
+GET /comments - 모든 comment 가져오기
+POST /comments - 새 comment 생성
+GET /comments/:id - id와 일치하는 comment 가져오기
+PATCH /comments/:id - 특정 comment 업데이트
+DELETE /comments/:id - 특정 comment 삭제
+```
+
+
+
+### [REST 아키텍처에 대하여] <BR>
+https://www.codecademy.com/article/what-is-rest <BR>
+https://aws.amazon.com/ko/what-is/restful-api/ <BR>
+https://www.ibm.com/cloud/learn/rest-apis <BR>
+https://blog.postman.com/rest-api-examples/ 
+
+
+<!-- 폼(form)과 Express
 -Express 앱에 데이터를 전송하고 파싱해서 사용하기
 
 메서드 오버라이드(치환)
+ -->
 
-Restful 라우팅 -->
