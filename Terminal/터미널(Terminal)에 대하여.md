@@ -95,7 +95,7 @@ https://ko.wikipedia.org/wiki/%EC%85%B8  <br>
 
 https://en.wikipedia.org/wiki/Shell_(computing)  <br>
 
-https://unabated.tistory.com/entry/LinuxUnix쉘-Shell-의-정의와-종류 
+https://www.journaldev.com/39194/different-types-of-shells-in-linux
 
 ## 커맨드라인 인터페이스(CLI)
 
@@ -106,7 +106,7 @@ CLI는 명령줄 인터페이스(Commandlind Interface, 명령어 인터페이�
 
 Bash는 Bourne 셸의 무료 소프트웨어 대체품으로 GNU 프로젝트를 위해 Brian Fox가 작성한 Unix 셸 및 명령 언어를 말한다. <br>
 
-**[microsoft docs]** <br>
+**[microsoft docs bash란?]** <br>
 https://docs.microsoft.com/ko-kr/learn/modules/bash-introduction/1-what-is-bash
 
 ## 프롬프트(prompt)
