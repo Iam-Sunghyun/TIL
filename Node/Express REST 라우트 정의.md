@@ -1,6 +1,4 @@
-# HTTP 요청 메서드 (HTTP 동사(verb))
-
-## GET vs POST 차이 
+# HTTP 요청 메서드 GET vs POST 
 
 ## GET
 
@@ -23,11 +21,18 @@
 
 <!-- PUT, PTACH, DELETE... -->
 
+<BR>
+
 ### [GET POST 차이]
 
 https://www.geeksforgeeks.org/difference-between-http-get-and-post-methods/ <BR>
 
 https://velog.io/@songyouhyun/Get%EA%B3%BC-Post%EC%9D%98-%EC%B0%A8%EC%9D%B4%EB%A5%BC-%EC%95%84%EC%8B%9C%EB%82%98%EC%9A%94
+
+### [http 요청 메서드]
+
+http://www.ktword.co.kr/test/view/view.php?no=3791
+https://developer.mozilla.org/ko/docs/Web/HTTP/Methods
 
 # POST 요청 다루기
 
@@ -61,15 +66,17 @@ app.use(express.urlencoded({ extended: true })) // request body에서 암호화�
 
 파싱은 body-parser을 기반으로 수행된다.
 
+<BR>
+
 ### [q 라이브러리 vs querystring 라이브러리 파싱 데이터 차이]
 
 https://intrepidgeeks.com/tutorial/qs-library-vs-querystring-library
 
-## HTTP GET 메소드에서 Content-Type
+## HTTP GET 요청에서 Content-Type
 
-HTTP 메소드에서 GET 방식은 데이터가 쿼리 스트링으로 보내지기 때문에 Content-Type이 존재하지 않는다(실제로 확인해보니 GET 요청 헤더에는 Content-Type이 없었다).
+HTTP GET 메서드는 데이터가 쿼리 스트링으로 보내지기 때문에 Content-Type이 존재하지 않는다(실제로 확인해보니 GET 요청 헤더에는 Content-Type이 없었다).
 
-HTTP 메소드에 POST, PUT처럼 Body에 data를 보낼때 Content-Type이 필요하다.
+HTTP 메소드에 POST, PUT처럼 request body에 data를 보낼때 Content-Type이 필요하다.
 
 axios를 사용해 클라이언트가 서버에서 API요청 시 Content-Type를 application/json으로 지정한다.
 
@@ -85,12 +92,11 @@ https://developer.mozilla.org/ko/docs/Web/HTTP/Methods/GET
 
 https://ko.wikipedia.org/wiki/%ED%8E%98%EC%9D%B4%EB%A1%9C%EB%93%9C_(%EC%BB%B4%ED%93%A8%ED%8C%85)
 
-
 # REST API
 
-REST API란 REST 아키텍처의 조건을 준수한 애플리케이션의 API를 말한다.
+REST는 HTTP를 기반으로 서버/클라이언트가 통신하기 위한 아키텍처이고, REST 아키텍처의 스타일을 준수한 애플리케이션의 API를 REST API라고 한다.
 
-아래는 RESTful API의 한 예로 기본적인 CRUD를 위한 API이다
+아래는 RESTful API의 한 예로 기본적인 CRUD를 위한 API이다.
 
 ### ex)
 ```
@@ -100,19 +106,52 @@ GET /comments/:id - id와 일치하는 comment 가져오기
 PATCH /comments/:id - 특정 comment 업데이트
 DELETE /comments/:id - 특정 comment 삭제
 ```
+<!-- rest 이전에는 soap  -->
 
-
+<BR>
 
 ### [REST 아키텍처에 대하여] <BR>
 https://www.codecademy.com/article/what-is-rest <BR>
 https://aws.amazon.com/ko/what-is/restful-api/ <BR>
 https://www.ibm.com/cloud/learn/rest-apis <BR>
-https://blog.postman.com/rest-api-examples/ 
+https://blog.postman.com/rest-api-examples/ <BR>
 
+### [REST 참고자료 +a]
+https://gmlwjd9405.github.io/2018/09/21/rest-and-restful.html
+
+# 요청 리디렉션(방향 수정)
+
+POST로 데이터를 추가한 후 `res.send()`로 응답을 하는 경우 응답 페이지가 새롭게 출력돼도 URL은 그대로 머물게 된다. 이 상태에서 새로고침을 하면, '양식 다시 제출 확인' 팝업창이 뜨고 확인을 누를 시 동일한 데이터로 또 다시 POST 요청이 발생하게 된다. 
+
+이런 경우 불필요하게 같은 데이터가 계속 추가될 수 있으므로 리디렉션이 필요하다.
+
+`res.redirect(status, path)`을 사용해 지정한 URL로 상태코드와 함께 리디렉션한다. 즉 해당 URL로 GET 요청을 전송한다.
+
+<!-- redirect 경로는 정확히 어떻게 되는거지? 링크 참고 -->
+
+```
+// 댓글 작성 POST 라우트
+app.post('/comments', (req, res) => {
+  const { username, comment } = req.body;
+  comments.push({ username, comment });
+  // 요청 리디렉션 -> /comments로 GET 요청
+  res.redirect('/comments');
+});
+```
+상태코드를 따로 주지 않을 경우 기본값은 `"302 Found"` 이다.
+
+<BR>
+
+### [요청 리디렉션 res.redirect()]
+https://kirkim.github.io/javascript/2021/09/21/redirect.html<BR>
+
+https://www.geeksforgeeks.org/express-js-res-redirect-function/
+
+
+<!-- 슬러그?중첩라우트? -->
 
 <!-- 폼(form)과 Express
 -Express 앱에 데이터를 전송하고 파싱해서 사용하기
 
 메서드 오버라이드(치환)
  -->
-
