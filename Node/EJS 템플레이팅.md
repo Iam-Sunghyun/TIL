@@ -41,7 +41,7 @@ EJS는 인기있는 express 템플릿 엔진 중 하나로 자바스크립트 �
 
 express가 템플릿 파일을 렌더링하려면 다음과 같은 설정이 필요하다.
 
-- `views` - 템플릿이 있는 디렉토리. 기본 값은 ./views이다.<br>
+- `views` - 템플릿이 있는 루트 디렉토리. 기본 값은 ./views이다.<br>
 - `view engine` - 사용할 템플릿 엔진.<br>
 
 ```
@@ -188,11 +188,11 @@ http://expressjs.com/en/starter/static-files.html
 
 <!-- # 정적 파일 사용 - 부트스트랩과 express 연동 -->
 
-# include로 파일 분할(포함)
+# include로 파일 분할(partials)
 
-포함이라고도 부르는 이유는 말 그대로 템플릿 안에 또 다른 템플릿을 포함시키는 것이기 때문.
+분할된 파일(partials)은 `include`로 다른 템플릿에 포함시켜 사용할 수 있다.
 
-공통된 부분을 하나의 템플릿으로 구성하고 필요에 따라 다른 템플릿에 `<%- inlcude('path') %>`로 추가하여 재사용성을 높인다.
+공통된 부분을 별개의 템플릿으로 구성하고 필요에 따라 다른 템플릿에 `<%- inlcude('path') %>`로 추가하여 재사용성을 높인다.
 
 ```
 // partials/head.ejs

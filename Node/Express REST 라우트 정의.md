@@ -3,7 +3,7 @@
 ## GET
 
 - 데이터를 요청할 때 전송할 데이터를 URL 쿼리 스트링에 포함시켜 데이터를 전달 한다.
-  - postman으로 확인해보면 GET요청 메시지 body는 아예 활성화가 되지 않는다.
+  <!-- - postman으로 확인해보면 GET요청 메시지 body는 아예 활성화가 되지 않는다. -->
 - 전송되는 데이터가 URL에 드러나기 때문에 보안 문제가 생길 수 있다.
 - GET 요청으로 서버는 요청을 수신할 수만 있고, 상태를 변경할 수 없다. 주로 읽기, 검색같은 상태 변경 없이 데이터 요청하는 경우 사용.
 - 요청을 북마크에 저장할 수 있고 URL로 전달하기 때문에 데이터 길이에 제한이 있다(2048자 인듯).
@@ -123,14 +123,14 @@ https://gmlwjd9405.github.io/2018/09/21/rest-and-restful.html
 
 POST로 데이터를 추가한 후 `res.send()`로 응답을 하는 경우 응답 페이지가 새롭게 출력돼도 URL은 그대로 머물게 된다. 이 상태에서 새로고침을 하면, '양식 다시 제출 확인' 팝업창이 뜨고 확인을 누를 시 동일한 데이터로 또 다시 POST 요청이 발생하게 된다. 
 
-이런 경우 불필요하게 같은 데이터가 계속 추가될 수 있으므로 리디렉션이 필요하다.
+이런 경우 불필요하게 같은 데이터가 계속 추가될 수 있으므로 다른 페이지로 리디렉션이 필요하다.
 
 `res.redirect(status, path)`을 사용해 지정한 URL로 상태코드와 함께 리디렉션한다. 즉 해당 URL로 GET 요청을 전송한다.
 
 <!-- redirect 경로는 정확히 어떻게 되는거지? 링크 참고 -->
 
 ```
-// 댓글 작성 POST 라우트
+// 댓글 작성 라우트
 app.post('/comments', (req, res) => {
   const { username, comment } = req.body;
   comments.push({ username, comment });
@@ -146,6 +146,8 @@ app.post('/comments', (req, res) => {
 https://kirkim.github.io/javascript/2021/09/21/redirect.html<BR>
 
 https://www.geeksforgeeks.org/express-js-res-redirect-function/
+
+
 
 
 <!-- 슬러그?중첩라우트? -->
