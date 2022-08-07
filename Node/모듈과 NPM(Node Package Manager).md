@@ -96,7 +96,7 @@ const mySquare = new Square(2);
 console.log(`The area of mySquare is ${mySquare.area()}`);
 --------------------------------------------
 // square.js
-// 이 경우 exports에 할당하면 지역변수가 되어버린다. 따라서 module.exports에 직접 할당할 것.
+// exports에 직접 할당하면 지역변수로 취급되어버린다. 따라서 module.exports에 직접 할당할 것.
 module.exports = class Square {
   constructor(width) {
     this.width = width;
@@ -122,17 +122,19 @@ module.exports = (name) => `Hi ${name} 👋`; (O)
 Node.js가 모듈을 결정하는 방법은 아래 링크 참조.
 
 <!--EMS #CJS 어떤걸 써야 할까??????-->
-
+<!-- AMD라는 모듈 시스템도 있다 -->
 
 https://yceffort.kr/2020/08/commonjs-esmodules
 <br>
+
+**[CommonJS란?]** <br>
+https://en.wikipedia.org/wiki/CommonJS br>
 
 **[Node.js 모듈 시스템 결정 방법]** <br>
 https://nodejs.org/api/packages.html#determining-module-system <br>
 
 **[CommonJS exports, module.exports 차이]** <br>
 https://dydals5678.tistory.com/97<br>
-https://pawelgrzybek.com/the-difference-between-module-exports-and-exports-in-node-js/
 
 
 
@@ -184,8 +186,8 @@ https://yceffort.kr/2020/08/commonjs-esmodules
 **[자바스크립트 모듈 시스템: ESM과 CommonJS]** <br>
 https://www.youdad.kr/js-module-system/ <br>
 
-**[Node.js DOCS]**  <br>
-https://nodejs.org/api/modules.html <br>
+**[MDN 모듈에 대하여]**  <br>
+https://developer.mozilla.org/ko/docs/Web/JavaScript/Guide/Modules <br>
 
 
 
