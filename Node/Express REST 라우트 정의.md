@@ -2,11 +2,12 @@
 
 ## GET
 
-- 데이터를 요청할 때 전송할 데이터를 URL 쿼리 스트링에 포함시켜 데이터를 전달 한다.
+- 데이터를 요청할 때 전송할 데이터를 URL 쿼리 스트링에 포함시켜 데이터를 전달 한다(body에 담을 수 있긴 함).
   <!-- - postman으로 확인해보면 GET요청 메시지 body는 아예 활성화가 되지 않는다. -->
 - 전송되는 데이터가 URL에 드러나기 때문에 보안 문제가 생길 수 있다.
 - GET 요청으로 서버는 요청을 수신할 수만 있고, 상태를 변경할 수 없다. 주로 읽기, 검색같은 상태 변경 없이 데이터 요청하는 경우 사용.
-- 요청을 북마크에 저장할 수 있고 URL로 전달하기 때문에 데이터 길이에 제한이 있다(2048자 인듯).
+- 요청을 북마크에 저장할 수 있고 URL로 전달하기 때문에 데이터 길이에 제한이 있다.
+<!-- - (2048자 인듯). -->
 - 요청 내용이 브라우저 히스토리에 저장된다.
 - 요청 내용이 브라우저 캐시에 저장된다.
 
@@ -15,12 +16,15 @@
 - POST 요청 시 데이터를 HTTP body에 저장해 전달하기 때문에 요청시 전송하는 데이터 크기나 유형에 좀 더 유연하다(보통  HTML 폼을 통해 서버에 전송한다).
 - 또한 데이터가 URL에 노출되지 않기 때문에 GET보다 보안에 유리하다.
 <!-- 회원가입, 로그인, 댓글 등 개인정보 필요한 경우 사용하는 듯). -->
-- 서버에 리소스/데이터를 생성하거나 업데이트하는데 사용한다.
+- 서버에 리소스/데이터를 생성하거나 업데이트하는데 사용한다(주로 Create).
 - 요청 내용이 브라우저 히스토리에 저장되지 않는다.
 - 요청 내용이 브라우저 캐시에 저장되지 않는다.
 
 <!-- PUT, PTACH, DELETE... -->
+## PUT, PATCH
 
+보통 PUT은 데이터 전체를 업데이트(새 버전으로), PATCH는 부분적으로 업데이트(수정, 추가)할 때 사용한다.
+<!-- POST는 -->
 <BR>
 
 ### [GET POST 차이]
@@ -40,7 +44,7 @@ https://developer.mozilla.org/ko/docs/Web/HTTP/Methods
 
 요청 데이터가 Body에 담겨 오는 메서드(POST, PUT...)들은 `req.body` 프로퍼티에 요청 데이터를 담을 수 있다. 
 
-기본 값은 undefined이고 express 내장 미들웨어로 요청 데이터 구문 분석 방식을 설정해줘야 전달받은 데이터가 `req.body`에 채워져서 사용할 수 있게 된다.
+`req.body` 기본 값은 `undefined`이다. 아래와 같이 express 내장 미들웨어로 요청 데이터 파싱을 해줘야 HTTP 요청 메시지 body의 데이터가 `req.body`에 채워져서 사용할 수 있게 된다.
 
 <!-- 아니면 여러가지 형식으로 request.body를 전송할 수 있고??, -->
 
@@ -64,13 +68,14 @@ app.use(express.urlencoded({ extended: true })) // request body에서 암호화�
 + `express.urlencoded()`의 `extended` 옵션은 `x-www-form-urlencoded` 타입의 데이터를 파싱하는 라이브러리를 지정하는 옵션이다. `true`일 경우, `qs` 라이브러리로 파싱을, `false`인 경우 `querystring` 라이브러리로 파싱하겠다는 의미이다. 
 + 쉽게 말하면 `qs`(true)로 설정한 경우 객체 형태로 전달된 데이터 내에서 중첩 객체를 허용한다는 말이며, `querystring`(false)인 경우에는 허용하지 않는다는 의미이다.
 
-파싱은 body-parser을 기반으로 수행된다.
+파싱은 Node.js의 `body-parser` 모듈을 기반으로 수행된다.
 
-<BR>
 
 ### [q 라이브러리 vs querystring 라이브러리 파싱 데이터 차이]
 
 https://intrepidgeeks.com/tutorial/qs-library-vs-querystring-library
+
+<BR>
 
 ## HTTP GET 요청에서 Content-Type
 
@@ -106,6 +111,9 @@ GET /comments/:id - id와 일치하는 comment 가져오기
 PATCH /comments/:id - 특정 comment 업데이트
 DELETE /comments/:id - 특정 comment 삭제
 ```
+
+REST api의 기본적인 원칙 두 가지는 URI는 리소스를 표현하는 데 집중하고, 리소스에 대한 행위는 요청 메서드로 표현하는 것이다.
+
 <!-- rest 이전에는 soap  -->
 
 <BR>
@@ -115,6 +123,9 @@ https://www.codecademy.com/article/what-is-rest <BR>
 https://aws.amazon.com/ko/what-is/restful-api/ <BR>
 https://www.ibm.com/cloud/learn/rest-apis <BR>
 https://blog.postman.com/rest-api-examples/ <BR>
+
+### [그런 REST API로 괜찮은가]
+https://www.youtube.com/watch?v=RP_f5dMoHFc&ab_channel=naverd2
 
 ### [REST 참고자료 +a]
 https://gmlwjd9405.github.io/2018/09/21/rest-and-restful.html
@@ -149,6 +160,17 @@ https://www.geeksforgeeks.org/express-js-res-redirect-function/
 
 
 
+## uuid 패키지
+
+무작위 UUID(universally unique identifier)를 생성해주는 npm 모듈.
+
+댓글 작성 라우트에서 댓글 고유의 id를 생성하기 위해 사용해주었다.
+
+### [npm uuid]
+https://www.npmjs.com/package/uuid <br>
+
+### [uuid란?]
+https://ko.wikipedia.org/wiki/%EB%B2%94%EC%9A%A9_%EA%B3%A0%EC%9C%A0_%EC%8B%9D%EB%B3%84%EC%9E%90
 
 <!-- 슬러그?중첩라우트? -->
 
