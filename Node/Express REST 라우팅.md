@@ -24,6 +24,9 @@
 ## PUT, PATCH
 
 보통 PUT은 데이터 전체를 업데이트(새 버전으로), PATCH는 부분적으로 업데이트(수정, 추가)할 때 사용한다.
+
+### [PUT, PATCH 차이]
+https://www.geeksforgeeks.org/difference-between-put-and-patch-request/
 <!-- POST는 -->
 <BR>
 
@@ -137,8 +140,8 @@ POST로 데이터를 추가한 후 `res.send()`로 응답을 하는 경우 응�
 이런 경우 불필요하게 같은 데이터가 계속 추가될 수 있으므로 다른 페이지로 리디렉션이 필요하다.
 
 `res.redirect(status, path)`을 사용해 지정한 URL로 상태코드와 함께 리디렉션한다. 즉 해당 URL로 GET 요청을 전송한다.
+리디렉션의 경로는 호스트 이름의 루트를 기준으로 설정할 수 있다. 
 
-<!-- redirect 경로는 정확히 어떻게 되는거지? 링크 참고 -->
 
 ```
 // 댓글 작성 라우트
@@ -159,7 +162,6 @@ https://kirkim.github.io/javascript/2021/09/21/redirect.html<BR>
 https://www.geeksforgeeks.org/express-js-res-redirect-function/
 
 
-
 ## uuid 패키지
 
 무작위 UUID(universally unique identifier)를 생성해주는 npm 모듈.
@@ -172,10 +174,84 @@ https://www.npmjs.com/package/uuid <br>
 ### [uuid란?]
 https://ko.wikipedia.org/wiki/%EB%B2%94%EC%9A%A9_%EA%B3%A0%EC%9C%A0_%EC%8B%9D%EB%B3%84%EC%9E%90
 
+
+# HTML 폼으로 GET, POST 외 요청 메서드 구현하기(method-override)
+
+HTML 폼은 지정한 URL로 `GET`, `POST`요청만 수행할 수 있는데, npm에 있는 `method-override` 모듈을 사용하면 `PUT`, `PATCH`, `DELETE`와 같은 클라이언트에서 지원하지 않는 요청 메서드를 사용할 수 있다(이러한 방법 외에도 클릭 이벤트 리스너에 fetch API, axios와 같은 클라이언트 측 자바스크립트를 통해 요청하는 방법도 있다.).
+
+`method-override` 모듈에는 HTTP 헤더를 이용한 재정의(override)가 있고, 쿼리 값을 이용한 재정의가 있는데 나는 쿼리 값을 사용해볼 것!
+
+## methodOverride(getter, [options])
+
+요청 메서드를 재정의하기 위한 미들웨어 함수로 인수로는 함수, 문자열을 전달할 수 있다.
+
++ `getter` - 어떤 요청에 대해 재정의된 요청 메서드를 조회하는 데 사용하기 위한 말그대로 일종의 getter이며 기본 값은 `'X-HTTP-Method-Override'`이다.
+
+<!-- + options.methods- 메서드 재정의 하고자 하는 요청이 가져야 할 기본 메서드를 설정한다(기본값: ['POST']).  -->
+
+### `getter`에 함수를 전달한 경우
+인수에 함수를 전달하여 사용자 정의 로직을 만들 수 있다. 자세한 것은 공식 문서 참조.
+
+### `getter`에 문자열을 전달한 경우
+
++ `getter` 값이 문자열이며 `'X-'`로 시작할 경우 헤더 이름으로 취급되고 해당 헤더는 요청 메서드 재정의에 사용된다.
++ 그 외 다른 모든 문자열은 URL 쿼리 문자열 키로 취급된다.
+
+## 쿼리 문자열 값을 이용한 요청 메서드 재정의
+
+쿼리 문자열을 사용해 메서드를 재정의(override)하려면 사용하고자 하는 쿼리 문자열 키를 `methodOverride(getter, [option])` 함수의 첫 번째 인수로 전달한다.
+
+```
+var express = require('express')
+var methodOverride = require('method-override')
+var app = express()
+
+// URL에 ?_method=METHOD 쿼리 문자열을 포함한 POST 요청을 재정의 하기 위함.
+// 이름은 자유지만 일반적으로 _method라 명명하여 사용함.
+app.use(methodOverride('_method'))
+```
+
+그 후 원하는 경로에 대한 요청을 `POST` 메서드의 HTML 폼 `action` URL에 지정한 쿼리 문자열 키와 요청 메서드를 값으로 전달하여 재정의 한다.
+
+```
+// /resource 경로에 대한 POST 요청이지만 DELETE로 재정의 되었다.
+<form method="post" action="/resource?_method=DELETE">
+  <button type="submit">Delete resource</button>
+</form>
+```
+
+## HTTP 헤더를 이용한 요청 메서드 재정의
+
+HTTP 헤더를 이용한 재정의는 사용할 헤더 이름을 `methodOverride(getter, [option])` 함수의 첫 번째 인수 값을 `'X-...'` 형태로 지정하여 해당 헤더를 메서드를 재정의하는 데 사용한다.
+
+```
+var express = require('express')
+var methodOverride = require('method-override')
+var app = express()
+
+// override with the X-HTTP-Method-Override header in the request
+app.use(methodOverride('X-HTTP-Method-Override'))
+```
+그 후 다음과 같이 지정한 헤더 이름으로 메서드를 재정의한다.
+```
+var xhr = new XMLHttpRequest()
+xhr.onload = onload
+xhr.open('post', '/resource', true)
+xhr.setRequestHeader('X-HTTP-Method-Override', 'DELETE')
+xhr.send()
+
+function onload () {
+  alert('got response: ' + this.responseText)
+}
+```
+
+
+### [method-override 패키지]
+http://expressjs.com/en/resources/middleware/method-override.html
 <!-- 슬러그?중첩라우트? -->
 
 <!-- 폼(form)과 Express
 -Express 앱에 데이터를 전송하고 파싱해서 사용하기
 
-메서드 오버라이드(치환)
+
  -->
