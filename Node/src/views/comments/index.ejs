@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Index Comments</title>
+</head>
+<body>
+    <h1>Comments</h1>
+    <hr>
+    <% for (const comment of comments) { %>
+      <li>
+        <%= comment.comment %> - <b> <%= comment.username %> </b>
+        <a href="/comments/<%= comment.id %>"> <span>자세히</span> </a>
+        <a href="/comments/<%= comment.id %>/edit "> <span>수정</span> </a>
+        <form method="post" action="/comments/<%= comment.id %>?_method=DELETE">
+          <button>삭제</button>
+        </form>
+      </li>
+      <% } %>
+    </ul>
+    <a href="/comments/new">add New Comment</a>
+</body>
+</html>
