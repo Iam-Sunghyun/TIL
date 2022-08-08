@@ -4,41 +4,47 @@
 
 Express.js, 또는 간단히 익스프레스는 Node.js를 위한 웹 프레임워크의 하나로, MIT 허가서로 라이선스되는 자유-오픈 소스 소프트웨어로 출시되었다. Node.js로 웹 애플리케이션, API 개발을 위해 설계되었다. Node.js의 사실상의 표준 서버 프레임워크로 불리고 있다. - 위키백과
 
-간단히 nodejs 서버 개발을 위한 다양한 기능을 제공하는 프레임워크이다.
+간단히 node.js 서버 개발을 위한 다양한 기능을 제공하는 프레임워크이다.
 
-### [Expressjs.com]
+### [Expressjs 공식 홈페이지]
 
 http://expressjs.com/
 
+### [Express.js vs Node.js]
+
+https://procoders.tech/blog/express-js-vs-node-js/
+
 # 미들웨어 함수(middel ware function)
 
-미들웨어 함수란 쉽게말해 요청에 대한 응답을 위해 중간에서 처리를 수행하는 함수로, 요청에 대한 핸들러 함수라고 보면 된다.
+미들웨어 함수란 쉽게말해 요청에 대한 응답을 위해 중간에서 처리를 수행하는 함수로, 요청에 대한 핸들러 함수라고 보면 된다. 
+
+미들웨어 함수는 요청 객체(req), 응답 객체(res), 다음 미들웨어 함수 호출을 위한 next() 함수를 인수로 전달 받는다.
+
+참고로 미들웨어의 실행 순서는 먼저 로드된 미들웨어 함수가 먼저 실행된다.
 
 아래 예시에서 2번째 부터 전달되는 콜백함수가 미들웨어 함수이다.
-
-미들웨어 함수는 여러개를 전달할 수 있다.
-
 ```
-// app.use('경로', function()) => 메서드 상관 없이 경로에 대한 모든 요청에 미들웨어 함수로 응답한다.
-// 아래의 예시에서 설정한 app.use('/abcd', ...) 경로는 app.all('/abcd/*', ...)과 일치한다.
-// 즉, app.use('/abcd', ...) === "/abcd", "/abcd/images", "/abcd/images/news/.." 등등 이므로 /abcd 하위의 경로를 식별할 수 없다.
-// 따라서 세세한 uri 식별을 위해선 app.all()을 사용하는 것을 권장.
-app.use('/abcd', function (req, res, next) {
-  next();
-});
+const express = require('express')
+const app = express()
 
+// '/' 경로에 대한 GET 요청 라우팅
+app.get('/', (req, res, next) => {
+  req.requestTime = Date.now();
+  next();   // 현재 미들웨어 함수가 요청-응답 주기를 종료하지 않으면 next()다음 미들웨어 함수에 제어를 전달하기 위해 호출해야 한다. 그렇지 않으면 요청이 중단된다. (흠..)
+})
 
-// '/' 경로로 get 요청이 발생했을 때 미들웨어 함수가 실행된다.
-app.get('/', (req, res, next) => {...});
+app.use(requestTime)
 
-// 포트 3000에 연결 및 요청 수신 대기(서버 실행)
-app.listen('3000', () => {
-  // 대기 중 서버 콘솔 메시지
-  console.log(`Exapmle app listening on port ${port}`);
-});
+app.get('/', (req, res) => {
+  let responseText = 'Hello World!<br>'
+  responseText += `<small>Requested at: ${req.requestTime}</small>`
+  res.send(responseText)
+})
+
+// 포트 3000에 연결 및 요청 수신 대기
+app.listen(3000)
 ```
-
-next()를 사용하면 후속 handler 함수로 제어를 전달할 수 있다.
+미들웨어 함수의 next()를 사용하면 후속 핸들러 함수로 제어를 전달할 수 있다.
 
 ```
 app.all('/', (req, res, next) => {
@@ -62,7 +68,6 @@ app.post('/', (req, res, next) => {
   next();
 }, (req, res) => res.send('Hello from POST /'));
 ```
-
 ## 요청(response), 응답(request) 객체
 
 미들웨어 함수의 인수로 전달되는 요청, 응답 정보를 저장하는 객체로 일반적으로 res, req로 명명하여 사용한다.
@@ -71,9 +76,49 @@ app.post('/', (req, res, next) => {
 
 `res` - 요청 대상에게 응답하기 위한 응답 객체.<br>
 
+
 ### [middleware란?]
 
 https://psyhm.tistory.com/8
+
+
+# 헷갈렸던 Express 메서드
+## app.use(path, callback...),  app.all(path, callback...)
+`app.use(path, callback...)`는 요청 메서드 상관없이 경로에 대한 모든 요청에 미들웨어 함수를 실행한다.
+
+`path`기본값은 `"/"`이며 경로 없이 마운트된 미들웨어는 앱에 대한 모든 요청에 ​​대해 실행된다.
+
+비슷하게 `app.all(path, callback...)` 또한 모든 요청 메서드에 대해 미들웨어 함수를 실행하는데, `app.use()`와 경로 설정에서 차이가 있다.
+
+아래의 예시에서 설정한 `app.use('/abcd', ...)` 경로는 `app.all('/abcd/*', ...)`과 일치한다.
+
+즉, `app.use('/abcd', ...)`에서 경로는 `"/abcd"`, `"/abcd/images"`, `"/abcd/images/news/.."` 등등과 같이 하위의 경로를 모두 포함한다. 
+
+따라서 세세하게 URI을 식별하여 적용하기 위해선 `app.all()`을 사용해야 한다.
+
+```
+// /abcd 하위 경로 요청 모두 포함
+app.use('/abcd', function (req, res, next) {
+  console.log('Time: %d', Date.now())
+});
+
+// /abcd 에 대한 요청만 실행
+app.all('/abcd', function (req, res, next) {
+  console.log('Time: %d', Date.now())
+});
+
+// 포트 3000에 연결 및 요청 수신 대기
+app.listen('3000', () => {
+  // 대기 중 서버 콘솔 메시지
+  console.log(`Exapmle app listening on port ${port}`);
+});
+```
+<!-- 흠 -->
+<!-- app.use 는 하나의 콜백 함수만 사용하며 앱 전역에 미들웨어를 적용하기 위한 것입니다. 미들웨어는 일반적으로 요청 및 응답을 처리하지 않으며(기술적으로 가능) 입력 데이터를 처리하고 대기열의 다음 처리기로 전달한다.
+app.all 은 여러 콜백을 사용하며 라우팅을 위한 것입니다. 여러 콜백을 사용하여 요청을 필터링하고 응답을 보낼 수 있다. -->
+
+### [app.use(), app.all() 차이]
+https://stackoverflow.com/questions/14125997/difference-between-app-all-and-app-use
 
 # 라우팅(routing)
 
