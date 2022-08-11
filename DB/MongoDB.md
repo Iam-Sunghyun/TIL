@@ -110,7 +110,7 @@ https://jinshine.github.io/2018/06/10/MongoDB/%EA%B8%B0%EB%B3%B8%EC%A0%81%EC%9D%
 https://www.mongodb.com/docs/mongodb-shell/
 
 
-# MongoDB CRUD 명령
+# MongoDB Shell CRUD 명령
 
 ## MongoDB Shell 실행
 
@@ -196,13 +196,14 @@ MongoDB에서 컬렉션에 저장된 각 문서에는 기본 키 역할을 하�
 
 # DB 컬렉션에서 문서 읽어오기(쿼리)
 
-### db.collection.find(query, projection)
-+ `query` - 문서 검색 조건. 생략하면 모든 문서를 읽는다.
-+ `projection` - 검색 조건에 일치하는 문서에서 반환할 필드를 지정함.
+### `db.collection.find(query, projection)`
+`query` - 문서 검색 조건. 생략하면 모든 문서를 읽는다. <br>
+`projection` - 검색 조건에 일치하는 문서에서 반환할 필드를 지정함.
 
 ```
 use animalShelter
 
+// dogs 컬렉션 모든 문서 읽기
 db.dogs.find()
 ```
 
@@ -221,11 +222,111 @@ db.dogs.find({ breed:"corgi" }, { age: false })
 <!-- 커서? -->
 
 ### [db.collection.find(query, projection) 매개변수 사용법] <br>
-query 매개변수 https://www.mongodb.com/docs/mongodb-shell/crud/read/  <br>
-projection 매개변수 https://www.mongodb.com/docs/manual/reference/method/db.collection.find/#mongodb-method-db.collection.find
+**query 매개변수** https://www.mongodb.com/docs/mongodb-shell/crud/read/  <br>
+**projection 매개변수** https://www.mongodb.com/docs/manual/reference/method/db.collection.find/#mongodb-method-db.collection.find
 
 
 # DB 업데이트하기
+`db.collection.updateOne(<filter>, <update>, <options>)` - 단일 삭제 <br>
+`db.collection.updateMany(<filter>, <update>, <options>)` - 일치하는 모든 문서 삭제 <br> 
+`db.collection.replaceOne(<filter>, <update>, <options>)` - "_id" 필드를 제외하고 모두 교체 <br>
+
+문서를 업데이트하기 위해 MongoDB는 필드 값을 수정하기 위해 `$set`과 같은 업데이트 연산자 를 제공한다.
+
+```
+db.inventory.insertMany( [
+   { item: "canvas", qty: 100, size: { h: 28, w: 35.5, uom: "cm" }, status: "A" },
+   { item: "journal", qty: 25, size: { h: 14, w: 21, uom: "cm" }, status: "A" },
+   { item: "mat", qty: 85, size: { h: 27.9, w: 35.5, uom: "in" }, status: "A" }
+] );
+
+// item 필드가 "mat"인 문서들을 업데이트
+db.inventory.updateOne(
+   { item: "paper" },
+   {
+    // "size.uom" -> 중첩 필드 지정
+     $set: { "size.uom": "cm", status: "P" }
+     // lastModified 필드 값을 현재 시간으로 설정. lastModified 필드가 없을 경우 생성.
+     $currentDate: { lastModified: true } 
+   }
+)
+```
+
+### [업데이트 연산자]
+https://www.mongodb.com/docs/v6.0/reference/operator/update/
+
+# DB 삭제하기
+`db.collection.deleteMany()` - 조건과 일치하는  여러 문서 삭제
+`db.collection.deleteOne()` - 조건과 일치하는 한개의 문서 삭제
+```
+// 모든 문서 삭제
+db.inventory.deleteMany({})
+
+// 조건과 일치하는 모든 문서 삭제
+db.inventory.deleteMany({ status : "A" })
+
+// 조건과 일치하는 한개의 문서 삭제
+db.inventory.deleteOne( { status: "D" } )
+```
+
+### [이 외에 mongosh 메서드들]
+https://www.mongodb.com/docs/v6.0/reference/method/
 
 
-Mongo inserts, updates, deletions, finding/querying
+# 기타 Mongo 연산자들(극히 일부)
+
+### 중첩 문서 선택
+```
+db.inventory.insertMany( [
+   { item: "journal", qty: 25, size: { h: 14, w: 21, uom: "cm" }, status: "A" },
+   { item: "notebook", qty: 50, size: { h: 8.5, w: 11, uom: "in" }, status: "A" },
+   { item: "paper", qty: 100, size: { h: 8.5, w: 11, uom: "in" }, status: "D" }
+]);
+
+db.inventory.find( { size: { h: 14, w: 21, uom: "cm" } } )
+```
+중첩 문서를 찾을 때는 인수로 전달한 문서가 찾고자 하는 문서와 필드 순서를 포함해 정확히 일치해야 한다. 안그러면 검색되지 않음.
+
+
+### 중첩 필드 선택
+
+중첩 문서 내에 특정 필드를 찾고자 할 때 다음과 같이 쌍따옴표와 마침표를 사용해 지정한다.
+```
+// inventory 컬렉션 문서 중 size 필드 중첩문서에 uom 필드 값이 "in"인 문서를 검색
+db.inventory.find( { "size.uom": "in" } )
+
+>> { item: "notebook", qty: 50, size: { h: 8.5, w: 11, uom: "in" }, status: "A" },
+   { item: "paper", qty: 100, size: { h: 8.5, w: 11, uom: "in" }, status: "D" }
+```
+
+
+# Query 연산자 몇 가지
+
+문서를 검색할 때 좀 더 구체적인 조건을 지정하기 위한 연산자들 일부이다.
+
+### 비교 연산자
+`$lt` - 필드 값이 지정한 값 이하인 문서들을 검색한다.   <br>
+`$gt` - 필드 값이 지정한 값 이상인 문서들을 검색한다.   <br>
+`$in` - 필드 값이 지정된 배열의 요소 값과 같은 문서를 모두 검색한다. <br>
+`$ne` - 지정된 값과 같지 않은 값 선택. <br>
+`$nin` - 배열에 요소 값과 일치하지 않는 값 선택.
+```
+// cats 컬렉션 문서 중 age필드 값이 5 이하인 문서
+db.cats.find({ age: { $lt: 5 } })
+
+// cats 컬렉션 문서 중 age필드 값이 5 이상인 문서
+db.cats.find({ age: { $gt: 5 } })
+
+// inventory 컬렉션 문서 중 quantity필드 값이 5 혹은 15 인 문서
+db.inventory.find( { quantity: { $in: [ 5, 15 ] } }, { _id: 0 } )
+
+// inventory 컬렉션 문서 중 tags 필드 값이 home 혹은 school인 문서들 선택
+db.inventory.updateMany(
+   { tags: { $in: [ "home", "school" ] } },
+   { $set: { exclude: false } }
+)
+```
+사용 방법을 위해 일부 연산자들로 예시를 들어봤는데 이 외에도 논리연산자, 업데이트시 사용할 수 있는 연산자 등 많은 연산자들이 있다. 자세한 것은 링크 참조.
+
+### [query, projection 연산자]
+https://www.mongodb.com/docs/v6.0/reference/operator/query/
