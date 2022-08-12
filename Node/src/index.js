@@ -1,6 +1,10 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const path = require('path');
+const { v4: uuidv4 } = require('uuid'); // UUID(범용 고유 식별자, universally unique identifier)를 만들기 위한 모듈
+const methodOverride = require('method-override');
+
 
 // 템플릿 엔진, 디렉토리 설정
 app.set('views', path.join(__dirname, 'views'));
@@ -14,20 +18,24 @@ app.use(express.urlencoded({ extended: true })); // request body에서 암호화
 app.use(methodOverride('_method'));
 
 // 임시 데이터베이스  
-const comments = [
+let comments = [
   {
+    id: uuidv4(),
     username: 'micheal',
     comment: 'lol that is so funny!',
   },
   {
+    id: uuidv4(),
     username: 'iwantjob',
     comment: 'give me a job',
   },
   {
+    id: uuidv4(),
     username: 'hey',
     comment: 'Plz delete your account, micheal',
   },
   {
+    id: uuidv4(),
     username: 'onlysayswoof',
     comment: 'woof woof woof',
   },
@@ -56,7 +64,7 @@ app.get('/comments/new', (req, res) => {
 // 댓글 추가 (new.ejs) 및 리디렉션
 app.post('/comments', (req, res) => {
   const { username, comment } = req.body;
-  comments.push({ username, comment });
+  comments.push({ id: uuidv4(), username, comment });
   // 요청 리디렉션
   res.redirect('comments');
 });
@@ -98,10 +106,10 @@ app.delete('/comments/:id', (req, res) => {
 
   // 리디렉션
   res.redirect('/comments');
-}); 
+});
 
 
-// 아래는 request 객체 내용 확인용 간단 코드
+// 아래 부터는 request 객체 내용 확인용 간단 코드
 app.get('/tacos', (req, res) => {
   const { meat, qty } = req.query;
   console.log(req.headers, req.query, req.body);  // req.body는 빈 객체로 출력 됨
