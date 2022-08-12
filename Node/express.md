@@ -6,12 +6,12 @@ Express.js, 또는 간단히 익스프레스는 Node.js를 위한 웹 프레임�
 
 간단히 node.js 서버 개발을 위한 다양한 기능을 제공하는 프레임워크이다.
 
-### [Expressjs 공식 홈페이지]
+<!-- Express 사용 이유? -->
 
+### [Expressjs 공식 홈페이지]
 http://expressjs.com/
 
 ### [Express.js vs Node.js]
-
 https://procoders.tech/blog/express-js-vs-node-js/
 
 # 미들웨어 함수(middel ware function)
@@ -113,9 +113,9 @@ app.listen('3000', () => {
   console.log(`Exapmle app listening on port ${port}`);
 });
 ```
-<!-- 흠 -->
-<!-- app.use 는 하나의 콜백 함수만 사용하며 앱 전역에 미들웨어를 적용하기 위한 것입니다. 미들웨어는 일반적으로 요청 및 응답을 처리하지 않으며(기술적으로 가능) 입력 데이터를 처리하고 대기열의 다음 처리기로 전달한다.
-app.all 은 여러 콜백을 사용하며 라우팅을 위한 것입니다. 여러 콜백을 사용하여 요청을 필터링하고 응답을 보낼 수 있다. -->
+보통 `app.use()`는 주로 앱에 미들웨어를 적용하기 위해 사용하고(요청/응답 처리를 위한게 아닌) `app.all()`은 라우팅 용도로 주로 사용된다고 함.
+
+아래 링크 참조!
 
 ### [app.use(), app.all() 차이]
 https://stackoverflow.com/questions/14125997/difference-between-app-all-and-app-use

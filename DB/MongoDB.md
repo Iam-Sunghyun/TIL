@@ -26,9 +26,7 @@ NoSQL 데이터베이스로는 MongoDB, Couch DB, Neo4j, Cassandra, Redis 등 �
 
 일반적으로 문서(Document) 형식에 많이들 데이터를 저장하는데 `xml`, `json`, `yaml` 등과 같은 익숙한 형식들(반정형 데이터)도 문서 형식에 포함된다.
 
-<!-- MongoDB같은 Nosql은 어디에 적합할까? -스키마가 정형적이지 않거나 자주변동될때, 휘발성 있는(로그같은 것) 데이터 저장할 때? -->
 
-<!-- 반정형 비정형 정형데이터? -->
 
 ### [SQL, NOSQL비교]
 https://azderica.github.io/00-db-nosql/ <br>
@@ -80,6 +78,8 @@ MongoDB는 NoSQL, 문서 지향 데이터베이스이며 관계형 데이터베�
 자바스크립트를 배우는 입장이라면 가장 먼저 접할 백엔드 소프트웨어인 nodejs, express와 호환이 좋아서 공부흐름을 이어가기도 좋다!
 
 <!-- MongoDB 장점, 쓸만한 이유에 대하여 좀더 간결히 정리 -->
+
+<!-- MongoDB같은 Nosql은 어디에 적합할까? -스키마가 정형적이지 않거나 자주변동될때, 휘발성 있는(로그같은 것) 데이터 저장할 때? -->
 
 ### [RDB와 MongoDB 비교]
 https://poiemaweb.com/mongdb-basics
