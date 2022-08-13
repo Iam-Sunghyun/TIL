@@ -150,6 +150,8 @@ db
 
 
 # DB 컬렉션에 데이터 삽입(생성)
+`db.collection.insertOne(<document>)` - 단일 문서 삽입<br>
+`db.collection.insertMany([ <document 1> , <document 2>, ... ])` - 여러 문서 삽입 <br>
 
 문서(Document)를 컬렉션(Collection)에 삽입한다. 컬렉션이 현재 존재하지 않는 경우 삽입 작업으로 컬렉션이 생성된다.
 
@@ -196,9 +198,10 @@ MongoDB에서 컬렉션에 저장된 각 문서에는 기본 키 역할을 하�
 
 # DB 컬렉션에서 문서 읽어오기(쿼리)
 
-### `db.collection.find(query, projection)`
-`query` - 문서 검색 조건. 생략하면 모든 문서를 읽는다. <br>
-`projection` - 검색 조건에 일치하는 문서에서 반환할 필드를 지정함.
+`db.collection.find(query, projection)` - 문서 선택<br>
+`db.collection.findOne(query, projection)` - 단일 문서 선택 <br>
++ `query` - 문서 검색 조건. 생략하면 모든 문서를 읽는다. <br>
++ `projection` - 검색 조건에 일치하는 문서에서 반환할 필드를 지정함.
 
 ```
 use animalShelter
@@ -231,7 +234,7 @@ db.dogs.find({ breed:"corgi" }, { age: false })
 `db.collection.updateMany(<filter>, <update>, <options>)` - 일치하는 모든 문서 삭제 <br> 
 `db.collection.replaceOne(<filter>, <update>, <options>)` - "_id" 필드를 제외하고 모두 교체 <br>
 
-문서를 업데이트하기 위해 MongoDB는 필드 값을 수정하기 위해 `$set`과 같은 업데이트 연산자 를 제공한다.
+문서를 업데이트하기 위해 MongoDB는 필드 값을 수정하기 위해 `$set`과 같은 업데이트 연산자를 사용한다.
 
 ```
 db.inventory.insertMany( [
@@ -242,9 +245,9 @@ db.inventory.insertMany( [
 
 // item 필드가 "mat"인 문서들을 업데이트
 db.inventory.updateOne(
-   { item: "paper" },
+   { item: "mat" },
    {
-    // "size.uom" -> 중첩 필드 지정
+     // "size.uom" -> 중첩 필드 지정
      $set: { "size.uom": "cm", status: "P" }
      // lastModified 필드 값을 현재 시간으로 설정. lastModified 필드가 없을 경우 생성.
      $currentDate: { lastModified: true } 
@@ -328,5 +331,5 @@ db.inventory.updateMany(
 ```
 사용 방법을 위해 일부 연산자들로 예시를 들어봤는데 이 외에도 논리연산자, 업데이트시 사용할 수 있는 연산자 등 많은 연산자들이 있다. 자세한 것은 링크 참조.
 
-### [query, projection 연산자]
+### [query 연산자(선택자)]
 https://www.mongodb.com/docs/v6.0/reference/operator/query/
