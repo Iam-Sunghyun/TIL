@@ -28,7 +28,9 @@ javascript로 매핑된 객체에 메서드를 추가하여 유효성 검사를 
 
 # Mongoose를 MongoDB에 연결하기
 
-## 1. Mongoose NPM으로 설치(Mongoose는 NPM 패키지이다.)
+## 1. Mongoose NPM으로 설치
+
+Mongoose는 NPM 패키지로 NPM으로 쉽게 설치할 수 있다.
 ```
 npm install mongoose --save
 ```
@@ -48,22 +50,20 @@ async function main() {
 }
 ```
 
-## 3. 스키마 정의, 모델 생성 후 문서 저장ㅎ기
+## 3. 스키마 정의, 모델 생성 후 단일 문서 저장하기
 
-Mongoose로 MongoDB 데이터를 사용, 접근하려면
-데이터를 정의하는 모델을 만들어야하는데 그러려면 우선 스키마를 정의해줘야 한다. 
+Mongoose로 MongoDB 데이터를 사용, 접근하려면 데이터를 정의하는 모델을 만들어야하는데 그러려면 우선 스키마를 정의해줘야 한다. 
 
 여기서 모델(model)이란 몽구스의 도움으로 생성되는 자바스크립트 클래스로 MongoDB 컬렉션의 스키마(schema)를 토대로 만들어진 클래스(생성자)를 말하며 모델의 인스턴스가 곧 문서(document)가 된다.
 
-### 스키마?
+### 스키마(schema)?
 관계형 데이터베이스에서의 스키마는 데이터베이스 구조와 제약조건에 대한 명세, 즉 구체적인 설계도 정도로 보면 된다.
 
 Mongoose에서 스키마란 MongoDB에 저장되는 document의 Data 구조, 즉 필드 타입에 관한 정보를 JSON 형태로 정의한 것으로 RDBMS의 테이블 정의와 유사한 개념이다.
 
 <!-- rdb에서 테이블 정의와 스키마는 다른건가? 같은건가? -->
-### 예시 코드
+### 단일 문서 저장 예시 코드
 ```
-// 스키마 정의
 const movieSchema = new mongoose.Schema({
   title: String,
   year: Number,
@@ -71,7 +71,7 @@ const movieSchema = new mongoose.Schema({
   rating: String
 });
 
-// 모델명과 스키마 전달. 여기서 모델명은 반드시 대문자 시작, 단수형이어야 한다. 
+// 모델명과 스키마 전달하여 모델 생성. 여기서 모델명은 반드시 대문자 시작, 단수형이어야 한다. 
 // 그러면 Mongoose는 자동으로 소문자 복수형의 값을 컬렉션 이름으로 사용한다(아래의 경우'movies').
 const Movie = mongoose.model('Movie', movieSchema);
 
@@ -82,10 +82,167 @@ const usualSuspects = new Movie({ title: 'Usual Suspects', year: 1995, score: 9.
 usualSuspects.save();
 ```
 
-### Document 여러 개 삽입하기
-위에서 본 단일 문서 저장과 달리 `model.inserMany()`로 삽입시 MongoDB에 바로 연결되어 `save()`없이 바로 저장됨(여러 개를 삽입하는 경우가 일반적이진 않은듯). 
+`document.save()`메서드는 비동기로 동작하며 `promise`객체를 반환한다.
 
-또한 promise 객체를 반환한다.
+# Document 여러 개 삽입하기
+
++ `Model.insertMany([document1, document2, ...], optioins, callback)`
+
+위에서 본 단일 문서 저장과 달리 `Model.insertMany()`로 삽입 시 MongoDB에 바로 연결되어 `save()`없이 바로 저장된다(여러 개를 삽입하는 경우가 일반적이진 않다.). 
+```
+Model.insertMany([
+  { title: 'Usual Suspects', year: 1995, score: 9.5, rating: 'R' },
+  { title: 'Amadues', year: 1984, score: 9.2, rating: 'R-13' },
+  { title: 'Ailen', year: 1979, score: 8.1, rating: 'R' }
+  ], function(error, docs) {})
+```
+
+`Model.insertMany()` 메서드는 `promise` 객체를 반환한다.
+
+
+# Document 찾기
+
++ `Model.find(filter, projection, options, callback)` - 모든 문서 검색 <br>
++ `Model.findOne(filter, projection, options, callback)` - 단일 문서 검색 <br>
++ `Model.findById(id, projection, options, callback)` - ID로 검색(Express 작업 시 주로 사용) <br>
+
+위 메서드들은 `'Query'` 객체를 반환하는데 프로미스처럼 `then()`, `async`/`await` 기능을 지원한다(`'Query'`객체가 프로미스는 아님).
+
+프로미스 객체를 반환 받고 싶다면 `exec()`을 호출해주면 된다.
+
+
+### [몽구스 Promises]
+https://mongoosejs.com/docs/promises.html
+### [Query 객체]
+https://mongoosejs.com/docs/queries.html
+
+메서드 인수로는 반환 받을 값을 지정하는 `projection`을 전달할 수 있고, 추가 옵션이나 콜백 함수를 전달할 수 있도 있다(콜백 함수 첫 번째 인수는 에러정보, 두 번째는 document를 전달 받음). 
+
+```
+Movie.find({year: {$gte: 1995}}).then(res => console.log(res));
+
+// 결과를 콜백 함수의 인수로 전달
+MyModel.find({ name: 'john', age: { $gte: 18 }}, function (err, docs) {});
+
+//  name이 john인 문서에서 name, firends 필드만 반환
+await MyModel.find({ name: /john/i }, 'name friends').exec();
+```
+
+# Document 업데이트 하기
+
++ `Model.updateOne(filter, update, options, callback)` - 단일 문서 업데이트 <br>
++ `Model.updateMany(filter, update, options, callback)` - 여러 문서 업데이트 <br>
+
+위 메서드들은 다음과 같이 업데이트 처리 결과만 반환한다. 즉 업데이트된 데이터나 갱신된 정보를 resolve하지 않는다. 
+
+```
+ Movie.updateOne({title: 'Usual Suspects'}, {score: 9.5}).then(m => console.log(m));
+
+>>{
+  acknowledged: true,
+  modifiedCount: 1,
+  upsertedId: null,
+  upsertedCount: 0,
+  matchedCount: 1
+}
+```
+
+업데이트된 데이터를 반환받고 싶으면 아래와 같은 메서드를 사용하면 되는데, 기본 값이 {new: false}인 options 매개변수 값을 { new: true }로 설정해주면 된다.
+
++ `Model.findByIdAndUpdate(id, update, options, callback)` <br>
++ `Model.findOneAndUpdate(query, update, options, callback)` <br>
+
+```
+Model.findOneAndUpdate({year: {$gte: 1995}}, {year: 1996},).then(d => console.log(d));
+
+>> {
+  _id: new ObjectId("62f65bb9a49d6d4a588c0ec8"),
+  title: 'Usual Suspects',
+  year: 1996,
+  score: 9.6,
+  rating: 'R',
+  __v: 0
+}
+```
+반환 값은 모두 `Query` 객체이다.
+
+# Document 삭제하기
++ `Model.deleteOne(query, options, callback)` <br>
++ `Model.deleteMany(query, options, callback)` <br>
+
+위 메서드들도 update와 마찬가지로 처리 결과만 반환한다.
+
+```
+Movie.deleteOne({title: 'Ailen'}).then(m => console.log(m));
+
+>>{ acknowledged: true, deletedCount: 1 }
+```
+
+따라서 삭제된 문서를 반환받기 위해선 다음 메서드들을 사용해줘야 한다.
+
++ `Model.findOneAndDelete(query, options, callback)` <br>
++ `Model.findByIdAndDelete(id, options, callback)` <br>
+```
+Movie.findOneAndDelete({title: 'Amadeus'}).then(m => console.log(m));
+
+>>{
+  _id: new ObjectId("62f78d4595676f589f677fe6"),
+  title: 'Amadeus',
+  year: 1984,
+  score: 9.5,
+  rating: 'R'
+}
+```
+
+반환 값은 모두 `Query` 객체이다.
+
+
+# 스키마 유효성 검사(validation)
+
+<!-- operation buffering? -->
+스키마를 정의할 때, 다음과 같이 내장 제약 조건들을 사용해 유효성 검사를 추가할 수 있다.
+```
+const productSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        maxlength: 20
+    },
+    price: {
+        type: Number,
+        required: true,
+        min: [0, 'Price must be positive ya dodo!']
+    },
+    onSale: {
+        type: Boolean,
+        default: false
+    },
+    categories: [String],
+    qty: {
+        online: {
+            type: Number,
+            default: 0
+        },
+        inStore: {
+            type: Number,
+            default: 0
+        }
+    },
+    size: {
+        type: String,
+        enum: ['S', 'M', 'L']
+    }
+});
+```
+
+모든 스키마 타입이 사용할 수 있는 공통 옵션이나, 스키마 타입 고유의 옵션으로 유효성 검사를 할 수 있다.
+
+### [유효성 검사(validation)]
+https://mongoosejs.com/docs/validation.html
+### [스키마 유형, 옵션]
+https://mongoosejs.com/docs/schematypes.html
+
+
 
 ### [몽구스 스키마 정의, 모델 생성]
 https://mongoosejs.com/docs/guide.html#models
