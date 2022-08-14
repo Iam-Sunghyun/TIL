@@ -1,23 +1,26 @@
-# Mongoose?
-MongoDB Shell없이 Node, Javascript를 MongoDB에 연결시켜주는 툴
-단순 연결뿐 아니라 유용한 도구, 메서드들도 포함하고 있어서 MongoDB를 더 쉽게 사용할 수 있게 한다.
-
-MongoDB 자체적으로 애플리케이션 언어마다 MongoDB를 연결할 수 있는 드라이버를 제공하긴 한다. 하지만 좀 더 다양한 기능을 제공하는 Mongoose를 사용하여 연결해 볼 것!
-
-# Mongoose 쓰는 이유?
+# Mongoose란?
 
 Mongoose 홈 페이지에는 다음과 같은 문구가 있다.
+
 ```
 node.js를 위한 우아한 mongodb 객체 모델링
 ```
 
-Mongoos는 MongoDB의 **ODM(Object Document Mapper)** 이다(관계형 데이터베이스에선 ORM(Object Ralation Mapper)이라고 한다.). 
+Node, Javascript를 사용해 MongoDB 데이터를 다룰 수 있게 연결시켜주는 툴로 Nodejs를 위한 MongoDB의 **ODM(Object Document Mapper)** 이다(관계형 데이터베이스에선 ORM(Object Ralation Mapper)이라고 한다.).
+
+### ODM, ORM?
 
 ODM 혹은 ORM은 데이터베이스와 프로그래밍 언어 간의 호환되지 않는 데이터를 변환하는 프로그래밍 기법, 툴을 말하는데 Mongoose는 MongoDB의 ODM으로서 데이터나 문서를 javascript 객체로 매핑해주는 역할을 한다.
 
-javascript로 매핑된 객체에 메서드를 추가하여 유효성 검사를 하거나 기본 스키마를 정의하여 데이터가 해당 스키마를 따르도록 만들거나 복잡한 쿼리를 하는 등 MongoDB에서 제공하는 기본 드라이버 이상의 기능들을 제공한다.
+## Mongoose 쓰는 이유?
 
-하지만 Mongoose로 할 수 있는 일은 Mongoose없이도 가능하긴 하다! 다만 직접 만들어야되는 다양한 기능들을 Mongoose가 제공해주는 것.
+Mongoose는 Nodejs와 MongoDB를 단순 연결하는 것뿐 아니라 유용한 도구, 메서드들도 포함하고 있어서 유용하다.
+
+MongoDB 자체적으로 애플리케이션 언어마다 MongoDB를 연결할 수 있는 드라이버를 제공하긴 한다. 하지만 좀 더 다양한 기능을 제공하는 Mongoose를 사용하여 연결해 볼 것!
+
+Mongoose를 사용하면 javascript로 매핑된 객체에 메서드를 사용, 추가하여 유효성 검사를 하거나 기본 스키마를 정의하여 데이터가 해당 스키마를 따르도록 만들거나 복잡한 쿼리를 하는 등 MongoDB에서 제공하는 기본 드라이버 이상의 기능들을 사용할 수 있다.
+
+그런데 Mongoose로 할 수 있는 일은 Mongoose없이도 가능하긴 하다! 다만 직접 만들어야되는 다양한 기능들을 Mongoose가 제공해주는 것.
 
 <!-- 일반적으로 솔루션을 선택할 때, 당신은 제공되는 기능과 "커뮤니티 활동" (다운로드, 공헌도, 버그 리포트, 문서 퀄리티 등) 모두를 고려해야 한다. 몽구스는 가장 유명한 ORM이며, MongoDB를 사용한다면 몽구스는 합리적인 선택이다. -->
 
@@ -25,17 +28,18 @@ javascript로 매핑된 객체에 메서드를 추가하여 유효성 검사를 
 
 <!-- Mongoose 쓰는이유? 아주 간단히 요약하면 MongoDB에서 제공하는 기본 드라이버 이상의 기능을 제공한다고 함 보충 필요-->
 
-
 # Mongoose를 MongoDB에 연결하기
 
 ## 1. Mongoose NPM으로 설치
 
 Mongoose는 NPM 패키지로 NPM으로 쉽게 설치할 수 있다.
+
 ```
 npm install mongoose --save
 ```
 
 ## 2. 프로젝트에 MongoDB 연결
+
 ```
 // Mongoose 불러오기
 const mongoose = require('mongoose');
@@ -52,18 +56,22 @@ async function main() {
 
 ## 3. 스키마 정의, 모델 생성 후 단일 문서 저장하기
 
-Mongoose로 MongoDB 데이터를 사용, 접근하려면 데이터를 정의하는 모델을 만들어야하는데 그러려면 우선 스키마를 정의해줘야 한다. 
+Mongoose로 MongoDB 데이터를 사용, 접근하려면 데이터를 정의하는 모델을 만들어야하는데 그러려면 우선 스키마를 정의해줘야 한다.
 
-여기서 모델(model)이란 몽구스의 도움으로 생성되는 자바스크립트 클래스로 MongoDB 컬렉션의 스키마(schema)를 토대로 만들어진 클래스(생성자)를 말하며 모델의 인스턴스가 곧 문서(document)가 된다.
+여기서 모델(model)이란 Mongoose의 도움으로 생성되는 자바스크립트 클래스로 MongoDB 컬렉션의 스키마(schema)를 토대로 만들어진 클래스(생성자)를 말하며 모델의 인스턴스가 곧 문서(document)가 된다.
 
 ### 스키마(schema)?
+
 관계형 데이터베이스에서의 스키마는 데이터베이스 구조와 제약조건에 대한 명세, 즉 구체적인 설계도 정도로 보면 된다.
 
 Mongoose에서 스키마란 MongoDB에 저장되는 document의 Data 구조, 즉 필드 타입에 관한 정보를 JSON 형태로 정의한 것으로 RDBMS의 테이블 정의와 유사한 개념이다.
 
-<!-- rdb에서 테이블 정의와 스키마는 다른건가? 같은건가? -->
+각 스키마는 MongoDB 컬렉션에 매핑되고 해당 컬렉션 내 문서의 구조를 정의한다.
+
 ### 단일 문서 저장 예시 코드
+
 ```
+// 스키마 정의
 const movieSchema = new mongoose.Schema({
   title: String,
   year: Number,
@@ -71,11 +79,11 @@ const movieSchema = new mongoose.Schema({
   rating: String
 });
 
-// 모델명과 스키마 전달하여 모델 생성. 여기서 모델명은 반드시 대문자 시작, 단수형이어야 한다. 
-// 그러면 Mongoose는 자동으로 소문자 복수형의 값을 컬렉션 이름으로 사용한다(아래의 경우'movies').
+// 모델명과 스키마 전달하여 모델 생성. 여기서 모델명은 반드시 대문자 시작, 단수형이어야 한다.
+// 그러면 Mongoose는 자동으로 소문자 복수형의 문자열을 컬렉션 이름으로 사용한다(아래의 경우'movies').
 const Movie = mongoose.model('Movie', movieSchema);
 
-// Document 생성
+// Document 생성. movies 컬렉션의 문서가 됨.
 const usualSuspects = new Movie({ title: 'Usual Suspects', year: 1995, score: 9.5, rating: 'R' });
 
 // DB에 저장
@@ -84,11 +92,20 @@ usualSuspects.save();
 
 `document.save()`메서드는 비동기로 동작하며 `promise`객체를 반환한다.
 
+### [몽구스 스키마 정의, 모델 생성]
+
+https://mongoosejs.com/docs/guide.html#schemas
+
+### [몽구스 빠른 시작 가이드]
+
+https://mongoosejs.com/docs/index.html
+
 # Document 여러 개 삽입하기
 
-+ `Model.insertMany([document1, document2, ...], optioins, callback)`
+- `Model.insertMany([document1, document2, ...], optioins, callback)`
 
-위에서 본 단일 문서 저장과 달리 `Model.insertMany()`로 삽입 시 MongoDB에 바로 연결되어 `save()`없이 바로 저장된다(여러 개를 삽입하는 경우가 일반적이진 않다.). 
+위에서 본 단일 문서 저장과 달리 `Model.insertMany()`로 삽입 시 MongoDB에 바로 연결되어 `save()`없이 바로 저장된다(여러 개를 삽입하는 경우가 일반적이진 않다.).
+
 ```
 Model.insertMany([
   { title: 'Usual Suspects', year: 1995, score: 9.5, rating: 'R' },
@@ -99,26 +116,34 @@ Model.insertMany([
 
 `Model.insertMany()` 메서드는 `promise` 객체를 반환한다.
 
-
 # Document 찾기
 
-+ `Model.find(filter, projection, options, callback)` - 모든 문서 검색 <br>
-+ `Model.findOne(filter, projection, options, callback)` - 단일 문서 검색 <br>
-+ `Model.findById(id, projection, options, callback)` - ID로 검색(Express 작업 시 주로 사용) <br>
+- `Model.find(filter, projection, options, callback)` - 모든 문서 검색 <br>
+- `Model.findOne(filter, projection, options, callback)` - 단일 문서 검색 <br>
+- `Model.findById(id, projection, options, callback)` - ID로 검색(Express 작업 시 주로 사용) <br>
 
 위 메서드들은 `'Query'` 객체를 반환하는데 프로미스처럼 `then()`, `async`/`await` 기능을 지원한다(`'Query'`객체가 프로미스는 아님).
 
 프로미스 객체를 반환 받고 싶다면 `exec()`을 호출해주면 된다.
 
-
 ### [몽구스 Promises]
+
 https://mongoosejs.com/docs/promises.html
+
 ### [Query 객체]
+
 https://mongoosejs.com/docs/queries.html
 
-메서드 인수로는 반환 받을 값을 지정하는 `projection`을 전달할 수 있고, 추가 옵션이나 콜백 함수를 전달할 수 있도 있다(콜백 함수 첫 번째 인수는 에러정보, 두 번째는 document를 전달 받음). 
+메서드 인수로는 반환 받을 값을 지정하는 `projection`을 전달할 수 있고, 추가 옵션이나 콜백 함수를 전달할 수 있도 있다.
+
+**Mongoose에서 쿼리할 때 결과를 2가지 방법으로 처리할 수 있다.**
+
+첫 번째는 메서드에 콜백함수를 인수로 전달한 경우, 쿼리를 비동기적으로 수행한 후에 결과를 콜백함수에 전달한다(콜백함수의 첫 번째 인수는 에러정보, 두 번째 인수는 문서를 전달받는다.).
+
+두 번째는, `.then()`를 호출하여 프로미스처럼 후속처리를 해줄 수 있다.
 
 ```
+// 결과를 then() 메서드에 전달
 Movie.find({year: {$gte: 1995}}).then(res => console.log(res));
 
 // 결과를 콜백 함수의 인수로 전달
@@ -130,10 +155,10 @@ await MyModel.find({ name: /john/i }, 'name friends').exec();
 
 # Document 업데이트 하기
 
-+ `Model.updateOne(filter, update, options, callback)` - 단일 문서 업데이트 <br>
-+ `Model.updateMany(filter, update, options, callback)` - 여러 문서 업데이트 <br>
+- `Model.updateOne(filter, update, options, callback)` - 단일 문서 업데이트 <br>
+- `Model.updateMany(filter, update, options, callback)` - 여러 문서 업데이트 <br>
 
-위 메서드들은 다음과 같이 업데이트 처리 결과만 반환한다. 즉 업데이트된 데이터나 갱신된 정보를 resolve하지 않는다. 
+위 메서드들은 다음과 같이 업데이트 처리 결과만 반환한다. 즉 업데이트된 데이터나 갱신된 정보를 resolve하지 않는다.
 
 ```
  Movie.updateOne({title: 'Usual Suspects'}, {score: 9.5}).then(m => console.log(m));
@@ -149,11 +174,11 @@ await MyModel.find({ name: /john/i }, 'name friends').exec();
 
 업데이트된 데이터를 반환받고 싶으면 아래와 같은 메서드를 사용하면 되는데, 기본 값이 {new: false}인 options 매개변수 값을 { new: true }로 설정해주면 된다.
 
-+ `Model.findByIdAndUpdate(id, update, options, callback)` <br>
-+ `Model.findOneAndUpdate(query, update, options, callback)` <br>
+- `Model.findByIdAndUpdate(id, update, options, callback)` <br>
+- `Model.findOneAndUpdate(query, update, options, callback)` <br>
 
 ```
-Model.findOneAndUpdate({year: {$gte: 1995}}, {year: 1996},).then(d => console.log(d));
+Model.findOneAndUpdate({year: {$gte: 1995}}, {year: 1996}, {new: true}).then(d => console.log(d));
 
 >> {
   _id: new ObjectId("62f65bb9a49d6d4a588c0ec8"),
@@ -164,11 +189,13 @@ Model.findOneAndUpdate({year: {$gte: 1995}}, {year: 1996},).then(d => console.lo
   __v: 0
 }
 ```
+
 반환 값은 모두 `Query` 객체이다.
 
 # Document 삭제하기
-+ `Model.deleteOne(query, options, callback)` <br>
-+ `Model.deleteMany(query, options, callback)` <br>
+
+- `Model.deleteOne(query, options, callback)` <br>
+- `Model.deleteMany(query, options, callback)` <br>
 
 위 메서드들도 update와 마찬가지로 처리 결과만 반환한다.
 
@@ -180,8 +207,9 @@ Movie.deleteOne({title: 'Ailen'}).then(m => console.log(m));
 
 따라서 삭제된 문서를 반환받기 위해선 다음 메서드들을 사용해줘야 한다.
 
-+ `Model.findOneAndDelete(query, options, callback)` <br>
-+ `Model.findByIdAndDelete(id, options, callback)` <br>
+- `Model.findOneAndDelete(query, options, callback)` <br>
+- `Model.findByIdAndDelete(id, options, callback)` <br>
+
 ```
 Movie.findOneAndDelete({title: 'Amadeus'}).then(m => console.log(m));
 
@@ -196,11 +224,12 @@ Movie.findOneAndDelete({title: 'Amadeus'}).then(m => console.log(m));
 
 반환 값은 모두 `Query` 객체이다.
 
-
 # 스키마 유효성 검사(validation)
 
 <!-- operation buffering? -->
+
 스키마를 정의할 때, 다음과 같이 내장 제약 조건들을 사용해 유효성 검사를 추가할 수 있다.
+
 ```
 const productSchema = new mongoose.Schema({
     name: {
@@ -209,15 +238,15 @@ const productSchema = new mongoose.Schema({
         maxlength: 20
     },
     price: {
-        type: Number,
+        type: Number,   // 숫자, 숫자로 형변환 가능한 문자열 모두 가능.
         required: true,
-        min: [0, 'Price must be positive ya dodo!']
+        min: [0, 'Price must be positive ya dodo!'] // 사용자 정의 에러메시지 지정
     },
     onSale: {
         type: Boolean,
         default: false
     },
-    categories: [String],
+    categories: [String], // 숫자를 삽입해도 문자열로 형변환 후 저장됨.
     qty: {
         online: {
             type: Number,
@@ -230,42 +259,151 @@ const productSchema = new mongoose.Schema({
     },
     size: {
         type: String,
-        enum: ['S', 'M', 'L']
+        enum: ['S', 'M', 'L'] // String의 enum 옵션으로 유효한 값 지정
     }
 });
 ```
 
 모든 스키마 타입이 사용할 수 있는 공통 옵션이나, 스키마 타입 고유의 옵션으로 유효성 검사를 할 수 있다.
 
-### [유효성 검사(validation)]
-https://mongoosejs.com/docs/validation.html
-### [스키마 유형, 옵션]
+스키마에 정의되지 않은 필드를 삽입 시 무시된다!
+
+
+### [스키마 유형, 옵션(제약 조건)]
+
 https://mongoosejs.com/docs/schematypes.html
+<!-- 일부 값들은 자동으로 해당 타입으로 형변환하여 저장된다. -->
+
+## 업데이트 유효성 검사
+
+스키마 정의 시 지정한 유효성 검사는 업데이트 시 적용되지 않는다.
+
+예를 들어 `type: number`이며 최소 값이 0이상 옵션을 설정한 price필드의 경우도 음수 값을 업데이트하면 음수가 적용되어버린다.
+```
+const Product = mongoose.model('Product', productSchema);
+
+// 문제없이 적용 되어버린다.
+Product.updateOne({name: 'bike', price: -1})
+```
+
+문서 업데이트 시에도 유효성 검사를 적용시키려면 옵션 값으로 `{runValidators: true}` 을 설정해주면 된다.
+
+```
+Product.updateMany({}, {price: 0}, {runValidators: true});
+```
+
+## 유효성 검사 에러 메시지
+
+Document 형식이 스키마 제약 조건에 어긋나는 경우 다음과 같이 사용자 정의 에러 메시지를 출력하게 할 수 있다(자주 쓰는 방법은 아닌듯).
+
+- 배열 문법 - `min: [6, 'Must be at least 6, got {VALUE}']`
+- 객체 문법 - `enum: { values: ['Coffee', 'Tea'], message: '{VALUE} is not supported' }`
+
+### [유효성 검사(validation)]
+
+https://mongoosejs.com/docs/validation.html
+
+# 사용자 정의 메서드를 스키마에 추가하기
+
+## 인스턴스 메서드 추가(자주 사용)
+
+인스턴스 메서드는 스키마의 `methods` 프로퍼티에 추가되어 `Model` 프로토타입에 컴파일되는 함수로, 개별 문서(document)들이 사용할 수 있는 메서드이다.
+
+주의할 것은 화살표 함수로 정의하지 말 것. 화살표 함수는 this 바인딩이 없으므로 인스턴스 메서드를 호출한 문서 필드에 접근할 수 없다.
+
+```
+// 반드시 모델 생성 이전에 추가해줘야 됨.
+productSchema.methods.greet = function () {
+    console.log(`this is ${this.name}`);
+}
+
+productSchema.methods.toggleOnSale = function () {
+    this.onSale = !this.onSale;
+    return this.save();
+};
+
+productSchema.methods.addCategory = function (newCat) {
+    this.categories.push(newCat);
+    return this.save();
+};
+
+const Product = mongoose.model('Product', productSchema);
+
+const a = new Product({ name: 'bike' });
+a.speak(); // "this is bike"
+```
+
+이런 식으로 사용자 정의 메서드를 추가하여 사용자 인증(authentication)같은 추가 유효성 검사를 구현하기도 한다.
+
+## 정적 메서드 추가
+
+개별 인스턴스(문서)가 아닌 모델 자체에 바인딩되는 메서드.
+
+주로 모델이 적용되는 컬렉션의 문서를 효율적으로 생성, 찾기, 업데이트, 삭제하는 작업을 정의한다.
+
+```
+// 정적 메서드
+// Product 모델의 문서들(products 컬렉션의 문서들) 모두 업데이트
+productSchema.statics.fireSale = function () {
+    return this.updateMany({}, { onSale: true, price: 0 });
+};
+
+// Product.fireSale().then(res => console.log(res))
+```
+
+### [스키마 인스턴스 메서드, 정적 메서드]
+
+https://mongoosejs.com/docs/guide.html#methods
+
+# 가상 Mongoose(Mongoose Virtuals)
+
+DB 스키마에 없는 속성을 가상으로 추가해 사용할 수 있게 해준다.
+
+```
+const personSchema = new mongoose.Schema({
+    first: String,
+    last: String
+});
+
+// 가상 getter, setter 함수 생성
+personSchema.virtual('fullName').
+  get(function() {
+    return this.first + ' ' + this.last;
+    }).
+  set(function(v) {
+    this.first = v.substr(0, v.indexOf(' ')); // 참고로 String.prototype.substr() 메서드는 사용 권장하지 않는다.
+    this.last = v.substr(v.indexOf(' ') + 1);
+  });
+
+// document 생성
+const Person = mongoose.model('Person', personSchema);
+
+// 가상 getter 테스트
+const tammy = new Person('Person', {first: 'Tammy', last: 'Chow'})
+console.log(tammy.fullName);
+
+>> Tammy Chow
+
+// 가상 setter 테스트
+tammy.fullName = `Tammy Xiao`;
+console.log(tammy.fullName);
+
+>> Tammy xiao
+```
+
+`tammy` 문서 스키마에는 없는 가상의 getter, setter 함수를 만들었고 호출해보았다. 
 
 
+```
+tammy.save();
+```
+위와 같이 문서를 저장한 경우 모델 생성 시 전달한 모델명의 복수형으로 컬렉션을 생성한다.
 
-### [몽구스 스키마 정의, 모델 생성]
-https://mongoosejs.com/docs/guide.html#models
+https://mongoosejs.com/docs/guide.html#virtuals
+<!--
 
-### [몽구스 빠른 시작 가이드]
-https://mongoosejs.com/docs/index.html
-
-
-<!-- ### Document 찾기
-
-
-모델 정의
-
-몽구스 CRUD
-
-스키마 제약조건
-
-
-
------
-모델 인스턴스 & 정적 메서드
 
 몽구스 미들웨어
 
 
-몽구스 버츄얼(virtuals)? -->
+ -->
