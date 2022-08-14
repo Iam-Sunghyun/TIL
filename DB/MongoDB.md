@@ -44,6 +44,10 @@ https://ko.wikipedia.org/wiki/NoSQL
 
 JSON과 유사한 BSON 형식의 NoSQL 문서 지향 데이터베이스이다(BSON은 JSON 형식의 문서를 바이너리 형태로 인코딩한 형태이다.).
 
+## mongoDB 구조
+
+<img src="https://github.com/Iam-Sunghyun/TIL/blob/main/DB/img/MongoDB.webp" width="450" height="400"> 
+
 <!-- ## BSON과 JSON 비교
 
 JSON은 텍스트 기반 형식이므로 텍스트 파싱이 느릴 수 있다.
