@@ -357,7 +357,9 @@ https://mongoosejs.com/docs/guide.html#methods
 
 # 가상 Mongoose(Mongoose Virtuals)
 
-DB 스키마에 없는 속성을 가상으로 추가해 사용할 수 있게 해준다.
+DB 스키마에 없는 가상의 속성을 추가해 사용할 수 있게 해준다.
+
+getter 함수로 필드 형식을 지정하거나, 여러 필드를 결합하는데 주로 사용하고, setter 함수는 단일 값을 입력받아 분해하여 여러 필드에 저장할 때 유용하게 사용된다.
 
 ```
 const personSchema = new mongoose.Schema({
@@ -397,13 +399,17 @@ console.log(tammy.fullName);
 ```
 tammy.save();
 ```
-위와 같이 문서를 저장한 경우 모델 생성 시 전달한 모델명의 복수형으로 컬렉션을 생성한다.
+위와 같이 문서를 저장한 경우 모델 생성 시 전달한 모델명의 복수형으로 컬렉션을 생성한다(위의 경우 Person -> people).
+
+### [Mongoose Virtuals]
 
 https://mongoosejs.com/docs/guide.html#virtuals
-<!--
 
 
-몽구스 미들웨어
+
+# Mongoose 미들웨어
+
+https://mongoosejs.com/docs/middleware.html
 
 
- -->
+

@@ -39,7 +39,12 @@ https://usefultoknow.tistory.com/entry/%ED%85%9C%ED%94%8C%EB%A6%BF-%EC%97%94%EC%
 
 EJS는 인기있는 express 템플릿 엔진 중 하나로 자바스크립트 구문을 사용하기 때문에 사용하기 쉽다.
 
-express가 템플릿 파일을 렌더링하려면 다음과 같은 설정이 필요하다.
+우선 NPM으로 EJS를 설치해준다.
+```
+npm install ejs
+```
+
+express가 템플릿 파일을 렌더링하려면 `app.set()` 메서드로 다음과 같은 설정이 필요하다.
 
 `views` - 템플릿이 있는 루트 디렉토리. 기본 값은 ./views이다.<br>
 `view engine` - 사용할 템플릿 엔진.<br>
