@@ -14,7 +14,7 @@ ODM 혹은 ORM은 데이터베이스와 프로그래밍 언어 간의 호환되�
 
 ## Mongoose 쓰는 이유?
 
-Mongoose는 Nodejs와 MongoDB를 단순 연결하는 것뿐 아니라 유용한 도구, 메서드들도 포함하고 있어서 유용하다.
+Mongoose는 Nodejs와 MongoDB를 단순 연결하는 것뿐 아니라 유용한 기능, 메서드들도 포함하고 있어서 유용하다.
 
 MongoDB 자체적으로 애플리케이션 언어마다 MongoDB를 연결할 수 있는 드라이버를 제공하긴 한다. 하지만 좀 더 다양한 기능을 제공하는 Mongoose를 사용하여 연결해 볼 것!
 
@@ -90,7 +90,7 @@ const usualSuspects = new Movie({ title: 'Usual Suspects', year: 1995, score: 9.
 usualSuspects.save();
 ```
 
-`document.save()`메서드는 비동기로 동작하며 `promise`객체를 반환한다.
+`Document.prototype.save()`메서드는 비동기로 동작하며 `promise` 객체를 반환한다(저장 시 유효성 검사도 수행함).
 
 ### [몽구스 스키마 정의, 모델 생성]
 
@@ -105,6 +105,8 @@ https://mongoosejs.com/docs/index.html
 - `Model.insertMany([document1, document2, ...], optioins, callback)`
 
 위에서 본 단일 문서 저장과 달리 `Model.insertMany()`로 삽입 시 MongoDB에 바로 연결되어 `save()`없이 바로 저장된다(여러 개를 삽입하는 경우가 일반적이진 않다.).
+
+만약 삽입할 요소 중 하나라도 유효성 검사를 통과하지 못한다면 전부 삽입되지 않는다.
 
 ```
 Model.insertMany([
@@ -138,7 +140,7 @@ https://mongoosejs.com/docs/queries.html
 
 **Mongoose에서 쿼리할 때 결과를 2가지 방법으로 처리할 수 있다.**
 
-첫 번째는 메서드에 콜백함수를 인수로 전달한 경우, 쿼리를 비동기적으로 수행한 후에 결과를 콜백함수에 전달한다(콜백함수의 첫 번째 인수는 에러정보, 두 번째 인수는 문서를 전달받는다.).
+첫 번째는 메서드에 콜백함수를 인수로 전달한 경우, 쿼리를 **비동기적**으로 수행한 후에 결과를 콜백함수에 전달한다(콜백함수의 첫 번째 인수는 에러정보, 두 번째 인수는 문서를 전달받는다.).
 
 두 번째는, `.then()`를 호출하여 프로미스처럼 후속처리를 해줄 수 있다.
 
@@ -172,7 +174,7 @@ await MyModel.find({ name: /john/i }, 'name friends').exec();
 }
 ```
 
-업데이트된 데이터를 반환받고 싶으면 아래와 같은 메서드를 사용하면 되는데, 기본 값이 {new: false}인 options 매개변수 값을 { new: true }로 설정해주면 된다.
+업데이트된 데이터를 반환받고 싶으면 아래와 같은 메서드를 사용하면 되는데, 기본 값이 {new: false}인 options 매개변수 값을 { new: true }로 설정해주면 된다(기본 값으로 둘 경우 업데이트 이전 문서, 즉 쿼리로 검색된 문서가 반환됨).
 
 - `Model.findByIdAndUpdate(id, update, options, callback)` <br>
 - `Model.findOneAndUpdate(query, update, options, callback)` <br>
@@ -330,7 +332,7 @@ productSchema.methods.addCategory = function (newCat) {
 const Product = mongoose.model('Product', productSchema);
 
 const a = new Product({ name: 'bike' });
-a.speak(); // "this is bike"
+a.greet(); // "this is bike"
 ```
 
 이런 식으로 사용자 정의 메서드를 추가하여 사용자 인증(authentication)같은 추가 유효성 검사를 구현하기도 한다.
@@ -357,17 +359,32 @@ https://mongoosejs.com/docs/guide.html#methods
 
 # 가상 Mongoose(Mongoose Virtuals)
 
-DB 스키마에 없는 가상의 속성을 추가해 사용할 수 있게 해준다.
+DB 스키마에 없는 가상의 프로퍼티를 문서에 추가해 사용할 수 있게 해준다.
 
 getter 함수로 필드 형식을 지정하거나, 여러 필드를 결합하는데 주로 사용하고, setter 함수는 단일 값을 입력받아 분해하여 여러 필드에 저장할 때 유용하게 사용된다.
 
 ```
-const personSchema = new mongoose.Schema({
+// 스키마에 직접 추가
+const personSchema = new Schema({
+  name: {
     first: String,
     last: String
+  }
+},{
+  virtuals:{
+    fullName:{
+      get() {
+        return this.name.first + ' ' + this.name.last;
+      },
+      set(v) {
+        this.name.first = v.substr(0, v.indexOf(' '));
+        this.name.last = v.substr(v.indexOf(' ') + 1);
+      }
+    }
+  }
 });
 
-// 가상 getter, setter 함수 생성
+// virtual 메서드로 추가
 personSchema.virtual('fullName').
   get(function() {
     return this.first + ' ' + this.last;
@@ -407,7 +424,15 @@ https://mongoosejs.com/docs/guide.html#virtuals
 
 
 
-# Mongoose 미들웨어
+# Mongoose 미들웨어(중요하지만 간단하게)
+
+<!-- Mongoose 미들웨어란
+
+
+특정 메서드 호출 전, 후에 실행되는 것들
+.pre()
+
+.post() -->
 
 https://mongoosejs.com/docs/middleware.html
 
