@@ -14,27 +14,35 @@ http://expressjs.com/
 ### [Express.js vs Node.js]
 https://procoders.tech/blog/express-js-vs-node-js/
 
-# 미들웨어 함수(middel ware function)
 
-미들웨어 함수란 쉽게말해 요청에 대한 응답을 위해 중간에서 처리를 수행하는 함수로, 요청에 대한 핸들러 함수라고 보면 된다. 
+## Express 장점
+
+https://jsqna.com/ejs-1-why-express/
+
+
+# 미들웨어 함수(middelware function)
+
+미들웨어 함수란 요청-응답 사이클 안에서 요청(req)/응답(res) 객체와, next() 메서드를 인수로 갖는 함수를 말한다. 쉽게 말해 요청/응답 중간에서 처리되는 함수로, 요청에 대한 핸들러 함수라고 보면 된다. 
 
 미들웨어 함수는 요청 객체(req), 응답 객체(res), 다음 미들웨어 함수 호출을 위한 next() 함수를 인수로 전달 받는다.
 
-참고로 미들웨어의 실행 순서는 먼저 로드된 미들웨어 함수가 먼저 실행된다.
+참고로 **미들웨어의 실행 순서는 먼저 로드된 미들웨어 함수가 먼저 실행된다.**
 
 아래 예시에서 2번째 부터 전달되는 콜백함수가 미들웨어 함수이다.
+
 ```
 const express = require('express')
 const app = express()
 
-// '/' 경로에 대한 GET 요청 라우팅
-app.get('/', (req, res, next) => {
-  req.requestTime = Date.now();
-  next();   // 현재 미들웨어 함수가 요청-응답 주기를 종료하지 않으면 next()다음 미들웨어 함수에 제어를 전달하기 위해 호출해야 한다. 그렇지 않으면 요청이 중단된다. (흠..)
-})
+// 요청 시간 기록 미들웨어 함수
+const requestTime = function (req, res, next) {
+  req.requestTime = Date.now()
+  next() // 현재 미들웨어 함수가 요청-응답 주기를 종료하지 않으면 next()다음 미들웨어 함수에 제어를 전달하기 위해 호출해야 한다. 그렇지 않으면 요청이 중단된다. (흠..)
+}
 
-app.use(requestTime)
+app.use(requestTime) // 모든 요청에 대해 미들웨어 함수 실행
 
+// 루트 경로에 대한 GET 요청 라우팅
 app.get('/', (req, res) => {
   let responseText = 'Hello World!<br>'
   responseText += `<small>Requested at: ${req.requestTime}</small>`
@@ -113,7 +121,7 @@ app.listen('3000', () => {
   console.log(`Exapmle app listening on port ${port}`);
 });
 ```
-보통 `app.use()`는 주로 앱에 미들웨어를 적용하기 위해 사용하고(요청/응답 처리를 위한게 아닌) `app.all()`은 라우팅 용도로 주로 사용된다고 함.
+보통 `app.use()`는 주로 앱에 미들웨어를 적용하기 위해 사용하고(요청/응답 처리를 위한게 아닌) `app.all()`은 라우팅 용도로 응답을 위해 주로 사용된다고 함.
 
 아래 링크 참조!
 
@@ -194,10 +202,3 @@ https://developer.mozilla.org/ko/docs/Learn/Server-side/Express_Nodejs
 
 https://poiemaweb.com/express-basics
 
-### 유용한 도구 nodemon
-
-서버를 재시작하지 않아도 변경사항을 감지하여 자동으로 재시작 해주는 프로그램.
-
-### [nodemon] <br>
-
-https://www.npmjs.com/package/nodemon
