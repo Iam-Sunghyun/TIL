@@ -22,63 +22,32 @@ https://jsqna.com/ejs-1-why-express/
 
 # 미들웨어 함수(middelware function)
 
-미들웨어 함수란 요청-응답 사이클 안에서 요청(req)/응답(res) 객체와, next() 메서드를 인수로 갖는 함수를 말한다. 쉽게 말해 요청/응답 중간에서 처리되는 함수로, 요청에 대한 핸들러 함수라고 보면 된다. 
+미들웨어 함수란 요청-응답 사이클 안에서 요청(`req`)/응답(`res`) 객체와, `next()` 메서드를 인수로 갖는 함수를 말한다. 쉽게 말해 요청/응답 중간에서 처리되는 함수로, 요청에 대한 핸들러 함수라고 보면 된다. 
 
-미들웨어 함수는 요청 객체(req), 응답 객체(res), 다음 미들웨어 함수 호출을 위한 next() 함수를 인수로 전달 받는다.
+미들웨어 함수는 요청 객체(`req`), 응답 객체(`res`), 다음 미들웨어 함수 호출을 위한 `next()` 함수를 인수로 전달 받는다.
 
-참고로 **미들웨어의 실행 순서는 먼저 로드된 미들웨어 함수가 먼저 실행된다.**
-
-아래 예시에서 2번째 부터 전달되는 콜백함수가 미들웨어 함수이다.
-
+### 예시
 ```
 const express = require('express')
 const app = express()
 
-// 요청 시간 기록 미들웨어 함수
-const requestTime = function (req, res, next) {
-  req.requestTime = Date.now()
-  next() // 현재 미들웨어 함수가 요청-응답 주기를 종료하지 않으면 next()다음 미들웨어 함수에 제어를 전달하기 위해 호출해야 한다. 그렇지 않으면 요청이 중단된다. (흠..)
-}
-
-app.use(requestTime) // 모든 요청에 대해 미들웨어 함수 실행
-
-// 루트 경로에 대한 GET 요청 라우팅
-app.get('/', (req, res) => {
-  let responseText = 'Hello World!<br>'
-  responseText += `<small>Requested at: ${req.requestTime}</small>`
-  res.send(responseText)
+// 
+app.use((req, res, next) => {
+  console.log('Time:', Date.now())
+  next()
 })
 
-// 포트 3000에 연결 및 요청 수신 대기
-app.listen(3000)
+app.use('/user/:id', (req, res, next) => {
+  console.log('Request Type:', req.method)
+  next()
+})
 ```
-미들웨어 함수의 next()를 사용하면 후속 핸들러 함수로 제어를 전달할 수 있다.
 
-```
-app.all('/', (req, res, next) => {
-  console.log('[All]');
-  next(); // 후속 핸들러에게 컨트롤을 패스한다.
-});
+추가적인 것은 `Express 미들웨어.md` 파일 참조.
 
-app.get('/', (req, res, next) => {
-  console.log('[GET 1] next 함수에 의해 후속 핸들러에게 response가 전달된다.');
-  next();
-}, (req, res, next) => {
-  console.log('[GET 2] next 함수에 의해 후속 핸들러에게 response가 전달된다.');
-  next();
-}, (req, res) => res.send('Hello from GET /'));
-
-app.post('/', (req, res, next) => {
-  console.log('[POST 1] next 함수에 의해 후속 핸들러에게 response가 전달된다.');
-  next();
-}, (req, res, next) => {
-  console.log('[POST 2] next 함수에 의해 후속 핸들러에게 response가 전달된다.');
-  next();
-}, (req, res) => res.send('Hello from POST /'));
-```
 ## 요청(response), 응답(request) 객체
 
-미들웨어 함수의 인수로 전달되는 요청, 응답 정보를 저장하는 객체로 일반적으로 res, req로 명명하여 사용한다.
+미들웨어 함수의 인수로 전달되는 요청, 응답 정보를 저장하는 객체로 일반적으로 `res`, `req`로 명명하여 사용한다.
 
 `req` - 요청 객체. http 요청 텍스트를 파싱해 자바스크립트 객체로 변환 후 전달된다.<br>
 
@@ -102,7 +71,7 @@ https://psyhm.tistory.com/8
 
 즉, `app.use('/abcd', ...)`에서 경로는 `"/abcd"`, `"/abcd/images"`, `"/abcd/images/news/.."` 등등과 같이 하위의 경로를 모두 포함한다. 
 
-따라서 세세하게 URI을 식별하여 적용하기 위해선 `app.all()`을 사용해야 한다.
+따라서 세세하게 URI을 식별하여 적용하기 위해선 `app.all()`을 사용한다.
 
 ```
 // /abcd 하위 경로 요청 모두 포함
@@ -121,7 +90,7 @@ app.listen('3000', () => {
   console.log(`Exapmle app listening on port ${port}`);
 });
 ```
-보통 `app.use()`는 주로 앱에 미들웨어를 적용하기 위해 사용하고(요청/응답 처리를 위한게 아닌) `app.all()`은 라우팅 용도로 응답을 위해 주로 사용된다고 함.
+**보통 `app.use()`는 주로 앱에 미들웨어를 적용하기 위해 사용하고(요청/응답 처리를 위한게 아닌) `app.all()`은 라우팅 용도로 응답을 위해 주로 사용된다고 함.**
 
 아래 링크 참조!
 
@@ -145,7 +114,7 @@ app.post('/dogs', (req, res) => {
   res.send(`<h1>Here is Response to post /dogs</h1>`);
 });
 
-// 모든 경로에 get 요청에 대한 응답. 주의할 것은 코드 맨 앞에 위치할 경우 다른 get 요청 라우트는 무시된다.
+// 모든 경로에 get 요청에 대한 응답. 주의할 것은 코드 맨 앞에 위치할 경우 다른 get 요청 라우트는 무시된다(next()없이 응답했을 경우).
 app.get('*', (req, res) => {
   res.send(`<h1>Here is Response</h1>`);
 });
