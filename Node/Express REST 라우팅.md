@@ -6,13 +6,13 @@
 - 전송되는 데이터가 URL에 드러나기 때문에 보안 문제가 생길 수 있다.
 - GET 요청으로 서버는 요청을 수신할 수만 있고, 상태를 변경할 수 없다. 주로 읽기, 검색같은 상태 변경 없이 데이터 요청하는 경우 사용.
 - 요청을 북마크에 저장할 수 있고 URL로 전달하기 때문에 데이터 길이에 제한이 있다.
-<!-- - (2048자 인듯). -->
+<!-- - (2048자). -->
 - 요청 내용이 브라우저 히스토리에 저장된다.
 - 요청 내용이 브라우저 캐시에 저장된다.
 
 ## POST
 
-- POST 요청 시 데이터를 HTTP body에 저장해 전달하기 때문에 요청시 전송하는 데이터 크기나 유형에 좀 더 유연하다(보통  HTML 폼을 통해 서버에 전송한다).
+- POST 요청 시 데이터를 HTTP body에 저장해 전달하기 때문에 요청시 전송하는 데이터 크기나 유형에 좀 더 유연하다(보통 HTML 폼을 통해 서버에 전송한다).
 - 또한 데이터가 URL에 노출되지 않기 때문에 GET보다 보안에 유리하다.
 <!-- 회원가입, 로그인, 댓글 등 개인정보 필요한 경우 사용하는 듯). -->
 - 서버에 리소스/데이터를 생성하거나 업데이트하는데 사용한다(주로 Create).
@@ -27,7 +27,6 @@
 ### [PUT, PATCH 차이]
 https://www.geeksforgeeks.org/difference-between-put-and-patch-request/
 <!-- POST는 -->
-<BR>
 
 ### [GET POST 차이]
 
@@ -37,7 +36,7 @@ https://velog.io/@songyouhyun/Get%EA%B3%BC-Post%EC%9D%98-%EC%B0%A8%EC%9D%B4%EB%A
 
 ### [http 요청 메서드]
 
-http://www.ktword.co.kr/test/view/view.php?no=3791
+http://www.ktword.co.kr/test/view/view.php?no=3791 <BR>
 https://developer.mozilla.org/ko/docs/Web/HTTP/Methods
 
 # POST 요청 다루기
@@ -46,9 +45,8 @@ https://developer.mozilla.org/ko/docs/Web/HTTP/Methods
 
 요청 데이터가 Body에 담겨 오는 메서드(POST, PUT...)들은 `req.body` 프로퍼티에 요청 데이터를 담을 수 있다. 
 
-`req.body` 기본 값은 `undefined`이다. 아래와 같이 express 내장 미들웨어로 요청 데이터 파싱을 해줘야 HTTP 요청 메시지 body의 데이터가 `req.body`에 채워져서 사용할 수 있게 된다.
+`req.body` 기본 값은 `undefined`이다. 아래와 같이 express 내장 미들웨어로 요청 데이터 파싱 설정을 해줘야 HTTP 요청 메시지 body의 데이터가 `req.body`에 채워져서 사용할 수 있게 된다.
 
-<!-- 아니면 여러가지 형식으로 request.body를 전송할 수 있고??, -->
 
 ```
 // app.use() -> 모든 요청에 대해 미들웨어 함수 실행
@@ -136,11 +134,11 @@ https://gmlwjd9405.github.io/2018/09/21/rest-and-restful.html
 
 POST로 데이터를 추가한 후 `res.send()`로 응답을 하는 경우 응답 페이지가 새롭게 출력돼도 URL은 그대로 머물게 된다. 이 상태에서 새로고침을 하면, '양식 다시 제출 확인' 팝업창이 뜨고 확인을 누를 시 동일한 데이터로 또 다시 POST 요청이 발생하게 된다. 
 
-이런 경우 불필요하게 같은 데이터가 계속 추가될 수 있으므로 다른 페이지로 리디렉션이 필요하다.
+이런 경우 불필요하게 같은 데이터가 계속 추가될 수 있으므로 다른 페이지로 리디렉션이 필요하다(DELETE, UPDATE도 마찬가지).
 
 `res.redirect(status, path)`을 사용해 지정한 URL로 상태코드와 함께 리디렉션한다. 즉 해당 URL로 GET 요청을 전송한다.
-리디렉션의 경로는 호스트 이름의 루트를 기준으로 설정할 수 있다. 
 
+리디렉션의 경로는 호스트 이름의 루트를 기준으로 설정할 수 있다. 
 
 ```
 // 댓글 작성 라우트

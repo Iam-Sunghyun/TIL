@@ -40,7 +40,7 @@ https://ko.wikipedia.org/wiki/NoSQL
 
 
 
-# MongoDB란
+# MongoDB란?
 
 JSON과 유사한 BSON 형식의 NoSQL 문서 지향 데이터베이스이다(BSON은 JSON 형식의 문서를 바이너리 형태로 인코딩한 형태이다.).
 
@@ -48,28 +48,20 @@ JSON과 유사한 BSON 형식의 NoSQL 문서 지향 데이터베이스이다(BS
 
 <img src="https://github.com/Iam-Sunghyun/TIL/blob/main/DB/img/MongoDB.webp" width="450" height="400"> 
 
-<!-- ## BSON과 JSON 비교
-
-JSON은 텍스트 기반 형식이므로 텍스트 파싱이 느릴 수 있다.
-
-bson은 내부적으로 binary 형태이므로 파싱이 더 빠르다
-
-bson이 더 많은 자료형을 지원한다.
-
- -->
+<!-- 아래 비교 자료 참조 -->
 
 ### [JSON BSON 비교]
-https://www.mongodb.com/json-and-bson
-https://www.mongodb.com/basics/bson
-https://www.educba.com/json-vs-bson/
+https://www.mongodb.com/json-and-bson <br>
+https://www.mongodb.com/basics/bson <br>
+https://www.educba.com/json-vs-bson/ <br>
 
 ### [BSON 공식 문서]
-https://bsonspec.org/
+https://bsonspec.org/ <br>
 
 ### [MongoDB란?]
-https://poiemaweb.com/mongdb-basics
-https://www.mongodb.com/docs/manual/introduction/
-https://ko.wikipedia.org/wiki/%EB%AA%BD%EA%B3%A0DB
+https://poiemaweb.com/mongdb-basics <br>
+https://www.mongodb.com/docs/manual/introduction/ <br>
+https://ko.wikipedia.org/wiki/%EB%AA%BD%EA%B3%A0DB <br>
 
 
 # 왜 MongoDB 인가?
@@ -228,7 +220,8 @@ db.dogs.find({ breed:"corgi" }, { age: false })
 
 <!-- 커서? -->
 
-### [db.collection.find(query, projection) 매개변수 사용법] <br>
+### [db.collection.find(query, projection) 매개변수 사용법] 
+
 **query 매개변수** https://www.mongodb.com/docs/mongodb-shell/crud/read/  <br>
 **projection 매개변수** https://www.mongodb.com/docs/manual/reference/method/db.collection.find/#mongodb-method-db.collection.find
 
@@ -302,8 +295,10 @@ db.inventory.find( { size: { h: 14, w: 21, uom: "cm" } } )
 // inventory 컬렉션 문서 중 size 필드 중첩문서에 uom 필드 값이 "in"인 문서를 검색
 db.inventory.find( { "size.uom": "in" } )
 
->> { item: "notebook", qty: 50, size: { h: 8.5, w: 11, uom: "in" }, status: "A" },
+>> [
+   { item: "notebook", qty: 50, size: { h: 8.5, w: 11, uom: "in" }, status: "A" },
    { item: "paper", qty: 100, size: { h: 8.5, w: 11, uom: "in" }, status: "D" }
+   ]
 ```
 
 
@@ -318,10 +313,10 @@ db.inventory.find( { "size.uom": "in" } )
 `$ne` - 지정된 값과 같지 않은 값 선택. <br>
 `$nin` - 배열에 요소 값과 일치하지 않는 값 선택.
 ```
-// cats 컬렉션 문서 중 age필드 값이 5 이하인 문서
+// cats 컬렉션 문서 중 age필드 값이 5 미만인 문서
 db.cats.find({ age: { $lt: 5 } })
 
-// cats 컬렉션 문서 중 age필드 값이 5 이상인 문서
+// cats 컬렉션 문서 중 age필드 값이 5 초과인 문서
 db.cats.find({ age: { $gt: 5 } })
 
 // inventory 컬렉션 문서 중 quantity필드 값이 5 혹은 15 인 문서

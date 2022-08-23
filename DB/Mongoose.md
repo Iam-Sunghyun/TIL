@@ -28,7 +28,7 @@ Mongoose를 사용하면 javascript로 매핑된 객체에 메서드를 사용, 
 
 <!-- Mongoose 쓰는이유? 아주 간단히 요약하면 MongoDB에서 제공하는 기본 드라이버 이상의 기능을 제공한다고 함 보충 필요-->
 
-# Mongoose를 MongoDB에 연결하기
+# Mongoose를 MongoDB에 연결 후 document 생성하기
 
 ## 1. Mongoose NPM으로 설치
 
@@ -59,6 +59,8 @@ async function main() {
 Mongoose로 MongoDB 데이터를 사용, 접근하려면 데이터를 정의하는 모델을 만들어야하는데 그러려면 우선 스키마를 정의해줘야 한다.
 
 여기서 모델(model)이란 Mongoose의 도움으로 생성되는 자바스크립트 클래스로 MongoDB 컬렉션의 스키마(schema)를 토대로 만들어진 클래스(생성자)를 말하며 모델의 인스턴스가 곧 문서(document)가 된다.
+
+정리하면 모델은 특정 컬렉션의 문서를 생성하기 위한 클래스이고 모델 생성 시 전달한 문자열이 컬렉션 이름으로, 스키마가 문서 구조가 되는 것이다.
 
 ### 스키마(schema)?
 
@@ -100,7 +102,9 @@ https://mongoosejs.com/docs/guide.html#schemas
 
 https://mongoosejs.com/docs/index.html
 
-# Document 여러 개 삽입하기
+# Mongoose API
+
+## Document 여러 개 삽입하기
 
 - `Model.insertMany([document1, document2, ...], optioins, callback)`
 
@@ -118,7 +122,7 @@ Model.insertMany([
 
 `Model.insertMany()` 메서드는 `promise` 객체를 반환한다.
 
-# Document 찾기
+## Document 찾기
 
 - `Model.find(filter, projection, options, callback)` - 모든 문서 검색 <br>
 - `Model.findOne(filter, projection, options, callback)` - 단일 문서 검색 <br>
@@ -138,11 +142,11 @@ https://mongoosejs.com/docs/queries.html
 
 메서드 인수로는 반환 받을 값을 지정하는 `projection`을 전달할 수 있고, 추가 옵션이나 콜백 함수를 전달할 수 있도 있다.
 
-**Mongoose에서 쿼리할 때 결과를 2가지 방법으로 처리할 수 있다.**
+## Mongoose에서 쿼리 결과를 처리하는 방법 2가지
 
-첫 번째는 메서드에 콜백함수를 인수로 전달한 경우, 쿼리를 **비동기적**으로 수행한 후에 결과를 콜백함수에 전달한다(콜백함수의 첫 번째 인수는 에러정보, 두 번째 인수는 문서를 전달받는다.).
+첫 번째는 메서드에 콜백함수를 인수로 전달한 경우, **쿼리를 비동기적으로 수행**한 후에 결과를 콜백함수에 전달한다(콜백함수의 첫 번째 인수는 에러정보, 두 번째 인수는 문서를 전달받는다).
 
-두 번째는, `.then()`를 호출하여 프로미스처럼 후속처리를 해줄 수 있다.
+두 번째는, `.then()`를 호출하여 프로미스처럼 후속처리를 해줄 수 있다(쿼리 메서드들의 대부분은 `Query` 객체를 반환함).
 
 ```
 // 결과를 then() 메서드에 전달
@@ -155,7 +159,7 @@ MyModel.find({ name: 'john', age: { $gte: 18 }}, function (err, docs) {});
 await MyModel.find({ name: /john/i }, 'name friends').exec();
 ```
 
-# Document 업데이트 하기
+## Document 업데이트 하기
 
 - `Model.updateOne(filter, update, options, callback)` - 단일 문서 업데이트 <br>
 - `Model.updateMany(filter, update, options, callback)` - 여러 문서 업데이트 <br>
@@ -194,7 +198,7 @@ Model.findOneAndUpdate({year: {$gte: 1995}}, {year: 1996}, {new: true}).then(d =
 
 반환 값은 모두 `Query` 객체이다.
 
-# Document 삭제하기
+## Document 삭제하기
 
 - `Model.deleteOne(query, options, callback)` <br>
 - `Model.deleteMany(query, options, callback)` <br>
@@ -232,6 +236,8 @@ Movie.findOneAndDelete({title: 'Amadeus'}).then(m => console.log(m));
 
 스키마를 정의할 때, 다음과 같이 내장 제약 조건들을 사용해 유효성 검사를 추가할 수 있다.
 
+모든 스키마 `type`이 사용할 수 있는 공통 옵션이나, 스키마 타입 고유의 옵션을 사용해 유효성 검사를 할 수 있다.
+
 ```
 const productSchema = new mongoose.Schema({
     name: {
@@ -266,9 +272,7 @@ const productSchema = new mongoose.Schema({
 });
 ```
 
-모든 스키마 타입이 사용할 수 있는 공통 옵션이나, 스키마 타입 고유의 옵션으로 유효성 검사를 할 수 있다.
-
-스키마에 정의되지 않은 필드를 삽입 시 무시된다!
+스키마 제약에 걸리는 경우 `save()`로 저장 시 에러가 발생하고, 스키마에 정의되지 않은 필드를 삽입 시 그 값은 무시된다.
 
 
 ### [스키마 유형, 옵션(제약 조건)]
@@ -276,7 +280,7 @@ const productSchema = new mongoose.Schema({
 https://mongoosejs.com/docs/schematypes.html
 <!-- 일부 값들은 자동으로 해당 타입으로 형변환하여 저장된다. -->
 
-## 업데이트 유효성 검사
+## 업데이트 시 유효성 검사
 
 스키마 정의 시 지정한 유효성 검사는 업데이트 시 적용되지 않는다.
 
@@ -301,6 +305,8 @@ Document 형식이 스키마 제약 조건에 어긋나는 경우 다음과 같�
 - 배열 문법 - `min: [6, 'Must be at least 6, got {VALUE}']`
 - 객체 문법 - `enum: { values: ['Coffee', 'Tea'], message: '{VALUE} is not supported' }`
 
+Mongoose는 위 예시의 `{VALUE}`를 유효성 검사하는 값으로 바꿔 출력한다.
+
 ### [유효성 검사(validation)]
 
 https://mongoosejs.com/docs/validation.html
@@ -309,11 +315,16 @@ https://mongoosejs.com/docs/validation.html
 
 ## 인스턴스 메서드 추가(자주 사용)
 
-인스턴스 메서드는 스키마의 `methods` 프로퍼티에 추가되어 `Model` 프로토타입에 컴파일되는 함수로, 개별 문서(document)들이 사용할 수 있는 메서드이다.
+인스턴스 메서드는 스키마의 `methods` 프로퍼티에 추가되어 `Model` 프로토타입에 컴파일되는 함수로, **개별 문서(document)들이 사용할 수 있는 메서드이다.**
 
-주의할 것은 화살표 함수로 정의하지 말 것. 화살표 함수는 this 바인딩이 없으므로 인스턴스 메서드를 호출한 문서 필드에 접근할 수 없다.
+**주의할 것은 화살표 함수로 정의하지 말 것**. 화살표 함수는 this 바인딩이 없으므로 인스턴스 메서드를 호출한 문서 필드에 접근할 수 없다.
 
 ```
+// 스키마 정의
+const productSchema = new mongoose.Schema({
+  name: String
+});
+
 // 반드시 모델 생성 이전에 추가해줘야 됨.
 productSchema.methods.greet = function () {
     console.log(`this is ${this.name}`);
@@ -339,7 +350,7 @@ a.greet(); // "this is bike"
 
 ## 정적 메서드 추가
 
-개별 인스턴스(문서)가 아닌 모델 자체에 바인딩되는 메서드.
+개별 인스턴스(문서)가 아닌 **모델 자체에 바인딩되는 메서드**.
 
 주로 모델이 적용되는 컬렉션의 문서를 효율적으로 생성, 찾기, 업데이트, 삭제하는 작업을 정의한다.
 
@@ -424,10 +435,10 @@ https://mongoosejs.com/docs/guide.html#virtuals
 
 
 
-# Mongoose 미들웨어(중요하지만 간단하게)
+# Mongoose 미들웨어
 
 <!-- Mongoose 미들웨어란
-
+일단 스킵했음 
 
 특정 메서드 호출 전, 후에 실행되는 것들
 .pre()

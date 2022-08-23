@@ -22,9 +22,7 @@ https://jsqna.com/ejs-1-why-express/
 
 # 미들웨어 함수(middelware function)
 
-미들웨어 함수란 요청-응답 사이클 안에서 요청(`req`)/응답(`res`) 객체와, `next()` 메서드를 인수로 갖는 함수를 말한다. 쉽게 말해 요청/응답 중간에서 처리되는 함수로, 요청에 대한 핸들러 함수라고 보면 된다. 
-
-미들웨어 함수는 요청 객체(`req`), 응답 객체(`res`), 다음 미들웨어 함수 호출을 위한 `next()` 함수를 인수로 전달 받는다.
+미들웨어 함수란 요청-응답 사이클 안에서 요청(`req`)/응답(`res`) 객체와, `next()` 메서드에 접근 권한을 갖는 함수를 말한다. 
 
 ### 예시
 ```
@@ -170,4 +168,6 @@ https://developer.mozilla.org/ko/docs/Learn/Server-side/Express_Nodejs
 ### [poiemaweb Express-basics] <br>
 
 https://poiemaweb.com/express-basics
+
+
 
