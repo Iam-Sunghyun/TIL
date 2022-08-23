@@ -146,50 +146,6 @@ app.get('/random', (req, res) => {
   </ul>
 </body>
 ```
-
-# express에서 정적 파일 사용하기
-
-정적 파일이란 말 그대로 변하지 않는 파일로 미리 저장되어있는 이미지, 동영상, CSS, Javascript과 같은 것들이 대표적인 static 파일이다.
-
-express에 내장된 `express.static()` 미들웨어로 정적 파일을 사용할 수 있다.
-
-## express.static(root, [options])
-
-정적 파일이 있는 루트 디렉토리를 설정한다. 템플릿 내에서 `css`, `js`같은 파일을 연결할 때 기준 디렉토리가 된다.
-
-```
-// app.use() -> 경로없이 미들웨어 함수만 전달한 경우 모든 요청에 함수 실행
-app.use(express.static('CSS'));
-```
-
-아래와 같이 여러 개의 디렉토리로 설정하면 설정한 디렉토리를 모두 탐색한다.
-
-```
-CSS
- /img
- /font
- /others
---------------------------------
-app.use(express.static('CSS'));
-app.use(express.static('CSS/img'));
-app.use(express.static('CSS/font'));
-app.use(express.static('CSS/others'));
-```
-
-그런데 위와 같은 상대 경로는 `express.static()`를 실행하는 파일이 있는 위치가 아닌 곳에서 실행하게 되면 정적 파일 폴더를 못찾을 수도 있다.
-
-따라서 다음과 같이 절대 경로를 지정해주는 것이 안전하다.
-
-```
-app.use(express.static(path.join(__dirname, 'CSS')));
-or
-app.use(express.static(__dirname + '/CSS'));
-```
-
-### [Express에서 정적 파일 제공]
-
-http://expressjs.com/en/starter/static-files.html
-
 <!--  부트스트랩과 express 연동 -> Express-Project폴더 파일들 참조..-->
 
 # include로 파일 분할(partials)
