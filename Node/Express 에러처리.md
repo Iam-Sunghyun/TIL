@@ -240,7 +240,7 @@ app.get('/products/:id/edit', async (req, res, next) => {
 // async 함수를 호출하는 무명함수를 반환하는 wrapAsync를 라우트 핸들러로 사용한다.
 // 그렇게 되면 해당 경로로 요청이 왔을 시 무명함수가 (req, res, next)를 받아 async(fn) 함수를 호출하고
 // async(fn) 함수 내에서 에러 발생 시 에러를 값으로 갖는 rejected 프로미스를 반환한다.
-// 반환한 rejected 프로미스를 Promise.prototype.catch 메서드를 사용해 에러를 캐치하여 처리하는 것이다. 
+// 반환한 rejected 프로미스를 Promise.prototype.catch 메서드를 사용해 에러를 캐치하여 next()를 호출해준다. 
 function wrapAsync(fn) {
     return function (req, res, next) {
         fn(req, res, next).catch(e => next(e));
@@ -258,7 +258,32 @@ app.get('/products/:id/edit', wrapAsync(async (req, res, next) => {
 }));
 ```
 
+참고로 현재 베타 버전인 Express5 에선 위와같이 처리해주지 않아도 프로미스를 반환하는 비동기 미들웨어, 라우트 핸들러에서 reject하거나 에러가 발생된 경우 자동으로 `next(value)`함수를 호출해 처리해준다. 
 
-<!-- # 몽구스 Errors -->
+# Mongoose 에러 구분하기
+
+모든 Mongoose 에러에는 name 프로퍼티가 있어서 ValidationError, CastError 등 다양한 이름을 갖고 있다. 따라서 다음과 같이 특정 Mongoose 에러를 선별하여 에러에 따른 로직을 만들 수도 있다.
+
+```
+const handleValidationErr = err => {
+    console.dir(err);
+    //In a real app, we would do a lot more here...
+    return new AppError(`Validation Failed...${err.message}`, 400);
+};
+
+// 에러 처리 미들웨어
+app.use((err, req, res, next) => {
+    console.log(err.name);
+    // 특정 유형의 Mongoose 에러 선별
+    if (err.name === 'ValidationError') err = handleValidationErr(err);
+    next(err);
+});
+
+app.use((err, req, res, next) => {
+    const { status = 500, message = '에러 발생' } = err;
+    res.status(status).send(message);
+});
+```
+
 
 
