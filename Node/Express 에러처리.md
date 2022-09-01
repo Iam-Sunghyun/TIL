@@ -61,7 +61,6 @@ app.get('/', (req, res, next) => {
     res.send(data)
   })
 })
-
 ```
 
 ### +
@@ -82,7 +81,7 @@ app.use((err, req, res, next) => {  // 다음 에러 처리 미들웨어에 에�
 클라이언트 출력 >> 에러!입니다.
 ```
 
-<!-- ## async/await -->
+
 
 ### [Error Handling in Express]
 
@@ -130,7 +129,7 @@ app.use((err, req, res, next) => {
 })
 ```
 
-**사용자 정의 에러 핸들러 미들웨어는 다음과 같이 다른 모든 라우터나 `app.use()` 호출 이후에 정의 한다.**
+**사용자 정의 에러 핸들러 미들웨어는 다음과 같이 다른 모든 라우터나 `app.use()` 호출 이후에 정의 한다**(그래야 모든 미들웨어에서 발생한 에러를 캐치하기 때문).
 
 ```
 const bodyParser = require('body-parser')
@@ -237,10 +236,11 @@ app.get('/products/:id/edit', async (req, res, next) => {
 
 ```
 // async 함수 내에서 try/catch 문을 사용해 에러 처리를 하지 않으면 async 함수는 발생한 에러를 값으로 갖는 rejected 프로미스 반환한다.
-// async 함수를 호출하는 무명함수를 반환하는 wrapAsync를 라우트 핸들러로 사용한다.
+// async 함수를 호출하기 위한 무명함수를 반환하는 wrapAsync를 라우트 핸들러로 사용한다.
 // 그렇게 되면 해당 경로로 요청이 왔을 시 무명함수가 (req, res, next)를 받아 async(fn) 함수를 호출하고
 // async(fn) 함수 내에서 에러 발생 시 에러를 값으로 갖는 rejected 프로미스를 반환한다.
-// 반환한 rejected 프로미스를 Promise.prototype.catch 메서드를 사용해 에러를 캐치하여 next()를 호출해준다. 
+// 반환한 rejected 프로미스를 Promise.prototype.catch 메서드를 사용해 에러를 캐치하여 next()를 호출해준다.
+// 명시적으로 호출을 해줘야 프로미스 후속 처리 메서드를 사용할 수 있기 때문에 이와같이 호출용 함수로 미들웨어(async 함수)를 감싸는 것. 
 function wrapAsync(fn) {
     return function (req, res, next) {
         fn(req, res, next).catch(e => next(e));
@@ -285,5 +285,7 @@ app.use((err, req, res, next) => {
 });
 ```
 
+
+# joi 모듈
 
 

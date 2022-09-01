@@ -64,9 +64,9 @@ Mongoose로 MongoDB 데이터를 사용, 접근하려면 데이터를 정의하�
 
 ### 스키마(schema)?
 
-관계형 데이터베이스에서의 스키마는 데이터베이스 구조와 제약조건에 대한 명세, 즉 구체적인 설계도 정도로 보면 된다.
+데이터베이스에서의 스키마는 데이터베이스의 **데이터 구조와 관계, 제약조건에 대한 명세를 말하는 것으로 데이터의 구체적인 설계구조** 정도로 보면 된다.
 
-Mongoose에서 스키마란 MongoDB에 저장되는 document의 Data 구조, 즉 필드 타입에 관한 정보를 JSON 형태로 정의한 것으로 RDBMS의 테이블 정의와 유사한 개념이다.
+Mongoose에서 스키마는 MongoDB에 저장되는 document의 Data 구조, 즉 필드 타입에 관한 정보를 JSON 형태로 정의한 것으로 RDBMS의 테이블 정의와 유사한 개념이다.
 
 각 스키마는 MongoDB 컬렉션에 매핑되고 해당 컬렉션 내 문서의 구조를 정의한다.
 
@@ -104,43 +104,6 @@ https://mongoosejs.com/docs/index.html
 
 # Mongoose API
 
-## Document 여러 개 삽입하기
-
-- `Model.insertMany([document1, document2, ...], optioins, callback)`
-
-위에서 본 단일 문서 저장과 달리 `Model.insertMany()`로 삽입 시 MongoDB에 바로 연결되어 `save()`없이 바로 저장된다(여러 개를 삽입하는 경우가 일반적이진 않다.).
-
-만약 삽입할 요소 중 하나라도 유효성 검사를 통과하지 못한다면 전부 삽입되지 않는다.
-
-```
-Model.insertMany([
-  { title: 'Usual Suspects', year: 1995, score: 9.5, rating: 'R' },
-  { title: 'Amadues', year: 1984, score: 9.2, rating: 'R-13' },
-  { title: 'Ailen', year: 1979, score: 8.1, rating: 'R' }
-  ], function(error, docs) {})
-```
-
-`Model.insertMany()` 메서드는 `promise` 객체를 반환한다.
-
-## Document 찾기
-
-- `Model.find(filter, projection, options, callback)` - 모든 문서 검색 <br>
-- `Model.findOne(filter, projection, options, callback)` - 단일 문서 검색 <br>
-- `Model.findById(id, projection, options, callback)` - ID로 검색(Express 작업 시 주로 사용) <br>
-
-위 메서드들은 `'Query'` 객체를 반환하는데 프로미스처럼 `then()`, `async`/`await` 기능을 지원한다(`'Query'`객체가 프로미스는 아님).
-
-프로미스 객체를 반환 받고 싶다면 `exec()`을 호출해주면 된다.
-
-### [몽구스 Promises]
-
-https://mongoosejs.com/docs/promises.html
-
-### [Query 객체]
-
-https://mongoosejs.com/docs/queries.html
-
-메서드 인수로는 반환 받을 값을 지정하는 `projection`을 전달할 수 있고, 추가 옵션이나 콜백 함수를 전달할 수 있도 있다.
 
 ## Mongoose에서 쿼리 결과를 처리하는 방법 2가지
 
@@ -158,6 +121,57 @@ MyModel.find({ name: 'john', age: { $gte: 18 }}, function (err, docs) {});
 //  name이 john인 문서에서 name, firends 필드만 반환
 await MyModel.find({ name: /john/i }, 'name friends').exec();
 ```
+
+## Document 여러 개 삽입하기
+
+- `Model.insertMany([document1, document2, ...], optioins, callback)`
+
+위에서 본 단일 문서 저장과 달리 `Model.insertMany()`로 삽입 시 MongoDB에 바로 연결되어 `save()`없이 바로 저장된다(여러 개를 삽입하는 경우가 일반적이진 않다.).
+
+```
+Model.insertMany([
+  { title: 'Usual Suspects', year: 1995, score: 9.5, rating: 'R' },
+  { title: 'Amadues', year: 1984, score: 9.2, rating: 'R-13' },
+  { title: 'Ailen', year: 1979, score: 8.1, rating: 'R' }
+  ], function(error, docs) {})
+```
+
+만약 삽입할 요소 중 하나라도 유효성 검사를 통과하지 못한다면 전부 삽입되지 않는다.
+
+
+`Model.insertMany()` 메서드는 `promise` 객체를 반환한다.
+
+## Document 찾기
+
+- `Model.find(filter, projection, options, callback)` - 모든 문서 검색 <br>
+- `Model.findOne(filter, projection, options, callback)` - 단일 문서 검색 <br>
+- `Model.findById(id, projection, options, callback)` - ID로 검색(Express 작업 시 주로 사용) <br>
+
+위 메서드들은 `'Query'` 객체를 반환하는데 프로미스처럼 `then()`, `async`/`await` 기능을 지원한다(`'Query'`객체가 프로미스는 아님).
+
+메서드 인수로는 반환 받을 값을 지정하는 `projection`을 전달할 수 있고, 추가 옵션이나 콜백 함수를 전달할 수 있도 있다.
+
+```
+// Find one adventure whose `country` is 'Croatia', otherwise `null`
+await Adventure.findOne({ country: 'Croatia' }).exec();
+
+// using callback
+Adventure.findOne({ country: 'Croatia' }, function (err, adventure) {});
+
+// select only the adventures name and length
+await Adventure.findOne({ country: 'Croatia' }, 'name length').exec();
+```
+
+프로미스 객체를 반환 받고 싶다면 `exec()`을 호출해주면 된다. 공식문서에는 `exec()`를 사용하면 더 나은 스택 추적을 제공하니 사용을 권장한다고 되어있다. 
+
+### [몽구스 Promises]
+
+https://mongoosejs.com/docs/promises.html
+
+### [Query 객체]
+
+https://mongoosejs.com/docs/queries.html
+
 
 ## Document 업데이트 하기
 
@@ -437,6 +451,7 @@ https://mongoosejs.com/docs/guide.html#virtuals
 
 # Mongoose 미들웨어
 
+Middleware functions in Mongoose let you run certain functions automatically before or after specific actions.
 <!-- Mongoose 미들웨어란
 일단 스킵했음 
 

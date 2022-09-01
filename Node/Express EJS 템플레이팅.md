@@ -8,32 +8,35 @@
 
 ### 템플릿?
 
-웹 맥락에서 템플릿은 하나의 양식화 된 페이지, 재사용할 수 있는 미리 만들어놓은 페이지(HTML)를 말한다. 크게 다를 것 없이 여기서도 템플릿 엔진의 태그나 코드가 삽입 된 HTML 문서를 템플릿 파일, 템플릿이라고 이해하면 될 듯.
+웹 맥락에서 템플릿은 하나의 양식화 된 페이지, 재사용할 수 있는 미리 만들어놓은 페이지(HTML)를 말한다. 크게 다를 것 없이 여기서도 템플릿 엔진의 코드가 삽입 된 HTML 문서를 템플릿 파일, 템플릿이라고 이해하면 될 듯.
 
-<br>
-
-### [템플릿이란?] <br>
-
-https://www.techtarget.com/whatis/definition/template
 
 ## 템플릿 엔진
+
+템플릿과 특정 데이터 모델에 따른 데이터를 합성하여 결과 문서를 출력하는 소프트웨어(또는 소프트웨어 컴포넌트)를 말한다.
 
 템플릿 엔진을 사용하면 애플리케이션에서 템플릿 파일을 사용할 수 있다.
 
 인기있는 템플릿 엔진으로는 EJS, Pug, Mustache, Handlebars와 같은 것들이 있으며 문법이 약간씩 다르다.
 
-클라이언트 사이드 템플릿 엔진 - Pug, Mustache
-서버 사이드 템플릿 엔진 - EJS, Handlebars
++ 클라이언트 사이드 템플릿 엔진 - Pug, Mustache...
++ 서버 사이드 템플릿 엔진 - EJS, Handlebars...
+
+### [템플릿 엔진이란?] <br>
+
+https://www.educative.io/answers/what-are-template-engines
+
+### [서버 사이드, 클라이언트 사이드 템플릿 엔진] <br>
+
+https://gmlwjd9405.github.io/2018/12/21/template-engine.html <br>
+
+https://velog.io/@hi_potato/Template-Engine-Template-Engine <br>
+
+https://usefultoknow.tistory.com/entry/%ED%85%9C%ED%94%8C%EB%A6%BF-%EC%97%94%EC%A7%84Template-Engine-%EC%9D%B4%EB%9E%80 
 
 ### [express와 호환되는 템플릿 엔진 목록] <br>
 
 https://expressjs.com/en/resources/template-engines.html
-
-### [서버 사이드, 클라이언트 사이드 템플릿 엔진] <br>
-
-https://velog.io/@hi_potato/Template-Engine-Template-Engine <br>
-
-https://usefultoknow.tistory.com/entry/%ED%85%9C%ED%94%8C%EB%A6%BF-%EC%97%94%EC%A7%84Template-Engine-%EC%9D%B4%EB%9E%80
 
 # EXPRESS에서 EJS(Embedded javascript)로 템플릿 구성하기
 
@@ -201,3 +204,8 @@ app.get('/random', (req, res) => {
 ### [EJS 공식 사이트]
 
 https://ejs.co/#install
+
+
+## ejs-mate
+### [npm ejs-mate]
+https://www.npmjs.com/package/ejs-mate
