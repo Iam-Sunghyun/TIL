@@ -13,6 +13,7 @@ MongoDB에서 일대다 관계의 데이터를 모델링하는 경우 크게 2�
 ### 데이터 모델링이란?
 ```
 데이터 모델링은 업무 수행 시 발생하는 데이터를 정확하고 효율적으로 데이터베이스에 저장하기 위해 데이터 구조를 설계하는 과정을 의미한다.
+-> 데이터베이스에 저장하고자 하는 대상을 추상화 하고(개념적 모델링) 컴퓨터에 저장할 수 있는 형태를 설계하는 것.
 ```
 
 # 임베디드(embedded) 방식
@@ -127,6 +128,9 @@ MongoDB에서 일대다 관계의 데이터를 모델링하는 경우 크게 2�
 ## [MongoDB 데이터 모델링]
 https://meetup.toast.com/posts/276
 
+## [MongoDB 웹사이트 MongoDB 스키마 디자인 가이드(1,2,3부)]
+https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-3
+
 ### [MongoDB 스키마 디자인]
 https://etloveguitar.tistory.com/106
 
@@ -224,3 +228,12 @@ https://www.geeksforgeeks.org/mongoose-populate-method/
 
 ### [Mongoose Populate]
 https://mongoosejs.com/docs/populate.html 
+
+
+
+<!-- # 상호 참조와 역정규화 (Denormalization)?
+
+역정규화 (Denormalization)란 성능을 위해 데이터 중복 저장하는 것. 
+
+https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-2 참조
+-->

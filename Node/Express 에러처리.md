@@ -267,7 +267,7 @@ app.get('/products/:id/edit', wrapAsync(async (req, res, next) => {
 ```
 const handleValidationErr = err => {
     console.dir(err);
-    //In a real app, we would do a lot more here...
+    // 실제 앱에서는 훨씬 더 많은 작업을 수행한다..
     return new AppError(`Validation Failed...${err.message}`, 400);
 };
 
@@ -288,4 +288,5 @@ app.use((err, req, res, next) => {
 
 # joi 모듈
 
+데이터 스키마 유효성 검증을 위한 npm 모듈
 

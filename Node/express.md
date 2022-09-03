@@ -11,6 +11,9 @@ Express.js, 또는 간단히 익스프레스는 Node.js를 위한 웹 프레임�
 ### [Expressjs 공식 홈페이지]
 http://expressjs.com/
 
+### [Expressjs 공식 홈페이지 자주 묻는 질문]
+https://expressjs.com/ko/starter/faq.html
+
 ### [Express.js vs Node.js]
 https://procoders.tech/blog/express-js-vs-node-js/
 

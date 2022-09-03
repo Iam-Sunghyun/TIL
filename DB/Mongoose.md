@@ -248,9 +248,9 @@ Movie.findOneAndDelete({title: 'Amadeus'}).then(m => console.log(m));
 
 <!-- operation buffering? -->
 
-스키마를 정의할 때, 다음과 같이 내장 제약 조건들을 사용해 유효성 검사를 추가할 수 있다.
+스키마를 정의할 때, 다음과 같이 내장 스키마 타입 옵션(제약 조건)을 사용해 유효성 검사를 구체적으로 할 수 있다.
 
-모든 스키마 `type`이 사용할 수 있는 공통 옵션이나, 스키마 타입 고유의 옵션을 사용해 유효성 검사를 할 수 있다.
+모든 스키마 타입이 사용할 수 있는 공통 옵션이나, 스키마 타입 고유의 옵션을 사용해 유효성 검사를 할 수 있다.
 
 ```
 const productSchema = new mongoose.Schema({
