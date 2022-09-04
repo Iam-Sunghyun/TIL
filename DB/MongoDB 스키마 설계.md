@@ -151,7 +151,7 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
    name: String,
    email: String,
-   blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Blog"}] // 채워넣을 필드 타입을 ObjectId로, 참조할 컬렉션을 ref에 지정해준다.(몽구스 모델 생성시 전달한 이름). 
+   blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Blog"}] // 채워넣을 프로퍼티의 스키마 타입을 ObjectId로, 참조할 모델을 ref 옵션 값에 지정해줬다(몽구스 모델 생성시 전달한 이름). 
 });
 
 const BlogSchema = new Schema({
@@ -164,7 +164,6 @@ const BlogSchema = new Schema({
 const User = mongoose.model("Author", UserSchema);
 const Blog = mongoose.model("Blog", BlogSchema);
 
-// 도큐먼트가 있다고 가정하고 find()함
 Blog.find({ title: 'populate practice' }).then((d) => console.log(d));
 
 // 그냥 출력
@@ -172,7 +171,7 @@ Blog.find({ title: 'populate practice' }).then((d) => console.log(d));
   {
     _id: new ObjectId("63120d5809058506f5485a22"),
     title: 'populate practice',
-    user: new ObjectId("63120bd0b1013f378f3906d1"), // 도큐먼트 생성시 입력한 사용자 _id 값이 그대로 출력됨.
+    user: new ObjectId("63120bd0b1013f378f3906d1"), // 참조 값만 출력됨.
     body: 'blah blah',
     comments: [],
     __v: 0
@@ -183,13 +182,13 @@ Blog.find({ title: 'populate practice' }).then((d) => console.log(d));
 ### populate()로 도큐먼트를 채워넣은 경우
 ```
 Blog.find({ title: 'populate practice' })
-    .populate('user')     // 채워넣을 필드 이름 지정
+    .populate('user')     // 채워넣을 프로퍼티 지정
     .then((d) => console.log(d));
 
 >> [
   {
     _id: new ObjectId("63120d5809058506f5485a22"),
-    user: {         // 필드 값이 채워넣기(population) 되었다.
+    user: {         // 참조 값과 일치하는 도큐먼트가 채워넣기(population) 되었다.
       _id: new ObjectId("63120bd0b1013f378f3906d1"),
       name: 'sunghyun',
       email: '123@321.com',
