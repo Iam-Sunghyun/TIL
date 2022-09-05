@@ -451,7 +451,19 @@ https://mongoosejs.com/docs/guide.html#virtuals
 
 # Mongoose 미들웨어
 
-Middleware functions in Mongoose let you run certain functions automatically before or after specific actions.
+Mongoose 미들웨어 함수는 비동기 함수 실행 중 제어가 전달되는 함수로, 특정 비동기 작업 처리 전/후에 자동적으로 실행되는 함수이다.
+
+`pre()`,`post()`로 전/후 작업을 정의할 수 있다.
+
+Mongoose 미들웨어는 모델 생성 이전에 정의해줘야 동작한다.
+```
+const farmSchema = new mongoose.Schema({
+    name: { type: String, required: [true, 'Farm must have a name!'] },
+    products: [{ type: Schema.Types.ObjectId, ref: 'Product' }]
+});
+
+
+```
 <!-- Mongoose 미들웨어란
 일단 스킵했음 
 
