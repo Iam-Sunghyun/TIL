@@ -151,7 +151,7 @@ const farmSchema = new Schema({
 
 // post() 미들웨어 정의
 // findByIdAndDelete()를 호출하면 findByIdAndDelete()가 트리거 된다.
-// farm.products 프로퍼티에 있는 참조 값(_id)과 일치하는 모든 도큐먼트 삭제
+// farm.products 프로퍼티에 있는 참조 값(_id)과 일치하는 모든 Product 모델 도큐먼트 삭제
 farmSchema.post('findOneAndDelete', async function (farm) {
     if (farm.products.length) {
         const res = await Product.deleteMany({ _id: { $in: farm.products } }) // $in => MongoDB query selector 연산자 사용

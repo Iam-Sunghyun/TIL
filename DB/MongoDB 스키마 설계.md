@@ -173,7 +173,7 @@ Blog.find({ title: 'populate practice' }).then((d) => console.log(d));
     title: 'populate practice',
     user: new ObjectId("63120bd0b1013f378f3906d1"), // 참조 값만 출력됨.
     body: 'blah blah',
-    comments: [],
+    comments: [], -> 빈배열은 실제론 출력 안됨.
     __v: 0
   }
 ]
@@ -192,11 +192,11 @@ Blog.find({ title: 'populate practice' })
       _id: new ObjectId("63120bd0b1013f378f3906d1"),
       name: 'sunghyun',
       email: '123@321.com',
-      blogs: [],
+      blogs: [], -> 빈배열은 실제론 출력 안됨.
       __v: 0
     },
     body: 'function String() { [native code] }',
-    comments: [],
+    comments: [], -> 빈배열은 실제론 출력 안됨.
     __v: 0
   }
 ]

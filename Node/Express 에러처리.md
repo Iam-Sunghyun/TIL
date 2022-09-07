@@ -57,7 +57,7 @@ app.get('/', (req, res, next) => {
   fs.readFile('/file-does-not-exist', (err, data) => {
     if (err) {
       return next(err) // Express에게 에러 객체 전달
-    }
+    } 
     res.send(data)
   })
 })
@@ -158,7 +158,7 @@ app.use((err, req, res, next) => {
 Express에서 자주 쓰이는 에러를 처리하는 패턴. DB와 상호작용, 사용자 인증 등과 같이 다양한 에러 상황에 응답하기 위해 하나의 사용자 정의 에러 클래스를 만들어 에러 객체로 사용한다.
 
 ```
-// 사용자 정의 에러 클래스 AppError.js
+// js 내장 Error 클래스를 확장한 사용자 정의 에러 클래스 AppError.js
 class AppError extends Error {
   constructor(message, status) {
     super();
@@ -180,8 +180,9 @@ const verifyPassword = (req, res, next) => {
   const { password } = req.query;
   if (password === 'chickennugget') {
     next();
+  } else {
+    throw new AppError('Password Required', 401);
   }
-  throw new AppError('Password Required', 401);
 };
 
 // 라우터
@@ -235,26 +236,19 @@ app.get('/products/:id/edit', async (req, res, next) => {
 위와 같이 모든 비동기 함수를 포함하는 라우트 핸들러에서 `try/catch`를 작성하는 것은 번거롭다. 이러한 문제를 해소하기 위해 비동기 콜백을 감싸는 함수를 만들어 사용할 수 있다.
 
 ```
-// async 함수 내에서 try/catch 문을 사용해 에러 처리를 하지 않으면 async 함수는 발생한 에러를 값으로 갖는 rejected 프로미스 반환한다.
-// async 함수를 호출하기 위한 무명함수를 반환하는 wrapAsync를 라우트 핸들러로 사용한다.
-// 그렇게 되면 해당 경로로 요청이 왔을 시 무명함수가 (req, res, next)를 받아 async(fn) 함수를 호출하고
-// async(fn) 함수 내에서 에러 발생 시 에러를 값으로 갖는 rejected 프로미스를 반환한다.
-// 반환한 rejected 프로미스를 Promise.prototype.catch 메서드를 사용해 에러를 캐치하여 next()를 호출해준다.
-// 명시적으로 호출을 해줘야 프로미스 후속 처리 메서드를 사용할 수 있기 때문에 이와같이 호출용 함수로 미들웨어(async 함수)를 감싸는 것. 
-function wrapAsync(fn) {
-    return function (req, res, next) {
-        fn(req, res, next).catch(e => next(e));
-    };
-}
+// async 함수 내에서 에러 발생 시 try/catch 문을 사용해 에러 처리를 하지 않으면 async 함수는 발생한 에러를 값으로 갖는 rejected 프로미스 반환한다.
+// async 라우트 핸들러를 호출하는 함수를 반환하는 래퍼함수를 사용하여 명시적으로 라우트 핸들러를 호출해준다.
+// -> 명시적으로 호출을 해줘야 프로미스 후속 처리 메서드를 사용할 수 있기 때문에
+const catchAsyncError = fn => {
+  return function (req, res, next) {
+      fn(req, res, next).catch(err => next(err));
+  };
+};
 
-// 다음과 같이 try/catch 없이 에러를 체크할 수 있다.
-app.get('/products/:id/edit', wrapAsync(async (req, res, next) => {
-    const { id } = req.params;
-    const product = await Product.findById(id);
-    if (!product) {
-        throw new AppError('Product Not Found', 404);
-    }
-    res.render('products/edit', { product, categories });
+// try/catch 없이 에러를 체크할 수 있다.
+app.get('/campgrounds/:id/edit', catchAsyncError(async (req, res, next) => {
+    const campground = await Campground.findById(req.params.id);
+    res.render('campgrounds/edit', { campground });
 }));
 ```
 
