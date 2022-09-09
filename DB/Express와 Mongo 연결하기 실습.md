@@ -150,7 +150,7 @@ const farmSchema = new Schema({
 });
 
 // post() 미들웨어 정의
-// findByIdAndDelete()를 호출하면 findByIdAndDelete()가 트리거 된다.
+// findByIdAndDelete()를 호출하면 findOneAndDelete()가 트리거 된다.
 // farm.products 프로퍼티에 있는 참조 값(_id)과 일치하는 모든 Product 모델 도큐먼트 삭제
 farmSchema.post('findOneAndDelete', async function (farm) {
     if (farm.products.length) {
