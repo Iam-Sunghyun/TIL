@@ -116,11 +116,48 @@ https://mongoosejs.com/docs/index.html
 Movie.find({year: {$gte: 1995}}).then(res => console.log(res));
 
 // 결과를 콜백 함수의 인수로 전달
-MyModel.find({ name: 'john', age: { $gte: 18 }}, function (err, docs) {});
+MyModel.find({ name: 'john', age: { $gte: 18 }}, function (error, result) {});
 
-//  name이 john인 문서에서 name, firends 필드만 반환
+// name이 john인 문서에서 name, firends 필드만 반환
 await MyModel.find({ name: /john/i }, 'name friends').exec();
+
 ```
+
+콜백과 `then()`을 함께 쓸 경우 쿼리 연산이 중복실행 될 수 있으므로 같이 연속해서 사용하지 말 것.
+```
+// updateMany()가 3번 호출된다..
+const q = MyModel.updateMany({}, { isDeleted: true }, function() {
+  console.log('Update 1');
+});
+
+q.then(() => console.log('Update 2'));
+q.then(() => console.log('Update 3'));
+```
+
+프로미스 객체를 반환 받고 싶다면 `exec()`을 호출해주면 된다. 공식문서에는 `exec()`를 사용하면 더 나은 스택 추적을 제공하니 사용을 권장한다고 되어있다. 
+```
+// exec()에 콜백 사용
+MyModel.find({ name: /john/i }, 'name friends').exec(function (err) {
+      if (err) {
+          // 에러 처리
+          return Promise.reject(err);
+      }
+      // 성공 시 처리
+    });
+
+// exec()에 프로미스 후속처리 메서드 사용
+MyModel.find({ name: /john/i }, 'name friends')
+             .exec().then(function () {
+        // 성공 시 처리
+    }).catch(function (err) {
+        // 에러 처리
+    });
+```
+### [몽구스 Promises]
+https://mongoosejs.com/docs/promises.html
+
+### [몽구스 Queries]
+https://mongoosejs.com/docs/queries.html
 
 ## Document 여러 개 삽입하기
 
@@ -161,17 +198,6 @@ Adventure.findOne({ country: 'Croatia' }, function (err, adventure) {});
 // select only the adventures name and length
 await Adventure.findOne({ country: 'Croatia' }, 'name length').exec();
 ```
-
-프로미스 객체를 반환 받고 싶다면 `exec()`을 호출해주면 된다. 공식문서에는 `exec()`를 사용하면 더 나은 스택 추적을 제공하니 사용을 권장한다고 되어있다. 
-
-### [몽구스 Promises]
-
-https://mongoosejs.com/docs/promises.html
-
-### [Query 객체]
-
-https://mongoosejs.com/docs/queries.html
-
 
 ## Document 업데이트 하기
 
@@ -465,7 +491,7 @@ const farmSchema = new mongoose.Schema({
 
 ```
 <!-- Mongoose 미들웨어란
-일단 스킵했음 
+
 
 특정 메서드 호출 전, 후에 실행되는 것들
 .pre()
