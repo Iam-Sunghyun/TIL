@@ -134,10 +134,10 @@ q.then(() => console.log('Update 2'));
 q.then(() => console.log('Update 3'));
 ```
 
-프로미스 객체를 반환 받고 싶다면 `exec()`을 호출해주면 된다. 공식문서에는 `exec()`를 사용하면 더 나은 스택 추적을 제공하니 사용을 권장한다고 되어있다. 
+프로미스 객체를 반환 받고 싶다면 `exec()`을 호출해 쿼리를 실행해주면 된다. 공식문서에는 `exec()`를 사용하면 더 나은 스택 추적을 제공하니 사용을 권장한다고 되어있다. 
 ```
 // exec()에 콜백 사용
-MyModel.find({ name: /john/i }, 'name friends').exec(function (err) {
+MyModel.find({ name: /john/i }, 'name friends').exec(function (err, result) {
       if (err) {
           // 에러 처리
           return Promise.reject(err);
