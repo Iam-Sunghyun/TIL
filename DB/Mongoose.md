@@ -123,9 +123,9 @@ await MyModel.find({ name: /john/i }, 'name friends').exec();
 
 ```
 
-콜백과 `then()`을 함께 쓸 경우 쿼리 연산이 중복실행 될 수 있으므로 같이 연속해서 사용하지 말 것.
+다음과 같이 콜백과 `then()`을 함께 쓸 경우 쿼리 연산이 중복실행 될 수 있으므로 같이 연속해서 사용하지 말 것.
 ```
-// updateMany()가 3번 호출된다..
+// updateMany()가 3번 호출된다. -> 콜백을 전달해줬기 때문에 쿼리가 즉시 1번 실행 + 2번의 then() 메서드 호출로 쿼리가 실행
 const q = MyModel.updateMany({}, { isDeleted: true }, function() {
   console.log('Update 1');
 });
