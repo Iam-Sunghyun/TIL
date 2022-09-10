@@ -135,11 +135,29 @@ app.post('/farms/:id/products', async (req, res) => {
 
 Mongoose 미들웨어는 4가지 종류(도큐먼트 미들웨어, 모델 미들웨어, aggregate 미들웨어, 쿼리(query) 미들웨어)가 있으며,`pre()`,`post()`를 선택적으로 호출하여 전/후 작업을 정의할 수 있다.
 
-예시에서 사용한 쿼리 미들웨어는 `Query` 객체 뒤에서(`Query`를 반환하는 함수) `exec()`, `then()`을 호출하거나 `await`을 사용하면 실행되는 미들웨어인데, 첫 번째 인수로 전달한 이름의 메서드를 트리거하는 쿼리 함수를 사용하면 실행된다.
+예시에서 사용한 쿼리 미들웨어로 `Query` 객체 뒤에서 `exec()`, `then()`을 호출하거나 `await`을 사용하면 실행되는 미들웨어인데, `pre()`,`post()`의 첫 번째 인수로 전달한 이름의 메서드를 트리거하는 쿼리 함수를 사용하면 실행된다.
 
-다음 예시는 'findOneAndDelete'를 트리거하는 쿼리 함수 사용시 실행되는 미들웨어이다.
+```
+schema.pre('findOneAndUpdate', () => console.log('update'));
+schema.post('findOne', () => console.log('findOne'));
 
-<!-- post() 미들웨어의 매개변수는 doc, next() 2개..흠 -->
+const Model = mongoose.model('Model', schema);
+
+// 어떤 미들웨어도 실행되지 않는다.
+const query = Model.findOneAndUpdate({}, { name: 'test' });
+
+// Prints "update"
+await query.exec();
+
+// Prints "findOne"
+await Model.findOne({});
+```
+
+다음 예시는 'findOneAndDelete'를 트리거하는 쿼리 함수 사용시 실행되는 `post` 미들웨어이다.
+
+`post` 미들웨어는 쿼리 결과를 콜백 함수의 첫 번째 매개변수(`doc`)에, 다음 미들웨어를 호출할 `next()` 메서드를 두 번째 매개변수에 전달한다. 
+
+### Post
 ```
 // 스키마 정의
 const farmSchema = new Schema({
@@ -150,8 +168,7 @@ const farmSchema = new Schema({
 });
 
 // post() 미들웨어 정의
-// findByIdAndDelete()를 호출하면 findOneAndDelete()가 트리거 된다.
-// farm.products 프로퍼티에 있는 참조 값(_id)과 일치하는 모든 Product 모델 도큐먼트 삭제
+// farm 도큐먼트 products 필드의 참조 값(_id)과 일치하는 모든 Product 모델 도큐먼트 삭제
 farmSchema.post('findOneAndDelete', async function (farm) {
     if (farm.products.length) {
         const res = await Product.deleteMany({ _id: { $in: farm.products } }) // $in => MongoDB query selector 연산자 사용
@@ -161,14 +178,35 @@ farmSchema.post('findOneAndDelete', async function (farm) {
 
 const Farm = mongoose.model('Farm', farmSchema);
 
-
-// Express 라우팅
+// findByIdAndDelete()를 호출하면 findOneAndDelete()가 트리거 된다.
 app.delete('farms/:id', async (req, res) => {
   const farm = await Farm.findByIdAndDelete(req.params.id);
   res.redirect('/farms');
 });
 ```
-Mongoose 모델 컴파일 후 `pre()`,`post()`를 통해 미들웨어 함수를 정의해주면 작동하지 않는다. 따라서 모델 컴파일 이전에 `pre()`,`post()`를 호출해줘야 작동한다.
+### Pre
+`pre` 미들웨어는 특정 함수 실행 이전에 hook되기 때문에 쿼리 결과를 전달받진 못하고 `next()` 함수 하나만 매개변수로 전달받는다.
+
+```
+const schema = new Schema(..);
+schema.pre('save', function(next) {
+  // do stuff
+  next();
+});
+
+// Mongoose 5.x에선 next() 호출 대신 프로미스를 반한하는 함수를 사용하여 제어를 넘길수도 있다(혹은 async/await).
+schema.pre('save', function() {
+  return doStuff().
+    then(() => doMoreStuff());
+});
+
+// Or, in Node.js >= 7.6.0:
+schema.pre('save', async function() {
+  await doStuff();
+  await doMoreStuff();
+});
+```
+주의할 것은 Mongoose 모델 컴파일 후 `pre()`,`post()`를 통해 미들웨어 함수를 정의해주면 작동하지 않는다. 따라서 모델 컴파일 이전에 `pre()`,`post()`를 호출해줘야 작동한다.
 
 ```
 const schema = new mongoose.Schema({ name: String });
@@ -182,7 +220,8 @@ user.save();
 ```
 <!-- Mongoose 메서드(위에선 Model.deleteMany())로 쿼리할 때도 mongoDB 명령어(query selector 연산자 $in..등)를 사용 가능했다-->
 <!-- 참고자료 보충 필요 -->
-### [mongoDB query selector 연산자]
+
+### [mongoDB query selector 연산자($in...)]
 https://www.mongodb.com/docs/v6.0/reference/operator/query/
 
 ### [Mongoose 미들웨어]
