@@ -135,7 +135,7 @@ app.post('/farms/:id/products', async (req, res) => {
 
 Mongoose 미들웨어는 4가지 종류(도큐먼트 미들웨어, 모델 미들웨어, aggregate 미들웨어, 쿼리(query) 미들웨어)가 있으며,`pre()`,`post()`를 선택적으로 호출하여 전/후 작업을 정의할 수 있다.
 
-예시에서 사용한 쿼리 미들웨어로 `Query` 객체 뒤에서 `exec()`, `then()`을 호출하거나 `await`을 사용하면 실행되는 미들웨어인데, `pre()`,`post()`의 첫 번째 인수로 전달한 이름의 메서드를 트리거하는 쿼리 함수를 호출하면 실행된다.
+예시에서 사용한 미들웨어는 **쿼리 미들웨어**로 `Query` 객체 뒤에서 `exec()`, `then()`을 호출하거나 `await`을 사용하면 실행되는 미들웨어인데, `pre()`,`post()`의 첫 번째 인수로 전달한 이름의 메서드를 트리거하는 쿼리 함수를 호출하면 실행된다.
 
 ```
 schema.pre('findOneAndUpdate', () => console.log('update'));
@@ -153,11 +153,12 @@ await query.exec();
 await Model.findOne({});
 ```
 
+### Post
+
 다음 예시는 'findOneAndDelete'를 트리거하는 쿼리 함수 사용시 실행되는 `post` 미들웨어이다.
 
 `post` 미들웨어는 쿼리 결과를 콜백 함수의 첫 번째 매개변수(`doc`)에, 다음 미들웨어를 호출할 `next()` 메서드를 두 번째 매개변수에 전달한다. 
 
-### Post
 ```
 // 스키마 정의
 const farmSchema = new Schema({
@@ -185,13 +186,17 @@ app.delete('farms/:id', async (req, res) => {
 });
 ```
 ### Pre
-`pre` 미들웨어는 특정 함수 실행 이전에 hook되기 때문에 쿼리 결과를 전달받진 못하고 `next()` 함수 하나만 매개변수로 전달받는다.
+`pre` 미들웨어는 특정 함수 실행 이전에 hook되기 때문에 쿼리 결과를 전달받진 못하고 `next()` 함수 하나만 매개변수로 전달받으며, `next()` 호출 시 다음 `pre` 미들웨어로 제어가 넘어간다.
+
+Express 미들웨어와 동일하게 `next()`를 호출한다고 해서 남은 코드를 스킵하는 것은 아니다. `return next()`와 같은 형태로 불필요한 `next()` 메서드 다음 코드를 실행하지 않을 수 있다. 
 
 ```
 const schema = new Schema(..);
 schema.pre('save', function(next) {
-  // do stuff
-  next();
+  if (...){
+    next();
+  }
+  console.log('after next');  // 'after next'가 출력 됨.
 });
 
 // Mongoose 5.x에선 next() 호출 대신 프로미스를 반한하는 함수를 사용하여 제어를 넘길수도 있다(혹은 async/await).
@@ -206,7 +211,7 @@ schema.pre('save', async function() {
   await doMoreStuff();
 });
 ```
-주의할 것은 Mongoose 모델 컴파일 후 `pre()`,`post()`를 통해 미들웨어 함수를 정의해주면 작동하지 않는다. 따라서 모델 컴파일 이전에 `pre()`,`post()`를 호출해줘야 작동한다.
+주의할 것은 Mongoose 모델 컴파일 후 `pre()`,`post()`를 통해 미들웨어 함수를 정의해주면 작동하지 않는다는 것. 따라서 모델 컴파일 이전에 `pre()`,`post()`를 호출해줘야 한다.
 
 ```
 const schema = new mongoose.Schema({ name: String });
