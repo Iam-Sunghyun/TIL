@@ -69,7 +69,7 @@ Node.js에는 CommonJS, ECMAScript 모듈(ESM) 두 가지 모듈 시스템이 �
 **[Node.js 모듈 시스템 결정 방법]** <br>
 https://nodejs.org/api/packages.html#determining-module-system <br>
 
-## ESM
+## ES 모듈(자바스크립트 내장 모듈)
 
 JavaScript 표준 모듈화 시스템으로 비동기로 동작하며 `import`, `export`, `export default`문을 사용한다. 
 
@@ -137,16 +137,24 @@ Node.js의 기본 모듈화 시스템이다. 동기 방식으로 동작하기 �
 
 `module.exports`는 모듈에서 내보낼 객체이고, `exports`는 `module.exports`의 축약어로 `module.exports` 객체를 참조하고 있는 키워드이다. 
 
-`exports`를 통해 할당하고자 하는 경우 프로퍼티를 명시해줘야 한다.
 ```
-// app.mjs
-const circle = require('./circle.js');
-console.log(`The area of a circle of radius 4 is ${circle.area(4)}`);
---------------------------------------------
+const module = { exports: {} };
+const exports = module.exports;
+// your code
+    .
+    .
+return module.exports;
+```
+따라서 `exports`를 통해 할당하고자 하는 경우 프로퍼티를 명시해줘야 한다.
+```
 // circle.js
 const { PI } = Math;
 exports.area = (r) => PI * r ** 2;
 exports.circumference = (r) => 2 * PI * r;
+--------------------------------------------
+// app.mjs
+const circle = require('./circle.js');
+console.log(`The area of a circle of radius 4 is ${circle.area(4)}`);
 ```
 
 하나의 클래스를 exports 하는 경우
