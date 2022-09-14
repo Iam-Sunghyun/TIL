@@ -81,7 +81,24 @@ app.use((err, req, res, next) => {  // 다음 에러 처리 미들웨어에 에�
 클라이언트 출력 >> 에러!입니다.
 ```
 
+`next('route')`와 같이 `'route'`를 전달하여 호출하는 경우 라우터에 연결된 나머지 미들웨어를 건너뛴다.
 
+```
+router.get('/', (req, res, next) => {
+  next('route');
+}, (req, res, next) => {
+  console.log('실행되지 않습니다');
+  next();
+}, (req, res, next) => {
+  console.log('실행되지 않습니다');
+  next();
+});
+
+router.get('/', function(req, res) {
+  console.log('실행됩니다');
+  res.render('index', { title:'Express' });
+});
+```
 
 ### [Error Handling in Express]
 
