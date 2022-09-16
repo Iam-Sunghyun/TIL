@@ -96,7 +96,8 @@ app.listen('3000', () => {
 아래 링크 참조!
 
 ### [app.use(), app.all() 차이]
-https://stackoverflow.com/questions/14125997/difference-between-app-all-and-app-use
+https://stackoverflow.com/questions/14125997/difference-between-app-all-and-app-use <br>
+https://bambielli.com/til/2016-12-27-app-use-app-all/
 
 # 라우팅(routing)
 
