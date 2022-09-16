@@ -41,11 +41,11 @@ https://developer.mozilla.org/ko/docs/Web/HTTP/Methods
 
 # POST 요청 다루기
 
-## 요청(request) body 파싱하기
+## Express 내장 미들웨어로 요청(request) body 파싱하기
 
 요청 데이터가 Body에 담겨 오는 메서드(POST, PUT...)들은 `req.body` 프로퍼티에 요청 데이터를 담을 수 있다. 
 
-`req.body` 기본 값은 `undefined`이다. 아래와 같이 express 내장 미들웨어로 요청 데이터 파싱 설정을 해줘야 HTTP 요청 메시지 body의 데이터가 `req.body`에 채워져서 사용할 수 있게 된다.
+`req.body` 기본 값은 `undefined`이다. 아래와 같이 Express 내장 미들웨어로 요청 데이터 파싱 설정을 해줘야 HTTP 요청 메시지 body의 데이터가 `req.body`에 채워져서 사용할 수 있게 된다.
 
 
 ```
@@ -54,18 +54,18 @@ app.use(express.json()) // request body에서 json 데이터를 파싱
 app.use(express.urlencoded({ extended: true })) // request body에서 암호화된 폼 데이터를 파싱 (x-www-form-urlencoded 데이터)
 ```
 
-### `express.json()`
+### `express.json([options])`
 
-+ `json` 형태로 전송되는 요청 데이터(json 페이로드)를 파싱한다.
++ `json` 형태로 전송되는 요청 데이터(json 페이로드)를 파싱하는 Express 내장 미들웨어.
 
-### `express.urlencoded({ extended: true })`
+### `express.urlencoded([options])`
 
-+ `Contetn-Type`이 `application/x-www-form-urlencoded` 인 요청 데이터를 파싱한다.
++ `Contetn-Type`이 `application/x-www-form-urlencoded` 인 요청 데이터를 파싱하는 Express 내장 미들웨어.
   여기서 `x-www-form-urlencoded`는 HTML 폼으로 전송되는 요청 데이터의 기본 `Content-Type`으로 암호화된 HTML 폼 데이터를 말한다.
 
 <!-- html폼으로 전송되는 요청 데이터 기본 Content Type이 x-www-form-urlencoded 인듯 -->
 
-+ `express.urlencoded()`의 `extended` 옵션은 `x-www-form-urlencoded` 타입의 데이터를 파싱하는 라이브러리를 지정하는 옵션이다. `true`일 경우, `qs` 라이브러리로 파싱을, `false`인 경우 `querystring` 라이브러리로 파싱하겠다는 의미이다. 
++ `express.urlencoded({ extended: true })`의 `extended` 옵션은 `x-www-form-urlencoded` 타입의 데이터를 파싱하는 라이브러리를 지정하는 옵션이다. `true`일 경우, `qs` 라이브러리로 파싱을, `false`인 경우 `querystring` 라이브러리로 파싱하겠다는 의미이다. 
 + 쉽게 말하면 `qs`(true)로 설정한 경우 객체 형태로 전달된 데이터 내에서 중첩 객체를 허용한다는 말이며, `querystring`(false)인 경우에는 허용하지 않는다는 의미이다.
 
 파싱은 Node.js의 `body-parser` 모듈을 기반으로 수행된다.
