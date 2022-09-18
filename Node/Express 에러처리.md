@@ -1,3 +1,16 @@
+# 목차
+- [Express 에러 처리](#express-에러-처리)
+- [에러 캐치하기](#에러-캐치하기)
+  - [동기(synchronous) 코드](#동기synchronous-코드)
+  - [비동기(synchronous) 코드](#비동기synchronous-코드)
+    - [next()로 에러 전달](#next로-에러-전달)
+- [Express 내장 에러 핸들러(기본 에러 핸들러)](#express-내장-에러-핸들러기본-에러-핸들러)
+- [사용자 정의 에러 핸들러](#사용자-정의-에러-핸들러)
+- [사용자 정의 에러 클래스](#사용자-정의-에러-클래스)
+- [비동기 에러 처리를 위한 유틸리티 함수](#비동기-에러-처리를-위한-유틸리티-함수)
+- [Mongoose 에러 구분하기](#mongoose-에러-구분하기)
+- [joi 모듈](#joi-모듈)
+
 # Express 에러 처리
 
 Express에서 에러 처리란 동기, 비동기로 동작하는 코드에서 발생하는 에러를 처리하는 것을 말한다.
@@ -52,18 +65,18 @@ app.get('/', (req, res, next) => {
   })
 })
 
-// 혹은 다음과 같이 return next(err)로 next() 메서드 이후 코드가 실행되지 않게 해준다. 
+// 혹은 다음과 같이 return next(err)로 next() 메서드 이후 코드가 실행되지 않게 해준다.
 app.get('/', (req, res, next) => {
   fs.readFile('/file-does-not-exist', (err, data) => {
     if (err) {
       return next(err) // Express에게 에러 객체 전달
-    } 
+    }
     res.send(data)
   })
 })
 ```
 
-### +
+### next()로 에러 전달
 
 만약 `next()` 메서드를 `'route'`를 제외한 어떤 값이든 인수로 전달하여 호출한다면 Express는 해당 요청을 에러로 간주하고 남은 에러 처리 미들웨어가 아닌 모든 라우터, 미들웨어를 건너뛴다.
 
@@ -81,7 +94,9 @@ app.use((err, req, res, next) => {  // 다음 에러 처리 미들웨어에 에�
 클라이언트 출력 >> 에러!입니다.
 ```
 
-`next('route')`와 같이 `'route'`를 전달하여 호출하는 경우 라우터에 연결된 나머지 미들웨어 함수를 건너뛴다. 주의할 것은 `next('route')`는 `app.METHOD()` 혹은 `router.METHOD()`에 전달되는 미들웨어에서만 동작한다(`app.use()`의 미들웨어에선 동작하지 않음).
+아래 예시에서 `next('route')`와 같이 `'route'`를 전달하여 호출하는 경우 라우터에 연결된 나머지 미들웨어 함수를 건너뛴다. 
+
+주의할 것은 `next('route')`는 `app.METHOD()` 혹은 `router.METHOD()`에 전달되는 미들웨어에서만 동작한다(`app.use()`의 미들웨어에선 동작하지 않음).
 
 ```
 router.get('/', (req, res, next) => {
@@ -100,11 +115,11 @@ router.get('/', function(req, res) {
 });
 ```
 
-### [Error Handling in Express]
+**[Error Handling in Express]**
 
 https://www.geeksforgeeks.org/error-handling-in-express/?ref=lbp
 
-### [Express 공식 문서 Error Handling]
+**[Express 공식 문서 Error Handling]**
 
 http://expressjs.com/en/guide/error-handling.html
 
@@ -234,7 +249,7 @@ app.use((err, req, res, next) => {
 
 # 비동기 에러 처리를 위한 유틸리티 함수
 
-Mongoose Model 객체의 쿼리 메서드는 비동기로 동작하는 경우가 많다. Express 라우트 핸들러 내에서 `Model.findById(id)`같은 비동기 함수를 호출하고 결과를 받아 처리하기 위해선 동기적으로 동작시킬 필요가 있는데, 이 때 `async/await`을 사용하며 다음과 같이 `try/catch`를 통해 에러를 처리해준다. 
+Mongoose Model 객체의 쿼리 메서드는 비동기로 동작하는 경우가 많다. Express 라우트 핸들러 내에서 `Model.findById(id)`같은 비동기 함수를 호출하고 결과를 받아 처리하기 위해선 동기적으로 동작시킬 필요가 있는데, 이 때 `async/await`을 사용하며 다음과 같이 `try/catch`를 통해 에러를 처리해준다.
 
 ```
 app.get('/products/:id/edit', async (req, res, next) => {
@@ -269,7 +284,7 @@ app.get('/campgrounds/:id/edit', catchAsyncError(async (req, res, next) => {
 }));
 ```
 
-참고로 현재 베타 버전인 Express5 에선 위와같이 처리해주지 않아도 프로미스를 반환하는 비동기 미들웨어, 라우트 핸들러에서 reject하거나 에러가 발생된 경우 자동으로 `next(value)`함수를 호출해 처리해준다. 
+참고로 현재 베타 버전인 Express5 에선 위와같이 처리해주지 않아도 프로미스를 반환하는 비동기 미들웨어, 라우트 핸들러에서 reject하거나 에러가 발생된 경우 자동으로 `next(value)`함수를 호출해 처리해준다.
 
 # Mongoose 에러 구분하기
 
@@ -296,8 +311,10 @@ app.use((err, req, res, next) => {
 });
 ```
 
-
 # joi 모듈
 
 데이터 스키마 유효성 검증을 위한 npm 모듈
 
+**[joi 모듈 document]**
+
+https://joi.dev/api/?v=17.6.0#example

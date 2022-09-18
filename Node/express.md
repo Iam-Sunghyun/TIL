@@ -1,38 +1,52 @@
-# Express 프레임워크
+# 목차
+- [Express란?](#express란)
+  - [Express 장점](#express-장점)
+- [미들웨어 함수(middelware function)](#미들웨어-함수middelware-function)
+  - [요청(response), 응답(request) 객체](#요청response-응답request-객체)
+- [헷갈렸던 Express 메서드](#헷갈렸던-express-메서드)
+  - [app.use(path, callback...), app.all(path, callback...)](#appusepath-callback-appallpath-callback)
+- [라우팅(routing)](#라우팅routing)
+- [경로 매개변수(path parameter)](#경로-매개변수path-parameter)
+- [쿼리 스트링(query string)](#쿼리-스트링query-string)
 
-### Express란?
+# Express란?
 
+다양한 API와 미들웨어 조합으로 간결하고 유연한 node.js 서버 개발 프레임워크이다.
+
+ Hapi, Koa,	Nest와 같은 다른 node.js 프레임워크보다 압도적인 다운로드 수를 기록하고 있으며 사실상 Nodejs의 표준 웹서버 프레임워크로 불려질 만큼 많은 곳에서 사용되고 있다.
+
+```
 Express.js, 또는 간단히 익스프레스는 Node.js를 위한 웹 프레임워크의 하나로, MIT 허가서로 라이선스되는 자유-오픈 소스 소프트웨어로 출시되었다. Node.js로 웹 애플리케이션, API 개발을 위해 설계되었다. Node.js의 사실상의 표준 서버 프레임워크로 불리고 있다. - 위키백과
-
-간단히 node.js 서버 개발을 위한 다양한 기능을 제공하는 프레임워크이다.
+```
 
 <!-- Express 사용 이유? -->
 
-### [Expressjs 공식 홈페이지]
+**[Expressjs 공식 홈페이지]**
+
 http://expressjs.com/
 
-### [Expressjs 공식 홈페이지 자주 묻는 질문]
+**[Expressjs 공식 홈페이지 자주 묻는 질문]**
+
 https://expressjs.com/ko/starter/faq.html
 
-### [Express.js vs Node.js]
-https://procoders.tech/blog/express-js-vs-node-js/
+**[Express.js vs Node.js]**
 
+https://procoders.tech/blog/express-js-vs-node-js/
 
 ## Express 장점
 
 https://jsqna.com/ejs-1-why-express/
 
-
 # 미들웨어 함수(middelware function)
 
-미들웨어 함수란 요청-응답 사이클 안에서 요청(`req`)/응답(`res`) 객체와, `next()` 메서드에 접근 권한을 갖는 함수를 말한다. 
+미들웨어 함수란 요청-응답 사이클 안에서 요청(`req`)/응답(`res`) 객체와, `next()` 메서드에 접근 권한을 갖는 함수를 말한다.
 
-### 예시
 ```
+// 예시
 const express = require('express')
 const app = express()
 
-// 
+//
 app.use((req, res, next) => {
   console.log('Time:', Date.now())
   next()
@@ -54,14 +68,14 @@ app.use('/user/:id', (req, res, next) => {
 
 `res` - 요청 대상에게 응답하기 위한 응답 객체.<br>
 
-
-### [middleware란?]
+**[middleware란?]**
 
 https://psyhm.tistory.com/8
 
-
 # 헷갈렸던 Express 메서드
-## app.use(path, callback...),  app.all(path, callback...)
+
+## app.use(path, callback...), app.all(path, callback...)
+
 `app.use(path, callback...)`는 요청 메서드 상관없이 경로에 대한 모든 요청에 미들웨어 함수를 실행한다.
 
 `path`기본값은 `"/"`이며 경로 없이 마운트된 미들웨어는 앱에 대한 모든 요청에 ​​대해 실행된다.
@@ -70,7 +84,7 @@ https://psyhm.tistory.com/8
 
 아래의 예시에서 설정한 `app.use('/abcd', ...)` 경로는 `app.all('/abcd/*', ...)`과 일치한다.
 
-즉, `app.use('/abcd', ...)`에서 경로는 `"/abcd"`, `"/abcd/images"`, `"/abcd/images/news/.."` 등등과 같이 하위의 경로를 모두 포함한다. 
+즉, `app.use('/abcd', ...)`에서 경로는 `"/abcd"`, `"/abcd/images"`, `"/abcd/images/news/.."` 등등과 같이 하위의 경로를 모두 포함한다.
 
 따라서 세세하게 URI을 식별하여 적용하기 위해선 `app.all()`을 사용한다.
 
@@ -91,11 +105,13 @@ app.listen('3000', () => {
   console.log(`Exapmle app listening on port ${port}`);
 });
 ```
+
 **보통 `app.use()`는 주로 앱에 미들웨어를 적용하기 위해 사용하고(요청/응답 처리를 위한게 아닌) `app.all()`은 라우팅 용도로 응답을 위해 주로 사용된다고 함.**
 
 아래 링크 참조!
 
-### [app.use(), app.all() 차이]
+**[app.use(), app.all() 차이]**
+
 https://stackoverflow.com/questions/14125997/difference-between-app-all-and-app-use <br>
 https://bambielli.com/til/2016-12-27-app-use-app-all/
 
@@ -103,9 +119,8 @@ https://bambielli.com/til/2016-12-27-app-use-app-all/
 
 라우팅은 애플리케이션(서버)의 엔드 포인트(URI)를 정의하고 해당 URI로 클라이언트 요청이 왔을 때 응답하는 방식을 설정하는 것을 말한다.
 
-### ex)
-
 ```
+// 라우팅 예시
 // /dogs 경로에 get 요청에 대한 응답 라우트
 app.get('/dogs', (req, res) => {
   res.send(`<h1>Here is Response to get /dogs</h1>`);
@@ -165,13 +180,10 @@ invalid query
 ----------------
 ```
 
-### [MDN express] <br>
+**[MDN express]** <br>
 
 https://developer.mozilla.org/ko/docs/Learn/Server-side/Express_Nodejs
 
-### [poiemaweb Express-basics] <br>
+**[poiemaweb Express-basics]** <br>
 
 https://poiemaweb.com/express-basics
-
-
-

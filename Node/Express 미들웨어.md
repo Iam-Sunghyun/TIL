@@ -1,14 +1,28 @@
+# 목차
+- [Express 미들웨어(middelware)의 개념](#express-미들웨어middelware의-개념)
+  - [미들웨어 함수의 기능](#미들웨어-함수의-기능)
+  - [미들웨어 함수의 종류](#미들웨어-함수의-종류)
+- [내장 미들웨어로 정적 파일 사용하기](#내장-미들웨어로-정적-파일-사용하기)
+  - [express.static(root, [options])](#expressstaticroot-options)
+- [써드파티(third-party) 미들웨어](#써드파티third-party-미들웨어)
+  - [Morgan 미들웨어](#morgan-미들웨어)
+    - [morgan(format, options)](#morganformat-options)
+- [미들웨어 정의하기](#미들웨어-정의하기)
+  - [미들웨어로 요청(`req`) 객체에 값 추가하기](#미들웨어로-요청req-객체에-값-추가하기)
+    - [요청 시간 기록 미들웨어 함수](#요청-시간-기록-미들웨어-함수)
+  - [next()](#next)
+  - [next() 이하 코드 무시하기](#next-이하-코드-무시하기)
+  - [에러 코드 404 라우팅](#에러-코드-404-라우팅)
+  - [미들웨어로 간단한 패스워드 설정](#미들웨어로-간단한-패스워드-설정)
+
 # Express 미들웨어(middelware)의 개념
 
-미들웨어 함수란 요청-응답 사이클 안에서 요청(req)/응답(res) 객체와, next() 메서드에 대한 접근 권한을 갖는 함수를 말한다. 
+미들웨어 함수란 요청-응답 사이클 안에서 요청(req)/응답(res) 객체와, next() 메서드에 대한 접근 권한을 갖는 함수를 말한다.
 
-쉽게 말해 요청/응답 중간에서 처리되는 함수로, 요청에 대한 핸들러 함수라고 보면 된다. 
+쉽게 말해 요청/응답 중간에서 처리되는 함수로, 요청에 대한 핸들러 함수라고 보면 된다.
 
-### [미들웨어와 라우트 핸들러 차이]
-https://stackoverflow.com/questions/58925276/what-is-the-difference-between-a-route-handler-and-middleware-function-in-expres 
-
-### 예시
 ```
+/// Express 미들웨어 예시
 const express = require('express')
 const app = express()
 
@@ -26,12 +40,12 @@ app.get('/user/:id', (req, res, next) => {
 
 ## 미들웨어 함수의 기능
 
-+ 요청/응답 사이클 내에서 원하는 코드 실행
-+ 요청/응답 객체(req, res) 변경(데코레이트) 
-  + ex) app.use(express.urlencoded(...))로 요청 body 파싱하기
-  + ex) req.requestTime = Date.now()과 같이 요청 시간 값을 req 객체 프로퍼티로 추가 등등 
-+ 요청에 대한 응답을 전송하여 요청/응답 사이클 종료
-+ 다음 미들웨어 함수로 제어 전달(next())
+- 요청/응답 사이클 내에서 원하는 코드 실행
+- 요청/응답 객체(req, res) 변경(데코레이트)
+  - ex) app.use(express.urlencoded(...))로 요청 body 파싱하기
+  - ex) req.requestTime = Date.now()과 같이 요청 시간 값을 req 객체 프로퍼티로 추가 등등
+- 요청에 대한 응답을 전송하여 요청/응답 사이클 종료
+- 다음 미들웨어 함수로 제어 전달(next())
 
 현재 미들웨어 함수가 요청/응답 사이클을 종료하지 않으면, next() 메서드로 다음 미들웨어에 제어를 전달해줘야 한다. 그렇지 않으면 요청이 중단된다.
 
@@ -39,17 +53,23 @@ app.get('/user/:id', (req, res, next) => {
 
 Express 미들웨어 유형은 다음과 같다. 자세한 것은 공식 페이지 참고.
 
-+ 애플리케이션 수준 미들웨어(Application-level middleware)
-+ 라우터 수준 미들웨어(Router-level middleware)
-+ 오류 처리 미들웨어(Error-handling middleware)
-+ 내장 미들웨어(Built-in middleware)
-+ 타사 미들웨어(Third-party middleware)
+- 애플리케이션 수준 미들웨어(Application-level middleware)
+- 라우터 수준 미들웨어(Router-level middleware)
+- 오류 처리 미들웨어(Error-handling middleware)
+- 내장 미들웨어(Built-in middleware)
+- 타사 미들웨어(Third-party middleware)
 
-### [Express 공식 홈페이지 middleware]
+**[Express 공식 홈페이지 middleware]**
+
 http://expressjs.com/en/guide/writing-middleware.html
 
-### [Middleware in Express.js]
+**[Middleware in Express.js]**
+
 https://www.geeksforgeeks.org/middleware-in-express-js/
+
+**[미들웨어와 라우트 핸들러 차이]**
+
+https://stackoverflow.com/questions/58925276/what-is-the-difference-between-a-route-handler-and-middleware-function-in-expres
 
 # 내장 미들웨어로 정적 파일 사용하기
 
@@ -90,29 +110,32 @@ or
 app.use(express.static(__dirname + '/CSS'));
 ```
 
-### [Express에서 정적 파일 제공]
+**[Express에서 정적 파일 제공]**
 
 http://expressjs.com/en/starter/static-files.html
 
 <!--  부트스트랩과 express 연동 -> Express-Project폴더 파일들 참조..-->
 
-# 써드파티(third-party) 미들웨어 
+# 써드파티(third-party) 미들웨어
 
 Express 앱에 여러 가지 외부 미들웨어 모듈을 통해 필요한 기능을 사용할 수 있다(`method-override`로 HTML 폼에서 POST 요청을 PATCH, DELETE, PUT과 같은 지원되지 않는 요청 메서드로 재정의 한 것처럼).
 
 ## Morgan 미들웨어
 
-`Morgan` 미들웨어는 써드파티 미들웨어로 HTTP 요청 로그를 터미널에 출력해주어 디버깅 할 때 매우 유용하다(ex) 요청 후 원하는 응답을 못 받은 상황이나, 어떤 요청인지 확인하고자 하는 경우). 
+`Morgan` 미들웨어는 써드파티 미들웨어로 HTTP 요청 로그를 터미널에 출력해주어 디버깅 할 때 매우 유용하다(ex) 요청 후 원하는 응답을 못 받은 상황이나, 어떤 요청인지 확인하고자 하는 경우).
 
 `Morgan`은 Node.js 모듈로 npm 레지스트리에서 다운로드 받을 수 있다.
+
 ```
 npm install morgan
 ```
+
 ### morgan(format, options)
 
 morgan 함수에 로그 출력 형식과 옵션을 지정하여 사용할 수 있다.
 
 다음은 기본 출력 형식으로 HTTP 요청 로그를 출력한 예이다. 로그는 응답이 완료되는 시점에 출력된다.
+
 ```
 const morgan = require('morgan');
 
@@ -128,12 +151,14 @@ app.get('/dogs', (req, res) => {
 ```
 
 <!-- Morgan 사용법 내용 보충↓ -->
-### [npm morgan]
+
+**[npm morgan]**
+
 https://www.npmjs.com/package/morgan
 
-### [Express 써드파티 미들웨어 목록]
-http://expressjs.com/en/resources/middleware.html
+**[Express 써드파티 미들웨어 목록]**
 
+http://expressjs.com/en/resources/middleware.html
 
 # 미들웨어 정의하기
 
@@ -143,7 +168,8 @@ http://expressjs.com/en/resources/middleware.html
 
 ### 요청 시간 기록 미들웨어 함수
 
-모든 요청의 시간을 `req`의 `requestTime` 프로퍼티에 저장하여 후속 미들웨어 함수에서 사용할 수 있게 한다. 
+모든 요청의 시간을 `req`의 `requestTime` 프로퍼티에 저장하여 후속 미들웨어 함수에서 사용할 수 있게 한다.
+
 ```
 const express = require('express')
 const app = express()
@@ -166,9 +192,11 @@ app.get('/', (req, res) => {
 // 포트 3000에 연결 및 요청 수신 대기
 app.listen(3000)
 ```
+
 이렇게 다음에 호출 될 라우트 핸들러 함수에서 사용하기 위해 요청 객체에 데이터를 추가하는 것을 데코레이팅이라고 한다.
 
 ## next()
+
 미들웨어 함수의 `next()`를 사용하면 같은 경로, 요청 메서드의 후속 미들웨어 함수로 제어를 전달할 수 있다.
 
 **미들웨어의 실행 순서는 먼저 로드된 미들웨어 함수부터 순서대로 실행된다.**
@@ -221,7 +249,8 @@ app.use((req, res, next) => {
    GET / 200 10 - 3.528 ms
 ```
 
-따라서 `next()`이하 코드를 무시하려면 다음과 같이 `next()`를 return해주면 된다. 
+따라서 `next()`이하 코드를 무시하려면 다음과 같이 `next()`를 return해주면 된다.
+
 ```
 app.use((req, res, next) => {
   console.log('morgan 1!!!!');
@@ -239,7 +268,6 @@ app.use((req, res, next) => {
    morgan 3!!!!
    GET / 304 - - 3.232 ms
 ```
-
 
 ## 에러 코드 404 라우팅
 
@@ -265,7 +293,7 @@ app.use((req, res) => {
 
 ## 미들웨어로 간단한 패스워드 설정
 
-미들웨어로 간이 특정 경로에 대한 사용자 인증을 구현해본다. 
+미들웨어로 간이 특정 경로에 대한 사용자 인증을 구현해본다.
 
 특정 경로에 대한 요청 시 쿼리 스트링으로 전달한 패스워드를 검사하는 미들웨어로 연습을 위해 단순하게 구성해보았다.
 

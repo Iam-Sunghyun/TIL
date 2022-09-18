@@ -1,10 +1,23 @@
 <!-- # SQL 데이터베이스 관계 개요 (下) -->
+# 목차
+- [목차](#목차)
+- [MongoDB 일대N 관계 데이터 모델링](#mongodb-일대n-관계-데이터-모델링)
+    - [데이터 모델링이란?](#데이터-모델링이란)
+- [임베디드(embedded) 방식](#임베디드embedded-방식)
+  - [One-to-Few](#one-to-few)
+- [참조(reference) 방식](#참조reference-방식)
+  - [One-to-Many](#one-to-many)
+  - [One-to-Squillions](#one-to-squillions)
+- [Mongoose Populate](#mongoose-populate)
+    - [populate()없이 참조 그대로 출력하는 경우](#populate없이-참조-그대로-출력하는-경우)
+    - [populate()로 도큐먼트를 채워넣은 경우](#populate로-도큐먼트를-채워넣은-경우)
+    - [채워진 도큐먼트의 특정 필드만 출력하기](#채워진-도큐먼트의-특정-필드만-출력하기)
 
 # MongoDB 일대N 관계 데이터 모델링
 
 MongoDB에서 일대다 관계의 데이터를 모델링하는 경우 크게 2가지 방법으로 모델링할 수 있고 각자 장단점을 갖고있다.
 
-+ 임베딩(embedding) 방식
++ 임베디드(embedded) 방식
 + 레퍼런스(reference, 참조) 방식
   + 자식 참조
   + 부모 참조
@@ -31,8 +44,8 @@ MongoDB에서 일대다 관계의 데이터를 모델링하는 경우 크게 2�
 
 조회 성능이 중요하고 데이터 중복에 따른 데이터 불일치 문제가 발생하지 않거나 업데이트가 과도하게 발생하지 않는 업무에 적합하다.
 
-### ex) 사용자의 주소 정보에 여러 값을 저장
 ```
+// 사용자의 주소 정보에 여러 값을 저장하는 경우
 > db.person.find()
 [
   {
@@ -72,8 +85,8 @@ MongoDB에서 일대다 관계의 데이터를 모델링하는 경우 크게 2�
 
 부모 도큐먼트에 발생하는 부하 및 크기 증가를 고려하여 자식 도큐먼트가 적게 생성되는 업무에 적합하다.
 
-### ex)
 ```
+// 자식 참조 예시
 > db.products.findOne()
 {
     name : 'left-handed smoke shifter',
@@ -110,6 +123,7 @@ MongoDB에서 일대다 관계의 데이터를 모델링하는 경우 크게 2�
 이력 또는 로그 데이터와 같이 자식 도큐먼트가 많이 생성되는 업무에 적합하다.
 
 ```
+// 부모 참조 예시
 > db.hosts.findOne()
 {
     _id : ObjectID('AAAB'),
@@ -125,13 +139,16 @@ MongoDB에서 일대다 관계의 데이터를 모델링하는 경우 크게 2�
 }
 ```
 
-## [MongoDB 데이터 모델링]
+**[MongoDB 데이터 모델링]**
+
 https://meetup.toast.com/posts/276
 
-## [MongoDB 웹사이트 MongoDB 스키마 디자인 가이드(1,2,3부)]
+**[MongoDB 웹사이트 MongoDB 스키마 디자인 가이드(1,2,3부)]**
+
 https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-3
 
-### [MongoDB 스키마 디자인]
+**[MongoDB 스키마 디자인]**
+
 https://etloveguitar.tistory.com/106
 
 
@@ -143,7 +160,9 @@ MongoDB에는 join 연산과 비슷한 기능의 `$lookup` 집합 연산자를 �
 
 Mongoose `Population`(채워넣기)은 도큐먼트의 특정 경로(참조)를 다른 컬렉션의 도큐먼트로 자동으로 교체해준다.
 
-### 사용 예시
+`Population`시 참조하고자 하는 모델(컬렉션)은 `ref` 필드로 지정해줄 수 있다.
+
+### populate()없이 참조 그대로 출력하는 경우
 ```
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
@@ -222,10 +241,12 @@ Blog.find({ title: 'populate practice' })
 ]
 ```
 
-### [geeksforgeeks populate]
+**[geeksforgeeks populate]**
+
 https://www.geeksforgeeks.org/mongoose-populate-method/
 
-### [Mongoose Populate]
+**[Mongoose Populate]**
+
 https://mongoosejs.com/docs/populate.html 
 
 

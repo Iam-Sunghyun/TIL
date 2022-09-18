@@ -1,3 +1,16 @@
+# 목차
+- [템플레이팅(templating)이란?](#템플레이팅templating이란)
+    - [템플릿?](#템플릿)
+  - [템플릿 엔진](#템플릿-엔진)
+- [EXPRESS에서 EJS(Embedded javascript)로 템플릿 구성하기](#express에서-ejsembedded-javascript로-템플릿-구성하기)
+  - [EJS 태그](#ejs-태그)
+- [EXPRESS 앱에서 템플릿으로 정보 전달하기](#express-앱에서-템플릿으로-정보-전달하기)
+  - [EJS 조건문, 루프](#ejs-조건문-루프)
+    - [조건문](#조건문)
+    - [반복문](#반복문)
+- [include로 파일 분할(partials)](#include로-파일-분할partials)
+  - [ejs-mate](#ejs-mate)
+  
 # 템플레이팅(templating)이란?
 
 요청마다 다른 페이지를 구성하는 게 아닌, 하나의 템플릿 안에 데이터(변수), 조건문이나 반복문 같은 로직을 삽입하여 HTML 일부를 반복 사용하는 것을 말한다(마치 문자열 안에 템플릿 리터럴로 표현식을 삽입해놓은 것처럼). -> **재사용성↑ 유지보수 용이**
@@ -22,11 +35,11 @@
 + 클라이언트 사이드 템플릿 엔진 - Pug, Mustache...
 + 서버 사이드 템플릿 엔진 - EJS, Handlebars...
 
-### [템플릿 엔진이란?] <br>
+**[템플릿 엔진이란?]** <br>
 
 https://www.educative.io/answers/what-are-template-engines
 
-### [서버 사이드, 클라이언트 사이드 템플릿 엔진] <br>
+**[서버 사이드, 클라이언트 사이드 템플릿 엔진]** <br>
 
 https://gmlwjd9405.github.io/2018/12/21/template-engine.html <br>
 
@@ -34,7 +47,7 @@ https://velog.io/@hi_potato/Template-Engine-Template-Engine <br>
 
 https://usefultoknow.tistory.com/entry/%ED%85%9C%ED%94%8C%EB%A6%BF-%EC%97%94%EC%A7%84Template-Engine-%EC%9D%B4%EB%9E%80 
 
-### [express와 호환되는 템플릿 엔진 목록] <br>
+**[express와 호환되는 템플릿 엔진 목록]** <br>
 
 https://expressjs.com/en/resources/template-engines.html
 
@@ -183,10 +196,10 @@ app.get('/random', (req, res) => {
 
 값을 출력하기 위한 `<%= %>` 태그의 경우 HTML을 이스케이프 처리하여 문자열로 취급해 문자 그대로 출력되는데, `<%- %>` 태그는 HTML을 이스케이프 처리하지 않고 HTML로 취급하여 출력한다.
 
-### ex)
-
 ```
-/// partials/footer.ejs
+// <%- include() %> 예시
+
+// partials/footer.ejs
 <footer class="footer">
   <h1>this is footer</h1>
 </footer>
@@ -201,11 +214,15 @@ app.get('/random', (req, res) => {
 따라서 `inlcude()`로 템플릿을 포함시킬 때는 `<%- %>` 태그를 사용해줘야 한다.
 
 
-### [EJS 공식 사이트]
+**[EJS 공식 사이트]**
 
 https://ejs.co/#install
 
 
 ## ejs-mate
-### [npm ejs-mate]
+
+ejs로 레이아웃(템플릿을 위한 템플릿)을 구성하기 위한 모듈.
+
+**[npm ejs-mate]**
+
 https://www.npmjs.com/package/ejs-mate

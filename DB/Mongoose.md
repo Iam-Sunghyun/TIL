@@ -1,3 +1,29 @@
+# 목차
+- [Mongoose란?](#mongoose란)
+  - [ODM, ORM?](#odm-orm)
+  - [Mongoose 쓰는 이유?](#mongoose-쓰는-이유)
+- [Mongoose로 MongoDB에 연결 후 document 생성하기](#mongoose로-mongodb에-연결-후-document-생성하기)
+  - [1. Mongoose NPM으로 설치](#1-mongoose-npm으로-설치)
+  - [2. 프로젝트에 MongoDB 연결](#2-프로젝트에-mongodb-연결)
+  - [3. 스키마 정의, 모델 생성 후 단일 문서 저장하기](#3-스키마-정의-모델-생성-후-단일-문서-저장하기)
+    - [스키마(schema)?](#스키마schema)
+    - [단일 문서 저장 예시 코드](#단일-문서-저장-예시-코드)
+- [Mongoose API](#mongoose-api)
+  - [Mongoose에서 쿼리 결과를 처리하는 방법 2가지](#mongoose에서-쿼리-결과를-처리하는-방법-2가지)
+  - [Document 여러 개 삽입하기](#document-여러-개-삽입하기)
+  - [Document 찾기](#document-찾기)
+  - [Document 업데이트 하기](#document-업데이트-하기)
+  - [Document 삭제하기](#document-삭제하기)
+- [Mongoose 스키마 유효성 검사(validation)](#mongoose-스키마-유효성-검사validation)
+  - [업데이트 시 유효성 검사](#업데이트-시-유효성-검사)
+  - [유효성 검사 에러 메시지](#유효성-검사-에러-메시지)
+- [사용자 정의 메서드를 스키마에 추가하기](#사용자-정의-메서드를-스키마에-추가하기)
+  - [인스턴스 메서드 추가(자주 사용)](#인스턴스-메서드-추가자주-사용)
+  - [정적 메서드 추가](#정적-메서드-추가)
+- [가상 Mongoose(Mongoose Virtuals)](#가상-mongoosemongoose-virtuals)
+- [Mongoose 미들웨어](#mongoose-미들웨어)
+
+
 # Mongoose란?
 
 Mongoose 홈 페이지에는 다음과 같은 문구가 있다.
@@ -8,7 +34,7 @@ node.js를 위한 우아한 mongodb 객체 모델링
 
 Node, Javascript를 사용해 MongoDB 데이터를 다룰 수 있게 연결시켜주는 툴로 Nodejs를 위한 MongoDB의 **ODM(Object Document Mapper)** 이다(관계형 데이터베이스에선 ORM(Object Ralation Mapper)이라고 한다.).
 
-### ODM, ORM?
+## ODM, ORM?
 
 ODM 혹은 ORM은 데이터베이스와 프로그래밍 언어 간의 호환되지 않는 데이터를 변환하는 프로그래밍 기법, 툴을 말하는데 Mongoose는 MongoDB의 ODM으로서 데이터나 문서를 javascript 객체로 매핑해주는 역할을 한다.
 
@@ -28,7 +54,7 @@ Mongoose를 사용하면 javascript로 매핑된 객체에 메서드를 사용, 
 
 <!-- Mongoose 쓰는이유? 아주 간단히 요약하면 MongoDB에서 제공하는 기본 드라이버 이상의 기능을 제공한다고 함 보충 필요-->
 
-# Mongoose를 MongoDB에 연결 후 document 생성하기
+# Mongoose로 MongoDB에 연결 후 document 생성하기
 
 ## 1. Mongoose NPM으로 설치
 
@@ -94,11 +120,11 @@ usualSuspects.save();
 
 `Document.prototype.save()`메서드는 비동기로 동작하며 `promise` 객체를 반환한다(저장 시 유효성 검사도 수행함).
 
-### [몽구스 스키마 정의, 모델 생성]
+**[몽구스 스키마 정의, 모델 생성]**
 
 https://mongoosejs.com/docs/guide.html#schemas
 
-### [몽구스 빠른 시작 가이드]
+**[몽구스 빠른 시작 가이드]**
 
 https://mongoosejs.com/docs/index.html
 
@@ -153,10 +179,10 @@ MyModel.find({ name: /john/i }, 'name friends')
         // 에러 처리
     });
 ```
-### [몽구스 Promises]
+**[몽구스 Promises]**
 https://mongoosejs.com/docs/promises.html
 
-### [몽구스 Queries]
+**[몽구스 Queries]**
 https://mongoosejs.com/docs/queries.html
 
 ## Document 여러 개 삽입하기
@@ -270,7 +296,7 @@ Movie.findOneAndDelete({title: 'Amadeus'}).then(m => console.log(m));
 
 반환 값은 모두 `Query` 객체이다.
 
-# 스키마 유효성 검사(validation)
+# Mongoose 스키마 유효성 검사(validation)
 
 <!-- operation buffering? -->
 
@@ -315,7 +341,7 @@ const productSchema = new mongoose.Schema({
 스키마 제약에 걸리는 경우 `save()`로 저장 시 에러가 발생하고, 스키마에 정의되지 않은 필드를 삽입 시 그 값은 무시된다.
 
 
-### [스키마 유형, 옵션(제약 조건)]
+**[스키마 유형, 옵션(제약 조건)]**
 
 https://mongoosejs.com/docs/schematypes.html
 <!-- 일부 값들은 자동으로 해당 타입으로 형변환하여 저장된다. -->
@@ -347,7 +373,7 @@ Document 형식이 스키마 제약 조건에 어긋나는 경우 다음과 같�
 
 Mongoose는 위 예시의 `{VALUE}`를 유효성 검사하는 값으로 바꿔 출력한다.
 
-### [유효성 검사(validation)]
+**[유효성 검사(validation)]**
 
 https://mongoosejs.com/docs/validation.html
 
@@ -404,7 +430,7 @@ productSchema.statics.fireSale = function () {
 // Product.fireSale().then(res => console.log(res))
 ```
 
-### [스키마 인스턴스 메서드, 정적 메서드]
+**[스키마 인스턴스 메서드, 정적 메서드]**
 
 https://mongoosejs.com/docs/guide.html#methods
 
@@ -469,7 +495,7 @@ tammy.save();
 ```
 위와 같이 문서를 저장한 경우 모델 생성 시 전달한 모델명의 복수형으로 컬렉션을 생성한다(위의 경우 Person -> people).
 
-### [Mongoose Virtuals]
+**[Mongoose Virtuals]**
 
 https://mongoosejs.com/docs/guide.html#virtuals
 
@@ -497,6 +523,7 @@ const farmSchema = new mongoose.Schema({
 .pre()
 
 .post() -->
+**[Mongoose middleware]**
 
 https://mongoosejs.com/docs/middleware.html
 

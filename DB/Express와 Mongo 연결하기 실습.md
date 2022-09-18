@@ -1,8 +1,19 @@
+# 목차
+- [MongoDB 여러 모델 데이터 결합하기](#mongodb-여러-모델-데이터-결합하기)
+    - [실습용 컬렉션](#실습용-컬렉션)
+    - [farm 컬렉션 도큐먼트 스키마](#farm-컬렉션-도큐먼트-스키마)
+    - [products 컬렉션 도큐먼트 스키마](#products-컬렉션-도큐먼트-스키마)
+    - [라우팅](#라우팅)
+- [Mongoose 미들웨어로 여러 모델이 결합된 데이터 삭제하기](#mongoose-미들웨어로-여러-모델이-결합된-데이터-삭제하기)
+    - [Post](#post)
+    - [Pre](#pre)
+
 # MongoDB 여러 모델 데이터 결합하기
 
 farm 컬렉션 도큐먼트와 products 도큐먼트 간에 Two-Way Referencing, 즉 상호 참조 관계를 만들어보는 코드. 데이터 입력을 위한 템플릿은 생략하였다.
 
 ### 실습용 컬렉션
+
 ```
 // mongosh
 farmStand> show collections
@@ -11,6 +22,7 @@ products
 ```
 
 ### farm 컬렉션 도큐먼트 스키마
+
 ```
 const mongoose = require("mongoose");
 
@@ -27,7 +39,7 @@ const farmSchema = new mongoose.Schema({
     required: [true, "must have email.."],
   },
   product: [  // ObjectId 타입의 배열, ref 옵션은 population시 사용할 모델을 지정한다.
-    {         
+    {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Product', // 'Product' 모델(products 컬렉션)
     },
@@ -39,6 +51,7 @@ module.exports = Farm;
 ```
 
 ### products 컬렉션 도큐먼트 스키마
+
 ```
 const mongoose = require("mongoose");
 
@@ -47,7 +60,7 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  price: { 
+  price: {
     type: Number,
     min: 0,
   },
@@ -67,6 +80,7 @@ module.exports = Product;
 ```
 
 ### 라우팅
+
 ```
 // 카테고리용 배열
 const categories = ['fruit', 'vegetable', 'dairy'];
@@ -78,7 +92,7 @@ app.get('/farms/:id/products/new', async (req, res) => {
     res.render('products/new', { categories, farm })
 })
 
-// 새 상품 추가 
+// 새 상품 추가
 app.post('/farms/:id/products', async (req, res) => {
 
     // 경로 파라미터로 연결하고자 하는 부모 도큐먼트(farm) 찾기
@@ -157,7 +171,7 @@ await Model.findOne({});
 
 다음 예시는 'findOneAndDelete'를 트리거하는 쿼리 함수 사용시 실행되는 `post` 미들웨어이다.
 
-`post` 미들웨어는 쿼리 결과를 콜백 함수의 첫 번째 매개변수(`doc`)에, 다음 미들웨어를 호출할 `next()` 메서드를 두 번째 매개변수에 전달한다. 
+`post` 미들웨어는 쿼리 결과를 콜백 함수의 첫 번째 매개변수(`doc`)에, 다음 미들웨어를 호출할 `next()` 메서드를 두 번째 매개변수에 전달한다.
 
 ```
 // 스키마 정의
@@ -185,10 +199,12 @@ app.delete('farms/:id', async (req, res) => {
   res.redirect('/farms');
 });
 ```
+
 ### Pre
+
 `pre` 미들웨어는 특정 함수 실행 이전에 hook되기 때문에 쿼리 결과를 전달받진 못하고 `next()` 함수 하나만 매개변수로 전달받으며, `next()` 호출 시 다음 `pre` 미들웨어로 제어가 넘어간다.
 
-Express 미들웨어와 동일하게 `next()`를 호출한다고 해서 남은 코드를 스킵하는 것은 아니다. `return next()`와 같은 형태로 불필요한 `next()` 메서드 다음 코드를 실행하지 않을 수 있다. 
+Express 미들웨어와 동일하게 `next()`를 호출한다고 해서 남은 코드를 스킵하는 것은 아니다. `return next()`와 같은 형태로 불필요한 `next()` 메서드 다음 코드를 실행하지 않을 수 있다.
 
 ```
 const schema = new Schema(..);
@@ -211,6 +227,7 @@ schema.pre('save', async function() {
   await doMoreStuff();
 });
 ```
+
 주의할 것은 Mongoose 모델 컴파일 후 `pre()`,`post()`를 통해 미들웨어 함수를 정의해주면 작동하지 않는다는 것. 따라서 모델 컴파일 이전에 `pre()`,`post()`를 호출해줘야 한다.
 
 ```
@@ -223,12 +240,15 @@ schema.pre('save', () => console.log('Hello from pre save'));
 const user = new User({ name: 'test' });
 user.save();
 ```
+
 <!-- Mongoose 메서드(위에선 Model.deleteMany())로 쿼리할 때도 mongoDB 명령어(query selector 연산자 $in..등)를 사용 가능했다-->
 <!-- 참고자료 보충 필요 -->
 
-### [mongoDB query selector 연산자($in...)]
+**[mongoDB query selector 연산자($in...)]**
+
 https://www.mongodb.com/docs/v6.0/reference/operator/query/
 
-### [Mongoose 미들웨어]
+**[Mongoose 미들웨어]**
+
 https://javascripttricks.com/mongoose-middleware-the-javascript-7d23a96bfcbf <br>
 https://mongoosejs.com/docs/middleware.html
