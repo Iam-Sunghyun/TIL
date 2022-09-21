@@ -3,12 +3,14 @@
   - [GET](#get)
   - [POST](#post)
   - [PUT, PATCH](#put-patch)
+  - [Reference](#reference)
 - [POST 요청 다루기](#post-요청-다루기)
   - [Express 내장 미들웨어로 요청(request) body 파싱하기](#express-내장-미들웨어로-요청request-body-파싱하기)
     - [`express.json([options])`](#expressjsonoptions)
     - [`express.urlencoded([options])`](#expressurlencodedoptions)
   - [HTTP GET 요청에서 Content-Type](#http-get-요청에서-content-type)
 - [REST API](#rest-api)
+  - [Reference](#reference-1)
 - [요청 리디렉션(방향 수정)](#요청-리디렉션방향-수정)
   - [uuid 패키지](#uuid-패키지)
 - [HTML 폼으로 GET, POST 외 요청 메서드 구현하기(method-override)](#html-폼으로-get-post-외-요청-메서드-구현하기method-override)
@@ -44,6 +46,9 @@
 ## PUT, PATCH
 
 보통 PUT은 데이터 전체를 업데이트(새 버전으로), PATCH는 부분적으로 업데이트(수정, 추가)할 때 사용한다.
+
+
+## Reference
 
 **[PUT, PATCH 차이]**
 
@@ -110,7 +115,7 @@ axios를 사용해 클라이언트가 서버에서 API요청 시 Content-Type를
 
 <br>
 
-**[MDN HTTP]**
+**[MDN HTTP GET]**
 
 https://developer.mozilla.org/ko/docs/Web/HTTP/Methods/GET
 
@@ -138,6 +143,8 @@ REST api의 기본적인 원칙 두 가지는 URI는 리소스를 표현하는 �
 <!-- rest 이전에는 soap  -->
 
 <BR>
+
+## Reference
 
 **[REST 아키텍처에 대하여]** <BR>
 
