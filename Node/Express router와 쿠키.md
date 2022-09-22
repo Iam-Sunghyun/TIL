@@ -74,6 +74,22 @@ HTTP는 클라이언트에 대한 상태 정보를 유지하지 않는 **무상�
 
 **쿠키는 'name=zerocho'와 같이 키=값 쌍의 요소들로 이루어진 작은 텍스트 파일이다.** 보통 클라이언트(웹 브라우저)에 저장되며 웹 사이트에 처음 접속할 시 서버에 의해 생성되고, HTTP 응답 메시지 `Set-cookie` 헤더에 포함되어 전송된다. 그 후에 쿠키는 같은 웹 사이트(서버)에 접속할 시 요청 메시지의 `Cookie` 헤더에 포함되어 전송된다.
 
+## 쿠키 속성(cookie attribute)
+
+`Set-cookie` 헤더에는 부가적으로 `secure`, `HttpOnly` 등 여러 속성을 지정할 수 있는데 종류는 다음과 같다.
+
+|제목|내용|
+|:---:|:---:|
+|Expires|쿠키 만료기간을 날짜 형식으로 나타낸다. 지정하지 않으면 세션 쿠키(클라이언트 종료시 세션 종료와 함께 세션 쿠키 제거됨)가 된다.|
+|Max-Age|쿠키 만료까지 남은 시간(초)을 나타낸다. 0 또는 음수를 설정한 경우 쿠키를 즉시 만료시킨다. Expires와 Max-Age 둘 다 설정된 경우 Max-Age가 우선순위가 높다.|
+|Domain|쿠키가 전송될 호스트를 지정한다. 생략하면 이 속성은 기본적으로 하위 도메인(서브 도메인)을 포함하지 않는 현재 문서 URL이 호스트로 설정된다. 도메인이 명시되면, 서브 도메인들은 항상 포함된다.|
+|Path|Domain과 마찬가지로 쿠키의 유효범위를 정의하는 속성. Cookie 헤더를 전송하기 위하여 요청되는 URL 내에 반드시 존재해야 하는 경로를 설정한다. Path가 설정된 경우 Path가 일치하는 경우에만 쿠키를 전송한다.<br>ex) Path=/docs; -> /docs, /docs/Web/, /docs/Web/HTTP 모두 매치됨.|
+|HttpOnly|XSS(Cross-Site Scripting, (공격자의 자바스크립트를 대상 클라이언트(브라우저)에 삽입해 실행시킴) 방어를 위한 옵션. <br>이 속성은 클라이언트(브라우저)측 JavaScript 코드가 쿠키에 접근하지 못하게 하는 속성으로 공격자가 XSS 공격이 성공한 경우 쿠키를 훔치는 것을 방지한다.<br>-> 클라이언트측에서 `document.cookie`로 쿠키에 접근할 수 있는데, HttpOnly 속성이 설정된 경우 접근할 수 없다. 또한 클라이언트측에서 생성한 쿠키는 HttpOnly 속성을 설정할 수 없다.|
+|Secure|true로 설정된 경우 암호화된 요청(HTTPS, WSS)에만 쿠키를 포함한다. 암호화되지 않은 일반 텍스트로 전송하는(HTTP, WS) 경우 헤더에 쿠키가 포함되지 않는다.|
+|SameSite=Lax, =Strict|아직 실험단계에 있어 모든 브라우저에서 제공되진 않는다고 함.|
+
+
+
 ### MDN에서 말하는 쿠키!
 
 ```
@@ -82,9 +98,19 @@ HTTP는 클라이언트에 대한 상태 정보를 유지하지 않는 **무상�
 
 ## Reference
 
-**[MDN HTTP 개요]** https://developer.mozilla.org/ko/docs/Web/HTTP/Overview
+**[RFC 6265 The Set-Cookie Header attribute]**
 
-**[MDN HTTP 쿠키]** https://developer.mozilla.org/ko/docs/Web/HTTP/Cookies
+https://www.rfc-editor.org/rfc/rfc6265#section-5.2
+
+**[MDN HTTP 쿠키]** 
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies (내용 좀 더 긴 영어 버전)
+
+https://developer.mozilla.org/ko/docs/Web/HTTP/Cookies (한글 버전)
+
+**[NHN Meetup! 쿠키에 대해]**
+
+https://meetup.toast.com/posts/172
 
 **[쿠키 장단점]**
 
@@ -99,6 +125,10 @@ https://www.appsecmonkey.com/blog/cookie-security
 https://quadrantsec.com/security-issues-cookies/
 
 https://appcheck-ng.com/cookie-security
+
+**[참고. OWASP TOP 10 - 웹 애플리케이션 주요 보안 취약점]**
+
+https://ko.wikipedia.org/wiki/OWASP
 
 
 # Express로 쿠키 보내기
@@ -119,7 +149,9 @@ https://byjus.com/gate/difference-between-stateless-and-stateful-protocol/
 
 ## Express 요청 쿠키 파싱하기
 
-`cookie-parser` 미들웨어를 통해 문자열로 전송되는 요청 헤더의 쿠키를 파싱하여 `req.cookies`에 쿠키 이름과 값을 프로퍼티로 갖는 자바스크립트 객체를 채워넣을 수 있다. 또 부가적으로 `cookieParser(secret, options)`에 `secret` 문자열 값을 전달해 서명된 쿠키를 만들수도 있다.
+`cookie-parser` 미들웨어를 통해 문자열로 전송되는 요청 헤더의 쿠키를 파싱하여 `req.cookies`에 쿠키 이름과 값을 프로퍼티로 갖는 자바스크립트 객체를 채워넣어 참조할 수 있다.
+
+또 부가적으로 `cookieParser(secret, options)`에 `secret` 문자열 값을 전달해 서명된 쿠키를 만들수도 있다.
 
 <!-- `secret` 문자열은 `req.secret`에 할당된다?  -->
 
