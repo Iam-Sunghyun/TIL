@@ -77,9 +77,7 @@ app.listen(3000, () => {
 `express-session`의 세션 데이터는 `req.session` 프로퍼티로 접근하거나 추가할 수 있다.
 <!-- To store or access session data, simply use the request property `req.session`, which is (generally) serialized as JSON by the store, so nested objects are typically fine. -->
 
-다음 예시는 `views` 프로퍼티를 세션에 추가해 특정 사용자의 
- For example below is a user-specific view counter:
-
+다음 예시는 `views` 프로퍼티를 세션에 추가해 특정 사용자의 웹 사이트 페이지 조회 횟수를 저장하는 예시이다.
 
 ```
 // Use the session middleware
@@ -102,9 +100,9 @@ app.get('/', function(req, res, next) {
 
 세션 데이터는 메모리(서버 기본 세션 저장소: MemoryStore)에 저장된다(따라서 앱을 껏다 키면 데이터 사라짐).
 <!-- 
-The default server-side session storage, MemoryStore, is purposely not designed for a production environment. It will leak memory under most conditions, does not scale past a single process, and is meant for debugging and developing. -->
+The default server-side session storage, Memo ryStore, is purposely not designed for a production environment. It will leak memory under most conditions, does not scale past a single process, and is meant for debugging and developing. -->
 
-이외에 Redis, mongo 등 호환되는 여러가지 세션 저장소가 있다(DB와 달리 서버를 종료해도 지속되지 않음).
+이외에 Redis, mongo 등 호환되는 여러가지 세션 저장소가 있다(DB와 달리 지속되지 않아 서버를 종료하면 사라짐).
 
 
 **[npm express-session 설명서]**
@@ -113,6 +111,15 @@ https://www.npmjs.com/package/express-session
 
 # 플래시 메시지
 
-플래시 메시지는 사용자의 사이트 이용을 방해하지 않으면서 피드백(완료 메시지 등)을 보내는 방법으로 세션을 이용하여 간단하게 구현할 수 있다.
+플래시는 메시지를 저장하는데 사용되는 세션의 특수 영역이며 플래시 메시지는 사용자의 사이트 이용을 방해하지 않으면서 피드백(완료 메시지 등)을 보내는 방법이다. 
+
+완료 메시지나 확인 메시지 같이 한 번 뜨고 사라지는 메시지에 사용되는데 특정 동작을 수행하고 다른 페이지로 리다이렉트되기 전에 세션에 메시지를 추가하여 리다이렉트된 페이지에 출력한다(새로고침시 사라짐).
+
+<!-- 플래시 메시지는 세션을 이용하여 간단하게 구현할 수 있다. -->
+<!-- 다양한 용도로 사용됨. -->
 
 connect-flash, express-flash..
+
+**[세션과 플래시]**
+
+https://memphis-cs.github.io/rails-tutorial-2019/deets-sessions/
