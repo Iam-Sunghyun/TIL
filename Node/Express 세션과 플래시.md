@@ -118,12 +118,18 @@ https://www.npmjs.com/package/express-session
 <!-- 플래시 메시지는 세션을 이용하여 간단하게 구현할 수 있다. -->
 <!-- 다양한 용도로 사용됨. -->
 
-<!-- connect-flash를 사용하여 구현.
+connect-flash를 사용하여 구현.
 ```
-``` -->
-
-## res.locals와 플래시
-
+```
 **[세션과 플래시]**
 
 https://memphis-cs.github.io/rails-tutorial-2019/deets-sessions/
+
+**[세션이란?]**
+
+https://en.wikipedia.org/wiki/Session_(computer_science)
+
+
+
+## res.locals와 플래시
+
