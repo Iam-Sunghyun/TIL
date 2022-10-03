@@ -73,12 +73,14 @@ https://developer.mozilla.org/ko/docs/Web/HTTP/Methods
 
 요청 데이터가 Body에 담겨 오는 메서드(POST, PUT...)들은 `req.body` 프로퍼티에 요청 데이터를 담을 수 있다.
 
-`req.body` 기본 값은 `undefined`이다. 아래와 같이 Express 내장 미들웨어로 요청 데이터 파싱 설정을 해줘야 HTTP 요청 메시지 body의 데이터가 `req.body`에 채워져서 사용할 수 있게 된다.
+`req.body` 기본 값은 `undefined`이다. 아래와 같이 Express 내장 미들웨어로 요청 데이터 파싱 설정을 해줘야 파싱된 HTTP 요청 메시지 body의 데이터 객체가 `req.body`에 채워져서 사용할 수 있게 된다.
+
+파싱할 요청 메시디 body가 없는 경우 `req.body`에는 빈 객체가 할당된다.
 
 ```
 // app.use() -> 모든 요청에 대해 미들웨어 함수 실행
-app.use(express.json()) // request body에서 json 데이터를 파싱
-app.use(express.urlencoded({ extended: true })) // request body에서 암호화된 폼 데이터를 파싱 (x-www-form-urlencoded 데이터)
+app.use(express.json()) // 요청 메시지 body의 json 데이터를 파싱
+app.use(express.urlencoded({ extended: true })) // 요청 메시지 body의 암호화된 폼(form) 데이터를 파싱 (x-www-form-urlencoded 데이터, html 폼의 기본 content-type)
 ```
 
 ### `express.json([options])`
