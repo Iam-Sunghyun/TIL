@@ -13,7 +13,8 @@
 
 HTML의 폼 태그 안에는 체크박스, 라디오 버튼, 입력 텍스트 필드, 비밀번호 필드 등 사용자의 입력을 받는 요소(폼 컨트롤)들이 포함되며 웹사이트의 모든 등록 또는 로그인/가입 페이지에서 볼 수 있다.
 
-다음은 `form`요소 형식과 필수 속성들이다.
+다음은 `form` 태그 형식과 필수 속성들이다.
+
 ## 예시
 ```
 <form action="양식 전송 위치(url)" method="get"></form>
@@ -21,6 +22,10 @@ HTML의 폼 태그 안에는 체크박스, 라디오 버튼, 입력 텍스트 �
 + `action` - 데이터를 보낼 URL을 지정한다.
 
 + `method` - 어떤 HTTP 방식을 사용할 것인지 지정한다.(GET, POST만 가능!)
+
+**[MDN form 태그 속성]**
+
+https://developer.mozilla.org/ko/docs/Web/HTML/Element/form
 
 # 자주 사용하는 HTML 폼 요소
 
@@ -162,6 +167,7 @@ EX) 특수 문자를 포함해야 되는 비밀번호, 아이디 최대 길이 �
 + **웹 사이트 보안을 위해** - 보호되지 않은 양식을 사용 하는 경우 이것을 오용하여 응용 프로그램을 손상시킬 수 있다. 아래 링크 참고.
 
 ### [웹 사이트 보안]
+
 https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps/Website_security
 
 
