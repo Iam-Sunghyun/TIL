@@ -169,7 +169,7 @@ POST로 데이터를 추가한 후 `res.send()`로 응답을 하는 경우 응�
 
 이런 경우 불필요하게 같은 데이터가 계속 추가될 수 있으므로 다른 페이지로 리디렉션이 필요하다(DELETE, UPDATE도 마찬가지).
 
-`res.redirect(status, path)`을 사용해 지정한 URL로 상태코드와 함께 리디렉션한다. 즉 해당 URL로 GET 요청을 전송한다.
+`res.redirect(status, path)`을 사용해 지정한 라우트로 상태코드와 함께 리디렉션한다. 즉 해당 라우트로 GET 요청을 전송한다.
 
 리디렉션의 경로는 호스트 이름의 루트를 기준으로 설정할 수 있다.
 
@@ -209,7 +209,7 @@ https://ko.wikipedia.org/wiki/%EB%B2%94%EC%9A%A9_%EA%B3%A0%EC%9C%A0_%EC%8B%9D%EB
 
 # HTML 폼으로 GET, POST 외 요청 메서드 구현하기(method-override)
 
-HTML 폼은 지정한 URL로 `GET`, `POST`요청만 수행할 수 있는데, npm에 있는 `method-override` 모듈을 사용하면 `PUT`, `PATCH`, `DELETE`와 같은 클라이언트에서 지원하지 않는 요청 메서드를 사용할 수 있다(이러한 방법 외에도 클릭 이벤트 리스너에 fetch API, axios와 같은 클라이언트 측 자바스크립트를 통해 요청하는 방법도 있다.).
+HTML 폼은 지정한 경로로 `GET`, `POST`요청만 수행할 수 있는데, npm에 있는 `method-override` 모듈을 사용하면 `PUT`, `PATCH`, `DELETE`와 같은 클라이언트에서 지원하지 않는 요청 메서드를 사용할 수 있다(이러한 방법 외에도 클릭 이벤트 리스너에 fetch API, axios와 같은 클라이언트 측 자바스크립트를 통해 요청하는 방법도 있다.).
 
 `method-override` 모듈에는 HTTP 헤더를 이용한 재정의(override)가 있고, 쿼리 값을 이용한 재정의가 있는데 나는 쿼리 값을 사용해볼 것!
 
@@ -239,12 +239,12 @@ var express = require('express')
 var methodOverride = require('method-override')
 var app = express()
 
-// URL에 ?_method=METHOD 쿼리 문자열을 포함한 POST 요청을 재정의 하기 위함.
+// 요청 경로에 ?_method=METHOD 쿼리 문자열을 포함한 POST 요청을 재정의 하기 위함. 아래 예시 참조
 // 이름은 자유지만 일반적으로 _method라 명명하여 사용함.
 app.use(methodOverride('_method'))
 ```
 
-그 후 원하는 경로에 대한 요청을 `POST` 메서드의 HTML 폼 `action` URL에 지정한 쿼리 문자열 키와 요청 메서드를 값으로 전달하여 재정의 한다.
+그 후 원하는 경로에 대한 요청을 `POST` 메서드의 HTML 폼 `action` 경로에 지정한 쿼리 문자열 키와 요청 메서드를 값으로 전달하여 재정의 한다.
 
 ```
 // /resource 경로에 대한 POST 요청이지만 DELETE로 재정의 되었다.
