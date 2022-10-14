@@ -1,3 +1,13 @@
+- [인증(Authentication) vs 권한 부여(Authorization) (上)](#인증authentication-vs-권한-부여authorization-上)
+- [비밀번호 암호화 하는 법 (上)](#비밀번호-암호화-하는-법-上)
+  - [암호화된 해시 함수(cryptographic hash function) (中)](#암호화된-해시-함수cryptographic-hash-function-中)
+- [Password Salt (中)](#password-salt-中)
+- [Bcrypt? (上)](#bcrypt-上)
+  - [bcrypt 모듈로 비밀번호 해시하는 방법](#bcrypt-모듈로-비밀번호-해시하는-방법)
+  - [bcrypt 모듈로 직접 비밀번호 해시해보기](#bcrypt-모듈로-직접-비밀번호-해시해보기)
+    - [솔트 생성 및 확인](#솔트-생성-및-확인)
+- [Express Auth 구현해보기 (中)](#express-auth-구현해보기-中)
+
 # 인증(Authentication) vs 권한 부여(Authorization) (上)
 
 **인증(Authentication)**이란 특정 사용자가 누구인지 확인하거나, 사용자가 본인이 맞는지 확인하는 과정을 말한다. 보통 웹에서는 아이디와 암호를 이용해 확인하는데 이외에도 얼굴인식, 지문인식, OTP 등 여러 가지 보안 질문을 통해서 이뤄지기도 한다.
@@ -26,7 +36,7 @@ https://www.okta.com/kr/identity-101/authentication-vs-authorization/
 
 **해시 함수**란 임의의 크기 입력 값을 고정된 크기 값으로 변환해주는 함수를 말한다.
 
-**암호화된 해시 함수(cryptographic hash function**는 해시 값과 원래 입력값의 관계를 찾기 어려운 성질을 갖는 해시 함수를 말하는데 비밀번호 저장용 암호화 해시 함수가 가져야 할 특성은 다음과 같다.
+**암호화된 해시 함수(cryptographic hash function**는 해시 값과 원래 입력 값의 관계를 찾기 어려운 성질을 갖는 해시 함수를 말하는데 비밀번호 저장용 암호화 해시 함수가 가져야 할 특성은 다음과 같다.
 
 1. **단방향 함수(one-way function)** 이어야 한다. <br> 즉, 해시 값을 입력 값으로 알아내는 것이 불가능해야 한다.
    
@@ -72,6 +82,9 @@ https://ko.wikipedia.org/wiki/%EC%95%94%ED%98%B8%ED%99%94_%ED%95%B4%EC%8B%9C_%ED
 
 https://en.wikipedia.org/wiki/Cryptographic_hash_function#SHA-3
 
+**[위키피디앝 암호 솔트(salt)]**
+
+https://ko.wikipedia.org/wiki/%EC%86%94%ED%8A%B8_(%EC%95%94%ED%98%B8%ED%95%99)
 
 # Bcrypt? (上)
 
@@ -80,7 +93,7 @@ https://en.wikipedia.org/wiki/Cryptographic_hash_function#SHA-3
 npm에는 `bcrypt`와 `bcryptjs`가 있는데 node.js를 대상으로 만들어진 `bcrypt` 모듈을 사용해 볼 것이다(`bcrypt`는 c++로 구현되어 있어 속도가 더 빠르고 `bcyprtjs`는 브라우저에서도 실행 가능하다는 차이가 있다).
 
 
-## bcrypt 모듈로 비밀번호 해시하기
+## bcrypt 모듈로 비밀번호 해시하는 방법
 
 우선 `bcrypt` 모듈을 설치 해준다.
 
@@ -88,24 +101,39 @@ npm에는 `bcrypt`와 `bcryptjs`가 있는데 node.js를 대상으로 만들어�
 npm i bcrypt
 ```
 
-`bcrypt`로 암호화하는 방법으로는 **비동기, 동기 방식 둘 다 가능한데 문서에서 추천하는 비동기 방식으로 암호화해 볼 것.**
+`bcrypt`로 암호화하는 방법으로는 **비동기, 동기 방식 둘 다 가능한데 문서에서 추천하는 비동기 방식으로 암호화해 볼 것이다.**
 
 `bcrypt` 모듈로 암호화하기 위해 암호 솔트(password salt)를 생성하는 **`genSalt()` 메서드**와 생성한 솔트와 비밀번호를 조합하여 해시 암호를 반환하는 **`hash()` 메서드**를 사용할 것이다.
 
-다음은 npm `bcyprt` 문서에 나와있는 예시로 **콜백 함수를 사용한 비동기 방식 예시**이다.
+다음은 npm `bcyprt` 문서에 나와있는 **콜백 함수를 사용한 비동기 방식 예시**이다.
 
 ```
-// Technique 1 (generate a salt and hash on separate function calls):
+const bcrypt = require('bcrypt');
+
+// 솔트 생성 및 암호 해싱 과정
+// Technique 1 (솔트 생성, 암호 해싱 과정을 별개의 분리 된 함수로 처리하는 방법):
 bcrypt.genSalt(saltRounds, function(err, salt) {
     bcrypt.hash(myPlaintextPassword, salt, function(err, hash) {
         // Store hash in your password DB.
     });
 });
 
-// Technique 2 (auto-gen a salt and hash):
+// Technique 2 (하나의 함수로 솔트 자동 생성 및 해싱하는 방법):
 bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
     // Store hash in your password DB.
 });
+
+----------------------------------------------------
+// 입력 비밀번호와 비밀번호 DB 해시 값 확인 과정
+// 여기서 hash는 비밀번호 데이터베이스에서 가져온 해시 값.
+bcrypt.compare(myPlaintextPassword, hash, function(err, result) {
+    // result == true
+});
+
+bcrypt.compare(someOtherPlaintextPassword, hash, function(err, result) {
+    // result == false
+});
+
 ```
 
 `genSalt()` 메서드의 첫 번째 인수(`saltRounds`)는 `Bcrypt`의 핵심 기능인 해시 함수의 난이도를 설정하기 위한 변수라고 보면 된다(12 언저리 값을 많이 사용한다고 함).
@@ -117,10 +145,39 @@ bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
 다음은 **프로미스를 사용하여 비동기로 암호화한 예시**이다.
 
 ```
+const bcrypt = require('bcrypt');
+
+// 암호 해싱 과정
 bcrypt.hash(myPlaintextPassword, saltRounds).then(function(hash) {
     // Store hash in your password DB.
 });
+--------------------------------------------
+// 암호 확인 과정
+bcrypt.compare(myPlaintextPassword, hash).then(function(result) {
+    // result == true
+});
+
+bcrypt.compare(someOtherPlaintextPassword, hash).then(function(result) {
+    // result == false
+});
+``` 
+
+## bcrypt 모듈로 직접 비밀번호 해시해보기
+
+### 솔트 생성 및 확인
 ```
+const hashPassword = async () => {
+    // saltRounds '10'으로 암호 솔트 생성
+    const salt = await bcrypt.genSalt(10);
+    console.log(salt);
+};
+
+hashPassword();
+
+>> $23en$wieNOIUnqwWEjeoI4ecjW9y.gTUqVU
+```
+
+위 예시에서 `bcrypt.genSalt(10)` 메서드에 `saltRounds` 값 10을 전달하여 솔트를 생성하였다. 여기서 `saltRounds` 값(10)은 생성된 솔트를 추가하여 입력 값을 Bcrypt로 암호화 할 때 몇 회 해시해야 하는지 결정하는 값이다.
 
 **[npm bcrypt]**
 
