@@ -6,6 +6,7 @@
   - [bcrypt 모듈로 비밀번호 해시하는 방법](#bcrypt-모듈로-비밀번호-해시하는-방법)
   - [bcrypt 모듈로 직접 비밀번호 해시해보기](#bcrypt-모듈로-직접-비밀번호-해시해보기)
     - [솔트 생성 및 확인](#솔트-생성-및-확인)
+    - [암호 대조(확인)하기](#암호-대조확인하기)
 - [Express Auth 구현해보기 (中)](#express-auth-구현해보기-中)
 
 # 인증(Authentication) vs 권한 부여(Authorization) (上)
@@ -75,8 +76,7 @@ https://ko.wikipedia.org/wiki/%EC%95%94%ED%98%B8%ED%99%94_%ED%95%B4%EC%8B%9C_%ED
 
 패스워드 솔트의 개념은 아주 간단하다. 암호를 해싱할 때 임의의 값(솔트)을 추가하여 해싱하는 것. 예를들어 비밀번호가 'password'라면 'passwordDog'처럼 'Dog'라는 솔트를 치는 것이다. 이렇게 하여 서로 다른 사용자가 동일한 비밀번호를 사용하는 경우에도 각자 다른 솔트를 사용해 데이터베이스에 다른 암호 해시 값을 저장할 수 있게 된다.
 
-**Password salt**를 사용하려면 당연히 사용자마다 사용 된 솔트를 알고 있어야 한다. 그래야 사용자가 비밀번호를 입력했을 때 솔트를 추가한 상태로 해싱하여 데이터베이스에 저장된 값과 대조해 볼 수 있기 때문.
-
+**Password salt**를 사용하려면 당연히 해시 값마다 사용 된 솔트를 알고 있어야 한다. 그래야 사용자가 비밀번호를 입력했을 때 솔트를 추가한 상태로 해싱하여 데이터베이스에 저장된 값과 대조해 볼 수 있기 때문.
 
 **[위키피디아 암호화 해시 함수]**
 
@@ -166,24 +166,34 @@ bcrypt.compare(someOtherPlaintextPassword, hash).then(function(result) {
 
 ### 솔트 생성 및 확인
 ```
-const hashPassword = async () => {
+// bcrypt의 비동기 메서드에 콜백 함수(솔트 생성 후 자동으로 실행 할)를 전달하지 않으면 프로미스를 반환한다. 따라서 async/await을 사용할 수 있다.
+const hashPassword = async (pw) => {
     // saltRounds '10'으로 암호 솔트 생성
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(10); 
+    const hash = await bcrypt.hash(pw, salt);
     console.log(salt);
+    console.log(hash);
 };
 
 hashPassword();
 
 >> $23en$wieNOIUnqwWEjeoI4ecjW9y.gTUqVU
+   $23en$wieNOIUnqwWEjeoI4ecjW9y.gTUqVU.eewjie302Eewj0JRJFR94jn.wkej@38
 ```
 
-위 예시에서 `bcrypt.genSalt(10)` 메서드에 `saltRounds` 값 10을 전달하여 솔트를 생성하였다. 여기서 `saltRounds` 값(10)은 생성된 솔트를 추가하여 입력 값을 Bcrypt로 암호화 할 때 몇 회 해시해야 하는지 결정하는 값이다.
+위 예시에서 `bcrypt.genSalt(10)` 메서드에 `saltRounds` 값 10을 전달하여 무작위 솔트를 생성하였다. 여기서 `saltRounds` 값(10)이 생성된 솔트를 추가하여 입력 값을 Bcrypt로 암호화 할 때 몇 회 해시해야 하는지를 결정한다. 
 
-**[npm bcrypt]**
+따라서 `saltRounds` 값에 100을 넣는다 한들 솔트 생성 속도 차이는 달라지지 않는다. 다만 실제로 비밀번호에 솔트를 추가해 bcrypt로 해싱할 때 입력한 `saltRounds` 크기에 비례해 속도 차이가 발생한다.
+
+<!-- 그렇다면 생성한 암호 해시를 저장했다면 입력 값과 어떻게 대조하는가 -->
+
+### 암호 대조(확인)하기
+
+**[npm bcrypt 모듈]**
 
 https://www.npmjs.com/package/bcrypt
 
-**[위키피디아 bcrypt]**
+**[위키피디아 Bcrypt]**
 
 https://en.wikipedia.org/wiki/Bcrypt
 
