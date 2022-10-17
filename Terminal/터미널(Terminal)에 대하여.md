@@ -108,6 +108,12 @@ Bash는 Bourne 셸의 무료 소프트웨어 대체품으로 GNU 프로젝트를
 **[microsoft docs bash란?]** <br>
 https://docs.microsoft.com/ko-kr/learn/modules/bash-introduction/1-what-is-bash
 
+
+**[Bash shell powershell 차이점]**
+
+https://www.cbtnuggets.com/blog/certifications/microsoft/powershell-vs-bash-whats-the-difference
+
+
 ## 프롬프트(prompt)
 터미널에서 키보드의 입력을 확인하고 편집할 수 있는 한 줄의 공간을 '프롬프트(Prompt)' 라고 하며, 사용자의 명령 입력 대기 상태를 나타내는 표시(커서)를 말하기도 한다.
 
