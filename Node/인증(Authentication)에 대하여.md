@@ -6,7 +6,7 @@
   - [bcrypt 모듈로 비밀번호 해시하는 방법](#bcrypt-모듈로-비밀번호-해시하는-방법)
   - [bcrypt 모듈로 직접 비밀번호 해시해보기](#bcrypt-모듈로-직접-비밀번호-해시해보기)
     - [솔트 생성 및 확인](#솔트-생성-및-확인)
-    - [암호 대조(확인)하기](#암호-대조확인하기)
+    - [사용자의 암호 대조(확인)해보기](#사용자의-암호-대조확인해보기)
 - [Express Auth 구현해보기 (中)](#express-auth-구현해보기-中)
 
 # 인증(Authentication) vs 권한 부여(Authorization) (上)
@@ -47,7 +47,7 @@ https://www.okta.com/kr/identity-101/authentication-vs-authorization/
    
 4. **충돌이 거의 없다시피 해야 한다**. <br> 그렇지 않고 서로 다른 비밀번호가 동일한 해시 값을 만들어 낸다면 큰 문제가 될 것.
    
-5. 비밀번호 저장용 해시 함수는 **느려야 한다!** <br> 빠른 해시 함수를 사용하게 되면 오히려 빠른 속도로 수 천만, 수 십억의 암호로 해싱을 시도하여 입력 값을 맞춰 버리는 경우가 생길 수 있다(-> 브루트 포스, 완전 탐색, 무차별 대입 검색). 따라서 고의적으로 느린 해시 함수를 사용해 이러한 시도를 늦추는 것. 물론 비밀번호 저장용이 아닌 해시 함수는 빠른 것이 좋다. 한 예로 서명된 쿠키 예제에서 사용된 해시 함수는 SHA-256으로 매우 빠른 해시 함수다. 이러한 함수는 비밀번호 저장용으로는 적합하지 않다.
+5. 비밀번호 저장용 해시 함수는 **느려야 한다!** <br> 빠른 해시 함수를 사용하게 되면 오히려 빠른 속도로 수 천만, 수 십억의 암호로 해싱을 시도하여 입력 값을 맞춰 버리는 경우가 생길 수 있다(-> 브루트 포스, 완전 탐색, 무차별 대입 검색). 따라서 고의적으로 느린 해시 함수를 사용해 이러한 시도를 늦추는 것. 물론 비밀번호 저장용이 아닌 해시 함수는 빠른 것이 좋다. 한 예로 서명된 쿠키 예제에서 사용된 해시 함수는 SHA-256으로 매우 빠른 해시 함수인데 이러한 함수는 비밀번호 저장용으로는 적합하지 않다.
 
 
 
@@ -70,7 +70,9 @@ https://ko.wikipedia.org/wiki/%EC%95%94%ED%98%B8%ED%99%94_%ED%95%B4%EC%8B%9C_%ED
 2. 서로 다른 사람들의 비밀번호가 같은 경우가 많다.
 3. 비밀번호를 저장할 때 사용되는 해시 알고리즘은 단 몇 개뿐이다(그 중 하나로 Bcrypt를 사용해볼 것). 
 
-2번의 경우 발생하는 문제 -> 여러 사용자의 비밀번호가 동일한 해시 값을 만들어 낸다. 여러 사용자의 비밀번호 해시 값이 동일하다면 이것은 단순한 비밀번호일 가능성이 높은데 이것을 보고 비밀번호를 캐내려는 사람이 인터넷 상에서 쉽게 얻을 수 있는 자주 사용하는 비밀번호 값 목록을 입력해 봄으로서 우연히 비밀번호를 알아내 역방향 조회 테이블을 만들어 낸다면, 수 많은 동일한 비밀번호를 사용하는 사용자들의 계정 정보가 유출 될 수 있다(공격자가 해시 알고리즘이 뭔지 안다는 가정 하에).
+2번의 경우 발생하는 문제 -> 여러 사용자의 비밀번호가 동일한 해시 값을 만들어 낸다. 여러 사용자의 비밀번호 해시 값이 동일하다면 이것은 단순한 비밀번호일 가능성이 높은데 이것을 보고 비밀번호를 캐내려는 사람이 인터넷 상에서 쉽게 얻을 수 있는 자주 사용하는 비밀번호 값 목록을 입력해 봄으로서 우연히 비밀번호를 알아낸다면, 수 많은 동일한 비밀번호를 사용하는 사용자들의 계정 정보가 유출 될 수 있다.
+
+<!-- (공격자가 해시 알고리즘이 뭔지 안다는 가정 하에)? -->
 
 이러한 경우를 방지하기 위한(역방향 조회 테이블을 만들 수 없게) 방법이 **Password Salt** 이다.
 
@@ -103,37 +105,36 @@ npm i bcrypt
 
 `bcrypt`로 암호화하는 방법으로는 **비동기, 동기 방식 둘 다 가능한데 문서에서 추천하는 비동기 방식으로 암호화해 볼 것이다.**
 
-`bcrypt` 모듈로 암호화하기 위해 암호 솔트(password salt)를 생성하는 **`genSalt()` 메서드**와 생성한 솔트와 비밀번호를 조합하여 해시 암호를 반환하는 **`hash()` 메서드**를 사용할 것이다.
+`bcrypt` 모듈로 암호화하기 위해 암호 솔트(password salt)를 생성하는 **`genSalt()` 메서드**와 생성한 솔트와 비밀번호를 조합하여 해시 암호를 반환하는 **`hash()` 메서드**를 사용한다.
 
 다음은 npm `bcyprt` 문서에 나와있는 **콜백 함수를 사용한 비동기 방식 예시**이다.
 
 ```
 const bcrypt = require('bcrypt');
 
-// 솔트 생성 및 암호 해싱 과정
+// 콜백을 통한 솔트 생성 및 암호 해싱 과정
 // Technique 1 (솔트 생성, 암호 해싱 과정을 별개의 분리 된 함수로 처리하는 방법):
 bcrypt.genSalt(saltRounds, function(err, salt) {
     bcrypt.hash(myPlaintextPassword, salt, function(err, hash) {
-        // Store hash in your password DB.
+        // 해시 값을 암호 DB에 저장 ...
     });
 });
 
 // Technique 2 (하나의 함수로 솔트 자동 생성 및 해싱하는 방법):
 bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
-    // Store hash in your password DB.
+    // 해시 값을 암호 DB에 저장 ...
 });
 
 ----------------------------------------------------
-// 입력 비밀번호와 비밀번호 DB 해시 값 확인 과정
-// 여기서 hash는 비밀번호 데이터베이스에서 가져온 해시 값.
+// 콜백을 통한 입력 비밀번호와 비밀번호 DB 해시 값 확인 과정
+// 여기서 hash는 비밀번호 데이터베이스에서 가져온 해시 값
 bcrypt.compare(myPlaintextPassword, hash, function(err, result) {
-    // result == true
+    // result는 확인 결과에 따라 true/false 값을 갖는다.
 });
 
 bcrypt.compare(someOtherPlaintextPassword, hash, function(err, result) {
-    // result == false
+    // result == false ...
 });
-
 ```
 
 `genSalt()` 메서드의 첫 번째 인수(`saltRounds`)는 `Bcrypt`의 핵심 기능인 해시 함수의 난이도를 설정하기 위한 변수라고 보면 된다(12 언저리 값을 많이 사용한다고 함).
@@ -147,47 +148,88 @@ bcrypt.compare(someOtherPlaintextPassword, hash, function(err, result) {
 ```
 const bcrypt = require('bcrypt');
 
-// 암호 해싱 과정
+// 프로미스를 통한 암호 해싱 과정
 bcrypt.hash(myPlaintextPassword, saltRounds).then(function(hash) {
     // Store hash in your password DB.
 });
 --------------------------------------------
-// 암호 확인 과정
+// 프로미스를 통한 입력 암호와 DB에 해시된 암호 확인(대조) 과정
 bcrypt.compare(myPlaintextPassword, hash).then(function(result) {
-    // result == true
+    // result == true ...
 });
 
 bcrypt.compare(someOtherPlaintextPassword, hash).then(function(result) {
-    // result == false
+    // result == false ...
 });
 ``` 
 
 ## bcrypt 모듈로 직접 비밀번호 해시해보기
 
 ### 솔트 생성 및 확인
+
+bcrypt의 콜백을 허용하는 비동기 메서드에 콜백 함수를 전달하지 않으면 프로미스를 반환한다(동기적으로 동작하는 메서드는 Sync가 붙는다). 따라서 async/await을 사용할 수 있다.
+
 ```
-// bcrypt의 비동기 메서드에 콜백 함수(솔트 생성 후 자동으로 실행 할)를 전달하지 않으면 프로미스를 반환한다. 따라서 async/await을 사용할 수 있다.
 const hashPassword = async (pw) => {
-    // saltRounds '10'으로 암호 솔트 생성
-    const salt = await bcrypt.genSalt(10); 
+    // saltRounds '12'으로 암호 솔트 생성 후 해시
+    const salt = await bcrypt.genSalt(12); 
     const hash = await bcrypt.hash(pw, salt);
     console.log(salt);
     console.log(hash);
 };
 
-hashPassword();
+hashPassword('example');
 
->> $23en$wieNOIUnqwWEjeoI4ecjW9y.gTUqVU
-   $23en$wieNOIUnqwWEjeoI4ecjW9y.gTUqVU.eewjie302Eewj0JRJFR94jn.wkej@38
+>> $2b$12$cXR3TfMiGM6b7BHh78.YYe
+   $2b$12$cXR3TfMiGM6b7BHh78.YYeELJP2Kaht2Mi7T2yhRltTKp0tJvIpje
 ```
 
-위 예시에서 `bcrypt.genSalt(10)` 메서드에 `saltRounds` 값 10을 전달하여 무작위 솔트를 생성하였다. 여기서 `saltRounds` 값(10)이 생성된 솔트를 추가하여 입력 값을 Bcrypt로 암호화 할 때 몇 회 해시해야 하는지를 결정한다. 
+위 예시에서 `bcrypt.genSalt(12)` 메서드에 `saltRounds` 값 12을 전달하여 무작위 솔트를 생성하였다. 여기서 `saltRounds` 값(12)이 생성된 솔트를 추가하여 입력 값을 Bcrypt로 암호화 할 때 몇 회 해시해야 하는지를 결정한다(기본 값은 10이다). 
 
-따라서 `saltRounds` 값에 100을 넣는다 한들 솔트 생성 속도 차이는 달라지지 않는다. 다만 실제로 비밀번호에 솔트를 추가해 bcrypt로 해싱할 때 입력한 `saltRounds` 크기에 비례해 속도 차이가 발생한다.
+따라서 `saltRounds` 값에 100을 넣는다 한들 솔트 생성 속도 차이는 달라지지 않는다. 다만 실제로 비밀번호에 솔트를 추가해 bcrypt로 해싱할 때 입력한 `saltRounds` 크기에 따라 속도 차이가 발생한다.
 
 <!-- 그렇다면 생성한 암호 해시를 저장했다면 입력 값과 어떻게 대조하는가 -->
 
-### 암호 대조(확인)하기
+### 사용자의 암호 대조(확인)해보기
+
+사용자가 입력한 암호를 데이터베이스의 해시 값과 대조할 때에는 위의 예시에서도 나왔던 **`compare()` 메서드**를 사용한다.
+
+다음은 비밀번호가 'example'이라고 가정한 간단한 예제로 비교할 해시 값을 직접 전달하였다.
+
+```
+const login = async (pw, hashedPw) => {
+  // 입력 암호(pw)와 암호 DB에 저장된 해시 값(hashedPw)를 인수로 전달하여 값을 대조하고, 일치하면 true 불일치면 false를 반환한다.
+  const result = await bcrypt.compare(pw, hashedPw);
+  if (result) {
+    console.log('정확한 비밀번호입니다');
+  } else {
+    console.log('잘못된 비밀번호입니다.');
+  }
+};
+
+login('example', '$2b$12$ZqDrbengGgyh9gGwzVXEJuqu2fP34B3BOLOJk0601lkH3Q6e9MEsS');
+login('example123', '$2b$12$ZqDrbengGgyh9gGwzVXEJuqu2fP34B3BOLOJk0601lkH3Q6e9MEsS');
+
+>> '정확한 비밀번호입니다'
+   '잘못된 비밀번호입니다.'
+```
+
+위의 코드는 메서드 결과를 확인하기 위한 것이고, 아래는 npm 문서에 나온 좀 더 현실적인 `compare()` 메서드 예시이다. 
+
+```
+// async/await
+async function checkUser(username, password) {
+    // ... 사용자 이름(ID)가 유효한지, 유효하다면 사용자 정보 인출(해시된 암호 포함하는) 및 기타 코드
+       ...
+    const match = await bcrypt.compare(password, user.passwordHash); // 암호 대조
+
+    if(match) {
+        // 로그인 성공!
+    } else {
+        //...
+    }
+}
+```
 
 **[npm bcrypt 모듈]**
 
