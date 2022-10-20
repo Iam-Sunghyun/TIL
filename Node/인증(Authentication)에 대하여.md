@@ -60,6 +60,8 @@ http://cryptostudy.xyz/crypto/article/5-%EC%95%94%ED%98%B8%ED%95%99%EC%A0%81-%ED
 
 https://ko.wikipedia.org/wiki/%EC%95%94%ED%98%B8%ED%99%94_%ED%95%B4%EC%8B%9C_%ED%95%A8%EC%88%98
 
+https://en.wikipedia.org/wiki/Cryptographic_hash_function
+
 # Password Salt (中)
 
 패스워드 솔트란 암호를 해싱할 때 암호를 역설계 하거나 암호를 유추하는 것을 어렵게 하기 위한 방법이다.
@@ -80,9 +82,6 @@ https://ko.wikipedia.org/wiki/%EC%95%94%ED%98%B8%ED%99%94_%ED%95%B4%EC%8B%9C_%ED
 
 **Password salt**를 사용하려면 당연히 해시 값마다 사용 된 솔트를 알고 있어야 한다. 그래야 사용자가 비밀번호를 입력했을 때 솔트를 추가한 상태로 해싱하여 데이터베이스에 저장된 값과 대조해 볼 수 있기 때문.
 
-**[위키피디아 암호화 해시 함수]**
-
-https://en.wikipedia.org/wiki/Cryptographic_hash_function#SHA-3
 
 **[위키피디앝 암호 솔트(salt)]**
 
@@ -240,3 +239,7 @@ https://www.npmjs.com/package/bcrypt
 https://en.wikipedia.org/wiki/Bcrypt
 
 # Express Auth 구현해보기 (中)
+
+```
+npm i express mongoose ejs bcrypt
+```
