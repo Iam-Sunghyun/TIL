@@ -1,12 +1,13 @@
 # 목차
 - [세션(session)이란?](#세션session이란)
-  - [세션 사용 이유](#세션-사용-이유)
+  - [세션 사용 이유?](#세션-사용-이유)
 - [Express 세션 구현하기](#express-세션-구현하기)
-  - [express-session 세션 미들웨어 생성하기](#express-session-세션-미들웨어-생성하기)
-    - [express-session options 종류와 예시](#express-session-options-종류와-예시)
+  - [`express-session` 세션 미들웨어 생성하기](#express-session-세션-미들웨어-생성하기)
+    - [`express-session` options 종류와 예시](#express-session-options-종류와-예시)
   - [`req.session`으로 세션 데이터 접근하기](#reqsession으로-세션-데이터-접근하기)
 - [플래시 메시지](#플래시-메시지)
-  - [res.locals와 플래시](#reslocals와-플래시)
+  - [세션과 `connect-flash`로 플래시 메시지 구현하기](#세션과-connect-flash로-플래시-메시지-구현하기)
+  - [`res.locals`로 플래시 메시지 사용하기](#reslocals로-플래시-메시지-사용하기)
   
   
 # 세션(session)이란?
@@ -196,7 +197,7 @@ app.use(session(sessionOptions));
 app.use(flash());
 
 app.use((req, res, next) => {
-    // req.flash() 호출하여 플래시 메시지 접근 후 res.locals에 저장
+    // req.flash() 호출하여 res.locals에 플래시 메시지 저장
     // 다음에 res.render()로 렌더링되는 템플릿에서 messages를 지역변수처럼 사용 가능하다
     res.locals.messages = req.flash('success'); 
     next();
