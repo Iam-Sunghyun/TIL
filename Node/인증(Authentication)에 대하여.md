@@ -47,13 +47,7 @@ https://www.okta.com/kr/identity-101/authentication-vs-authorization/
    
 4. **충돌이 거의 없다시피 해야 한다**. <br> 그렇지 않고 서로 다른 비밀번호가 동일한 해시 값을 만들어 낸다면 큰 문제가 될 것.
    
-5. 비밀번호 저장용 해시 함수는 **느려야 한다!** <br> 빠른 해시 함수를 사용하게 되면 오히려 빠른 속도로 수 천만, 수 십억의 암호로 해싱을 시도하여 입력 값을 맞춰 버리는 경우가 생길 수 있다(-> 브루트 포스, 완전 탐색, 무차별 대입 검색). 따라서 고의적으로 느린 해시 함수를 사용해 이러한 시도를 늦추는 것. 물론 비밀번호 저장용이 아닌 해시 함수는 빠른 것이 좋다. 한 예로 서명된 쿠키 예제에서 사용된 해시 함수는 SHA-256으로 매우 빠른 해시 함수인데 이러한 함수는 비밀번호 저장용으로는 적합하지 않다.
-
-
-
-**[암호학적 해시 함수란]**
-
-http://cryptostudy.xyz/crypto/article/5-%EC%95%94%ED%98%B8%ED%95%99%EC%A0%81-%ED%95%B4%EC%8B%9C%ED%95%A8%EC%88%98
+5. 비밀번호 저장용 해시 함수는 **느려야 한다!** <br> 빠른 해시 함수를 사용하게 되면 오히려 빠른 속도로 수 천만, 수 백억의 암호로 해싱을 시도하여 입력 값을 맞춰 버리는 경우가 생길 수 있다(-> 브루트 포스, 완전 탐색, 무차별 대입 검색). 따라서 고의적으로 느린 해시 함수를 사용해 이러한 시도를 늦추는 것. 물론 비밀번호 저장용이 아닌 해시 함수는 빠른 것이 좋다. 한 예로 서명된 쿠키 예제에서 사용된 해시 함수는 SHA-256으로 매우 빠른 해시 함수인데 이러한 함수를 단일 반복으로 사용한다면 비밀번호 저장용으로는 적합하지 않다.
 
 
 **[위키피디아 암호화 해시 함수]**
@@ -61,6 +55,13 @@ http://cryptostudy.xyz/crypto/article/5-%EC%95%94%ED%98%B8%ED%95%99%EC%A0%81-%ED
 https://ko.wikipedia.org/wiki/%EC%95%94%ED%98%B8%ED%99%94_%ED%95%B4%EC%8B%9C_%ED%95%A8%EC%88%98
 
 https://en.wikipedia.org/wiki/Cryptographic_hash_function
+
+
+**[좋은 암호화 해시 함수]**
+
+https://crypto.stackexchange.com/questions/24/what-makes-a-hash-function-good-for-password-hashing
+
+https://www.thesslstore.com/blog/what-is-a-hash-function-in-cryptography-a-beginners-guide/
 
 # Password Salt (中)
 
@@ -136,7 +137,7 @@ bcrypt.compare(someOtherPlaintextPassword, hash, function(err, result) {
 });
 ```
 
-`genSalt()` 메서드의 첫 번째 인수(`saltRounds`)는 `Bcrypt`의 핵심 기능인 해시 함수의 난이도를 설정하기 위한 변수라고 보면 된다(12 언저리 값을 많이 사용한다고 함).
+`genSalt()` 메서드의 첫 번째 인수(`saltRounds`)는 `Bcrypt`의 핵심 기능인 해시 함수의 난이도(복잡도)를 설정하기 위한 변수라고 보면 된다(12 언저리 값을 많이 사용한다고 함).
 
 <!-- 난이도를 설정한다는 게 구체적으로 뭐지? -->
 
@@ -183,7 +184,7 @@ hashPassword('example');
    $2b$12$cXR3TfMiGM6b7BHh78.YYeELJP2Kaht2Mi7T2yhRltTKp0tJvIpje
 ```
 
-위 예시에서 `bcrypt.genSalt(12)` 메서드에 `saltRounds` 값 12을 전달하여 무작위 솔트를 생성하였다. 여기서 `saltRounds` 값(12)이 생성된 솔트를 추가하여 입력 값을 Bcrypt로 암호화 할 때 몇 회 해시해야 하는지를 결정한다(기본 값은 10이다). 
+위 예시에서 `bcrypt.genSalt(12)` 메서드에 `saltRounds` 값 12을 전달하여 무작위 솔트를 생성하였다. 여기서 `saltRounds` 값(12)이 생성된 솔트를 추가하여 입력 값을 Bcrypt로 암호화 할 때 해시를 몇 회 반복해야 하는지를 결정한다(기본 값은 10이다). 
 
 따라서 `saltRounds` 값에 100을 넣는다 한들 솔트 생성 속도 차이는 달라지지 않는다. 다만 실제로 비밀번호에 솔트를 추가해 bcrypt로 해싱할 때 입력한 `saltRounds` 크기에 따라 속도 차이가 발생한다.
 
