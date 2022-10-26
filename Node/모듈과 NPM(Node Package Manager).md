@@ -75,7 +75,10 @@ bar
 https://yceffort.kr/2020/08/commonjs-esmodules
 
 **[자바스크립트 모듈 시스템: ESM과 CommonJS]** <br>
+
 https://www.youdad.kr/js-module-system/ <br>
+
+https://dev.to/iggredible/what-the-heck-are-cjs-amd-umd-and-esm-ikm
 
 **[MDN 모듈에 대하여]** <br>
 https://developer.mozilla.org/ko/docs/Web/JavaScript/Guide/Modules <br>
