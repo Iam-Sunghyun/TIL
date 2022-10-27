@@ -151,8 +151,10 @@ export default const foo = () => {};
 
 Node.js에서 esm을 사용하려면 `package.json`파일에 `"type"="module"`을 넣어줘야 한다.
 
-**[ES6 모듈 내보내고 가져오기]** <BR>
+**[ES6 모듈(ESM) 명령어]** <BR>
 https://ko.javascript.info/import-export#ref-4122 <BR>
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export
 
 ## Commonjs(CJS)
 
@@ -228,7 +230,11 @@ https://yceffort.kr/2020/08/commonjs-esmodules
 https://en.wikipedia.org/wiki/CommonJS br>
 
 **[CommonJS exports, module.exports 차이]** <br>
-https://dydals5678.tistory.com/97<br>
+
+https://medium.com/@chullino/require-exports-module-exports-%EA%B3%B5%EC%8B%9D%EB%AC%B8%EC%84%9C%EB%A1%9C-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-1d024ec5aca3
+
+https://dydals5678.tistory.com/97
+
 
 ## 디렉토리로 파일 불러오기
 
