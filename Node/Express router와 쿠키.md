@@ -100,13 +100,13 @@ Cookie: yummy_cookie=choco; tasty_cookie=strawberry
 
 |제목|내용|
 |:---:|:---:|
-|Expires|쿠키 만료기간을 날짜 형식으로 나타낸다. 지정하지 않으면 세션 쿠키(클라이언트 종료시 세션 종료와 함께 제거됨)가 된다.|
+|Expires|쿠키 만료기간을 날짜 형식으로 나타낸다. 지정하지 않으면 **세션 쿠키(클라이언트 종료시 세션 종료와 함께 제거됨)** 가 된다.|
 |Max-Age|쿠키 만료까지 남은 시간(초)을 나타낸다. 0 또는 음수를 설정한 경우 쿠키를 즉시 만료시킨다. Expires와 Max-Age 둘 다 설정된 경우 Max-Age가 우선순위가 높다.|
 |Domain|쿠키가 전송될 호스트를 지정한다. 생략하면 이 속성은 기본적으로 하위 도메인(서브 도메인)을 포함하지 않는 현재 문서 URL이 호스트로 설정된다.<br> 도메인이 명시되면, 서브 도메인들은 항상 포함된다.|
 |Path|Domain과 마찬가지로 쿠키의 유효범위를 정의하는 속성. Cookie 헤더를 전송하기 위하여 요청되는 URL 내에 반드시 존재해야 하는 경로를 설정한다. <br>ex) Path=/docs; -> /docs, /docs/Web/, /docs/Web/HTTP 모두 매치됨.<br>Path가 설정된 경우 Path가 일치하는 경우에만 쿠키를 전송하고 명시하지 않은 경우 `Set-Cookie` 헤더를 전송한 서버의 경로를 사용한다.|
 |HttpOnly|XSS(Cross-Site Scripting, (공격자의 자바스크립트를 대상 클라이언트(브라우저)에 삽입해 실행시킴) 방어를 위한 옵션. <br>이 속성은 클라이언트(브라우저)측 JavaScript 코드가 쿠키에 접근하지 못하게 하는 속성으로 공격자가 XSS 공격이 성공한 경우 쿠키를 훔치는 것을 방지한다.<br>-> 클라이언트측에서 `document.cookie`로 쿠키에 접근할 수 있는데, HttpOnly 속성이 설정된 경우 접근할 수 없다. 또한 클라이언트측에서 생성한 쿠키는 HttpOnly 속성을 설정할 수 없다.|
 |Secure|true로 설정된 경우 암호화된 연결의 요청(HTTPS, WSS)에만 쿠키를 포함한다. 암호화되지 않은 일반 텍스트로 전송하는(HTTP, WS) 경우 헤더에 쿠키가 포함되지 않는다.|
-|SameSite=Lax, =Strict|아직 실험단계에 있어 모든 브라우저에서 제공되진 않는다고 함.|
+|SameSite<br>(Lax, Strict, None)|HTTP 응답 헤더의 SameSite속성을 사용하면 쿠키를 자사(first-party) 또는 동일 사이트 컨텍스트 Set-Cookie로 제한해야 하는지 여부를 설정한다.<br> https://seob.dev/posts/%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80-%EC%BF%A0%ED%82%A4%EC%99%80-SameSite-%EC%86%8D%EC%84%B1/ 참고 <br>아직 실험단계에 있어 모든 브라우저에서 제공되진 않는다고 함(크롬에서만 제공되는듯).|
 
 
 ### MDN에서 말하는 쿠키!
@@ -120,6 +120,10 @@ Cookie: yummy_cookie=choco; tasty_cookie=strawberry
 **[RFC 6265 The Set-Cookie Header attribute]**
 
 https://www.rfc-editor.org/rfc/rfc6265#section-5.2
+
+**[javascript info 쿠키]**
+
+https://ko.javascript.info/cookie
 
 **[위키피디아 쿠키]**
 
