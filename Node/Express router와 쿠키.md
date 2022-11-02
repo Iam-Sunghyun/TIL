@@ -106,7 +106,7 @@ Cookie: yummy_cookie=choco; tasty_cookie=strawberry
 |Path|Domain과 마찬가지로 쿠키의 유효범위를 정의하는 속성. Cookie 헤더를 전송하기 위하여 요청되는 URL 내에 반드시 존재해야 하는 경로를 설정한다. <br>ex) Path=/docs; -> /docs, /docs/Web/, /docs/Web/HTTP 모두 매치됨.<br>Path가 설정된 경우 Path가 일치하는 경우에만 쿠키를 전송하고 명시하지 않은 경우 `Set-Cookie` 헤더를 전송한 서버의 경로를 사용한다.|
 |HttpOnly|XSS(Cross-Site Scripting, (공격자의 자바스크립트를 대상 클라이언트(브라우저)에 삽입해 실행시킴) 방어를 위한 옵션. <br>이 속성은 클라이언트(브라우저)측 JavaScript 코드가 쿠키에 접근하지 못하게 하는 속성으로 공격자가 XSS 공격이 성공한 경우 쿠키를 훔치는 것을 방지한다.<br>-> 클라이언트측에서 `document.cookie`로 쿠키에 접근할 수 있는데, HttpOnly 속성이 설정된 경우 접근할 수 없다. 또한 클라이언트측에서 생성한 쿠키는 HttpOnly 속성을 설정할 수 없다.|
 |Secure|true로 설정된 경우 암호화된 연결의 요청(HTTPS, WSS)에만 쿠키를 포함한다. 암호화되지 않은 일반 텍스트로 전송하는(HTTP, WS) 경우 헤더에 쿠키가 포함되지 않는다.|
-|SameSite<br>(Lax, Strict, None)|HTTP 응답 헤더의 SameSite속성을 사용하면 쿠키를 자사(first-party) 또는 동일 사이트 컨텍스트 Set-Cookie로 제한해야 하는지 여부를 설정한다.<br> https://seob.dev/posts/%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80-%EC%BF%A0%ED%82%A4%EC%99%80-SameSite-%EC%86%8D%EC%84%B1/ 참고 <br>아직 실험단계에 있어 모든 브라우저에서 제공되진 않는다고 함(크롬에서만 제공되는듯).|
+|SameSite<br>(Lax, Strict, None)|HTTP 응답 헤더의 SameSite속성을 사용하면 쿠키를 자사(first-party) 또는 동일 사이트 컨텍스트 Set-Cookie로 제한해야 하는지 여부를 설정한다. <br>아직 실험단계에 있어 모든 브라우저에서 제공되진 않는다고 함(크롬에서만 제공되는듯).<br> 자사 쿠키(first-party cookie), 타사 쿠키(third-party cookie)에 관한 것은 아래 참고 <br> https://seob.dev/posts/%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80-%EC%BF%A0%ED%82%A4%EC%99%80-SameSite-%EC%86%8D%EC%84%B1/ <br> https://en.wikipedia.org/wiki/HTTP_cookie#Third-party_cookie 참고|
 
 
 ### MDN에서 말하는 쿠키!
