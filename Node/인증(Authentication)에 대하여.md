@@ -161,6 +161,19 @@ bcrypt.compare(myPlaintextPassword, hash).then(function(result) {
 bcrypt.compare(someOtherPlaintextPassword, hash).then(function(result) {
     // result == false ...
 });
+
+// async/await를 사용한 암호 확인 과정
+async function checkUser(username, password) {
+    // ... 사용자 이름(ID)가 유효한지, 유효하다면 사용자 정보 인출(해시된 암호 포함하는) 및 기타 코드
+       ...
+    const match = await bcrypt.compare(password, user.passwordHash); // 암호 대조
+
+    if(match) {
+        // 로그인 성공!
+    } else {
+        //...
+    }
+}
 ``` 
 
 ## bcrypt 모듈로 직접 비밀번호 해시해보기
@@ -212,23 +225,6 @@ login('example123', '$2b$12$ZqDrbengGgyh9gGwzVXEJuqu2fP34B3BOLOJk0601lkH3Q6e9MEs
 
 >> '정확한 비밀번호입니다'
    '잘못된 비밀번호입니다.'
-```
-
-위의 코드는 메서드 결과를 확인하기 위한 것이고, 아래는 npm 문서에 나온 좀 더 현실적인 `compare()` 메서드 예시이다. 
-
-```
-// async/await
-async function checkUser(username, password) {
-    // ... 사용자 이름(ID)가 유효한지, 유효하다면 사용자 정보 인출(해시된 암호 포함하는) 및 기타 코드
-       ...
-    const match = await bcrypt.compare(password, user.passwordHash); // 암호 대조
-
-    if(match) {
-        // 로그인 성공!
-    } else {
-        //...
-    }
-}
 ```
 
 **[npm bcrypt 모듈]**
