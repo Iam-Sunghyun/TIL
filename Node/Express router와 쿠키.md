@@ -155,8 +155,9 @@ https://appcheck-ng.com/cookie-security
 
 **[참고. OWASP TOP 10 - 웹 애플리케이션 주요 보안 취약점]**
 
-https://ko.wikipedia.org/wiki/OWASP
+https://owasp.org/www-project-top-ten/
 
+https://www.igloo.co.kr/security-information/%ED%95%9C%EB%B0%9C-%EC%95%9E%EC%84%9C-%EC%82%B4%ED%8E%B4%EB%B3%B4%EB%8A%94-owasp-top-10-2021-draft/
 
 # Express로 쿠키 보내기
 
