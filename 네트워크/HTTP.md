@@ -8,6 +8,10 @@
 
 https://developer.mozilla.org/ko/docs/Web/HTTP/Overview
 
+**[위키피디아 HTTP]**
+
+https://ko.wikipedia.org/wiki/HTTP
+
 <!-- **비상태 프로토콜**
 
 # TCP/IP
