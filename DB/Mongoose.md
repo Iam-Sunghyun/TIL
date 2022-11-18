@@ -133,9 +133,9 @@ https://mongoosejs.com/docs/index.html
 
 ## Mongoose에서 쿼리 결과를 처리하는 방법 2가지
 
-첫 번째는 메서드에 콜백함수를 인수로 전달한 경우, **쿼리를 비동기적으로 수행**한 후에 결과를 콜백함수에 전달한다(콜백함수의 첫 번째 인수는 에러정보, 두 번째 인수는 문서를 전달받는다).
+첫 번째는 메서드에 콜백함수를 인수로 전달한 경우, **쿼리를 비동기적으로 수행**한 후에 결과를 콜백함수에 전달하여 호출한다(콜백함수의 첫 번째 인수는 에러정보, 두 번째 인수는 문서를 전달받는다).
 
-두 번째는, `.then()`를 호출하여 프로미스처럼 후속처리를 해줄 수 있다(쿼리 메서드들의 대부분은 `Query` 객체를 반환함).
+두 번째는, `.then()`, `async/await`을 사용하여 프로미스처럼 후속처리를 해줄 수 있다(쿼리 메서드들의 대부분은 `Query` 객체를 반환함).
 
 ```
 // 결과를 then() 메서드에 전달
@@ -149,7 +149,7 @@ await MyModel.find({ name: /john/i }, 'name friends').exec();
 
 ```
 
-다음과 같이 콜백과 `then()`을 함께 쓸 경우 쿼리 연산이 중복실행 될 수 있으므로 같이 연속해서 사용하지 말 것.
+다음과 같이 콜백과 `then()`을 함께 쓸 경우 쿼리 연산이 중복 실행될 수 있으므로 같이 연속해서 사용하지 말 것.
 ```
 // updateMany()가 3번 호출된다. -> 콜백을 전달해줬기 때문에 쿼리가 즉시 1번 실행 + 2번의 then() 메서드 호출로 쿼리가 실행
 const q = MyModel.updateMany({}, { isDeleted: true }, function() {
@@ -160,7 +160,24 @@ q.then(() => console.log('Update 2'));
 q.then(() => console.log('Update 3'));
 ```
 
-프로미스 객체를 반환 받고 싶다면 `exec()`을 호출해 쿼리를 실행해주면 된다. 공식문서에는 `exec()`를 사용하면 더 나은 스택 추적을 제공하니 사용을 권장한다고 되어있다. 
+또한 쿼리에 `async/await`을 사용하여 동기적으로 결과를 얻을 수도 있는데 여기서도 콜백과 함께 사용할 경우 중복 실행될 수 있다. 아래 예시는 `tags` 배열에 요소를 2번 입력한다.
+```
+const BlogPost = mongoose.model('BlogPost', new Schema({
+  title: String,
+  tags: [String]
+}));
+
+// await과 콜백이 '함께' 사용됐기 때문에 updateOne() 메서드가 2번 실행된다.
+// 따라서 동일한 문자열 값을 tags 배열에 2번 입력하게 되는 셈.
+const update = { $push: { tags: ['javascript'] } };
+await BlogPost.updateOne({ title: 'Introduction to Promises' }, update, (err, res) => {
+  console.log(res);
+});
+```
+
+따라서 Mongoose 쿼리할 때 콜백과 프로미스(`then()`, `async/await`)는 같이 사용하지 말 것!
+
+만약 쿼리 결과로 프로미스 객체를 반환 받고 싶다면 `exec()`을 호출해 쿼리를 실행해주면 된다. 공식문서에는 `exec()`를 사용하면 더 나은 스택 추적을 제공하니 사용을 권장한다고 되어있다. 
 ```
 // exec()에 콜백 사용
 MyModel.find({ name: /john/i }, 'name friends').exec(function (err, result) {
