@@ -252,3 +252,31 @@ https://expressjs.com/en/4x/api.html#res.locals
 세션을 이용해 로그인 상태를 유지하고, 특정 페이지에 대한 접근 권한을 부여해볼 것(로그인 해야 볼 수 있는 페이지).
 
 첫 번째는 우선 사용자의 로그인 여부를 확인해야 하는데 이 때 세션을 사용한다.
+
+```
+// 사용자 로그인
+app.post('/login', async (req, res) => {
+  const { id, password } = req.body;
+  const user = await userModel.findOne({ userName: id });
+  const validPassword = await bcrypt.compare(password, user.hashedPassword);
+  if (validPassword) {
+    // 로그인 유지를 위해 해당 사용자의 세션(req.session)에 _id(db에 저장된 값) 저장
+    req.session.user_id = user._id;
+    res.send('로그인 성공!!!!!');
+  } else {
+    res.send('로그인 실패');
+  }
+});
+
+// 비로그인은 볼 수 없는 페이지
+app.get('/secret', (req, res) => {
+  if (!req.session.user_id) {
+    req.session.login = '로그인 해주세요.'
+    res.redirect('login');
+  } else {
+    res.send('환영합니다.');
+  }
+});
+```
+
+위 예시는 간단한 데모이다. 로그인 성공 시 Mongodb의 해당 사용자 `_id`값을 `req.session.user_id`에 저장하고, 로그아웃 전까지 유지한다. 이로서 로그인이 필요한 페이지에서 `req.session.user_id`를 검사하는 것으로 로그인 여부를 확인할 수 있게 되었다.
