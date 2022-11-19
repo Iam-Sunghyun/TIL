@@ -292,7 +292,7 @@ app.get('/secret', (req, res) => {
 app.post('/logout', (req, res) => {
   if (req.session.user_id) {
     delete req.session.user_id; // or req.session.user_id = null;
-    req.session.logout = '로그아웃 성공';
+    req.session.logout = '로그아웃 성공'; // 플래시 메시지
   } else {
     req.session.logout = '로그인 되어있지 않습니다.';
   }
