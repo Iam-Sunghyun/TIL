@@ -280,3 +280,22 @@ app.get('/secret', (req, res) => {
 ```
 
 위 예시는 간단한 데모이다. 로그인 성공 시 Mongodb의 해당 사용자 `_id`값을 `req.session.user_id`에 저장하고, 로그아웃 전까지 유지한다. 이로서 로그인이 필요한 페이지에서 `req.session.user_id`를 검사하는 것으로 로그인 여부를 확인할 수 있게 되었다.
+
+<!-- 여기서 `boolean` 값을 사용할 수도 있는데 굳이 `_id`를 저장한 이유는 -->
+
+## 로그아웃
+
+로그아웃은 단순하다. 앞서 저장한 세션에 `user_id` 값을 삭제해주면 된다.
+
+```
+// 로그아웃(GET 메서드만 아니면 됨)
+app.post('/logout', (req, res) => {
+  if (req.session.user_id) {
+    delete req.session.user_id; // or req.session.user_id = null;
+    req.session.logout = '로그아웃 성공';
+  } else {
+    req.session.logout = '로그인 되어있지 않습니다.';
+  }
+  res.redirect('login');
+});
+```
