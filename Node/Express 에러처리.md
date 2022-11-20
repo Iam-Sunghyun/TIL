@@ -4,6 +4,7 @@
   - [동기(synchronous) 코드](#동기synchronous-코드)
   - [비동기(synchronous) 코드](#비동기synchronous-코드)
     - [next()로 에러 전달](#next로-에러-전달)
+    - [next('route')](#nextroute)
 - [Express 내장 에러 핸들러(기본 에러 핸들러)](#express-내장-에러-핸들러기본-에러-핸들러)
     - [프로덕션 환경이란?](#프로덕션-환경이란)
 - [사용자 정의 에러 핸들러](#사용자-정의-에러-핸들러)
@@ -94,6 +95,8 @@ app.use((err, req, res, next) => {  // 다음 에러 처리 미들웨어에 에�
 
 클라이언트 출력 >> 에러!입니다.
 ```
+
+### next('route')
 
 아래 예시에서 `next('route')`와 같이 `'route'`를 전달하여 호출하는 경우 라우터에 연결된 나머지 미들웨어 함수를 건너뛴다. 
 
