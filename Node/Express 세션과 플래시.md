@@ -9,6 +9,8 @@
   - [세션과 `connect-flash`로 플래시 메시지 구현하기](#세션과-connect-flash로-플래시-메시지-구현하기)
   - [`res.locals`로 플래시 메시지 사용하기](#reslocals로-플래시-메시지-사용하기)
 - [세션으로 로그인 상태 유지하기](#세션으로-로그인-상태-유지하기)
+  - [로그아웃](#로그아웃)
+  - [로그인 미들웨어](#로그인-미들웨어)
 
 
   
@@ -297,5 +299,34 @@ app.post('/logout', (req, res) => {
     req.session.logout = '로그인 되어있지 않습니다.';
   }
   res.redirect('login');
+});
+```
+
+위와 같이 `null`을 할당하거나, `delete` 로 값을 삭제해줄 수도 있고, 삭제해야될 사용자 정보가 많은 경우 `express-session`의 `req.session.destroy(callback)` 메서드로 세션 전체를 파기하는 방법을 사용하는 경우도 있다.
+
+## 로그인 미들웨어
+
+사용자의 로그인 여부를 확인해야 하는 경우가 여럿 있을 수 있다. 이런 경우 로그인 확인 미들웨어를 따로 작성하는 것으로 로그인이 필요한 페이지마다 재사용할 수 있다.
+
+로그인 확인 미들웨어는 간단하다. 만약 로그인이 안되어있다면 플래시 메시지와 함께 로그인 페이지로 리디렉션하고, 로그인 되어있는 경우 `next()`를 호출하여 다음 미들웨어에 제어권을 넘기는 구조이다.
+
+```
+// ./utils/loginCheck.js
+const loginCheck = (req, res, next) => {
+  if (!req.session.user_id) {
+    req.session.login = '로그인 해주세요.'
+    res.redirect('login');
+  } else {
+    next();
+  }
+};
+
+module.exports = loginCheck;
+---------------------------------
+// const loginCheck = require('./utils/loginCheck.js');
+
+// 비로그인은 볼 수 없는 페이지
+app.get('/secret', loginCheck, (req, res) => {
+  res.send('환영합니다.');
 });
 ```
