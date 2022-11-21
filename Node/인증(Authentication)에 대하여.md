@@ -1,13 +1,18 @@
 - [인증(Authentication) vs 권한 부여(Authorization) (上)](#인증authentication-vs-권한-부여authorization-上)
 - [비밀번호 암호화 하는 법 (上)](#비밀번호-암호화-하는-법-上)
   - [암호화된 해시 함수(cryptographic hash function) (中)](#암호화된-해시-함수cryptographic-hash-function-中)
-- [Password Salt (中)](#password-salt-中)
-- [Bcrypt? (上)](#bcrypt-上)
-  - [bcrypt 모듈로 비밀번호 해시하는 방법](#bcrypt-모듈로-비밀번호-해시하는-방법)
-  - [bcrypt 모듈로 직접 비밀번호 해시해보기](#bcrypt-모듈로-직접-비밀번호-해시해보기)
-    - [솔트 생성 및 확인](#솔트-생성-및-확인)
-    - [사용자의 암호 대조(확인)해보기](#사용자의-암호-대조확인해보기)
-- [Express Auth 구현해보기 (中)](#express-auth-구현해보기-中)
+  - [Password Salt (中)](#password-salt-中)
+  - [Bcrypt? (上)](#bcrypt-上)
+- [npm bcrypt 모듈로 비밀번호 해시하는 방법](#npm-bcrypt-모듈로-비밀번호-해시하는-방법)
+- [bcrypt 모듈로 직접 비밀번호 해시해보기](#bcrypt-모듈로-직접-비밀번호-해시해보기)
+  - [솔트 생성 및 확인](#솔트-생성-및-확인)
+  - [사용자의 암호 대조(확인)해보기](#사용자의-암호-대조확인해보기)
+- [Express로 Authentication 구현해보기 (中)](#express로-authentication-구현해보기-中)
+  - [사용자 등록](#사용자-등록)
+  - [로그인](#로그인)
+- [세션으로 로그인 상태 유지하기](#세션으로-로그인-상태-유지하기)
+  - [로그아웃](#로그아웃)
+  - [로그인 미들웨어](#로그인-미들웨어)
 
 # 인증(Authentication) vs 권한 부여(Authorization) (上)
 
@@ -63,7 +68,7 @@ https://crypto.stackexchange.com/questions/24/what-makes-a-hash-function-good-fo
 
 https://www.thesslstore.com/blog/what-is-a-hash-function-in-cryptography-a-beginners-guide/
 
-# Password Salt (中)
+## Password Salt (中)
 
 패스워드 솔트란 암호를 해싱할 때 암호를 역설계 하거나 암호를 유추하는 것을 어렵게 하기 위한 방법이다.
 
@@ -88,14 +93,14 @@ https://www.thesslstore.com/blog/what-is-a-hash-function-in-cryptography-a-begin
 
 https://ko.wikipedia.org/wiki/%EC%86%94%ED%8A%B8_(%EC%95%94%ED%98%B8%ED%95%99)
 
-# Bcrypt? (上)
+## Bcrypt? (上)
 
 많이 사용되는 암호화 해시 함수 중 하나로 레인보우 테이블(해시함수(MD-5, SHA-1, SHA-2 등)를 사용하여 만들어낼 수 있는 값들을 대량으로 저장한 표) 공격 방지를 위해 솔트를 사용하는 해시 함수이다. 
 
 npm에는 `bcrypt`와 `bcryptjs`가 있는데 node.js를 대상으로 만들어진 `bcrypt` 모듈을 사용해 볼 것이다(`bcrypt`는 c++로 구현되어 있어 속도가 더 빠르고 `bcyprtjs`는 브라우저에서도 실행 가능하다는 차이가 있다).
 
 
-## bcrypt 모듈로 비밀번호 해시하는 방법
+# npm bcrypt 모듈로 비밀번호 해시하는 방법
 
 우선 `bcrypt` 모듈을 설치 해준다.
 
@@ -176,9 +181,9 @@ async function checkUser(username, password) {
 }
 ``` 
 
-## bcrypt 모듈로 직접 비밀번호 해시해보기
+# bcrypt 모듈로 직접 비밀번호 해시해보기
 
-### 솔트 생성 및 확인
+## 솔트 생성 및 확인
 
 bcrypt의 콜백을 허용하는 비동기 메서드에 콜백 함수를 전달하지 않으면 프로미스를 반환한다(동기적으로 동작하는 메서드는 Sync가 붙는다). 따라서 async/await을 사용할 수 있다.
 
@@ -203,7 +208,7 @@ hashPassword('example');
 
 <!-- 그렇다면 생성한 암호 해시를 저장했다면 입력 값과 어떻게 대조하는가 -->
 
-### 사용자의 암호 대조(확인)해보기
+## 사용자의 암호 대조(확인)해보기
 
 사용자가 입력한 암호를 데이터베이스의 해시 값과 대조할 때에는 위의 예시에서도 나왔던 **`compare()` 메서드**를 사용한다.
 
@@ -235,8 +240,195 @@ https://www.npmjs.com/package/bcrypt
 
 https://en.wikipedia.org/wiki/Bcrypt
 
-# Express Auth 구현해보기 (中)
+# Express로 Authentication 구현해보기 (中)
 
 ```
 npm i express mongoose ejs bcrypt
 ```
+## 사용자 등록
+
+간단한 데모이므로 로직을 확인하기 쉽게 라우트 핸들러에 모든 코드를 담아 작성하였다.
+
+```
+// 사용자 등록 (반드시 POST 메서드로 전송!)
+app.post('/register', async (req, res) => {
+  const { userName, password } = req.body;
+  const dbID = await userModel.findOne({ userName }); 
+
+  // 중복된 아이디가 아니라면 계정 생성
+  if (!dbID.length) {
+    const hash = await bcrypt.hash(password, 12); // bcrypt 모듈로 암호 해시
+
+    // mongodb 도큐먼트 생성 및 저장
+    const newUser = new userModel({
+      userName,
+      hashedPassword: hash
+    })
+    await newUser.save();
+
+    // 플래시 메시지
+    req.session.success = '회원가입 성공';
+    res.redirect('login');
+  } else {
+    req.session.duplicate = '중복된 아이디 입니다.'; 
+    res.redirect('register');
+  }
+});
+```
+## 로그인
+```
+// 사용자 로그인
+app.post('/login', async (req, res) => {
+  const { id, password } = req.body;
+  const user = await userModel.findOne({ userName: id });
+
+  // compare() 메서드로 암호 대조
+  const validPassword = await bcrypt.compare(password, user.hashedPassword);
+
+  // 입력 비밀번호가 DB 값과 일치한다면
+  if (validPassword) {
+    res.send('로그인 성공!!!!!');
+  } else {
+    res.send('로그인 실패');
+  }
+});
+```
+<!-- bcrypt로 암호화한 비밀번호를 compare() 메서드로 확인한다... -->
+
+# 세션으로 로그인 상태 유지하기
+
+세션을 이용해 로그인 상태를 유지하고, 로그인 해야 볼 수 있는 페이지에 대한 접근 권한을 부여해볼 것.
+
+첫 번째는 특정 페이지에 접근 시 사용자의 로그인 여부를 확인해야 하는데 이 때 세션을 사용한다.
+
+```
+// 사용자 로그인
+app.post('/login', async (req, res) => {
+  const { id, password } = req.body;
+  const user = await userModel.findOne({ userName: id });
+  const validPassword = await bcrypt.compare(password, user.hashedPassword);
+
+  // 입력 비밀번호가 DB 값과 일치한다면
+  if (validPassword) {
+    // 사용자의 세션(req.session)에 DB의 사용자 정보 도큐먼트 _id 저장(로그인 확인을 위한 값)
+    req.session.user_id = user._id;
+    res.send('로그인 성공!!!!!');
+  } else {
+    res.send('로그인 실패');
+  }
+});
+
+// 비로그인은 볼 수 없는 페이지
+app.get('/secret', (req, res) => {
+
+  // 세션 값으로 로그인 여부를 확인한다
+  if (!req.session.user_id) {
+    req.session.login = '로그인 해주세요.'
+    res.redirect('login');
+  } else {
+    res.send('환영합니다.');
+  }
+});
+```
+
+위 예시는 간단한 데모이다. 로그인 성공 시 Mongodb의 해당 사용자 `_id`값을 `req.session.user_id`에 저장하고, 로그아웃 전까지 유지한다. 로그인이 필요한 페이지에서 `req.session.user_id`를 검사하는 것으로 로그인 여부를 확인하고 페이지에 접근을 제어할 수 있게 되었다.
+
+
+## 로그아웃
+
+로그아웃은 단순하다. 앞서 저장한 세션에 `user_id` 값을 삭제해주면 된다.
+
+```
+// 로그아웃(GET 메서드만 아니면 됨)
+app.post('/logout', (req, res) => {
+  if (req.session.user_id) {
+    delete req.session.user_id; // or req.session.user_id = null;
+    req.session.logout = '로그아웃 성공'; // 플래시 메시지
+  } else {
+    req.session.logout = '로그인 되어있지 않습니다.';
+  }
+  res.redirect('login');
+});
+```
+
+위와 같이 `null`을 할당하거나, `delete` 로 값을 삭제해줄 수도 있고, 삭제해야될 사용자 정보가 많은 경우 `express-session`의 `req.session.destroy(callback)` 메서드로 세션 전체를 파기하는 방법을 사용하는 경우도 있다.
+
+## 로그인 미들웨어
+
+사용자의 로그인 여부를 확인해야 하는 경우가 여럿 있을 수 있다. 이런 경우 로그인 확인 미들웨어를 따로 작성하는 것으로 로그인이 필요한 페이지마다 재사용할 수 있다(자주 사용하는 패턴).
+
+로그인 확인 미들웨어는 간단하다. 위의 라우트 핸들러에 작성한 코드를 모듈로 분리하기만 하면 된다. 만약 로그인이 안되어있다면 플래시 메시지와 함께 로그인 페이지로 리디렉션하고, 로그인 되어있는 경우 `next()`를 호출하여 다음 미들웨어에 제어권을 넘기는 구조이다.
+
+```
+// ./utils/loginCheck.js
+const loginCheck = (req, res, next) => {
+  if (!req.session.user_id) {
+    req.session.login = '로그인 해주세요.'
+    res.redirect('login');
+  } else {
+    next();
+  }
+};
+
+module.exports = loginCheck;
+---------------------------------
+// const loginCheck = require('./utils/loginCheck.js');
+
+// 비로그인은 볼 수 없는 페이지
+app.get('/secret', loginCheck, (req, res) => {
+  res.send('환영합니다.');
+});
+```
+
+
+## mongoose Model 정적 메서드로 리팩토링
+
+Authentication 일부 로직을 mongoose Model 정적 메서드로 작성하여 코드를 리펙토링 해본다.
+
+```
+// 기존 코드
+app.post('/login', async (req, res) => {
+  const { id, password } = req.body;
+  const user = await userModel.findOne({ userName: id });
+  const validPassword = await bcrypt.compare(password, user.hashedPassword);
+  if (validPassword) {
+    // 로그인 유지를 위해 해당 사용자의 세션(req.session)에 _id(db에 저장된 값) 저장
+    req.session.user_id = user._id;
+    res.send('로그인 성공!!!!!');
+  } else {
+    res.send('로그인 실패');
+  }
+});
+---------------------------------------
+// userSchema 스키마에 정적 메서드 추가
+userSchema.statics.validation = async function (userName, password) {
+  const user = await this.findOne({ userName });
+  const isValidPassword = await bcrypt.compare(password, user.hashedPassword);
+  return isValidPassword ? user : false;
+}
+
+module.exports = mongoose.model('User', userSchema);
+----------------------------------------
+// 리팩토링 후 코드
+// 모듈 로드
+const userModel = require('./model/user.js');
+
+// 사용자 로그인
+app.post('/login', async (req, res) => {
+  const { id, password } = req.body;
+
+  // Model 정적 메서드로 암호 대조
+  const foundUser = await userModel.validation(id, password);
+
+  // 입력 비밀번호가 DB 값과 일치한다면
+  if (foundUser) {
+    // 사용자의 세션(req.session)에 DB의 사용자 정보 도큐먼트 _id 저장(로그인 확인을 위한 값)
+    req.session.user_id = foundUser._id;
+    res.send('로그인 성공!!!!!');
+  } else {
+    res.send('로그인 실패');
+  }
+});
+```
+
+위와 같이 스키마 객체의 statics 프로퍼티에 정적 메서드를 정의하여 코드를 좀 더 간결하게 축소하였다.
