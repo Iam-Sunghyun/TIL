@@ -398,17 +398,22 @@ https://mongoosejs.com/docs/validation.html
 
 ## 인스턴스 메서드 추가(자주 사용)
 
-인스턴스 메서드는 스키마의 `methods` 프로퍼티에 추가되어 `Model` 프로토타입에 컴파일되는 함수로, **개별 문서(document)들이 사용할 수 있는 메서드이다.**
+인스턴스 메서드는 스키마 생성 단계에서 인수로 전달하거나, 스키마의 `methods` 프로퍼티에 추가할 수 있는 메서드로 `Model` 프로토타입에 컴파일되는 함수로 **개별 문서(document)들이 사용할 수 있는 메서드이다.**
 
-**주의할 것은 화살표 함수로 정의하지 말 것**. 화살표 함수는 this 바인딩이 없으므로 인스턴스 메서드를 호출한 문서 필드에 접근할 수 없다.
+인스턴스 메서드를 추가하는 방법은 2가지가 있으며 **주의할 것은 화살표 함수로 정의하지 말 것**. 화살표 함수는 this 바인딩이 없으므로 인스턴스 메서드를 호출한 문서 필드에 접근할 수 없다.
 
 ```
-// 스키마 정의
-const productSchema = new mongoose.Schema({
-  name: String
+// 첫 번째 방법. methods 객체에 인스턴스 메서드를 추가하여 스키마 생성 시 2번째 인수로 전달한다.
+const productSchema = new mongoose.Schema({ name: String, type: String },
+{
+  methods: {
+    greet() {
+      console.log(`this is ${this.name}`);
+    }
+  }
 });
 
-// 반드시 모델 생성 이전에 추가해줘야 됨.
+// 두 번째 방법. 생성된 스키마의 methods 프로퍼티에 동적으로 추가하는 방법도 있다(반드시 모델 생성 이전에 추가해줘야 됨).
 productSchema.methods.greet = function () {
     console.log(`this is ${this.name}`);
 }
@@ -435,16 +440,33 @@ a.greet(); // "this is bike"
 
 개별 인스턴스(문서)가 아닌 **모델 자체에 바인딩되는 메서드**.
 
-주로 모델이 적용되는 컬렉션의 문서를 효율적으로 생성, 찾기, 업데이트, 삭제하는 작업을 정의한다.
+주로 모델이 적용되는 컬렉션의 문서를 효율적으로 생성, 찾기, 업데이트, 삭제하는 작업을 정의하며 3가지 방법으로 정의할 수 있다.
 
 ```
 // 정적 메서드
-// Product 모델의 문서들(products 컬렉션의 문서들) 모두 업데이트
+// 1. 스키마 생성 시 2번째 인수로 전달하는 방법
+// statics 객체에 정적 메서드를 추가하여 전달한다.
+const productSchema = new Schema({ name: String, type: String },
+{
+  statics: {
+    // Product 모델의 문서들(products 컬렉션의 문서들) 모두 업데이트
+    firesale() { 
+      return this.updateMany({}, { onSale: true, price: 0 });
+    }
+  }
+});
+
+// 2. 생성된 스키마의 statics 프로퍼티에 할당하는 방법
 productSchema.statics.fireSale = function () {
     return this.updateMany({}, { onSale: true, price: 0 });
 };
 
-// Product.fireSale().then(res => console.log(res))
+// 3. Model.static() 메서드를 호출하는 방법
+productSchema.static('fireSale', function () {
+  return this.updateMany({}, { onSale: true, price: 0 });
+});
+
+Product.fireSale().then(res => console.log(res))
 ```
 
 **[스키마 인스턴스 메서드, 정적 메서드]**
