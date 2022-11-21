@@ -563,7 +563,7 @@ const farmSchema = new mongoose.Schema({
 
 **[Express와 MongoDB 연결하기 실습.md 참고]**
 
-https://github.com/Iam-Sunghyun/TIL/blob/main/DB/Express%EC%99%80%20Mongo%20%EC%97%B0%EA%B2%B0%ED%95%98%EA%B8%B0%20%EC%8B%A4%EC%8A%B5.md#mongoose-%EB%AF%B8%EB%93%A4%EC%9B%A8%EC%96%B4%EB%A1%9C-%EC%97%AC%EB%9F%AC-%EB%AA%A8%EB%8D%B8%EC%9D%B4-%EA%B2%B0%ED%95%A9%EB%90%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%82%AD%EC%A0%9C%ED%95%98%EA%B8%B0
+https://github.com/Iam-Sunghyun/TIL/blob/main/DB/Express%EC%99%80%20MongoDB%20%EC%97%B0%EA%B2%B0%ED%95%98%EA%B8%B0%20%EC%8B%A4%EC%8A%B5.md#mongoose-%EB%AF%B8%EB%93%A4%EC%9B%A8%EC%96%B4%EB%A1%9C-%EC%97%AC%EB%9F%AC-%EB%AA%A8%EB%8D%B8%EC%9D%B4-%EA%B2%B0%ED%95%A9%EB%90%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%82%AD%EC%A0%9C%ED%95%98%EA%B8%B0
 
 **[Mongoose middleware]**
 
