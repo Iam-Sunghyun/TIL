@@ -381,10 +381,11 @@ app.get('/secret', loginCheck, (req, res) => {
 ```
 
 
-## mongoose Model 정적 메서드로 리팩토링
+## mongoose Model 정적(static) 메서드, 미들웨어(middleware)로 리팩토링
 
-Authentication 일부 로직을 mongoose Model 정적 메서드로 작성하여 코드를 리펙토링 해본다.
+로그인과 사용자 등록 일부 로직을 mongoose **Model 정적 메서드, 미들웨어**를 사용하여 리펙토링 해본다.
 
+먼저 로그인 코드의 암호 대조 부분을 **정적 메서드**로 작성하여 코드를 간소화 해보았다.
 ```
 // 기존 코드
 app.post('/login', async (req, res) => {
@@ -431,4 +432,56 @@ app.post('/login', async (req, res) => {
 });
 ```
 
-위와 같이 스키마 객체의 statics 프로퍼티에 정적 메서드를 정의하여 코드를 좀 더 간결하게 축소하였다.
+mongoose 스키마 객체의 statics 프로퍼티에 정적 메서드를 정의하여 코드를 좀 더 간결하게 축소하였다.
+
+다음은 **mongoose 미들웨어**를 통해 사용자 등록시 입력한 비밀번호를 자동으로 암호화 해시하는 코드를 작성해본다. 
+
+```
+// 기존 사용자 등록 라우트 핸들러
+app.post('/register', async (req, res) => {
+  const { id, password } = req.body;
+  const dbID = await userModel.findOne({ userName: id }); 
+
+  // 중복된 아이디가 아니라면 계정 생성
+  if (!dbID) {
+    const hash = await bcrypt.hash(password, 12); // bcrypt 모듈로 암호 해시
+
+    // mongodb 도큐먼트 생성 및 저장
+    const newUser = new userModel({ userName: id, password });
+    await newUser.save();
+
+    req.session.success = '회원가입 성공'; // 플래시 메시지
+    req.session.user_id = newUser._id; // 가입 성공시 따로 로그인 없이 자동 로그인 유지를 위해 사용자의 세션에 _id 저장 후 리디렉션
+    res.redirect('login');
+  } else {
+    req.session.duplicate = '중복된 아이디 입니다.'; 
+    res.redirect('register');
+  }
+});
+-----------------------------
+// userSchema 스키마에 document 미들웨어 추가
+userSchema.pre('save', async function (next) {
+  this.password = await bcrypt.hash(this.password, 12); // document 미들웨어의 this는 미들웨어 트리거 메서드(여기선 save())를 호출한 도큐먼트가 할당된다
+  next(); // 다음 pre 미들웨어가 있다면 제어권 넘김. 없다면 save() 메서드 호출
+});
+-----------------------------
+// 사용자 등록 
+app.post('/register', async (req, res) => {
+  const { id, password } = req.body;
+  const dbID = await userModel.findOne({ userName: id }); 
+
+  // 중복된 아이디가 아니라면 계정 생성
+  if (!dbID) {
+    // mongodb 도큐먼트 생성 및 저장
+    const newUser = new userModel({ userName: id, password });
+    await newUser.save(); // 저장 시 자동으로 암호 해시
+
+    req.session.success = '회원가입 성공'; // 플래시 메시지
+    req.session.user_id = newUser._id; // 가입 성공시 따로 로그인 없이 자동 로그인 유지를 위해 사용자의 세션에 _id 저장 후 리디렉션
+    res.redirect('login');
+  } else {
+    req.session.duplicate = '중복된 아이디 입니다.'; 
+    res.redirect('register');
+  }
+});
+```
