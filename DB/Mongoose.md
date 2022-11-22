@@ -249,7 +249,7 @@ await Adventure.findOne({ country: 'Croatia' }, 'name length').exec();
 - `Model.updateOne(filter, update, options, callback)` - 단일 문서 업데이트 <br>
 - `Model.updateMany(filter, update, options, callback)` - 여러 문서 업데이트 <br>
 
-위 메서드들은 다음과 같이 업데이트 처리 결과만 반환한다. 즉 업데이트된 데이터나 갱신된 정보를 resolve하지 않는다.
+위 메서드들은 다음과 같이 업데이트 처리 결과만 반환한다. 즉 업데이트된 데이터나 갱신된 정보를 반환하지 않는다.
 
 ```
  Movie.updateOne({title: 'Usual Suspects'}, {score: 9.5}).then(m => console.log(m));
