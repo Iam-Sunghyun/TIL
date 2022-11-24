@@ -1,3 +1,4 @@
+**목차**
 - [인증(Authentication) vs 권한 부여(Authorization) (上)](#인증authentication-vs-권한-부여authorization-上)
 - [비밀번호 암호화 하는 법 (上)](#비밀번호-암호화-하는-법-上)
   - [암호화된 해시 함수(cryptographic hash function) (中)](#암호화된-해시-함수cryptographic-hash-function-中)
@@ -13,6 +14,8 @@
 - [세션으로 로그인 상태 유지하기](#세션으로-로그인-상태-유지하기)
   - [로그아웃](#로그아웃)
   - [로그인 미들웨어](#로그인-미들웨어)
+  - [mongoose Model 정적(static) 메서드, 미들웨어(middleware)로 리팩토링](#mongoose-model-정적static-메서드-미들웨어middleware로-리팩토링)
+- [Passport.js 라이브러리로 인증(Authentication)하기](#passportjs-라이브러리로-인증authentication하기)
 
 # 인증(Authentication) vs 권한 부여(Authorization) (上)
 
@@ -36,7 +39,7 @@ https://www.okta.com/kr/identity-101/authentication-vs-authorization/
 
 따라서 비밀번호를 저장할 때 암호화가 필수적인데 **해시 함수**를 사용해 암호화를 해볼 것이다.
 
-<!-- 자격 증명(credential)? -->
+<!-- 자격 증명(credential)? -> 말 그대로 자격 증명하는 것. 웹에선 보통 아이디 비밀번호, 그 외에는 지문인식, 등등 여러가지가 있다 -->
 
 ## 암호화된 해시 함수(cryptographic hash function) (中)
 
@@ -78,11 +81,11 @@ https://www.thesslstore.com/blog/what-is-a-hash-function-in-cryptography-a-begin
 2. 서로 다른 사람들의 비밀번호가 같은 경우가 많다.
 3. 비밀번호를 저장할 때 사용되는 해시 알고리즘은 단 몇 개뿐이다(그 중 하나로 Bcrypt를 사용해볼 것). 
 
-2번의 경우 발생하는 문제 -> 여러 사용자의 비밀번호가 동일한 해시 값을 만들어 낸다. 여러 사용자의 비밀번호 해시 값이 동일하다면 이것은 단순한 비밀번호일 가능성이 높은데 이것을 보고 비밀번호를 캐내려는 사람이 인터넷 상에서 쉽게 얻을 수 있는 자주 사용하는 비밀번호 값 목록을 입력해 봄으로서 우연히 비밀번호를 알아낸다면, 수 많은 동일한 비밀번호를 사용하는 사용자들의 계정 정보가 유출 될 수 있다.
+2번의 경우 발생하는 문제 -> 여러 사용자의 비밀번호가 동일한 해시 값을 만들어 낸다. 여러 사용자의 비밀번호 해시 값이 동일하다면 이것은 단순한 비밀번호일 가능성이 높은데 이것을 보고 비밀번호를 캐내려는 사람이 인터넷 상에서 쉽게 얻을 수 있는 자주 사용하는 비밀번호 값 목록을 입력해 봄으로서 우연히 비밀번호를 알아낸다면(혹은 레인보우 테이블을 이용해 해시된 암호로 원래 암호를 알아낸다면), 수 많은 동일한 비밀번호를 사용하는 사용자들의 계정 정보가 유출 될 수 있다.
 
 <!-- (공격자가 해시 알고리즘이 뭔지 안다는 가정 하에)? -->
 
-이러한 경우를 방지하기 위한(역방향 조회 테이블을 만들 수 없게) 방법이 **Password Salt** 이다.
+이러한 경우를 방지하기 위한 방법이 **Password Salt** 이다.
 
 패스워드 솔트의 개념은 아주 간단하다. 암호를 해싱할 때 임의의 값(솔트)을 추가하여 해싱하는 것. 예를들어 비밀번호가 'password'라면 'passwordDog'처럼 'Dog'라는 솔트를 치는 것이다. 이렇게 하여 서로 다른 사용자가 동일한 비밀번호를 사용하는 경우에도 각자 다른 솔트를 사용해 데이터베이스에 다른 암호 해시 값을 저장할 수 있게 된다.
 
@@ -459,10 +462,15 @@ app.post('/register', async (req, res) => {
   }
 });
 -----------------------------
-// userSchema 스키마에 document 미들웨어 추가
+// userSchema 스키마에 암호 해시 document 미들웨어 추가
 userSchema.pre('save', async function (next) {
-  this.password = await bcrypt.hash(this.password, 12); // document 미들웨어의 this는 미들웨어 트리거 메서드(여기선 save())를 호출한 도큐먼트가 할당된다
-  next(); // 다음 pre 미들웨어가 있다면 제어권 넘김. 없다면 save() 메서드 호출
+
+  // document.prototype.isModified() -> 도큐먼트의 특정 필드가 변경되었을 경우(인수로 전달한 값) return true
+  // 비밀번호가 아닌 값을 변경하고 save()하는 경우 불필요하게 암호가 또 해시되는 것을 방지하기 위함
+  if (!this.isModified('password')) return next(); // return next()로 다음 메서드로 제어권 넘기고 코드 종료
+  
+  this.password = await bcrypt.hash(this.password, 12); // document 미들웨어의 this는 미들웨어를 트리거하는 메서드(여기선 save())를 호출한 도큐먼트가 할당된다
+  next(); // 다음 pre 미들웨어가 있다면 제어권 넘김. 없다면 save() 메서드 호출   
 });
 -----------------------------
 // 사용자 등록 
@@ -472,8 +480,7 @@ app.post('/register', async (req, res) => {
 
   // 중복된 아이디가 아니라면 계정 생성
   if (!dbID) {
-    // mongodb 도큐먼트 생성 및 저장
-    const newUser = new userModel({ userName: id, password });
+    const newUser = new userModel({ userName: id, password }); // mongodb 도큐먼트 생성
     await newUser.save(); // 저장 시 자동으로 암호 해시
 
     req.session.success = '회원가입 성공'; // 플래시 메시지
@@ -485,3 +492,19 @@ app.post('/register', async (req, res) => {
   }
 });
 ```
+
+# Passport.js 라이브러리로 인증(Authentication)하기
+
+Passport.js는 Node.js 앱에 인증을 추가해주는 유용한 라이브러리로 Twitter, FaceBook, Google로 로그인 등 500가지가 넘는 다양한 인증 방식을 제공하여 직접 구현하지 않고도 앱의 사용자 인증 방식을 확장하기 쉽다는 장점이 있다.
+
+여러 방식 중 가장 기본인 사용자가 입력한 이름(id)과 비밀번호로 인증하는 `passport-local`을 사용해 볼 것인데, 이 방식을 기반으로 Mongoose로 Passport.js 인증 구현을 쉽게 해주는 Mongoose 플러그인 `passport-local-mongoose`를 사용할 것이다.
+
+`passport-local-mongoose`를 사용하기 위해선 다음 세 가지 모듈이 필요하다.
+
+```
+> npm install passport mongoose passport-local-mongoose
+```
+
+**[Top 5 JavaScript User Authentication Libraries for 2022]**
+
+https://linuxhint.com/top-5-javascript-user-authentication-libraries-2022/#b1
