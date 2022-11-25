@@ -1,4 +1,4 @@
-# 목차
+**목차**
 - [Express 에러 처리](#express-에러-처리)
 - [에러 캐치하기](#에러-캐치하기)
   - [동기(synchronous) 코드](#동기synchronous-코드)
@@ -327,3 +327,7 @@ app.use((err, req, res, next) => {
 **[joi 모듈 document]**
 
 https://joi.dev/api/?v=17.6.0#example
+
+**[joi 장점 및 사용 방법]**
+
+https://www.geeksforgeeks.org/how-to-validate-data-using-hapi-joi-module-in-node-js/
