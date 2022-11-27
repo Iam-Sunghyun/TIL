@@ -183,16 +183,30 @@ const BlogSchema = new Schema({
 const User = mongoose.model("Author", UserSchema);
 const Blog = mongoose.model("Blog", BlogSchema);
 
-Blog.find({ title: 'populate practice' }).then((d) => console.log(d));
+const user1 = new User({
+   _id: ObjectId("63120bd0b1013f378f3906d1")
+  name: 'sunghyun',
+  email: '123@321.com',
+  blogs: [],
+});
+
+const blog1 = new Blog({
+  title: 'populate practice',
+  user: ObjectId("63120bd0b1013f378f3906d1") ,
+  body: 'blah blah',
+  comments: [],
+})
 
 // 그냥 출력
+Blog.find({ title: 'populate practice' }).then((d) => console.log(d));
+
 >> [
   {
     _id: new ObjectId("63120d5809058506f5485a22"),
     title: 'populate practice',
     user: new ObjectId("63120bd0b1013f378f3906d1"), // 참조 값만 출력됨.
     body: 'blah blah',
-    comments: [], -> 빈배열은 실제론 출력 안됨.
+    comments: [], 
     __v: 0
   }
 ]
@@ -211,11 +225,11 @@ Blog.find({ title: 'populate practice' })
       _id: new ObjectId("63120bd0b1013f378f3906d1"),
       name: 'sunghyun',
       email: '123@321.com',
-      blogs: [], -> 빈배열은 실제론 출력 안됨.
+      blogs: [], 
       __v: 0
     },
-    body: 'function String() { [native code] }',
-    comments: [], -> 빈배열은 실제론 출력 안됨.
+    body: 'blah blah',
+    comments: [], 
     __v: 0
   }
 ]
