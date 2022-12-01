@@ -1,4 +1,4 @@
-# 목차
+**목차**
 - [Mongoose란?](#mongoose란)
   - [ODM, ORM?](#odm-orm)
   - [Mongoose 쓰는 이유?](#mongoose-쓰는-이유)
@@ -9,7 +9,7 @@
     - [스키마(schema)?](#스키마schema)
     - [단일 문서 저장 예시 코드](#단일-문서-저장-예시-코드)
 - [Mongoose API](#mongoose-api)
-  - [Mongoose에서 쿼리 결과를 처리하는 방법 2가지](#mongoose에서-쿼리-결과를-처리하는-방법-2가지)
+  - [Mongoose 쿼리를 실행하는 방법 2가지](#mongoose-쿼리를-실행하는-방법-2가지)
   - [Document 여러 개 삽입하기](#document-여러-개-삽입하기)
   - [Document 찾기](#document-찾기)
   - [Document 업데이트 하기](#document-업데이트-하기)
@@ -118,7 +118,7 @@ const usualSuspects = new Movie({ title: 'Usual Suspects', year: 1995, score: 9.
 usualSuspects.save();
 ```
 
-`Document.prototype.save()`메서드는 비동기로 동작하며 `promise` 객체를 반환한다(저장 시 유효성 검사도 수행함).
+`Document.prototype.save()`메서드는 비동기로 동작하며 `promise` 객체를 반환한다(**save()로 저장 시 정의한 스키마 유효성 검사도 수행함**).
 
 **[몽구스 스키마 정의, 모델 생성]**
 
@@ -357,7 +357,7 @@ const productSchema = new mongoose.Schema({
 });
 ```
 
-스키마 제약에 걸리는 경우 `save()`로 저장 시 에러가 발생하고, 스키마에 정의되지 않은 필드를 삽입 시 그 값은 무시된다.
+**스키마 제약에 걸리는 경우 `save()`로 저장 시 에러가 발생하고, 스키마에 정의되지 않은 필드를 삽입 시 그 값은 무시된다.**
 
 
 **[스키마 유형, 옵션(제약 조건)]**
@@ -385,12 +385,12 @@ Product.updateMany({}, {price: 0}, {runValidators: true});
 
 ## 유효성 검사 에러 메시지
 
-Document 형식이 스키마 제약 조건에 어긋나는 경우 다음과 같이 사용자 정의 에러 메시지를 출력하게 할 수 있다(자주 쓰는 방법은 아닌듯).
+Document 형식이 스키마 제약 조건에 어긋나는 경우 다음과 같이 **사용자 정의 에러 메시지를 출력하게 할 수 있다**(자주 쓰는 방법은 아닌듯).
 
 - 배열 문법 - `min: [6, 'Must be at least 6, got {VALUE}']`
 - 객체 문법 - `enum: { values: ['Coffee', 'Tea'], message: '{VALUE} is not supported' }`
 
-Mongoose는 위 예시의 `{VALUE}`를 유효성 검사하는 값으로 바꿔 출력한다.
+Mongoose는 위 예시의 `{VALUE}`를 유효성 검사 중인 값으로 바꿔 출력한다.
 
 **[유효성 검사(validation)]**
 
