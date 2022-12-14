@@ -5,7 +5,7 @@
 - [회원가입 및 로그인](#회원가입-및-로그인)
   - [User.register(user, password, cb)로 사용자 등록](#userregisteruser-password-cb로-사용자-등록)
   - [passport.authenticate(strategy, options)로 인증](#passportauthenticatestrategy-options로-인증)
-  - [isLoggedIn 미들웨어로 로그인 상태 유지](#isloggedin-미들웨어로-로그인-상태-유지)
+  - [isLoggedIn 미들웨어로 로그인 확인](#isloggedin-미들웨어로-로그인-확인)
   - [req.logout()으로 로그아웃](#reqlogout으로-로그아웃)
 
 # Passport.js 라이브러리로 인증(Authentication)하기
@@ -160,7 +160,8 @@ router.post('/login',
 `passport.authenticate()` 미들웨어는 요청에 전송된 자격증명(credential)을 인증한다. 인증에 성공하면 `req.user` 프로퍼티에 인증된 사용자가 저장되며, 로그인 세션이 생성된다.
 
 
+## isLoggedIn 미들웨어로 로그인 확인
 
-## isLoggedIn 미들웨어로 로그인 상태 유지 
+`passport.authenticate()`로 인증이 된 경우 `req.user`에 사용자 정보가 저장된다.
 
 ## req.logout()으로 로그아웃
