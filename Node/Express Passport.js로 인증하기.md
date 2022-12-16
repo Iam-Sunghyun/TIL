@@ -200,9 +200,9 @@ router.post('/login',
 
 ## isLoggedIn 미들웨어로 로그인 확인
 
-`passport.authenticate()`로 인증이 된 경우 `req.user`에 사용자 정보가 저장되는데 주의할 점은 `redirect()`시 독립된 요청으로 취급되어 `req.user`가 `undefined`가 된다.
+`passport.authenticate()`로 인증이 된 경우 `req.user`에 사용자 정보가 저장된다.
 
-로그인 확인은 `req.isAuthenticated()`를 사용하여 확인하는데 `passport.authenticate()`로 인증이 되면 `true`를 반환한다.
+로그인 확인은 `req.isAuthenticated()`를 사용하여 확인하며 `passport.authenticate()`로 인증이 성공적으로 이루어지면 `true`를 반환한다.
 
 ```
 // middleware.js
