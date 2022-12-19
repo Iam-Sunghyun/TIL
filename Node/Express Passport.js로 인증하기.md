@@ -10,6 +10,7 @@
   - [passport.authenticate(strategy, options)로 인증](#passportauthenticatestrategy-options로-인증)
   - [isLoggedIn 미들웨어로 로그인 확인](#isloggedin-미들웨어로-로그인-확인)
   - [req.logout()으로 로그아웃](#reqlogout으로-로그아웃)
+  - [returnTo 프로퍼티 - 원래 요청 페이지로 리디렉션하기](#returnto-프로퍼티---원래-요청-페이지로-리디렉션하기)
 
 # Passport.js 라이브러리로 인증(Authentication)하기
 
@@ -181,6 +182,8 @@ router.post('/signup', async (req, res) => {
 });
 ```
 
+<!-- req.login() 메서드로 회원가입 후 자동으로 로그인 세션 생성(로그인 유지) -->
+
 ## passport.authenticate(strategy, options)로 인증
 
 `passport.authenticate(strategy, options)` 미들웨어로 로그인한다.
@@ -195,25 +198,24 @@ router.post('/login',
   }
 );
 ```
-`passport.authenticate()` 미들웨어는 요청에 전송된 자격증명(credential)을 인증한다. 인증에 성공하면 `req.user` 프로퍼티에 인증된 사용자가 저장되며, 로그인 세션이 생성된다.
+`passport.authenticate()` 미들웨어는 요청에 전송된 자격증명(credential)을 인증한다. 인증에 성공하면  내부에서 `req.login()` 메서드를 자동으로 호출하여 로그인 세션을 생성하며 `req.user` 프로퍼티에 인증된 사용자가 저장된다.
 
 
 ## isLoggedIn 미들웨어로 로그인 확인
 
-`passport.authenticate()`로 인증이 된 경우 `req.user`에 사용자 정보가 저장된다.
+로그인 확인은 `req.isAuthenticated()`를 통해 이루어지는데 세션(`req.session`)에 저장된 `passport` 로그인 세션을 확인하여 `true`/`false`를 반환한다. 
 
-로그인 확인은 `req.isAuthenticated()`를 사용하여 확인하며 `passport.authenticate()`로 인증이 성공적으로 이루어지면 `true`를 반환한다.
+즉, `passport.authenticate()`로 인증이 성공적으로 이루어져 로그인 세션이 생성된 사용자의 경우에만 `true`를 반환하는 것이다.
 
 ```
 // middleware.js
-const router = (req, res, next) => {
-    if (!req.session.passport) {
-      req.flash('error', '로그인이 필요합니다.');
-      return res.redirect('/users/login');
-    }
-    next();
-}
-module.exports = router;
+module.exports.isLoggedIn = (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    req.flash("error", "로그인이 필요합니다.");
+    return res.redirect("/users/login");
+  }
+  next();
+};
 ----------------------------
 const isLoggedIn = require('../middleware');
 
@@ -224,7 +226,7 @@ router.get('/new', isLoggedIn, (req, res) => {
 
 ## req.logout()으로 로그아웃
 
-`req.logout(cb)` 메서드에 콜백을 전달하여 호출 함으로서 로그아웃한다.
+`req.logout(cb)` 메서드에 콜백을 전달하여 호출 함으로서 로그인 세션을 삭제하여 로그아웃한다.
 ```
 router.post('/logout', (req, res) => {
   req.logout((err) => {
@@ -234,6 +236,48 @@ router.post('/logout', (req, res) => {
   });
 })
 ```
+
+## returnTo 프로퍼티 - 원래 요청 페이지로 리디렉션하기
+
+현재 상태는 로그인하지 않는 사용자가 새 게시물 작성시 로그인 페이지로 리디렉션 되고, 로그인을 완료하면 다시 홈 페이지로 이동한다. 
+
+편의를 위해 로그인 후 새 게시물 작성 페이지로 리디렉션 되도록 코드를 수정한다.
+
+```
+// middleware.js
+// 로그인 확인용 미들웨어
+module.exports.isLoggedIn = (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    // 로그인한 사용자가 아니라면 세션에 요청 페이지 url 저장(로그인 후 요청 페이지로 보내기 위해)
+    req.session.returnTo = req.originalUrl;
+    req.flash("error", "로그인이 필요합니다.");
+    return res.redirect("/users/login");
+  }
+  next();
+};
+-------------------------
+// authRouter.js
+// POST 로그인 
+router.post('/login',
+  passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: '아이디 혹은 비밀번호가 다릅니다.', keepSessionInfo : true }),
+  (req, res) => {
+    const redirectUrl = req.session.returnTo || '/campgrounds';
+    delete req.session.returnTo;
+    req.flash('success', `${req.body.username}님 환영합니다!`);
+    res.redirect(redirectUrl);
+  }
+);
+```
+
+`isLoggedIn` 미들웨어는 로그인 여부에 따라 요청 페이지 혹은 로그인 페이지로 리디렉션 하는데,
+
+로그인 안한 상태라면 요청 url을 담고있는 `req.originalUrl` 값을 세션(`req.session.returnTo`)에 저장한 후 로그인 페이지로 리디렉션 한다(로그인 후 요청 페이지로 리디렉션 하기 위해).
+
+그 후 로그인이 완료되면 `req.session.returnTo`에 저장했던 원래 요청 페이지로 리디렉션한다.
+
+isLoggdeIn 미들웨어로 로그인이 요구되는 페이지에서 리디렉션을 통해 로그인 하는 경우에만 유효하고 로그인 링크를 클릭하여 로그인하는 경우는 `/campgrounds`로 이동한다.
+
+
 
 
 **[passport-local-mongoose]**
