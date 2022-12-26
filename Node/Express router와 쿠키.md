@@ -1,6 +1,7 @@
 **목차**
 - [Express Router?](#express-router)
   - [Router 객체 생성](#router-객체-생성)
+  - [router.route() 메서드로 라우터 통합하기](#routerroute-메서드로-라우터-통합하기)
 - [쿠키(cookie)](#쿠키cookie)
   - [쿠키 속성(cookie attribute)](#쿠키-속성cookie-attribute)
     - [MDN에서 말하는 쿠키!](#mdn에서-말하는-쿠키)
@@ -11,7 +12,7 @@
 
 # Express Router?
 
-Express `Router` 객체를 통해 라우터를 분리하고 그룹화하여 앱 구조를 단순화하고 관리(및 확장)하기 쉽게 만들 수 있다(Express의 장점). 보통 별도의 파일에 관련된 라우터들을 정의하여 모듈로 사용한다(큰 규모의 앱이라면 흔히 사용) -> 라우터를 분리하고 연결하는데 사용되는 객체.
+Express `Router` 객체를 통해 라우터를 분리하고 그룹화하여 앱 구조를 단순화하고 관리(및 확장)하기 쉽게 만들 수 있다(Express의 장점). 보통 별도의 파일에 관련된(동일 요청 경로) 라우터들을 정의하여 미들웨어처럼 사용한다. -> 라우터를 분리하고 연결하는데 사용되는 객체.
 
 ## Router 객체 생성
 
@@ -60,6 +61,50 @@ https://expressjs.com/en/guide/routing.html
 **[Router 객체 쓰임새 예시]**
 
 https://itecnote.com/tecnote/node-js-difference-between-app-use-and-router-use-in-express/
+
+
+## router.route() 메서드로 라우터 통합하기
+
+`express.router()` 객체를 통해 라우터를 관리하기 쉽게 분리하였다. 
+
+분리한 `router` 객체에서 `router.route()` 메서드를 사용하여 중복된 경로의 라우터들을 통합하여 가독성을 높이고 코드 관리를 용이하게 할 수 있다.
+
+```
+// 기존 코드, 라우트 핸들러는 controllers 폴더에 따로 분리해놓은 상태이다.
+router.get('/', catchAsyncError(campground.index));
+
+router.get('/new', isLoggedIn, campground.renderCampgroundNew);
+
+router.post('/', isLoggedIn, validateCampground, catchAsyncError(campground.createNewCampground));
+
+router.delete('/:id', isLoggedIn, isAuthor, catchAsyncError(campground.deleteCampground));
+
+router.get('/:id', catchAsyncError(campground.renderCampgroundDetail));
+
+router.get('/:id/edit', isLoggedIn, isAuthor, catchAsyncError(campground.renderCampgroundEdit));
+
+router.put('/:id', isLoggedIn, isAuthor, validateCampground, catchAsyncError(campground.editCampground));
+```
+
+위 코드처럼 동일한 라우트의 라우터들이 여럿 있는 경우 가독성이 떨어질 수 있다. 따라서 다음과 같이 `router.route()` 메서드를 사용해 코드를 정리해주었다.
+
+```
+router.route('/')
+  .get(catchAsyncError(campground.index)) // 캠핑장 페이지
+  .post(isLoggedIn, validateCampground, catchAsyncError(campground.createNewCampground)); // 새 캠핑장 추가
+
+// 새 캠핑장 추가 페이지
+router.get('/new', isLoggedIn, campground.renderCampgroundNew);
+
+router.route('/:id')
+  .get(catchAsyncError(campground.renderCampgroundDetail)) // 특정 캠핑장 세부화면
+  .put(isLoggedIn, isAuthor, validateCampground, catchAsyncError(campground.editCampground)) // 특정 캠핑장 내용 수정
+  .delete(isLoggedIn, isAuthor, catchAsyncError(campground.deleteCampground)); // 캠핑장 삭제(mongoose 미들웨어로 달려있던 리뷰도 모두 삭제)
+
+// 특정 캠핑장 내용 수정 페이지
+router.get('/:id/edit', isLoggedIn, isAuthor, catchAsyncError(campground.renderCampgroundEdit));
+```
+
 
 # 쿠키(cookie)
 
