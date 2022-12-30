@@ -1,17 +1,21 @@
 **목차**
-- [MongoDB에 이미지 저장하기](#mongodb에-이미지-저장하기)
+- [MongoDB에 이미지 저장하는 방법](#mongodb에-이미지-저장하는-방법)
   - [클라이언트에서 서버로 이미지 파일 전송 시 문제점](#클라이언트에서-서버로-이미지-파일-전송-시-문제점)
 - [실습](#실습)
-  - [1. HTML 폼에서 서버로 파일 보내기](#1-html-폼에서-서버로-파일-보내기)
-  - [2. 전송받은 파일 파싱하기](#2-전송받은-파일-파싱하기)
-    - [Multer 사용하여 폼으로 전송된 파일 파싱하기](#multer-사용하여-폼으로-전송된-파일-파싱하기)
-  - [3. 이미지 파일 Clodinary에 저장하기](#3-이미지-파일-clodinary에-저장하기)
-    - [Cloudinary에 등록하기](#cloudinary에-등록하기)
-    - [Dotenv로 API 자격 증명(credential) 외부화하기](#dotenv로-api-자격-증명credential-외부화하기)
-    - [Cloudinary에 이미지 업로드하기](#cloudinary에-이미지-업로드하기)
-  - [참조 URL MongoDB에 저장하기](#참조-url-mongodb에-저장하기)
+- [1. HTML 폼에서 서버로 파일 보내기](#1-html-폼에서-서버로-파일-보내기)
+- [2. 전송받은 파일 파싱하기](#2-전송받은-파일-파싱하기)
+  - [Multer 사용하여 폼으로 전송된 파일 파싱하기](#multer-사용하여-폼으로-전송된-파일-파싱하기)
+- [3. 이미지 파일 Clodinary에 저장하기](#3-이미지-파일-clodinary에-저장하기)
+  - [Cloudinary에 등록하기](#cloudinary에-등록하기)
+  - [Dotenv로 API 자격 증명(credential) 외부화](#dotenv로-api-자격-증명credential-외부화)
+    - [`.env` 파일에 자격 증명(credential) 저장 및 불러오기](#env-파일에-자격-증명credential-저장-및-불러오기)
+  - [Cloudinary에 이미지 업로드하기](#cloudinary에-이미지-업로드하기)
+    - [환경변수 설정](#환경변수-설정)
+    - [cloudinary 모듈 인스턴스 설정](#cloudinary-모듈-인스턴스-설정)
+    - [multer-strorage-cloudinary로 통합](#multer-strorage-cloudinary로-통합)
+    - [파일 URL MongoDB에 저장하기](#파일-url-mongodb에-저장하기)
 
-# MongoDB에 이미지 저장하기
+# MongoDB에 이미지 저장하는 방법
 
 ## 클라이언트에서 서버로 이미지 파일 전송 시 문제점
 
@@ -42,7 +46,7 @@ https://www.mongodb.com/community/forums/t/process-of-storing-images-in-mongodb/
 3. 파일 데이터를 Clodinary에 저장하고 참조 URL을 받는다.
 4. 해당 참조 URL을 MongoDB에 저장한다.
 
-## 1. HTML 폼에서 서버로 파일 보내기
+# 1. HTML 폼에서 서버로 파일 보내기
 
 기본 HTML 폼을 사용하면 파일이 제대로 전송되지 않기 때문에 몇 가지 단계를 거쳐야 한다.
 
@@ -57,7 +61,7 @@ https://www.mongodb.com/community/forums/t/process-of-storing-images-in-mongodb/
 
 https://stackoverflow.com/questions/9258108/whats-the-difference-between-mediatype-contenttype-and-mimetype
 
-**[<form> enctype 속성에 대하여]**
+**[HTML Form enctype 속성에 대하여]**
 
 <!-- HTML 폼(<form>)의 enctype 속성과 multipart/form-data 의 의미 -->
 https://blogpack.tistory.com/1088 
@@ -72,13 +76,13 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Comm
 
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
 
-## 2. 전송받은 파일 파싱하기
+# 2. 전송받은 파일 파싱하기
 
 요청 body에 전송되는 `multipart/form-data` 데이터를 사용하려면 추가로 미들웨어를 사용해 파싱해줘야 한다. 
 
 `multipart/form-data` 데이터를 다루기 위한 미들웨어는 여러 가지가 있으며 프로젝트에선 **Multer**를 사용해볼 것이다.
 
-### Multer 사용하여 폼으로 전송된 파일 파싱하기
+## Multer 사용하여 폼으로 전송된 파일 파싱하기
 
 우선 npm 모듈 **Multer**을 다운로드 해준다.
 ```
@@ -123,32 +127,36 @@ app.post('/photos/upload', upload.array('photos', 12), function (req, res, next)
 https://github.com/expressjs/multer/blob/master/doc/README-ko.md
 
 
-## 3. 이미지 파일 Clodinary에 저장하기
+# 3. 이미지 파일 Clodinary에 저장하기
 
-### Cloudinary에 등록하기
+## Cloudinary에 등록하기
 
 먼저 Cloudinary에 계정을 생성하면 클라우드 스토리지가 생성되는데, 클라우드 이름, 그리고 API키와 API Secret키를 자격 증명(credential)으로서 사용한다.
 
 ```
-Cloudinary는 일부 무료로 제공되나, 사용량을 초과하면 유료로 전환해야 한다. 이런 경우 신용카드같은 결제를 위한 요소를 연결해야 하는데 만약 API 자격 증명을 앱에 직접 넣어 Git Hub에 push라도 하게 되면 다른 사람에게 노출될 수 있다(다른 사람에게 사용되어 비용이 많이 발생할 수도 있음).
-따라서 Cloudinary뿐 아니라 다른 서비스를 사용하더라도 API 크리덴셜을 앱에 직접 넣지 않도록 주의할 것(nodejs 책에선 json 파일로 외부화하는 것을 권장하고 있다).
+Cloudinary는 일부 무료로 제공되나, 사용량을 초과하면 유료로 전환해야 한다. 
+이런 경우 신용카드같은 결제를 위한 요소를 연결해야 하는데 만약 API 자격 증명을 앱에 직접 넣어 Git Hub에 push라도 하게 되면 다른 사람에게 노출될 수 있다(다른 사람에게 사용되어 비용이 많이 발생할 수도 있음).
+따라서 Cloudinary뿐 아니라 다른 서비스를 사용하더라도 API 크리덴셜을 앱에 직접 넣지 않도록 주의할 것.
 ```
 
-### Dotenv로 API 자격 증명(credential) 외부화하기
+## Dotenv로 API 자격 증명(credential) 외부화
 
-Dotenv는 별도의 의존성이 없는 모듈로 로컬의 `.env` 파일로부터 환경 변수를 불러와 `process.env`에 할당하는 모듈이다. 
+`dotenv`는 별도의 의존성이 없는 모듈로 로컬의 `.env` 파일로부터 환경변수를 불러와 `process.env`에 할당하는 모듈이다(`dotenv`가 `.env` 파일에 정의한 값들을 환경변수화). 
 
 이 모듈로 애플리케이션 코드가 아닌 `.env` 파일에 자격 증명을 저장하여 자격 증명을 찾거나 업데이트하기 쉬워지고, 또 버전 관리 시스템에 자격 증명 파일을 둘 필요가 없어져 깃허브 같은 공개 소스 저장소에서 오픈 소스 프로젝트를 운영할 때 자격 증명 보안을 걱정하지 않아도 된다.
 
 <!-- 또 버전 관리 시스템에 자격 증명 파일을 둘 필요가 없어진다는게 뭐지 ? -->
 
-우선 dotenv를 설치해준다.
+우선 **dotenv를 설치**해준다.
 
 ```
 > npm install dotenv --save
 ```
 
-그다음 `.env` 파일에 API 키, 암호와 같은 자격 증명을 다음과 같은 형식으로 저장해준다. 
+### `.env` 파일에 자격 증명(credential) 저장 및 불러오기
+
+그다음 **`.env` 파일에 API 키, 암호와 같은 자격 증명을 다음과 같은 형식으로 저장**해준다. 
+
 ```
 // .env
 CLOUDINARY_CLOUD_NAME=dowpf7g5p
@@ -156,7 +164,7 @@ CLOUDINARY_KEY=157928963436911
 CLOUDINARY_SECRET=t2E6fQ_mc9cBgKb_UJKJ8uGfqrk
 ```
 
-`dotenv` 모듈을 로드하여 `config()` 메서드를 호출하면 최상위 디렉토리에서 이름이 `.env`인 파일을 탐색한다. 그 후 `.env` 파일에 정의했던 변수들을 가져와 `process.env`에 할당한다(참고로 프로덕션 환경의 경우 `.env` 파일이 아닌 프로덕션 환경 자체에 환경변수가 저장되어있을 것).
+`dotenv` 모듈을 로드하여 `config()` 메서드를 호출하면 현재 디렉토리에서 이름이 `.env`인 파일을 탐색한다. 그 후 `.env` 파일에 정의했던 변수들을 가져와 `process.env`에 할당한다.
 
 ```
 // app.js
@@ -176,7 +184,7 @@ console.log(process.env.CLOUDINARY_SECRET);
 https://www.npmjs.com/package/dotenv
 
 
-### Cloudinary에 이미지 업로드하기
+## Cloudinary에 이미지 업로드하기
 
 `Multer`로 요청에 전송된 `multipart/form-data` 파일을 파싱했었다.
 그 다음은 `Multer`로 파싱한 파일을 Cloudinary에 좀 더 쉽게 업로드하기 위해 `Multer Storage Cloudinary`라고 하는 npm 모듈을 사용해 볼 것이다. 
@@ -187,12 +195,89 @@ https://www.npmjs.com/package/dotenv
 2. cloudinary로부터 URL을 가져와 multer에 추가
 3. 라우트 핸들러에서 URL에 접근하여 추가 처리해줌
 
+우선 **cloudinary 모듈을 다운로드**한다.
+```
+> npm i cloudinary
+```
 
-**[NPM Multer Storage Cloudinary]**
+### 환경변수 설정
+
+그다음 터미널에서 다음과 같이 `CLOUDINARY_URL` **환경변수 값을 설정**해준다. 대응되는 값들은 Cloudinary 웹 사이트 대쉬보드의 product environment credentials에서 확인할 수 있다.
+
+```
+// Windows
+> CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+```
+
+프로젝트에선 위처럼 터미널을 통해 환경변수 설정은 따로 하지 않았고 `dotenv`로 `.env` 파일에 자격 증명을 정의하여 환경변수로 설정, 사용해주었다.
+
+### cloudinary 모듈 인스턴스 설정
+
+`cloudinary`의 계정과 연결하기 위해 필요한 필수 매개변수들을 입력해준다(각 변수들은 `.env` 파일에 정의한 값이다).
+
+```
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET
+});
+```
+
+
+### multer-strorage-cloudinary로 통합
+
+필요한 값을 설정한 모듈들을 `multer-storage-cloudinary`로 통합하여 파일 업로드 절차를 간소화하였다.
+
+```
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const express = require('express');
+const multer = require('multer');
+ 
+const app = express();
+
+// cloudinary 계정 연결을 위한 객체
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET
+});
+
+// multer-storage-cloudinary 객체
+const storage = new CloudinaryStorage({
+  // cloudinary 계정과 연결하기 위한 cloudinary 객체
+  cloudinary: cloudinary, 
+  // cloudinary에 저장 시 사용되는 옵션
+  params: {  
+    folder: 'some-folder-name',
+    format: async (req, file) => 'png', 
+    public_id: (req, file) => 'computed-filename-using-request',
+  },
+});
+
+// multer-storage-cloudinary 객체를 전달하여 파싱한 파일 저장 위치를 cloudinary로 설정함
+const upload = multer({ storage: storage });
+
+app.post('/upload', parser.single('image'), function (req, res) {
+  res.json(req.file);
+});
+```
+
+
+**[Cloudinary 홈 페이지 Nodejs SDK docs]**
+
+https://cloudinary.com/documentation/node_integration
+
+**[npm Multer-Storage-Cloudinary]**
 
 https://www.npmjs.com/package/multer-storage-cloudinary
 
-## 참조 URL MongoDB에 저장하기
+
+### 파일 URL MongoDB에 저장하기
+
+
 
 <!-- 
 https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_and_retrieving_form_data#a_special_case_sending_files -->
