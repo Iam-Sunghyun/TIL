@@ -48,7 +48,7 @@ router.post('/', isLoggedIn, validateCampground, catchAsyncError(async (req, res
 
 현재 로그인 중이라면 사용자 정보가 할당되어 있을 `req.user` 객체를 게시물의 작성자 필드(`campground.author`)와 비교하여 출력되는 템플릿을 다르게 한다.
 
-템플릿 내에서 사용하기 위해 `res.locals`에 사용자 객체를 할당 해주었고 객체 비교는 mongoose 도큐먼트 메서드인 `Document.prototype.equals()`를 사용하였다(아래의 `campground.author.equals()`).
+템플릿 내에서 사용하기 위해 `res.locals`에 사용자 객체를 할당 해주었고 객체 비교는 mongoose 도큐먼트 메서드인 `Document.prototype.equals()`를 사용하였다(`equals()` 메서드는 같은 `_id` 값을 갖는 경우 동일한 도큐먼트로 취급한다). 
 
 ```
 // app.js 
@@ -70,7 +70,6 @@ app.use((req, res, next) => {
         </div>
       <% } %>
 ```
-
 
 ## 서버 측에서 한번 더 사용자 확인하기
 
