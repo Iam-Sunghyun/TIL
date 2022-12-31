@@ -3,17 +3,17 @@
   - [클라이언트에서 서버로 이미지 파일 전송 시 문제점](#클라이언트에서-서버로-이미지-파일-전송-시-문제점)
 - [실습](#실습)
 - [1. HTML 폼에서 서버로 파일 보내기](#1-html-폼에서-서버로-파일-보내기)
-- [2. 전송받은 파일 파싱하기](#2-전송받은-파일-파싱하기)
-  - [Multer 사용하여 폼으로 전송된 파일 파싱하기](#multer-사용하여-폼으로-전송된-파일-파싱하기)
+- [2. Multer 모듈로 전송받은 파일 파싱하기](#2-multer-모듈로-전송받은-파일-파싱하기)
 - [3. 이미지 파일 Clodinary에 저장하기](#3-이미지-파일-clodinary에-저장하기)
   - [Cloudinary에 등록하기](#cloudinary에-등록하기)
   - [Dotenv로 API 자격 증명(credential) 외부화](#dotenv로-api-자격-증명credential-외부화)
     - [`.env` 파일에 자격 증명(credential) 저장 및 불러오기](#env-파일에-자격-증명credential-저장-및-불러오기)
   - [Cloudinary에 이미지 업로드하기](#cloudinary에-이미지-업로드하기)
-    - [환경변수 설정](#환경변수-설정)
-    - [cloudinary 모듈 인스턴스 설정](#cloudinary-모듈-인스턴스-설정)
+    - [API 환경변수 설정](#api-환경변수-설정)
+    - [cloudinary 인스턴스 설정](#cloudinary-인스턴스-설정)
     - [multer-strorage-cloudinary로 통합](#multer-strorage-cloudinary로-통합)
     - [파일 URL MongoDB에 저장하기](#파일-url-mongodb에-저장하기)
+  - [게시물 수정 페이지 사진 업로드 추가하기](#게시물-수정-페이지-사진-업로드-추가하기)
 
 # MongoDB에 이미지 저장하는 방법
 
@@ -55,6 +55,9 @@ https://www.mongodb.com/community/forums/t/process-of-storing-images-in-mongodb/
 3.  `<input type="file">` 폼 요소를 통해 사용자가 업로드 하고자 하는 파일을 전달 받는다.
 
 <!-- Content-type은 http 메시지 헤더의 필드이고, media-type은 여기에 들어가는 값들로 말 그대로 데이터 형식을 의미(application/...) MIME type은 media type의 구 명칭. Content-type 헤더에는 media-type과 charset=UTF-8 같은 문자 인코딩 방식, 그리고 boundary를 값으로 갖는다. Content-type의 데이터 형식(media type)은 크게 10가지인데 enctype으로 설정할 수 있는 media type 값은 3가지다!
+-> application/x-www-form-urlencoded
+   text/plain
+   multipart/form-data
  -->
 
 **[What's the difference between mediatype, contenttype and mimetype?]**
@@ -76,15 +79,14 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Comm
 
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
 
-# 2. 전송받은 파일 파싱하기
+# 2. Multer 모듈로 전송받은 파일 파싱하기
 
 요청 body에 전송되는 `multipart/form-data` 데이터를 사용하려면 추가로 미들웨어를 사용해 파싱해줘야 한다. 
 
 `multipart/form-data` 데이터를 다루기 위한 미들웨어는 여러 가지가 있으며 프로젝트에선 **Multer**를 사용해볼 것이다.
 
-## Multer 사용하여 폼으로 전송된 파일 파싱하기
-
 우선 npm 모듈 **Multer**을 다운로드 해준다.
+
 ```
 > npm install --save multer
 ```
@@ -98,10 +100,17 @@ Multer는 요청 메시지에 담긴 `multipart/form-data` 데이터를 파싱�
   <input type="file" name="avatar" multiple /> // 여러 파일을 전송하려면 multiple 어트리뷰트를 추가해준다.
 </form>
 ```
+**[MDN input type="file"]**
+
+https://developer.mozilla.org/ko/docs/Web/HTML/Element/Input/file
+
+<br>
 
 아래 코드는 `Multer` 사용 예제인데 절차는 다음과 같다.
 
-우선 `Multer` 모듈을 불러오고 `options`을 전달하여 객체를 생성한다. 그 후 `upload.single()`, `upload.array()` 등 Multer api로 요청에 전송된 `multipart/form-data` 파일을 파싱해 요청 객체에 추가한다.
+우선 `Multer` 모듈을 불러오고 `options`을 전달하여 객체를 생성한다. 그 후 `upload.single(fieldname)`, `upload.array(fieldname)` 등 Multer api로 요청에 전송된 `multipart/form-data` 파일을 파싱해 요청 객체에 추가한다.
+
+단일 파일의 경우 `req.file`에 저장되고, 여러 파일은 `req.files`에 저장된다.
 
 ```
 const express = require('express')
@@ -192,7 +201,7 @@ https://www.npmjs.com/package/dotenv
 업로드 절차는 다음과 같으며 `Multer`, `Cloudinary`, `Multer Storage Cloudinary` 세 모듈을 사용한다.
 
 1. multer로 파싱한 파일을 cloudinary에 업로드
-2. cloudinary로부터 URL을 가져와 multer에 추가
+2. cloudinary로부터 파일 정보를 가져와 multer에 추가(req.file/req.files)
 3. 라우트 핸들러에서 URL에 접근하여 추가 처리해줌
 
 우선 **cloudinary 모듈을 다운로드**한다.
@@ -200,7 +209,7 @@ https://www.npmjs.com/package/dotenv
 > npm i cloudinary
 ```
 
-### 환경변수 설정
+### API 환경변수 설정
 
 그다음 터미널에서 다음과 같이 `CLOUDINARY_URL` **환경변수 값을 설정**해준다. 대응되는 값들은 Cloudinary 웹 사이트 대쉬보드의 product environment credentials에서 확인할 수 있다.
 
@@ -211,7 +220,7 @@ https://www.npmjs.com/package/dotenv
 
 프로젝트에선 위처럼 터미널을 통해 환경변수 설정은 따로 하지 않았고 `dotenv`로 `.env` 파일에 자격 증명을 정의하여 환경변수로 설정, 사용해주었다.
 
-### cloudinary 모듈 인스턴스 설정
+### cloudinary 인스턴스 설정
 
 `cloudinary`의 계정과 연결하기 위해 필요한 필수 매개변수들을 입력해준다(각 변수들은 `.env` 파일에 정의한 값이다).
 
@@ -225,10 +234,9 @@ cloudinary.config({
 });
 ```
 
-
 ### multer-strorage-cloudinary로 통합
 
-필요한 값을 설정한 모듈들을 `multer-storage-cloudinary`로 통합하여 파일 업로드 절차를 간소화하였다.
+필요한 모듈들을 `multer-storage-cloudinary`로 통합하여 Cloudinary에 파일을 업로드한다. 
 
 ```
 const cloudinary = require('cloudinary').v2;
@@ -260,7 +268,7 @@ const storage = new CloudinaryStorage({
 // multer-storage-cloudinary 객체를 전달하여 파싱한 파일 저장 위치를 cloudinary로 설정함
 const upload = multer({ storage: storage });
 
-app.post('/upload', parser.single('image'), function (req, res) {
+app.post('/upload', upload.single('image'), function (req, res) {
   res.json(req.file);
 });
 ```
@@ -268,7 +276,7 @@ app.post('/upload', parser.single('image'), function (req, res) {
 
 **[Cloudinary 홈 페이지 Nodejs SDK docs]**
 
-https://cloudinary.com/documentation/node_integration
+https://cloudinary.com/documentation/node_quickstart
 
 **[npm Multer-Storage-Cloudinary]**
 
@@ -277,7 +285,52 @@ https://www.npmjs.com/package/multer-storage-cloudinary
 
 ### 파일 URL MongoDB에 저장하기
 
+파일 URL을 저장, 참조하기 위해 campground 모델에 image 필드를 추가해준다.
 
+```
+const CampgroundSchema = new mongoose.Schema({
+    title: String,
+    // 이미지 정보 필드 추가
+    image: [{
+      url: String,
+      filename: String
+    }],
+    price: Number,
+    description: String,
+    location: String,
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    review: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }]
+});
+```
+
+전송되는 폼 데이터(multipart/form-data)는 파싱 후 텍스트 필드는 `req.body`에, 파일은 `req.file/req.files`에 저장된다.
+
+Multer API 호출 시 파일 전송 폼의 name을 인수로 전달해줘야 한다. 아래 코드에선 `upload.array(fieldname)`을 호출하여 여러 파일을 전송받아 `req.files`에 저장한다.
+
+```
+router.route('/')
+  .get(catchAsyncError(campground.index)) // 캠핑장 페이지
+  .post(isLoggedIn, upload.array('image'), validateCampground, catchAsyncError(campground.createNewCampground)); // 새 캠핑장 추가
+```
+
+라우트 핸들러에서 `req.files`에 접근, URL을 도큐먼트에 저장해준다.
+
+```
+module.exports.createNewCampground = async (req, res) => {
+  const campground = new Campground(req.body.campground);
+  // 이미지 데이터 저장
+  campground.image = req.files.map(f => ({
+    url: f.path,
+    filename: f.filename
+  }));
+  campground.author = req.user._id; 
+  await campground.save();
+  req.flash('success', '새 캠핑장이 추가되었습니다.');
+  res.redirect(`/campgrounds`);
+};
+```
+
+## 게시물 수정 페이지 사진 업로드 추가하기
 
 <!-- 
 https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_and_retrieving_form_data#a_special_case_sending_files -->
