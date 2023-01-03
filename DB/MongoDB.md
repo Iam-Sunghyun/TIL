@@ -1,4 +1,4 @@
-# 목차
+**목차**
 - [데이터베이스(Database) 필요성 간략하게](#데이터베이스database-필요성-간략하게)
 - [SQL, NoSQL?](#sql-nosql)
   - [SQL(Structed Query Language)](#sqlstructed-query-language)
@@ -266,8 +266,7 @@ db.dogs.find({ breed:"corgi" }, { age: false })
 
 **[db.collection.find(query, projection) 매개변수 사용법]**
 
-**query 매개변수** https://www.mongodb.com/docs/mongodb-shell/crud/read/ <br>
-**projection 매개변수** https://www.mongodb.com/docs/manual/reference/method/db.collection.find/#mongodb-method-db.collection.find
+https://www.mongodb.com/docs/manual/reference/method/db.collection.find/#mongodb-method-db.collection.find
 
 # DB 업데이트하기
 
