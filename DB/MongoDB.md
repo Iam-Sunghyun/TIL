@@ -266,7 +266,7 @@ db.dogs.find({ breed:"corgi" }, { age: false })
 
 **[db.collection.find(query, projection) 매개변수 사용법]**
 
-https://www.mongodb.com/docs/manual/reference/method/db.collection.find/#mongodb-method-db.collection.find
+https://www.mongodb.com/docs/manual/reference/operator/query/
 
 # DB 업데이트하기
 
