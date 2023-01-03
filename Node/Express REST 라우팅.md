@@ -1,4 +1,5 @@
 # 목차
+- [목차](#목차)
 - [HTTP 요청 메서드 GET vs POST](#http-요청-메서드-get-vs-post)
   - [GET](#get)
   - [POST](#post)
@@ -14,7 +15,7 @@
 - [요청 리디렉션(방향 수정)](#요청-리디렉션방향-수정)
   - [uuid 패키지](#uuid-패키지)
 - [HTML 폼으로 GET, POST 외 요청 메서드 구현하기(method-override)](#html-폼으로-get-post-외-요청-메서드-구현하기method-override)
-  - [methodOverride(getter, [options])](#methodoverridegetter-options)
+  - [methodOverride(getter, \[options\])](#methodoverridegetter-options)
     - [`getter`에 함수를 전달한 경우](#getter에-함수를-전달한-경우)
     - [`getter`에 문자열을 전달한 경우](#getter에-문자열을-전달한-경우)
   - [쿼리 문자열 값을 이용한 요청 메서드 재정의](#쿼리-문자열-값을-이용한-요청-메서드-재정의)
@@ -160,6 +161,8 @@ https://blog.postman.com/rest-api-examples/ <BR>
 https://www.youtube.com/watch?v=RP_f5dMoHFc&ab_channel=naverd2
 
 **[REST 참고자료 +a]**
+
+https://en.wikipedia.org/wiki/Representational_state_transfer
 
 https://gmlwjd9405.github.io/2018/09/21/rest-and-restful.html
 
