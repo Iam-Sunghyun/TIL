@@ -132,11 +132,9 @@ MongoShell 기본 명령어 외에도 자바스크립트 구문을 사용하기 
 
 **[MongoDB Shell 명령어]**
 
+https://www.mongodb.com/docs/mongodb-shell/reference/methods/
+
 https://jinshine.github.io/2018/06/10/MongoDB/%EA%B8%B0%EB%B3%B8%EC%A0%81%EC%9D%B8%20%EB%AA%85%EB%A0%B9%EC%96%B4/
-
-**[MongoDB Shell이란? (공식홈페이지 짧은 설명)]**
-
-https://www.mongodb.com/docs/mongodb-shell/
 
 # MongoDB Shell CRUD 명령
 
@@ -264,7 +262,7 @@ db.dogs.find({ breed:"corgi" }, { age: false })
 
 <!-- 커서? -->
 
-**[db.collection.find(query, projection) 매개변수 사용법]**
+**[MongoDB Query and Projection Operators]**
 
 https://www.mongodb.com/docs/manual/reference/operator/query/
 
