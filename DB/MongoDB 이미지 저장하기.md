@@ -1,25 +1,29 @@
 **목차**
 - [MongoDB에 이미지 저장하는 방법](#mongodb에-이미지-저장하는-방법)
-  - [클라이언트에서 서버로 이미지 파일 전송 시 문제점](#클라이언트에서-서버로-이미지-파일-전송-시-문제점)
+  - [클라이언트에서 서버로 이미지 파일 전송 시 알아야 할 것](#클라이언트에서-서버로-이미지-파일-전송-시-알아야-할-것)
 - [실습](#실습)
-- [1. HTML 폼에서 서버로 파일 보내기](#1-html-폼에서-서버로-파일-보내기)
-- [2. Multer 모듈로 전송받은 파일 파싱하기](#2-multer-모듈로-전송받은-파일-파싱하기)
-- [3. 이미지 파일 Clodinary에 저장하기](#3-이미지-파일-clodinary에-저장하기)
+- [HTML 폼에서 서버로 파일 보내기](#html-폼에서-서버로-파일-보내기)
+- [Multer 모듈로 전송받은 파일 파싱하기](#multer-모듈로-전송받은-파일-파싱하기)
+- [이미지 파일 Clodinary에 저장하기](#이미지-파일-clodinary에-저장하기)
   - [Cloudinary에 등록하기](#cloudinary에-등록하기)
-  - [Dotenv로 API 자격 증명(credential) 외부화](#dotenv로-api-자격-증명credential-외부화)
-    - [`.env` 파일에 자격 증명(credential) 저장 및 불러오기](#env-파일에-자격-증명credential-저장-및-불러오기)
   - [Cloudinary에 이미지 업로드하기](#cloudinary에-이미지-업로드하기)
-    - [API 환경변수 설정](#api-환경변수-설정)
-    - [cloudinary 인스턴스 설정](#cloudinary-인스턴스-설정)
-    - [multer-strorage-cloudinary로 통합](#multer-strorage-cloudinary로-통합)
-    - [파일 URL MongoDB에 저장하기](#파일-url-mongodb에-저장하기)
-  - [게시물 수정 페이지 사진 업로드 추가하기](#게시물-수정-페이지-사진-업로드-추가하기)
+  - [API 자격 증명(credential) 환경변수 설정](#api-자격-증명credential-환경변수-설정)
+  - [Dotenv로 Cloudinary API 자격 증명(credential) 외부화](#dotenv로-cloudinary-api-자격-증명credential-외부화)
+    - [`.env` 파일에 자격 증명(credential) 저장 및 확인하기](#env-파일에-자격-증명credential-저장-및-확인하기)
+  - [Cloudinary 모듈 인스턴스 설정](#cloudinary-모듈-인스턴스-설정)
+  - [multer-strorage-cloudinary로 통합하여 이미지 업로드](#multer-strorage-cloudinary로-통합하여-이미지-업로드)
+  - [이미지 파일 URL MongoDB에 저장하기](#이미지-파일-url-mongodb에-저장하기)
+- [이미지 preview 및 삭제 구현하기](#이미지-preview-및-삭제-구현하기)
+  - [edit 페이지 폼 수정하기](#edit-페이지-폼-수정하기)
+  - [MongoDB 도큐먼트에서 이미지 삭제](#mongodb-도큐먼트에서-이미지-삭제)
+  - [Cloudinary에 업로드된 이미지 삭제](#cloudinary에-업로드된-이미지-삭제)
+- [썸네일에 가상 속성 추가하기](#썸네일에-가상-속성-추가하기)
 
 # MongoDB에 이미지 저장하는 방법
 
-## 클라이언트에서 서버로 이미지 파일 전송 시 문제점
+## 클라이언트에서 서버로 이미지 파일 전송 시 알아야 할 것
 
-1. HTML Form은 서버에 파일을 보낼 수 없다. 따라서 Form을 바꿔줘야 됨(?).
+1. HTML 기본 Form은 서버에 파일을 보낼 수 없다. 따라서 Form을 바꿔줘야 됨.
 2. 웹 페이지에 이미지를 업로드하기 위해선 어딘가에 사진을 저장해야 되는데 MongoDB의 BSON 도큐먼트는 최대 16MB만 저장 가능하기 때문에 용량이 큰 이미지를 직접 저장하는 것이 불가능(크기가 작은 이미지 데이터는 저장 가능).
 
 따라서 MongoDB에 용량이 큰 이미지 같은 16MB 이상의 파일을 저장하고자 하는 경우 **GridFS**라는 것을 이용하거나, AWS S3, Google Cloud Storage, Backblaze 등과 같은 클라우드 스토리지를 사용하거나, Cloudflare, Fastly 같은 CDN을 사용해 데이터를 저장하고 참조용 URL을 Mongodb에 저장하는 방법을 사용한다.
@@ -46,7 +50,7 @@ https://www.mongodb.com/community/forums/t/process-of-storing-images-in-mongodb/
 3. 파일 데이터를 Clodinary에 저장하고 참조 URL을 받는다.
 4. 해당 참조 URL을 MongoDB에 저장한다.
 
-# 1. HTML 폼에서 서버로 파일 보내기
+# HTML 폼에서 서버로 파일 보내기
 
 기본 HTML 폼을 사용하면 파일이 제대로 전송되지 않기 때문에 몇 가지 단계를 거쳐야 한다.
 
@@ -79,7 +83,7 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Comm
 
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
 
-# 2. Multer 모듈로 전송받은 파일 파싱하기
+# Multer 모듈로 전송받은 파일 파싱하기
 
 요청 body에 전송되는 `multipart/form-data` 데이터를 사용하려면 추가로 미들웨어를 사용해 파싱해줘야 한다. 
 
@@ -108,27 +112,44 @@ https://developer.mozilla.org/ko/docs/Web/HTML/Element/Input/file
 
 아래 코드는 `Multer` 사용 예제인데 절차는 다음과 같다.
 
-우선 `Multer` 모듈을 불러오고 `options`을 전달하여 객체를 생성한다. 그 후 `upload.single(fieldname)`, `upload.array(fieldname)` 등 Multer api로 요청에 전송된 `multipart/form-data` 파일을 파싱해 요청 객체에 추가한다.
+우선 `Multer` 모듈을 불러오고 `options`을 전달하여 객체를 생성한다. 만약 옵션 개체를 생략하면 파일이 메모리에 보관되고 디스크에 기록되지 않는다.
+
+그 후 `upload.single(fieldname)`, `upload.array(fieldname)` 등 `Multer` API로 요청에 전송된 `multipart/form-data` 파일을 파싱해 요청 객체에 추가한다.
 
 단일 파일의 경우 `req.file`에 저장되고, 여러 파일은 `req.files`에 저장된다.
 
 ```
 const express = require('express')
 const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' }) // 로컬 저장하는 경우의 예시. 실제로는 로컬에 직접 저장하는 경우가 많지 않다고 한다.
+const upload = multer({ dest: 'uploads/' }) // dest, storage로 파일을 저장할 위치를 지정한다. 이 코드는 로컬 저장하는 경우의 예시인데 실제로는 로컬에 직접 저장하는 경우가 많지 않다고 한다.
 
 const app = express()
 
-// 인수로 전달한 'avatar'는 fieldname으로 파일 전송 폼의 name 값이다.
-app.post('/profile', upload.single('avatar'), function (req, res, next) {
-  // req.file에 폼 name="avatar"로 전송된 단일 파일이 저장 됨.
+// 인수로 전달한 'image'는 fieldname으로 파일 전송 폼의 name 값이다.
+app.post('/profile', upload.single('image'), function (req, res, next) {
+  // req.file에 폼 name="image"로 전송된 단일 파일이 저장 됨.
   // req.body will hold the text fields, if there were any
 })
 
-app.post('/photos/upload', upload.array('photos', 12), function (req, res, next) {
+app.post('/photos/upload', upload.array('image', 12), function (req, res, next) {
   // req.files is array of `photos` files
   // req.body will contain the text fields, if there were any
 })
+------------------------------------------
+// req.files 객체 확인
+console.log(req.files);
+
+>[
+  {
+    fieldname: 'image',
+    originalname: 'ë\x85¸ë¸\x8Cë\x9E\x9Cë\x93\x9C ë\x83\x89ë\x8F\x99 ì\x82¼ê²¹ì\x82´.JPG',
+    encoding: '7bit',
+    mimetype: 'image/jpeg',
+    path: 'https://res.cloudinary.com/dowpf7g5p/image/upload/v1672756165/CampInfo/cpuaqu0mkwqkendx3ick.jpg',
+    size: 31572,
+    filename: 'CampInfo/cpuaqu0mkwqkendx3ick'
+  }
+]
 ```
 
 **[npm Multer document]**
@@ -136,7 +157,7 @@ app.post('/photos/upload', upload.array('photos', 12), function (req, res, next)
 https://github.com/expressjs/multer/blob/master/doc/README-ko.md
 
 
-# 3. 이미지 파일 Clodinary에 저장하기
+# 이미지 파일 Clodinary에 저장하기
 
 ## Cloudinary에 등록하기
 
@@ -148,23 +169,53 @@ Cloudinary는 일부 무료로 제공되나, 사용량을 초과하면 유료로
 따라서 Cloudinary뿐 아니라 다른 서비스를 사용하더라도 API 크리덴셜을 앱에 직접 넣지 않도록 주의할 것.
 ```
 
-## Dotenv로 API 자격 증명(credential) 외부화
+## Cloudinary에 이미지 업로드하기
+
+`Multer`로 요청에 전송된 `multipart/form-data` 파일을 파싱했었다.
+그 다음은 `Multer`로 파싱한 파일을 Cloudinary에 좀 더 쉽게 업로드하기 위해 `Multer Storage Cloudinary`라고 하는 npm 모듈을 사용해 볼 것이다. 
+
+업로드 절차는 다음과 같으며 `Multer`, `Cloudinary`, `Multer Storage Cloudinary` 세 모듈을 사용한다.
+
+1. multer로 파싱한 파일을 cloudinary에 업로드
+2. cloudinary로부터 파일 정보를 가져와 multer에 추가(req.file/req.files)
+3. 라우트 핸들러에서 파일 정보 객체에 접근하여 추가 처리해줌
+
+우선 필요한 모듈들을 다운로드한다.
+
+```
+> npm i cloudinary multer-storage-cloudinary
+```
+
+## API 자격 증명(credential) 환경변수 설정
+
+그다음 터미널에서 다음과 같이 `CLOUDINARY_URL` **환경변수 값을 설정**해준다. 대응되는 값들은 Cloudinary 웹 사이트 대쉬보드의 product environment credentials에서 확인할 수 있다.
+
+```
+// Windows
+> CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+```
+
+프로젝트에선 `dotenv`로 `.env` 파일에 자격 증명을 정의하여 외부화 할 예정이므로 위처럼 터미널을 통해 환경변수 설정은 따로 하지 않았다.
+
+**[위키피디아 Environment varialble]**
+
+https://en.wikipedia.org/wiki/Environment_variable
+
+## Dotenv로 Cloudinary API 자격 증명(credential) 외부화
 
 `dotenv`는 별도의 의존성이 없는 모듈로 로컬의 `.env` 파일로부터 환경변수를 불러와 `process.env`에 할당하는 모듈이다(`dotenv`가 `.env` 파일에 정의한 값들을 환경변수화). 
 
 이 모듈로 애플리케이션 코드가 아닌 `.env` 파일에 자격 증명을 저장하여 자격 증명을 찾거나 업데이트하기 쉬워지고, 또 버전 관리 시스템에 자격 증명 파일을 둘 필요가 없어져 깃허브 같은 공개 소스 저장소에서 오픈 소스 프로젝트를 운영할 때 자격 증명 보안을 걱정하지 않아도 된다.
 
-<!-- 또 버전 관리 시스템에 자격 증명 파일을 둘 필요가 없어진다는게 뭐지 ? -->
-
-우선 **dotenv를 설치**해준다.
+우선 dotenv를 설치해준다.
 
 ```
 > npm install dotenv --save
 ```
 
-### `.env` 파일에 자격 증명(credential) 저장 및 불러오기
+### `.env` 파일에 자격 증명(credential) 저장 및 확인하기
 
-그다음 **`.env` 파일에 API 키, 암호와 같은 자격 증명을 다음과 같은 형식으로 저장**해준다. 
+그다음 `.env` 파일에 API 키, 암호와 같은 자격 증명을 다음과 같은 형식으로 저장해준다. 
 
 ```
 // .env
@@ -192,35 +243,7 @@ console.log(process.env.CLOUDINARY_SECRET);
 
 https://www.npmjs.com/package/dotenv
 
-
-## Cloudinary에 이미지 업로드하기
-
-`Multer`로 요청에 전송된 `multipart/form-data` 파일을 파싱했었다.
-그 다음은 `Multer`로 파싱한 파일을 Cloudinary에 좀 더 쉽게 업로드하기 위해 `Multer Storage Cloudinary`라고 하는 npm 모듈을 사용해 볼 것이다. 
-
-업로드 절차는 다음과 같으며 `Multer`, `Cloudinary`, `Multer Storage Cloudinary` 세 모듈을 사용한다.
-
-1. multer로 파싱한 파일을 cloudinary에 업로드
-2. cloudinary로부터 파일 정보를 가져와 multer에 추가(req.file/req.files)
-3. 라우트 핸들러에서 URL에 접근하여 추가 처리해줌
-
-우선 **cloudinary 모듈을 다운로드**한다.
-```
-> npm i cloudinary
-```
-
-### API 환경변수 설정
-
-그다음 터미널에서 다음과 같이 `CLOUDINARY_URL` **환경변수 값을 설정**해준다. 대응되는 값들은 Cloudinary 웹 사이트 대쉬보드의 product environment credentials에서 확인할 수 있다.
-
-```
-// Windows
-> CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@CLOUD_NAME
-```
-
-프로젝트에선 위처럼 터미널을 통해 환경변수 설정은 따로 하지 않았고 `dotenv`로 `.env` 파일에 자격 증명을 정의하여 환경변수로 설정, 사용해주었다.
-
-### cloudinary 인스턴스 설정
+## Cloudinary 모듈 인스턴스 설정
 
 `cloudinary`의 계정과 연결하기 위해 필요한 필수 매개변수들을 입력해준다(각 변수들은 `.env` 파일에 정의한 값이다).
 
@@ -234,7 +257,7 @@ cloudinary.config({
 });
 ```
 
-### multer-strorage-cloudinary로 통합
+## multer-strorage-cloudinary로 통합하여 이미지 업로드
 
 필요한 모듈들을 `multer-storage-cloudinary`로 통합하여 Cloudinary에 파일을 업로드한다. 
 
@@ -274,7 +297,7 @@ app.post('/upload', upload.single('image'), function (req, res) {
 ```
 
 
-**[Cloudinary 홈 페이지 Nodejs SDK docs]**
+**[Cloudinary Nodejs Quick Start]**
 
 https://cloudinary.com/documentation/node_quickstart
 
@@ -283,7 +306,7 @@ https://cloudinary.com/documentation/node_quickstart
 https://www.npmjs.com/package/multer-storage-cloudinary
 
 
-### 파일 URL MongoDB에 저장하기
+## 이미지 파일 URL MongoDB에 저장하기
 
 파일 URL을 저장, 참조하기 위해 campground 모델에 image 필드를 추가해준다.
 
@@ -303,9 +326,9 @@ const CampgroundSchema = new mongoose.Schema({
 });
 ```
 
-전송되는 폼 데이터(multipart/form-data)는 파싱 후 텍스트 필드는 `req.body`에, 파일은 `req.file/req.files`에 저장된다.
+전송되는 폼 데이터(multipart/form-data)는 `Multer`로 파싱 후 텍스트 필드는 `req.body`에, 파일은 `req.file/req.files`에 저장된다.
 
-Multer API 호출 시 파일 전송 폼의 name을 인수로 전달해줘야 한다. 아래 코드에선 `upload.array(fieldname)`을 호출하여 여러 파일을 전송받아 `req.files`에 저장한다.
+`Multer` API 호출 시 파일 전송 폼의 name을 인수로 전달해줘야 한다. 아래 코드에선 `upload.array(fieldname)`을 호출하여 여러 파일을 전송받아 `req.files`에 저장한다.
 
 ```
 router.route('/')
@@ -330,7 +353,96 @@ module.exports.createNewCampground = async (req, res) => {
 };
 ```
 
-## 게시물 수정 페이지 사진 업로드 추가하기
+# 이미지 preview 및 삭제 구현하기
+
+사용자가 업로드한 게시물의 이미지 수정 페이지에서 파일 미리보기, 삭제 기능을 구현해본다.
+
+
+## edit 페이지 폼 수정하기
+
+우선 부트스트랩 `img-thumbnail` 클래스 사용해 preview 이미지를 출력하고 삭제할 이미지 선택 수단으로 체크박스(`.form-check` 클래스)를 추가해준다.
+
+체크박스 값은 `image.filename`으로 MongoDB 도큐먼트와 Cloudinary에서 업로드된 파일을 삭제할 때 사용할 값이다.
+
+```
+// edit.ejs
+<form class="needs-validation" action="/campgrounds/<%=campground._id%>?_method=PUT" method="POST" enctype="multipart/form-data" novalidate>
+  .
+  .
+<div class="mb-3">
+  <% campground.image.forEach((img, i) => { %>
+    // 이미지 출력
+    <img class="img-thumbnail" src="<%= img.url %>" alt="" style="width: 100%; height: 450px">
+    // 체크박스. 각각 체크 박스의 값들은 삭제를 위한 값으로 image.filename이다
+    <div class="form-check mb-2">
+      <input class="form-check-input" type="checkbox" id="image-<%= i %>" name="deleteImage[]" value="<%= img.filename %>">
+      <label class="form-check-label" for="image-<%= i %>">삭제</label>
+    </div>
+  <% }) %> 
+</div>
+  .
+  .
+</form>
+```
+
+## MongoDB 도큐먼트에서 이미지 삭제
+
+먼저 라우트 핸들러에서 사용자가 선택한 이미지를 `campground` 도큐먼트의 `image` 필드에서 삭제해준다.
+
+삭제 로직에서 MongoDB 쿼리 연산자 `$in`을 사용하여 사용자가 삭제하고자 하는 이미지 filename과 일치하는 image 필드 배열의 요소를 선택하였고, 선택된 요소들을 업데이트 연산자 `$pull`로 삭제해주었다.
+
+```
+module.exports.editCampground = async (req, res) => {
+   const campground = await Campground.findByIdAndUpdate(req.params.id, req.body.campground);
+    .
+    .
+  if(req.body.deleteImage.length !== 0){
+  // $pull 연산자로 지정된 조건과 일치하는 campground 도큐먼트의 image 필드 배열의 요소들을 제거
+  // 삭제 요소 조건은 image의 filename이 deleteImage[]의 요소 값과 일치하는 경우(deleteImagep[]의 요소는 사용자가 수정 페이지에서 체크박스로 체크한 이미지의 filename이다)
+    campground.updateOne({ $pull: { image: { filename: { $in: req.body.deleteImage } } } });
+  }
+  req.flash('success', '캠핑장 업데이트 완료!');
+  res.redirect(`/campgrounds/${campground._id}`);
+};
+```
+
+**[MongoDB docs - 연산자 'Reference' 카테고리 참조]**
+
+https://www.mongodb.com/docs/manual/
+
+## Cloudinary에 업로드된 이미지 삭제
+
+`cloudinary.uploader.destroy(public_id, options).then(callbacks)` 메서드로 `cloudinary` 저장소에 저장된 이미지 파일을 삭제해준다.
+
+인수 `public_id`는 `cloudinary`에 저장된 `폴더/고유식별자` 형태이다.
+```
+if (req.body.deleteImage && req.body.deleteImage.length !== 0) {
+    for (const filename of req.body.deleteImage) {
+      // cloudinary에서 삭제
+      await cloudinary.uploader.destroy(filename);
+    }
+    .
+    .
+  }
+```
+
+삭제 작업을 요약하면 우선 HTML 폼 체크박스로 사용자가 삭제할 이미지를 입력 받아 요청 body의 `delete[]` 프로퍼티에 요소로 전송받았다. 전송받은 데이터와 일치하는 캠핑장 도큐먼트의 image 필드 요소들을 삭제한 후, `cloudinary` API를 사용해 파일 저장소인 `cloudinary`에서도 삭제해줌으로서 완전히 삭제를 구현하였다.
+
+**[Cloudinary References > Upload API]**
+
+https://cloudinary.com/documentation/cloudinary_references
+
+
+# 썸네일에 가상 속성 추가하기
+
+cloudinary transformation API를 사용해 참조할 이미지를 변환한 상태로 전송받을 수 있다.
+
+
+**[Cloudinary Transformation API]**
+
+https://cloudinary.com/documentation/transformation_reference
+
+<!-- 위 과정들은 이미지 업로드 데모로 실제 프로덕션 단계로는 부족하다. 실제로는 업로드 갯수, 용량 등 업로드에 제한을 두어야 안전할 것. -->
 
 <!-- 
 https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_and_retrieving_form_data#a_special_case_sending_files -->
