@@ -17,7 +17,7 @@
   - [edit 페이지 폼 수정하기](#edit-페이지-폼-수정하기)
   - [MongoDB 도큐먼트에서 이미지 삭제](#mongodb-도큐먼트에서-이미지-삭제)
   - [Cloudinary에 업로드된 이미지 삭제](#cloudinary에-업로드된-이미지-삭제)
-- [썸네일에 가상 속성 추가하기](#썸네일에-가상-속성-추가하기)
+- [가상 속성으로 cloudinary transformation 추가하기](#가상-속성으로-cloudinary-transformation-추가하기)
 
 # MongoDB에 이미지 저장하는 방법
 
@@ -433,10 +433,55 @@ if (req.body.deleteImage && req.body.deleteImage.length !== 0) {
 https://cloudinary.com/documentation/cloudinary_references
 
 
-# 썸네일에 가상 속성 추가하기
+# 가상 속성으로 cloudinary transformation 추가하기
 
-cloudinary transformation API를 사용해 참조할 이미지를 변환한 상태로 전송받을 수 있다.
+cloudinary transformation URL API를 사용해 참조할 이미지를 변환한 상태로 전송받을 수 있다.
 
+다음은 cloudinary에 저장된 이미지 참조 URL과 transformation URL의 예시이다.
+
+```
+// cloudinary transformation URL 예시
+https://res.cloudinary.com/<cloud_name>/<asset_type>/<delivery_type>/<transformations>/<version>/<public_id_full_path>.<extension>
+
+// 실제 cloudinary에 업로드 되어있는 이미지 참조 URL
+https://res.cloudinary.com/dowpf7g5p/image/upload/v1672764633/CampInfo/jwtpxbwf4uyndf8vwolo.jpg
+```
+
+기본 이미지 참조 URL에는 `<transformations>`가 생략되어 있다. Mongoose 가상(virtual) 속성을 이용해 URL에 `<transformations>` 값을 추가하여 요청하면 cloudinary에 저장된 이미지를 변환 후 전달받을 수 있다.
+
+```
+const imageSchema = new mongoose.Schema({
+  url: String, // 이미지 참조 URL 저장 필드
+  filename: String
+});
+
+// 참조 URL에 transformations 값 추가하는 thumbnail 가상 프로퍼티.
+imageSchema.virtual('thumbnail').get(function () {
+  return this.url.replace('/upload', '/upload/w_500,h_550');  
+});
+
+const CampgroundSchema = new mongoose.Schema({
+    title: String,
+    image: [imageSchema],
+        .
+        .
+        .
+});
+
+module.exports = mongoose.model('Campground', CampgroundSchema);
+```
+
+추가한 가상 속성은 렌더링되는 템플릿에서 참조하여 cloudinary에 저장된 이미지들을 원하는 크기로 변환 후 출력한다.
+
+```
+<div class="carousel-inner">
+  <% campground.image.forEach((img, i) => { %>
+    <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+        <img src="<%= img.thumbnail %>" class="d-block" alt="" />
+    </div>
+  <% }) %> 
+</div>
+```
 
 **[Cloudinary Transformation API]**
 
