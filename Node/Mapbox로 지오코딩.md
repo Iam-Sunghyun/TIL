@@ -146,7 +146,41 @@ https://github.com/mapbox/mapbox-sdk-js/blob/main/docs/services.md#forwardgeocod
 
 Mapbox의 정방향 지오코딩 응답 객체는 **`GeoJSON` 객체**인데 이것은 위치 정보를 표시하기 위한 개방형 표준으로 `JSON` 형식을 기반으로 하는 객체이다(아래 링크 참조).
 
-`GeoJSON` 객체의 프로퍼티인 `geometry`에 저장되는 객체는 **위치 타입(type)**과 **경도/위도 좌표(coordinates)** 값을 담고있다. 위치 타입에는 다양한 종류가 있으며 프로젝트에서 사용되는 타입은 `Position`으로 위치 정보를 하나의 점으로 나타낸다.
+`GeoJSON` 객체의 지리 정보는 `features` 프로퍼티에 배열 형태로 저장되어 있다. `features` 배열의 각 요소(객체)는 `geometry`와 `properites`로 구성되어 있는데 `geometry`에 저장되는 객체는 **좌표 타입(type)**과 **경도/위도 좌표(coordinates)** 값을 저장하고 `properties`는 위치에 대한 부가적인 정보들을 저장한다.
+
+아래 예시는 `GeoJSON FeatureCollection` 타입의 예시이다.
+```
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {   // 좌표 정보
+        "type": "Point",
+        "coordinates": [102.0, 0.5]
+      },
+      "properties": {  // 부가 정보
+        "prop0": "value0"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]
+        ]
+      },
+      "properties": {
+        "prop0": "value0",
+        "prop1": 0.0
+      }
+    },
+  ]
+}
+```
+
+좌표 타입에는 `Point`,`LineString`, `Polygon` 등 다양한 종류가 있으며 프로젝트에서 사용되는 타입은 `Position`으로 좌표를 하나의 점으로 나타낸다.
 
 좌표 정보를 굳이 `GeoJSON` 형식으로 저장하는 이유는 `MongoDB`에서 `GeoJSON`을 위한 다양한 쿼리를 제공하기 때문.
 
