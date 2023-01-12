@@ -1,9 +1,10 @@
 **목차**
 - [Passport.js 라이브러리로 인증(Authentication)하기](#passportjs-라이브러리로-인증authentication하기)
-  - [1. 스키마에 `passport-local-mongoose` 모듈 적용하기](#1-스키마에-passport-local-mongoose-모듈-적용하기)
+  - [1. Mongoose 스키마에 `passport-local-mongoose` 모듈 적용하기](#1-mongoose-스키마에-passport-local-mongoose-모듈-적용하기)
   - [2. `passport`/`passport-local` 설정하기](#2-passportpassport-local-설정하기)
-    - [기본 미들웨어 설정](#기본-미들웨어-설정)
-    - [`passport`에 전략(strategy) 전달](#passport에-전략strategy-전달)
+    - [`passport` 기본 설정하기](#passport-기본-설정하기)
+    - [`passport`에 `passport-local` 전략(strategy) 설정](#passport에-passport-local-전략strategy-설정)
+    - [`passport-local-mongoose`를 사용한 strategy 간소화](#passport-local-mongoose를-사용한-strategy-간소화)
     - [세션 저장/불러오기 방식 결정](#세션-저장불러오기-방식-결정)
 - [회원가입 및 로그인](#회원가입-및-로그인)
   - [User.register(user, password, cb)로 사용자 등록](#userregisteruser-password-cb로-사용자-등록)
@@ -16,7 +17,7 @@
 
 Passport.js는 Node.js 앱에 인증을 추가해주는 유용한 라이브러리로 Twitter, FaceBook, Google로 로그인 등 500가지가 넘는 다양한 인증 방식을 제공하여 직접 구현하지 않고도 앱의 사용자 인증 방식을 확장하기 쉽다는 장점이 있다.
 
-여러 방식 중 가장 기본적인 방법인 사용자가 입력한 이름(id)과 비밀번호로 인증하는 `passport-local`을 사용해 볼 것인데, 이것 그대로 사용하지 않고 Mongoose를 통한 `passport-local` 인증 구현을 더 간편하게 해주는 Mongoose 플러그인 `passport-local-mongoose`를 사용할 것이다.
+여러 방식 중 가장 기본적인 인증 방식인 사용자가 입력한 이름(id)과 비밀번호로 인증하는 `passport-local`을 사용해 볼 것인데, 이것 그대로 사용하지 않고 Mongoose를 통한 `passport-local` 인증 구현을 더 간편하게 해주는 Mongoose 플러그인 `passport-local-mongoose`를 함께 사용할 것이다.
 
 `passport-local-mongoose`를 사용하기 위해선 다음 세 가지 모듈이 필요하다.
 
@@ -34,7 +35,7 @@ passport-local-mongoose -> local strategy 인증을 위한 mongoose 모델에 �
 > npm install passport mongoose passport-local-mongoose
 ```
 
-## 1. 스키마에 `passport-local-mongoose` 모듈 적용하기
+## 1. Mongoose 스키마에 `passport-local-mongoose` 모듈 적용하기
 
 <!-- `Passport`는 요청을 인증하기 위해 웹 애플리케이션 내에서 미들웨어로 사용된다. . -->
 
@@ -56,7 +57,7 @@ userSchema.plugin(passportLocalMongoose);
 module.exports = mongoose.model('User', userSchema);
 ```
 적용된 스키마에는 username, hash, salt 값이 `passport-local-mongoose`에 의해 자동으로 추가 되며 해당 필드에는 순서대로 사용자 이름, 암호화된 비밀번호, 솔트 값이 저장된다.
-또한 username이 중복 값인지 자동으로 체크한다고 한다!
+또한 `User.register(user, password, cb)`으로 사용자 등록 시에(DB에 저장) username이 중복 값인지 자동으로 체크한다고 한다.
 
 
 ## 2. `passport`/`passport-local` 설정하기
@@ -69,14 +70,14 @@ module.exports = mongoose.model('User', userSchema);
 + 세션 설정
 
 
-### 기본 미들웨어 설정
+### `passport` 기본 설정하기
 
-우선 전략 상관없이 `Express`같은 connect-style 기반 앱에서  `passport`를 사용하기 위해 공통적으로 필요한 설정들이다. 
+우선 전략 상관없이 `Express`같은 connect-style 기반 앱에서  `passport`를 사용하기 위해 공통적으로 필요한 설정들이다(connect-style이란 미들웨어를 사용하는 확장하기 쉬운 node.js 서버 프레임워크 스타일을 말한다). 
 
-npm 문서에 나와있는 예시 코드를 앱 환경(`express` 4.x )에 맞게 적용 시켜준다.
+npm 문서에 나와 있는 예시 코드를 앱 환경(프로젝트에선 `express` 4.x )에 맞게 적용시켜준다.
 
 ```
-// npm 예시 코드
+// npm에 나와있는 예시 코드
 const app = express();
 app.use(require('serve-static')(__dirname + '/../../public'));
 app.use(require('cookie-parser')()); // express-session 1.5.0 이후 버전 사용하면 필요 없음.
@@ -93,9 +94,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 ```
 
-### `passport`에 전략(strategy) 전달
+**[NPM connect?]**
 
-다음은 `passport-local` 생성자 함수(LocalStrategy)에 verify 콜백 함수를 전달해줘야 한다. verify 콜백은 자격 증명(credential)과 `done()` 메서드에 접근 권한을 갖는 함수이다.  
+https://www.npmjs.com/package/connect
+
+### `passport`에 `passport-local` 전략(strategy) 설정
+
+다음은 `passport-local` 생성자 함수(LocalStrategy)에 verify 콜백 함수를 전달해줘야 한다. verify 콜백은 자격증명(credential)과 `done()` 메서드에 접근 권한을 갖는 함수이다.  
 
 이렇게 생성한 `strategy` 객체를 `passport.use()`에 적용시켜준다.
 
@@ -117,11 +122,12 @@ passport.use(new LocalStrategy(
 ));
 ```
 
-**`passport-local-mongoose`를 사용한 strategy 간소화**
+### `passport-local-mongoose`를 사용한 strategy 간소화
 
 하지만 0.2.1 이후 버전의 `passport-local-mongoose`를 사용하면 사용자 모델에 추가되는 `User.createStrategy()` 메서드로 다음과 같이 설정이 매우 간소화 된다.
 
 ```
+// userModel.js
 const mongoose = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
 
@@ -129,9 +135,12 @@ const userSchema = new mongoose.Schema({
   email: { . . . }
 });
 userSchema.plugin(passportLocalMongoose);
+
+module.exports = mongoose.model('User', userSchema);
 -----------------------------------------------
+// app.js
 const passport = require('passport');
-const User = require('./models/user');
+const User = require('./models/userModel');
 
 // passport-local-mongoose 0.2.1이상 버전의 createStrategy() 메서드는 new LocalStrategy()(올바른 옵션의 passport-local 객체 생성)의 역할을 한다.
 passport.use(User.createStrategy());
@@ -182,7 +191,7 @@ router.post('/signup', async (req, res) => {
 });
 ```
 
-<!-- req.login() 메서드로 회원가입 후 자동으로 로그인 세션 생성(로그인 유지) -->
+`User.register(user, password, cb)` 메서드는 `username` 값이 유일한 값인지 체크한다.
 
 ## passport.authenticate(strategy, options)로 인증
 
@@ -198,7 +207,7 @@ router.post('/login',
   }
 );
 ```
-`passport.authenticate()` 미들웨어는 요청에 전송된 자격증명(credential)을 인증한다. 인증에 성공하면  내부에서 `req.login()` 메서드를 자동으로 호출하여 로그인 세션을 생성하며 `req.user` 프로퍼티에 인증된 사용자가 저장된다.
+`passport.authenticate()` 미들웨어는 요청 body에 전송된 자격증명(username, password)으로 인증한다. 인증에 성공하면 내부에서 `req.login()` 메서드를 호출하여 로그인 세션을 생성하며 인증된 사용자 객체가 `req.user` 프로퍼티에 저장된다.
 
 
 ## isLoggedIn 미들웨어로 로그인 확인
@@ -217,8 +226,10 @@ module.exports.isLoggedIn = (req, res, next) => {
   next();
 };
 ----------------------------
+// campgroundRouter.js
 const isLoggedIn = require('../middleware');
 
+// 새 캠핑장 생성 라우터
 router.get('/new', isLoggedIn, (req, res) => {
   res.render('campgrounds/new');
 });
@@ -226,8 +237,10 @@ router.get('/new', isLoggedIn, (req, res) => {
 
 ## req.logout()으로 로그아웃
 
-`req.logout(cb)` 메서드에 콜백을 전달하여 호출 함으로서 로그인 세션을 삭제하여 로그아웃한다.
+`req.logout(cb)` 메서드에 콜백을 전달하여 호출하여 로그인 세션을 삭제하고 로그아웃한다.
+
 ```
+// authRouter.js
 router.post('/logout', (req, res) => {
   req.logout((err) => {
     if (err) next(err);
@@ -248,7 +261,7 @@ router.post('/logout', (req, res) => {
 // 로그인 확인용 미들웨어
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
-    // 로그인한 사용자가 아니라면 세션에 요청 페이지 url 저장(로그인 후 요청 페이지로 보내기 위해)
+    // 로그인한 사용자가 아니라면 세션에 요청 페이지 url 저장(리디렉션을 위해)
     req.session.returnTo = req.originalUrl;
     req.flash("error", "로그인이 필요합니다.");
     return res.redirect("/users/login");
@@ -261,6 +274,7 @@ module.exports.isLoggedIn = (req, res, next) => {
 router.post('/login',
   passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: '아이디 혹은 비밀번호가 다릅니다.', keepSessionInfo : true }),
   (req, res) => {
+    // 리디렉션할 페이지가 있는지 체크. 없으면 홈으로 이동
     const redirectUrl = req.session.returnTo || '/campgrounds';
     delete req.session.returnTo;
     req.flash('success', `${req.body.username}님 환영합니다!`);
@@ -269,14 +283,11 @@ router.post('/login',
 );
 ```
 
-`isLoggedIn` 미들웨어는 로그인 여부에 따라 요청 페이지 혹은 로그인 페이지로 리디렉션 하는데,
-
-로그인 안한 상태라면 요청 url을 담고있는 `req.originalUrl` 값을 세션(`req.session.returnTo`)에 저장한 후 로그인 페이지로 리디렉션 한다(로그인 후 요청 페이지로 리디렉션 하기 위해).
+`isLoggedIn` 미들웨어는 로그인이 안되어있는 경우 로그인 페이지로 리디렉션 하는데, 이때 요청 URL을 담고있는 `req.originalUrl` 값을 세션(`req.session.returnTo`)에 저장한 후(로그인 성공했다면 요청했던 페이지로 리디렉션 하기 위해) 로그인 페이지로 리디렉션 한다.
 
 그 후 로그인이 완료되면 `req.session.returnTo`에 저장했던 원래 요청 페이지로 리디렉션한다.
 
-isLoggdeIn 미들웨어로 로그인이 요구되는 페이지에서 리디렉션을 통해 로그인 하는 경우에만 유효하고 로그인 링크를 클릭하여 로그인하는 경우는 `/campgrounds`로 이동한다.
-
+`isLoggdeIn` 미들웨어의 `returnTo` 프로퍼티는 로그인이 요구되는 페이지에서 리디렉션을 통해 로그인하는 경우에만 유효하고 로그인 링크를 클릭하여 로그인하는 경우는 `/campgrounds`로 이동한다.
 
 
 
