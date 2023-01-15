@@ -1,3 +1,11 @@
+**목차**
+- [마커 클러스터링이란?](#마커-클러스터링이란)
+- [Mapbox cluster 출력해보기](#mapbox-cluster-출력해보기)
+  - [`index.ejs` 페이지 지도 컨테이너 및 자바스크립트 추가](#indexejs-페이지-지도-컨테이너-및-자바스크립트-추가)
+  - [Mapbox 클러스터 자바스크립트(`markerCluster.js`) 수정](#mapbox-클러스터-자바스크립트markerclusterjs-수정)
+  - [사용자 정의 Popup 추가](#사용자-정의-popup-추가)
+  
+  
 # 마커 클러스터링이란?
 
 마커 클러스터링(marker clustering)이란 지도에 표시되는 마커가 너무 많은 경우 일정 범위에 있는 마커를 합하여 더 간결하게 표현하는 것을 말한다.
