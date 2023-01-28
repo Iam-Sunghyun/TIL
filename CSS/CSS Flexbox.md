@@ -1,8 +1,24 @@
+**목차**
+- [Flexbox](#flexbox)
+- [속성(Property)](#속성property)
+  - [flex-direction](#flex-direction)
+- [하위 요소 정렬 속성](#하위-요소-정렬-속성)
+  - [justify-content](#justify-content)
+  - [flex-wrap](#flex-wrap)
+  - [align-items](#align-items)
+  - [align-content](#align-content)
+- [플렉스 항목(Flex item)에서 사용할 수 있는 속성들](#플렉스-항목flex-item에서-사용할-수-있는-속성들)
+  - [align-self](#align-self)
+  - [flex-grow](#flex-grow)
+  - [flex-shrink](#flex-shrink)
+  - [flex-basis](#flex-basis)
+  - [flex](#flex)
+
 # Flexbox
 
 **웹 페이지 레이아웃을 지정하는데 매우 중요한 속성!**
 
-말 그대로 컨테이너 안에 요소를 유연하게 배치하는데 사용. `display: flex`를 적용해준 요소를 '플렉스 컨테이너(flex container)'라 하고, 자식 요소들을 '플렉스 항목(flex item)'이라 한다. 
+말 그대로 컨테이너 안에 요소를 유연하게 배치하는데 사용. `display: flex`를 적용해준 요소를 '플렉스 컨테이너(flex container)'라 하고, 자식 요소들을 '플렉스 항목(flex item)'이라 한다(`display: flex`로 설정된 요소의 외부 디스플레이 유형은 `block` 박스가 적용된다). 
 
 플렉스 컨테이너 안에는 **주축(main axis)** 과 **교차축(cross axis)** 2가지 축이 있는데 이 축을 기준으로 항목들이 배열된다.
 

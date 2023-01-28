@@ -1,10 +1,16 @@
+**목차**
+- [CSS 값과 단위](#css-값과-단위)
+- [절대 길이(`<length>`)단위](#절대-길이length단위)
+- [상대 길이 단위](#상대-길이-단위)
+  - [백분율(`<Percentage>`)](#백분율percentage)
+
 # CSS 값과 단위
 
 CSS 에서 사용 할 수 있는 숫자 값(Numeric data type)은 다음과 같다.
 
 `<integer>` - 말 그대로 정수 값을 뜻한다.<br>
 `<number>` - 정수와 소수를 모두 포함한다.<br>
-`<dimension>` - px와 같은 단위가 붙는 값을 말한다. 단위 유형에는 `<length>`, `<angle>`, `<time>`, `<frequency>`, `<resolution>`가 있다.<br>
+`<dimension>` - px와 같은 단위가 붙는 `<number>`값을 말한다. 단위 유형에는 `<length>`, `<angle>`, `<time>`, `<frequency>`, `<resolution>`가 있다.<br>
 `<percentage>` - 백분율을 말한다. 백분율은 항상 다른 값을 기준으로 계산 된다.<br>
 
 <br>

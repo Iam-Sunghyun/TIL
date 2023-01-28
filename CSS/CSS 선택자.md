@@ -1,3 +1,20 @@
+**목차**
+
+- [CSS 선택자(Selector)](#css-선택자selector)
+  - [전체, 범용 선택자(Universal selectors)](#전체-범용-선택자universal-selectors)
+  - [타입, 태그, 요소 선택자(Type, Tag name, Elements selectors)](#타입-태그-요소-선택자type-tag-name-elements-selectors)
+  - [다중 선택자](#다중-선택자)
+  - [id 선택자(Id selectors)](#id-선택자id-selectors)
+  - [클래스 선택자](#클래스-선택자)
+  - [자손 선택자 " " (Descendant selectors), 후손 선택자](#자손-선택자---descendant-selectors-후손-선택자)
+  - [자식 선택자 \> (Child selectors)](#자식-선택자--child-selectors)
+  - [인접 형제 선택자 + (Adjacent sibling selectors)](#인접-형제-선택자--adjacent-sibling-selectors)
+  - [일반 형제 선택자 ~ (General sibling selectors)](#일반-형제-선택자--general-sibling-selectors)
+  - [가상 클래스, 의사 클래스 (Pseudo class)](#가상-클래스-의사-클래스-pseudo-class)
+    - [자주 쓰이는 가상 클래스 몇 가지](#자주-쓰이는-가상-클래스-몇-가지)
+  - [가상 요소, 의사 요소(Pseudo element)](#가상-요소-의사-요소pseudo-element)
+  - [속성 선택자(Attribute selctors)](#속성-선택자attribute-selctors)
+
 # CSS 선택자(Selector)
 
 ## 전체, 범용 선택자(Universal selectors)
@@ -51,7 +68,7 @@ li.spacious {    // class가 spacious인 모든 li 요소
 ```
 ```id```와 비슷하게 요소를 식별하는 데 사용. 
 
-클래스는 ```id```와 달리 여러 요소에 사용해 그룹화할 수 있다. 가장 자주 사용하는 듯.
+클래스는 ```id```와 달리 여러 요소에 사용해 그룹화할 수 있다. 가장 자주 사용.
 
 
 ## 자손 선택자 " " (Descendant selectors), 후손 선택자
@@ -128,7 +145,7 @@ button:hover {
 https://developer.mozilla.org/ko/docs/Web/CSS/Pseudo-classes
   
 
-## 가상 요소, 유사 요소(Pseudo element)
+## 가상 요소, 의사 요소(Pseudo element)
 ```
 // 모든 p요소의 첫 번째 줄에 적용.
 p::first-line {
