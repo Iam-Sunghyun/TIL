@@ -40,8 +40,12 @@ css 스타일의 속성을 2개 이상 지정 할 경우 반드시 세미콜론(
 
 <br>
 
-**[MDN CSS]**  <br>
-https://developer.mozilla.org/ko/docs/Learn/CSS
+**[MDN CSS]**
+
+https://developer.mozilla.org/ko/docs/Web/CSS
+
+**[MDN CSS Reference]**  <br>
+https://developer.mozilla.org/ko/docs/Web/CSS/Reference
 
 # CSS 적용 방식
 
@@ -195,13 +199,15 @@ https://developer.mozilla.org/ko/docs/Web/CSS/Reference
 
 # 자주 사용하는 텍스트 관련 속성
 
-```text-align``` - 블록 요소나 표의 칸 상자 내부 콘텐츠의 가로 정렬을 설정한다.
+```text-align``` - 블록 요소나 테이블 셀 상자 내부 인라인 콘텐츠의 가로 정렬을 설정한다.
+
+`vertical-align` - 인라인, 인라인 블록 또는 테이블 셀 상자의 수직 정렬을 설정한다.
 
 ```font-weight``` - 글자 굵기 설정. 몇몇 폰트들은 normal(400)이나 bold(700)만 가능하다.
 
 ```text-decoration``` - 텍스트에 장식용 선을 추가한다. ```text-decoration-line```, ```text-decoration-color```, ```text-decoration-style```, ```text-decoration-thickness```의 단축 속성이다.
 
-```line-height``` - 줄 간격을 조절한다.
+```line-height``` - 인라인 요소의 줄 높이를 조절한다.
 
 ```letter-spacing``` - 글자간 간격을 조절한다.
 
