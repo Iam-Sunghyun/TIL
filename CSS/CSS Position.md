@@ -8,10 +8,12 @@
   - [`fixed(고정 위치)`](#fixed고정-위치)
   - [`sticky`](#sticky)
 - [컨테이닝 블록(containing block)이란?](#컨테이닝-블록containing-block이란)
+  - [컨테이닝 블록의 식별](#컨테이닝-블록의-식별)
   - [`absolute`, `fixed`의 컨테이닝 블록이 변경되는 경우](#absolute-fixed의-컨테이닝-블록이-변경되는-경우)
+  - [초기 컨테이닝 블록?](#초기-컨테이닝-블록)
 - [z-index](#z-index)
 - [overflow 프로퍼티](#overflow-프로퍼티)
-- [stacking-context(쌓임 맥락)](#stacking-context쌓임-맥락)
+- [쌓임 맥락(stacking-context)](#쌓임-맥락stacking-context)
   - [쌓임 맥락의 핵심 내용](#쌓임-맥락의-핵심-내용)
 
 # Position 프로퍼티
@@ -34,9 +36,10 @@ Postion 프로퍼티의 값으로는 아래 5가지가 있다.
 
 ## `absolute(절대 위치)` 
 
-**문서 흐름에서 제거**되어 페이지에서 공간도 차지하지 않게 되며 가장 가까운 **조상 요소 중 위치 지정 요소(`position` 프로퍼티가 `static`이 아닌 요소)가 있다면 해당 조상 요소를 기준으로 배치**한다. 
+**문서 흐름에서 제거**되어 페이지에서 공간도 차지하지 않게 되며 가장 가까운 **조상 요소 중 위치 지정 요소(`position` 프로퍼티가 `static`이 아닌 요소)가 있다면 해당 조상 요소의 `padding` 박스를 기준으로 배치**한다. 
 
-만약 조상 중 위치 지정 요소가 없다면 초기 컨테이닝 블록(`<html>`)을 기준으로 배치한다.
+만약 조상 중 위치 지정 요소가 없다면 초기 컨테이닝 블록(`<html>`의 컨테이닝 블록)을 기준으로 배치한다.
+
 
 ## `fixed(고정 위치)` 
 
@@ -45,12 +48,14 @@ Postion 프로퍼티의 값으로는 아래 5가지가 있다.
 **즉, 해당 요소가 항상 페이지의 같은 위치에 출력**되게 된다(네비게이션 바 구현할 때 사용). 
 
 ```
-※ fixed 선언 시, block 요소의 width는 inline 요소와 같이 content에 맞게 변화되므로 필요에 따라 적절한 width를 지정해 주도록 하자.
+※ position: absolute나 fixed 선언 시, block 요소의 width는 inline 요소와 같이 content에 맞게 변화되므로 필요에 따라 적절한 width를 지정해 주도록 하자.
+
+※ 또한 절대 위치 지정 요소(absolute, fixed)의 바깥 여백은 서로 상쇄되지 않는다.
 ```
 
 ## `sticky` 
 
-**가장 가까이에 있는 스크롤되는 조상 요소나 표 관련 요소를 포함한 컨테이닝 블록(가장 가까운 블록 레벨 조상)을 기준으로** `top`, `right`, `bottom`, `left`의 값에 따라 오프셋을 적용해 위치시킨다.
+**가장 가까이에 있는 스크롤되는 조상 요소, 혹은 표 관련 요소를 포함한 컨테이닝 블록(가장 가까운 블록 레벨 조상)을 기준으로** `top`, `right`, `bottom`, `left`의 값에 따라 오프셋을 적용해 위치시킨다.
 
 ```
 오프셋(offset)-> 상대적인 위치 차이, 변위차. (분야나 상황별로 여러 가지로 해석됨)
@@ -71,22 +76,35 @@ https://developer.mozilla.org/ko/docs/Web/CSS/position
   
 # 컨테이닝 블록(containing block)이란?
 
-말 그대로 어떤 요소가 담겨있는 사각형의 영역을 말하며 해당 요소의 크기, 위치 값을 설정할 때 기준이 되기도 한다.
+말 그대로 어떤 요소가 담겨있는 사각형의 영역을 말하며 해당 요소의 크기, 위치 값을 설정할 때 기준이 된다.
 
-보통 가장 가까이 있는 블록 레벨 조상의 콘텐츠 영역(블록 레벨 부모 요소 콘텐츠 영역)이지만, `position: fixed;` 같이 그렇지않은 경우도 있다.
+보통 가장 가까이 있는 블록 레벨 조상의 콘텐츠 영역(블록 레벨 부모 요소 콘텐츠 영역)이지만, `position: fixed;` 같이 그렇지 않은 경우도 있다.
 
+
+## 컨테이닝 블록의 식별
+
+컨테이닝 블록의 식별은 다음 상황에 맞게 달라진다.
+
++ `position` 프로퍼티가 `static`, `relative`, `sticky` 중 하나라면 가장 가까운 조상 요소 중 블록 레벨 요소(`inline-block`, `block`, `list-item` 등) 혹은 내부에 블록 영역을 만들어내는 조상 요소(`table`, `flex`, `grid`, 블록 컨테이너 자기 자신)의 콘텐츠 박스 영역의 경계를 기준으로 형성된다. -> 결국 `fixed`, `absolute`가 아니라면 부모 요소 콘텐츠 박스가 곧 컨테이닝 블록이 됨.
+
++ `position` 프로퍼티가 `absolute`, `fixed`의 경우 위 내용 참조.
 
 ## `absolute`, `fixed`의 컨테이닝 블록이 변경되는 경우
 
-`position`이 `absolute`인 경우 가장 가까운 조상 요소 중 `position`이 `static`이 아닌 요소가 있다면 해당 조상 요소가, 그렇지 않다면 `<html>`가 컨테이닝 블록이 됐었고 `fixed`의 경우는 viewport를 컨테이닝 블록으로 위치가 결정됐었다.
+`position`이 `absolute`인 경우 가장 가까운 조상 요소 중 `position`이 `static`이 아닌 요소가 있다면 해당 조상 요소가, 그렇지 않다면 초기 컨테이닝 블록(루트 요소인 `<html>`의 컨테이닝 블록)이 컨테이닝 블록이 됐었고 `fixed`의 경우는 viewport를 컨테이닝 블록으로 위치가 결정됐었다.
 
-위 두가지 `position`에서 컨테이닝 블록이 변경되는 경우가 있는데, 요소의 조상 중 다음을 만족하는 요소가 있는 경우 컨테이닝 블록이 해당 조상 요소로 변경된다.
+위 두가지 `position`에서 컨테이닝 블록이 변경되는 경우가 있는데, 요소의 조상 중 다음을 만족하는 요소가 있는 경우 컨테이닝 블록이 해당 조상 요소의 `padding` 박스로 변경된다.
 
 + `transform`, `perspective` 속성이 `none`이 아닌 경우
 + `filter` 프로퍼티가 `none`인 경우 
 + `will-change` 프로퍼티가 `transform`, `perspective`인 경우
 + `contain` 프로퍼티 값이 `paint`인 경우
 
+
+## 초기 컨테이닝 블록?
+```
+초기 컨테이닝 블록은 루트 요소(`<html>`)의 컨테이닝 블록을 말하는데 이는 뷰포트 또는 (페이지로 나뉘는 매체에선) 페이지 영역의 크기와 같다.
+```
 **[MDN containing block]**
 
 https://developer.mozilla.org/ko/docs/Web/CSS/Containing_block
@@ -130,7 +148,7 @@ overflow: auto;
 overflow: hidden visible;
 ```
 
-# stacking-context(쌓임 맥락)
+# 쌓임 맥락(stacking-context)
 
 요소 출력 순서를 나타내기 위해 사용자 시점에서 z축을 추가하여 웹 페이지를 3차원으로 개념화한 것을 **쌓임 맥락(stacking-context)**이라 한다.
 
