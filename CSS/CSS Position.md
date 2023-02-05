@@ -111,7 +111,7 @@ https://developer.mozilla.org/ko/docs/Web/CSS/Containing_block
 
 # z-index
 
-요소의 z축 값을 설정하는 프로퍼티로 **`position` 프로퍼티가 `static` 이외인 요소에만 적용되며** 요소 출력 우선순위를 결정한다.
+요소의 z축 값을 설정하는 프로퍼티로 **`position` 프로퍼티가 `static` 이외인 요소나 그 자손 요소 혹은 플렉스 아이템에 적용되며** 요소 출력 우선순위를 결정한다. (아래 쌓임 맥락을 생성하는 경우 참조)
 
 웹 페이지의 모든 요소는 기본적으로 `auto` 값을 가지며 이는 0과 같다.
 
@@ -130,7 +130,9 @@ z-index: -1;
 
 https://developer.mozilla.org/en-US/docs/Web/CSS/z-index
 
+**[MDN z-index 이해하기]**
 
+https://developer.mozilla.org/ko/docs/Web/CSS/CSS_Positioning/Understanding_z_index
 
 # overflow 프로퍼티
 
