@@ -6,11 +6,12 @@
   - [`relative(상대 위치)`](#relative상대-위치)
   - [`absolute(절대 위치)`](#absolute절대-위치)
   - [`fixed(고정 위치)`](#fixed고정-위치)
+    - [`absolute`, `fixed` 차이점](#absolute-fixed-차이점)
   - [`sticky`](#sticky)
 - [컨테이닝 블록(containing block)이란?](#컨테이닝-블록containing-block이란)
   - [컨테이닝 블록의 식별](#컨테이닝-블록의-식별)
   - [`absolute`, `fixed`의 컨테이닝 블록이 변경되는 경우](#absolute-fixed의-컨테이닝-블록이-변경되는-경우)
-  - [초기 컨테이닝 블록?](#초기-컨테이닝-블록)
+    - [초기 컨테이닝 블록?](#초기-컨테이닝-블록)
 - [z-index](#z-index)
 - [overflow 프로퍼티](#overflow-프로퍼티)
 - [쌓임 맥락(stacking-context)](#쌓임-맥락stacking-context)
@@ -38,19 +39,24 @@ Postion 프로퍼티의 값으로는 아래 5가지가 있다.
 
 **문서 흐름에서 제거**되어 페이지에서 공간도 차지하지 않게 되며 가장 가까운 **조상 요소 중 위치 지정 요소(`position` 프로퍼티가 `static`이 아닌 요소)가 있다면 해당 조상 요소의 `padding` 박스를 기준으로 배치**한다. 
 
-만약 조상 중 위치 지정 요소가 없다면 초기 컨테이닝 블록(`<html>`의 컨테이닝 블록)을 기준으로 배치한다.
-
+만약 조상 중 위치 지정 요소가 없다면 초기 컨테이닝 블록(`<html>`의 컨테이닝 블록) 즉, 뷰포트 영역을 기준으로 배치한다.
 
 ## `fixed(고정 위치)` 
 
-`absolute`처럼 요소를 **일반적인 문서 흐름에서 제거**되어 페이지 레이아웃에 공간이 배정되지 않는다. **브라우저의 viewport를 기준으로** 좌표 프로퍼티(top, bottom, left, right)을 사용하여 위치를 이동시킨다. 
+`absolute`처럼 요소를 **일반적인 문서 흐름에서 제거**되어 페이지 레이아웃에 공간이 배정되지 않는다. **브라우저의 뷰포트를 기준으로** 좌표 프로퍼티(top, bottom, left, right)을 사용하여 위치를 이동시킨다. 
 
-**즉, 해당 요소가 항상 페이지의 같은 위치에 출력**되게 된다(네비게이션 바 구현할 때 사용). 
+**즉, 해당 요소가 뷰포트의 항상 같은 위치에 출력**되게 된다(네비게이션 바 구현할 때 사용). 
 
 ```
 ※ position: absolute나 fixed 선언 시, block 요소의 width는 inline 요소와 같이 content에 맞게 변화되므로 필요에 따라 적절한 width를 지정해 주도록 하자.
 
-※ 또한 절대 위치 지정 요소(absolute, fixed)의 바깥 여백은 서로 상쇄되지 않는다.
+※ 또한 절대 위치 지정 요소(absolute, fixed)의 바깥 여백(margin)은 서로 상쇄되지 않는다.
+```
+
+### `absolute`, `fixed` 차이점
+
+```
+fixed의 경우 뷰포트의 고정된 위치에 배치하고(스크롤을 내려도 뷰포트에 고정된 채로 이동), absolute는 뷰포트를 기준으로 계산된 웹 페이지에 위치시킨다(스크롤을 내리면 요소는 그 자리에 머물러있다).
 ```
 
 ## `sticky` 
@@ -78,7 +84,7 @@ https://developer.mozilla.org/ko/docs/Web/CSS/position
 
 말 그대로 어떤 요소가 담겨있는 사각형의 영역을 말하며 해당 요소의 크기, 위치 값을 설정할 때 기준이 된다.
 
-보통 가장 가까이 있는 블록 레벨 조상의 콘텐츠 영역(블록 레벨 부모 요소 콘텐츠 영역)이지만, `position: fixed;` 같이 그렇지 않은 경우도 있다.
+보통 가장 가까이 있는 블록 레벨 조상의 콘텐츠 영역(블록 레벨 부모 요소 콘텐츠 영역)이지만, `position: fixed` 같이 그렇지 않은 경우도 있다.
 
 
 ## 컨테이닝 블록의 식별
@@ -99,12 +105,13 @@ https://developer.mozilla.org/ko/docs/Web/CSS/position
 + `filter` 프로퍼티가 `none`인 경우 
 + `will-change` 프로퍼티가 `transform`, `perspective`인 경우
 + `contain` 프로퍼티 값이 `paint`인 경우
++ `backdrop-filter` 값이 `none` 이외의 값인 경우
 
 
-## 초기 컨테이닝 블록?
-```
+### 초기 컨테이닝 블록?
+
 초기 컨테이닝 블록은 루트 요소(`<html>`)의 컨테이닝 블록을 말하는데 이는 뷰포트 또는 (페이지로 나뉘는 매체에선) 페이지 영역의 크기와 같다.
-```
+
 **[MDN containing block]**
 
 https://developer.mozilla.org/ko/docs/Web/CSS/Containing_block
