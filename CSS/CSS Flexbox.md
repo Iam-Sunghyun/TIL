@@ -1,13 +1,15 @@
-**목차**
+<h2>목차</h2>
+
 - [Flexbox](#flexbox)
-- [속성(Property)](#속성property)
+- [플렉스 컨테이너 속성(Property)](#플렉스-컨테이너-속성property)
   - [flex-direction](#flex-direction)
-- [하위 요소 정렬 속성](#하위-요소-정렬-속성)
-  - [justify-content](#justify-content)
   - [flex-wrap](#flex-wrap)
+  - [flex-flow](#flex-flow)
+  - [justify-content](#justify-content)
   - [align-items](#align-items)
   - [align-content](#align-content)
 - [플렉스 항목(Flex item)에서 사용할 수 있는 속성들](#플렉스-항목flex-item에서-사용할-수-있는-속성들)
+  - [order](#order)
   - [align-self](#align-self)
   - [flex-grow](#flex-grow)
   - [flex-shrink](#flex-shrink)
@@ -18,20 +20,22 @@
 
 **웹 페이지 레이아웃을 지정하는데 매우 중요한 속성!**
 
-말 그대로 컨테이너 안에 요소를 유연하게 배치하는데 사용. `display: flex`를 적용해준 요소를 '플렉스 컨테이너(flex container)'라 하고, 자식 요소들을 '플렉스 항목(flex item)'이라 한다(`display: flex`로 설정된 요소의 외부 디스플레이 유형은 `block` 박스가 적용된다). 
+말 그대로 컨테이너 안에 요소를 유연하게 배치하는데 사용. `display: flex`, `display: inline-flex`를 적용해준 요소를 '플렉스 컨테이너(flex container)'라 하고, 자식 요소들을 '플렉스 항목(flex item)'이라 한다.
 
-플렉스 컨테이너 안에는 **주축(main axis)** 과 **교차축(cross axis)** 2가지 축이 있는데 이 축을 기준으로 항목들이 배열된다.
+`display: flex`로 설정된 요소의 외부 디스플레이 유형은 `block` 박스가 적용되며 `display: inline-flex`의 경우는 `inline` 박스가 적용된다.
+
+플렉스 컨테이너 안에는 **주축(main axis)** 과 **교차 축(cross axis)** 2가지 축이 있는데 이 축을 기준으로 항목들이 배열된다.
 
 
 <img src="https://github.com/Iam-Sunghyun/TIL/blob/main/CSS/img/flex-box.png" width="450" height="250"> 
 
-# 속성(Property)
+# 플렉스 컨테이너 속성(Property)
 
 ## flex-direction
 
-주축과 방향을 결정하는 속성. 기본 값은 수평 좌->우 방향이며 `flex-direction` 속성으로 방향을 변경할 수 있다. 
+주축과 주축의 방향을 결정하는 속성. 기본 값은 수평, 좌->우 방향이며 아래 값에 따라 다르게 적용된다.
 
-아래는 flex-direction 속성 값들이다.
+아래는 `flex-direction` 속성 값들이다.
 ```
 flex-direction: row(기본 값);    - 수평 기본 
 flex-direction: row-reverse;    - 수평 반전(우->좌) 
@@ -39,11 +43,45 @@ flex-direction: column;         - 수직 기본
 flex-direction: column-reverse; - 수직 반전(하->상)
 ```
 
-# 하위 요소 정렬 속성
+## flex-wrap
+
+플렉스 항목들이 한 줄에 표시되게 할지, 플렉스 컨테이너를 넘어가지 않으면서 여러 줄에 표현할 것 인지(줄 바꿈 여부) 설정하는 속성. 
+
+주축이 수평일 때 새로운 행을 만들어 정렬하고, 수직일 땐 새로운 열을 만들어 요소를 나열한다.
+
+또한 교차 축의 방향도 지정할 수 있다.
+
+```
+flex-wrap: nowrap(기본 값);  - 요소들을 한 줄에 배치 
+flex-wrap: wrap;            - 여러 줄로 나눠 배치
+flex-wrap: wrap-reverse;    - 여러 줄로 나누고, 교차 축 반대 방향으로 배치
+```
+
+## flex-flow
+
+`flex-direction`과 `flex-wrap`의 단축 속성.
+
+```
+/* 'flex-direction'만 설정하는 경우 */
+flex-flow: row;
+flex-flow: row-reverse;
+flex-flow: column;
+flex-flow: column-reverse;
+
+/* 'flex-wrap'만 설정하는 경우 */
+flex-flow: nowrap;
+flex-flow: wrap;
+flex-flow: wrap-reverse;
+
+/* 'flex-direction', 'flex-wrap' 둘 다 설정하는 경우 */
+flex-flow: row nowrap;
+flex-flow: column wrap;
+flex-flow: column-reverse wrap-reverse;
+```
 
 ## justify-content
 
-플렉스 컨테이너에서 주축을 기준으로 요소와 콘텐츠를 어떻게 배치할 지 결정한다. 
+플렉스 컨테이너에서 주축을 기준으로 콘텐츠 배치 방법을 정의한다. 
 
 기본 값은 `flex-start`이다.
 ```
@@ -57,37 +95,25 @@ justify-content: space-around;  - 컨테이너 내에 고르게 분포하면서 
 justify-content: space-evenly;  - 컨테이너 내에 고르게 분포하면서 시작과 끝 요소와 컨테이너 사이 빈 공간도 항목사이 공간과 동일하게 배치함 
 ```
 
-## flex-wrap
-
-플렉스 항목들이 한 줄에 표시되게 할 지, 플렉스 컨테이너를 넘어가지 않으면서 여러 줄에 표현할 것 인지 설정하는 속성. 
-
-주축이 수평일 때 새로운 행을 만들어 정렬하고, 수직일 땐 새로운 열을 만들어 요소를 나열한다.
-
-또한 교차축의 방향도 지정할 수 있다.
-
-```
-flex-wrap: nowrap(기본 값);  - 요소들을 한 줄에 배치 
-flex-wrap: wrap;            - 여러 줄로 나눠 배치
-flex-wrap: wrap-reverse;    - 여러 줄로 나누고, 교차축 반대 방향으로 배치
-```
-
 ## align-items 
 
-`justify-content`가 주축을 기준이었다면 `align-items`는 교차축에 따라 요소를 배치하는 방법을 지정한다. 
+`justify-content`가 주축이 기준이었다면 `align-items`는 교차 축에 따라 요소를 배치하는 방법을 지정한다. 
 
 기본 값은 `flex-start`로 상-하 방향으로 배치한다.
 ```
-align-items: flex-start(기본 값);   - 교차축 시작점부터 배치
-align-items: flext-end;            - 교차축의 끝점부터 배치
+align-items: stretch               - 교차 축을 채우기 위해 flex items를 늘림
+align-items: flex-start(기본 값);   - 교차 축 시작점부터 배치
+align-items: flext-end;            - 교차 축의 끝점부터 배치
 align-items: center;               - 교차 축 중앙 정렬 
 align-items: baseline;             - 텍스트의 밑줄에 맞춰 요소 정렬
 ```
 ## align-content
 
-행이나 열이 **여러 개일 때** 교차축을 기준으로 요소 배치 방법을 지정하는 속성.
+행이나 열이 **여러 개일 때** 교차 축을 기준으로 요소 배치 방법을 지정하는 속성.
 
 `flex-wrap: nowrap`과 같이 단일 행, 열의 경우 아무 효과가 없다.
 ```
+align-content: stretch              
 align-content: flex-start(기본 값);
 align-content: flex-end;
 
@@ -106,9 +132,21 @@ align-content: space-evenly;
 
 플렉스 컨테이너 자체에는 사용하지 않고, 개별 요소(플렉스 항목)에 사용하는 속성들이다.
 
+
+## order
+
+플렉스 항목의 순서를 설정한다(`z-index`처럼 쌓임 순서가 아닌 정렬 순서를 말함).
+
+큰 값일수록 뒤로 밀려나며 `<integer>` 값을 사용할 수 있다.
+
+```
+order: 5;
+order: -5;
+```
+
 ## align-self
 
-`align-items`와 매우 비슷하지만 플렉스 컨테이너 내에 교차축을 기준으로 개별 요소의 배치 방식을 지정한다. 
+`align-items`와 매우 비슷하지만 플렉스 컨테이너 내에 교차 축을 기준으로 개별 요소의 배치 방식을 지정한다. 
 
 ```
 align-self: flex-start; 
@@ -122,6 +160,7 @@ align-self: stretch;
 ```
 
 ## flex-grow 
+
 컨테이너에 남은 공간이 있을 때 요소가 그 공간을 얼마나 차지할 지 비율을 결정한다.
 
 ```
