@@ -6,6 +6,7 @@
   - [flex-wrap](#flex-wrap)
   - [flex-flow](#flex-flow)
   - [justify-content](#justify-content)
+    - [기본 값 참고 사항](#기본-값-참고-사항)
   - [align-items](#align-items)
   - [align-content](#align-content)
 - [플렉스 항목(Flex item)에서 사용할 수 있는 속성들](#플렉스-항목flex-item에서-사용할-수-있는-속성들)
@@ -83,7 +84,8 @@ flex-flow: column-reverse wrap-reverse;
 
 플렉스 컨테이너에서 주축을 기준으로 콘텐츠 배치 방법을 정의한다. 
 
-기본 값은 `flex-start`이다.
+기본 값은 `flex-start`이다. 
+
 ```
 justify-content: flex-start;    - 주축의 시작점부터 배치 
 justify-content: flex-end;      - 주축의 끝점부터 배치
@@ -95,11 +97,26 @@ justify-content: space-around;  - 컨테이너 내에 고르게 분포하면서 
 justify-content: space-evenly;  - 컨테이너 내에 고르게 분포하면서 시작과 끝 요소와 컨테이너 사이 빈 공간도 항목사이 공간과 동일하게 배치함 
 ```
 
+### 기본 값 참고 사항
+
+```
+기본 값은 w3c 2022 latest stable CSS 기준이며(글쓴 시점 최신) MDN에는 더 낮은 표준 제정 단계의 값까지 포함해 기록되어있다. 물론 최신 브라우저에서는 동작에 문제가 없다. 
+css w3c 표준과 표준 제정 단계에 따른 브라우저 지원 여부를 확인하려면 아래 링크 참조.
+```
+
+**[w3c 2022 snapshot]**
+
+https://www.w3.org/TR/css-flexbox-1/
+
+**[caniuse.com]**
+
+https://caniuse.com/?search=justify-content
+
 ## align-items 
 
 `justify-content`가 주축이 기준이었다면 `align-items`는 교차 축에 따라 요소를 배치하는 방법을 지정한다. 
 
-기본 값은 `flex-start`로 상-하 방향으로 배치한다.
+기본 값은 `stretch`이다.
 ```
 align-items: stretch               - 교차 축을 채우기 위해 flex items를 늘림
 align-items: flex-start(기본 값);   - 교차 축 시작점부터 배치
