@@ -43,7 +43,7 @@ Postion 프로퍼티의 값으로는 아래 5가지가 있다.
 
 ## `fixed(고정 위치)` 
 
-`absolute`처럼 요소를 **일반적인 문서 흐름에서 제거**되어 페이지 레이아웃에 공간이 배정되지 않는다. **브라우저의 뷰포트를 기준으로** 좌표 프로퍼티(top, bottom, left, right)을 사용하여 위치를 이동시킨다. 
+`absolute`처럼 요소가 **일반적인 문서 흐름에서 제거**되어 페이지 레이아웃에 공간이 배정되지 않는다. **브라우저의 뷰포트를 기준으로** 좌표 프로퍼티(top, bottom, left, right)을 사용하여 위치를 이동시킨다. 
 
 **즉, 해당 요소가 뷰포트의 항상 같은 위치에 출력**되게 된다(네비게이션 바 구현할 때 사용). 
 
@@ -91,7 +91,7 @@ https://developer.mozilla.org/ko/docs/Web/CSS/position
 
 컨테이닝 블록의 식별은 다음 상황에 맞게 달라진다.
 
-+ `position` 프로퍼티가 `static`, `relative`, `sticky` 중 하나라면 가장 가까운 조상 요소 중 블록 레벨 요소(`inline-block`, `block`, `list-item` 등) 혹은 내부에 블록 영역을 만들어내는 조상 요소(`table`, `flex`, `grid`, 블록 컨테이너 자기 자신)의 콘텐츠 박스 영역의 경계를 기준으로 형성된다. -> 결국 `fixed`, `absolute`가 아니라면 부모 요소 콘텐츠 박스가 곧 컨테이닝 블록이 됨.
++ `position` 프로퍼티가 `static`, `relative`, `sticky` 중 하나라면 가장 가까운 조상 요소 중 블록 레벨 요소(`inline-block`, `block`, `list-item` 등) 혹은 내부에 블록 영역을 만들어내는 조상 요소(`table`, `flex`, `grid`, 블록 컨테이너)의 콘텐츠 박스 영역의 경계를 기준으로 형성된다. -> 결국 `fixed`, `absolute`가 아니라면 부모 요소 콘텐츠 박스가 곧 컨테이닝 블록이 됨.
 
 + `position` 프로퍼티가 `absolute`, `fixed`의 경우 위 내용 참조.
 

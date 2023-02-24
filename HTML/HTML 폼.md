@@ -31,7 +31,7 @@ https://developer.mozilla.org/ko/docs/Web/HTML/Element/form
 
 ## ```<input>```
 
-**가장 자주 쓰이고 강력한 HTML 폼 요소(폼 컨트롤이라고도 함)**이다. type 속성 값에 따라 20가지가 넘는 폼 요소를 만들 수 있으며 기본 값은 "text"이다.
+**가장 자주 쓰이고 강력한 HTML 폼 요소(폼 컨트롤이라고도 함)** 이다. type 속성 값에 따라 20가지가 넘는 폼 요소를 만들 수 있으며 기본 값은 "text"이다.
 
 ### 속성 몇가지
 + ```type``` - 요소의 타입을 지정한다.<br>
@@ -46,13 +46,13 @@ https://developer.mozilla.org/ko/docs/Web/HTML/Element/form
 요소를 설명하는 역할을 한다.
 ```<input>``` 요소와 연결하게 되면 연결된 label의 텍스트를 클릭해도 ```<input>```요소가 활성화 된다.
 
-스크린 리더를 사용할 경우 ```<input>``` 요소에 연결된 label 내용을 설명 해 이해를 돕는다.
+스크린 리더를 사용할 경우 ```<input>``` 요소에 연결된 label 내용을 설명해 이해를 돕는다.
 
-for 속성에 요소의 id를 입력해 연결하거나, label 태그 안에 중첩시켜 연결 할 수 있다.(전자를 주로 사용)
+for 속성에 요소의 id를 입력해 연결하거나, label 태그 안에 중첩시켜 연결할 수 있다.(전자를 주로 사용)
 
 ```
 <div class="preference1">
-    <label for="cheese">Do you like cheese?</label>
+    <label for="cheese1">Do you like cheese?</label>
     <input type="checkbox" name="cheese" id="cheese1">x
 </div>
 
@@ -73,7 +73,7 @@ for 속성에 요소의 id를 입력해 연결하거나, label 태그 안에 중
 라디오 버튼 - ```<input type="radio" name="이름" id="id" value="요소의 값">```
 
 
-체크박스와 달리 라디오 버튼은 아래와같이 동일한 name 값으로 버튼들을 그룹화하여 1가지 항목만 선택하게 할 수 있다.
+체크박스와 달리 라디오 버튼은 아래와 같이 동일한 name 값으로 버튼들을 그룹화하여 1가지 항목만 선택하게 할 수 있다.
 ```
 <fieldset>
     <legend>Select a maintenance drone:</legend>
@@ -156,7 +156,7 @@ https://developer.mozilla.org/ko/docs/Learn/Forms#html_%EC%9A%94%EC%86%8C
 
 # HTML 폼 유효성 검사(validation)
 
-유효성 검사란 입력에 제한을 추가하거나 하여 입력된 데이터가 유효한 값인지 검사하는 것. 브라우저에서 수행되는 유효성 검사를 '클라이언트측 유효성 검사'라고 하고 서버에서 수행되는 유효성 검사를 '서버측 유효성 검사'라고 한다.
+유효성 검사란 입력 값을 정해진 형식으로만 제한하는 것을 말한다. 브라우저에서 수행되는 유효성 검사를 '클라이언트측 유효성 검사'라고 하고 서버에서 수행되는 유효성 검사를 '서버측 유효성 검사'라고 한다.
 
 EX) 특수 문자를 포함해야 되는 비밀번호, 아이디 최대 길이 제한 등
 

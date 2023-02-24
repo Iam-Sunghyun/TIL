@@ -54,7 +54,7 @@ https://poiemaweb.com/css3-responsive-web-design
 
 그렇기 때문에 데스크톱 브라우저 뷰포트의 375x667 크기에서 보이는 웹 페이지 형태가 아이폰 a8(css 픽셀 375x667)에서 나타나지 않았던 것.
 
-따라서 반응형 페이지를 제대로 출력하기 위해서는 해당 모바일 기기의 너비를(css 픽셀 너비)를 브라우저 뷰포트 너비로 지정해야 하는데, 이때 사용하는 태그가 뷰포트 메타 태그(`<meta name="viewport" ... >`)이다. 
+따라서 반응형 페이지를 제대로 출력하기 위해서는 해당 모바일 기기의 너비를(css 픽셀 너비)를 모바일 브라우저 뷰포트 너비로 지정해야 하는데, 이때 사용하는 태그가 뷰포트 메타 태그(`<meta name="viewport" ... >`)이다. 
 
 
 **[mydevice.io 물리적 픽셀, css 픽셀 값 비교]**
@@ -93,7 +93,7 @@ https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag
 
 # 미디어 쿼리(media query)
 
-미디어 쿼리란 반응형 웹 디자인의 핵심이 되는 CSS3 기능으로 기기 유형, 출력 화면 크기 등 조건에 따라 스타일을 다르게 적용할 수 있게 한다.
+미디어 쿼리란 반응형 웹 디자인의 핵심이 되는 CSS3 기능으로 기기 유형, 출력 화면 크기 등 조건에 따라 스타일을 다르게 적용할 수 있게 하는 기능이다.
 
 `@media` 키워드와 **미디어의 유형(media types)**, **미디어 특성(media features)** 을 지정하고 적용할 스타일이 선언한다.
 
@@ -181,7 +181,7 @@ https://developer.mozilla.org/ko/docs/Web/CSS/Media_Queries/Using_media_queries
 논리합(`or`) 연산자로 쿼리 중 하나라도 참일 경우 적용된다.
 
 ```
-// 너비가 400px인 화면 장치이거나 너비가 높이보다 큰 화면 장치의 경우 
+// 너비가 400px인 화면 장치이거나 너비가 높이보다 큰 경우(가로 모드)
 @media screen and (min-width: 400px), screen and (orientation: landscape) {
     body {
         color: blue;
