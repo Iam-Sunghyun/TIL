@@ -97,7 +97,7 @@ https://developer.mozilla.org/ko/docs/Web/CSS/position
 
 ## `absolute`, `fixed`의 컨테이닝 블록이 변경되는 경우
 
-`position`이 `absolute`인 경우 가장 가까운 조상 요소 중 `position`이 `static`이 아닌 요소가 있다면 해당 조상 요소가, 그렇지 않다면 초기 컨테이닝 블록(루트 요소인 `<html>`의 컨테이닝 블록)이 컨테이닝 블록이 됐었고 `fixed`의 경우는 viewport를 컨테이닝 블록으로 위치가 결정됐었다.
+`position`이 `absolute`인 경우 가장 가까운 조상 요소 중 `position`이 `static`이 아닌 요소가 있다면 해당 조상 요소가, 그렇지 않다면 초기 컨테이닝 블록(루트 요소인 `<html>`의 컨테이닝 블록, 결국 뷰포트 기준임)이 컨테이닝 블록이 됐었고 `fixed`의 경우는 항상 `viewport`를 컨테이닝 블록으로 위치가 결정됐었다.
 
 위 두가지 `position`에서 컨테이닝 블록이 변경되는 경우가 있는데, 요소의 조상 중 다음을 만족하는 요소가 있는 경우 컨테이닝 블록이 해당 조상 요소의 `padding` 박스로 변경된다.
 
