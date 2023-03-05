@@ -1,9 +1,10 @@
 <h2>목차</h2>
 
 - [컴포넌트에 이벤트 핸들러 등록하기](#컴포넌트에-이벤트-핸들러-등록하기)
-- [리액트 요소에 반응성 추가하기 (`state`, 상태 `Hook`, `useState()`)](#리액트-요소에-반응성-추가하기-state-상태-hook-usestate)
-- [`Form`으로 사용자 입력 업데이트하기](#form으로-사용자-입력-업데이트하기)
-  - [이전 `state` 값에 의존하여 업데이트하기](#이전-state-값에-의존하여-업데이트하기)
+- [상호작용 추가하기 (`useState()`, 상태 `Hook`,)](#상호작용-추가하기-usestate-상태-hook)
+  - [HTML `Form`으로 사용자 입력받아 업데이트하기](#html-form으로-사용자-입력받아-업데이트하기)
+  - [다음 렌더링 전 `state` 값을 여러 번 업데이트하기](#다음-렌더링-전-state-값을-여러-번-업데이트하기)
+  - [Lifting state up - 상위 컴포넌트에 데이터 전달하기](#lifting-state-up---상위-컴포넌트에-데이터-전달하기)
 
 # 컴포넌트에 이벤트 핸들러 등록하기
 
@@ -30,7 +31,7 @@
 
 https://ko.reactjs.org/docs/events.html
  
-# 리액트 요소에 반응성 추가하기 (`state`, 상태 `Hook`, `useState()`)
+# 상호작용 추가하기 (`useState()`, 상태 `Hook`,)
 
 다음은 버튼 클릭 시 근처 요소의 텍스트가 변경되는 이벤트 핸들러를 등록하는 코드이다. 
 
@@ -60,14 +61,16 @@ function ExpenseItem(props) {
 ```
 그 이유는 리액트에서 컴포넌트 렌더링 후 `JSX`에서 자바스크립트로 변환을 거쳐(React DOM), 실제 DOM과 비교 후 변경된 곳을 동기화하여 브라우저 출력을 업데이트하는데, 위와 같이 일반적인 지역변수는 렌더링 간에 값이 유지되지도 않고(매 렌더링마다 새롭게 평가, 생성), 초기 렌더링 이후 지역변수 값을 변경하는 것으로는 렌더링이 트리거 되지 않기 때문("렌더링"은 React가 함수인 컴포넌트를 호출한다는 것을 의미). 
 
-이런 경우 `state`라고 하는 상태 변수를 사용하는데 함수 컴포넌트에선 React 버전 16.8부터 추가된 **`Hook`이라는 기능을 사용하여 `state` 값을 생성 및 변경하고 컴포넌트를 리렌더링 시킬 수 있다.**
+이런 경우 `state`라고 하는 상태 변수를 사용하여 값을 유지하고 렌더링을 트리거할 수 있다.
 
-+ **`state`란 컴포넌트 자기 자신 안에서 생성되고 제어되는 데이터로 요소에 반응성을 추가하기 위한 컴포넌트 내부 상태 값(데이터)이다.**
+함수 컴포넌트에선 React 버전 16.8부터 추가된 **`Hook`이라는 기능을 사용하여 `state`를 제어한다.**
+
++ **`state`란 컴포넌트 자기 자신 안에서 생성되고 제어되는 데이터로 요소에 반응성을 추가하는데 사용되는 컴포넌트 내부 상태 값(데이터)이다.**
 + `props`와 달리 변경이 가능한 값이다.
 
-훅은 React가 렌더링 되는 동안에만 사용할 수 있는 특수 기능으로 `state`를 제어하는 `Hook` 말고도 여러 추가적인 `Hook`이 있으며 모든 `Hook`은 컴포넌트 내부의 최상위 수준에서 호출되어야 한다.
+훅은 React가 렌더링 되는 동안에만 사용할 수 있는 특수 기능으로 `state`를 제어하는 `Hook` 말고도 여러 추가적인 `Hook`이 있으며 모든 **`Hook`은 컴포넌트 내부의 최상위 수준에서 호출되어야 한다.**
 
-아래와 같이 `useState()` 훅을 호출하여 인수로 전달한 값을 갖는 `state`와, `state`를 업데이트 할 수 있는 함수를 요소로 갖는 배열을 반환받아 `state`를 제어할 수 있다.
+아래와 같이 `useState()` 훅을 호출하여 인수를 초기 값으로 갖는 상태 변수(`state`)와, `state`를 업데이트 할 수 있는 `set` 함수를 요소로 갖는 배열을 반환받아 `state`를 제어할 수 있다.
 
 ```
 import ExpenseDate from './ExpenseDate';
@@ -99,17 +102,17 @@ function ExpenseItem(props) {
 }
 ```
 
-`useState()`가 반환한 함수를 `setTitle` 변수에 저장하고, 인수를 전달해 호출하여 상태 변수 값을 업데이트하고 렌더링을 트리거한다.
+`useState()`가 반환한 `set` 함수를 `setTitle` 변수에 저장하고, 인수를 전달해 호출하여 상태 변수 값을 업데이트하고 렌더링을 트리거한다.
 
-컴포넌트가 다시 호출되면 위의 `title` 상태 변수는 `setTitle()`로 설정한 가장 최신 값이 할당되는데 이는 상태 변수가 지역 변수와 달리 매 호출마다 새롭게 평가되고 값이 할당되는 것이 아니라 리액트에 의해 기억되기 때문이다.
+함수 컴포넌트가 다시 호출되면(렌더링) 위의 `title` 상태 변수는 `setTitle()`로 설정한 가장 최신 값이 할당되는데 이는 상태 변수가 지역 변수와 달리 매 호출마다 새롭게 평가되고 값이 할당되는 것이 아니라 리액트에 의해 기억되기 때문이다.
 
-맨 처음 `useState()`를 호출했을 때 전달한 값을 초기 값으로 갖고 `set` 함수로 상태 값이 변경되면 컴포넌트가 재호출 되는데 이때 `useState()`의 인수로 또 다시 초기화되는 것이 아닌(초기 렌더링 이후 무시 됨) `set` 함수로 업데이트 된 가장 최신의 값을 할당한다.
+맨 처음 `useState()`를 호출했을 때 전달한 값을 초기 값으로 갖고 `set` 함수로 상태 값이 업데이트되면 컴포넌트가 재호출 되는데 이때 `useState()`의 인수로 또 다시 초기화되는 것이 아닌 `set` 함수로 업데이트 된 가장 최신의 값을 할당한다(초기 렌더링 이후 초기 인수 값은 무시 됨).
 
-추가로 `set`함수를 통한 `state` 값의 변경은 비동기적으로 이루어진다. 따라서 `setTitle()` 다음에 `console.log()`가 위치하여도 콘솔창에는 업데이트 전 값이 출력된다. 
+추가로 `set` 함수를 통한 `state` 값의 변경은 비동기적으로 이루어진다. 따라서 `setTitle()` 다음에 `console.log()`가 위치하여도 콘솔 창에는 업데이트 전 값이 출력된다. 
 
-<!-- 비동기로 동작하는게 맞나? -->
+<!-- 비동기가 맞나? -->
 
-결국 `set` 함수는 다음 렌더링에 대한 상태 변수만 업데이트하는 것.
+<!-- **`set` 함수는 다음 렌더링에 대한 상태 변수만 업데이트한다.** -->
 
 <!--
 
@@ -141,7 +144,7 @@ https://beta.reactjs.org/reference/react/useState#avoiding-recreating-the-initia
 https://beta.reactjs.org/learn/render-and-commit
 
 
-# `Form`으로 사용자 입력 업데이트하기
+## HTML `Form`으로 사용자 입력받아 업데이트하기
 
 `Form` 요소로 사용자 입력을 받고 이벤트 핸들러에서 `state`를 업데이트하는 코드이다.
 
@@ -158,7 +161,7 @@ function ExpenseForm() {
     setDate(e.target[0]);
     setTitle(e.target[1]);
     setAmount(e.target[2]);
-    e.preventDefault();     // form
+    e.preventDefault();     
   };
 
   return (
@@ -183,9 +186,38 @@ function ExpenseForm() {
 export default ExpenseForm;
 ```
 
-여기서 알아야 할 것은 **React는 상태 업데이트를 일괄 처리한다는 것**. 즉, 이벤트 핸들러의 모든 코드와 `set` 함수가 호출된 후에 화면을 업데이트하는 것으로 단일 이벤트 중에 여러 번 렌더링되는 것을 방지한다. 
+여기서 알아야 할 것은 **React는 상태 업데이트를 일괄 처리한다는 것**이다. 즉, `set` 함수는 비동기적으로 동작하여 따로 큐에 푸시되고, 이벤트 핸들러의 모든 코드가 실행되고 난 뒤 일괄적으로 실행되어 상태가 업데이트되고 리렌더링이 발생한다. 
 
-위와 같이 3개의 상태 변수를 선언할 수도 있고 다음과 같이 하나의 객체에 담아서 선언할 수도 있다.
+이런 방식으로 단일 이벤트 중에 여러 번 렌더링되는 것을 방지하는 것(`set` 함수 호출마다 렌더링이 발생하는 것이 아니다). 
+
+따라서 아래와 같이 동일한 `set` 함수를 여러 번 호출하여도 특정 렌더링 당시의 고정된 상태 값을 기반으로 다음 렌더링에 대한 상태 값을 변경하는 것이기 때문에 원하는 값이 만들어지지 않을 수 있다.
+
+```
+/** 
+ * 버튼을 클릭하면 number 값이 +3 될 것 같지만 그렇지 않다.
+ * set 함수는 다음 렌더링에 대한 상태 값을 업데이트하는 것이고, 일괄적으로 처리되고 나서 렌더링이 발생하기 때문에 각각의 set 함수 호출마다 상태 변수가 업데이트 되지 않는다.
+ * 따라서 아래의 set 함수 3회 호출은 렌더링 당시 number 값(0)을 기준으로 다음 렌더링에 number에 0 + 1 을 할당하라고 3번 호출하는 것과 같다.
+ * 결론적으로 버튼 클릭 시 number 값은 +3이 아닌 +1이 되는 것.
+ */
+import { useState } from 'react';
+
+export default function Counter() {
+  const [number, setNumber] = useState(0);
+
+  return (
+    <>
+      <h1>{number}</h1>
+      <button onClick={() => {
+        setNumber(number + 1);
+        setNumber(number + 1);
+        setNumber(number + 1);
+      }}>+3</button>
+    </>
+  )
+}
+```
+
+추가로 상태 변수를 다음과 같이 하나의 객체로 선언할 수도 있다.
 
 ```
 function ExpenseForm() {
@@ -216,15 +248,15 @@ const formSubmited = e => {
 
 **`set` 함수는 이전 값과 병합하는게 아닌 새롭게 업데이트하는 것**이기 때문에 `set` 함수에 전달하지 않은 프로퍼티는 사라진다. 
 
-## 이전 `state` 값에 의존하여 업데이트하기
 
-이전 상태 값에 의존하여 상태를 업데이트해야 되는 경우가 있을 수 있다.
+## 다음 렌더링 전 `state` 값을 여러 번 업데이트하기
+
+이전 상태 값에 의존하여 다음 렌더링 전에 상태를 여러 번 업데이트해야 되는 경우가 있을 수 있다.
 
 여러 개의 이벤트 핸들러에서 `set` 함수로 업데이트 하는 코드가 있고 해당 이벤트 핸들러들이 동시에 호출된다면, 혹은 하나의 이벤트 핸들러에서 동시에 여러 개의 `set` 함수로 업데이트 한다면 갱신되지 않은 `state` 값으로 업데이트하여 기대한 값이 나오지 않을 수 있다. 
 
 이런 경우 **`set` 함수에 콜백을 전달하여 이전 상태 값에 의존하여 업데이트 할 수 있다.**
 
-<!-- 예시 수정필 -->
 ```
 // 버튼 클릭 시 number 값이 +3 씩 증가
 import { useState } from 'react';
@@ -243,19 +275,139 @@ export default function Counter() {
     </>
   )
 }
+------------------------------------
+// 위의 코드를 수정한 예시
+function ExpenseForm() {
+
+const [userInput, setUserInput] = useState({
+  date: '',
+  title: '',
+  amount: ''
+});
+
+const formSubmited = e => {
+    setUserInput(userInput => ({   // 이전 userInput 값에 의존
+      ...userInput,    
+      date: e.target[0],
+    }));
+    e.preventDefault();
+  };
+
+ return (
+        . 
+        .
+        .
+  );
+}
 ```
 </br>
 
 
+<!-- ## 양방향 바인딩, 상태 변수로 입력 제어 
 
-**[React docs 상태 업데이트 일괄 처리]**
+https://beta.reactjs.org/reference/react-dom/components/input#controlling-an-input-with-a-state-variable
+사용자 입력을 받아 `state` 업데이트, `state` 값 수정한 것을 기반으로 input 요소 값 결정
+ -->
+
+**[React docs 여러 개의 상태 업데이트 처리]**
 
 https://beta.reactjs.org/learn/queueing-a-series-of-state-updates
 
 
-<!-- # 양방향 바인딩
+## Lifting state up - 상위 컴포넌트에 데이터 전달하기
 
-사용자 입력을 받아 `state` 업데이트, `state` 값 수정한 것을 기반으로 input 요소 값 결정
+상태 끌어올리기(Lifting state up)는 **컴포넌트 간에 상태를 공유할 때 사용되는 중요한 패턴**으로 자식 컴포넌트에서 부모 컴포넌트로 데이터를 이동해서, 부모 컴포넌트에서 사용하거나 또는 다른 자식 컴포넌트로 데이터를 전달하는 것을 말한다(트리에서 간선을 하나씩 거쳐 이동하는 것과 같다).
+
+아래의 `ExpenseForm.js`에서 폼으로 수집한 사용자 데이터를 상위 컴포넌트인 `App.js`에 전달하는 과정을 통해 상태 끌어올리기(Lifting state up)가 어떻게 동작하는 것인지 살펴본다. 
 
 
-## -->
+```
+// App.js (상위 컴포넌트)
+function App() {
+      .
+      .
+      .
+  // 하위 컴포넌트 데이터를 전달받기 위한 함수
+  const onAddExpense = expenses => {
+    console.log(expenses);
+  }
+
+  return (
+    <div className='header'>
+      <ExpenseForm onAddExpense={onAddExpense} />
+      <h2>지출 내역</h2>
+      <Expenses expenses={expenses} />
+    </div>
+  );
+}
+
+export default App;
+----------------------------
+// ExpenseForm.js (하위 컴포넌트)
+function ExpenseForm(props) {
+  const [date, setDate] = useState('');
+  const [title, setTitle] = useState('');
+  const [amount, setAmount] = useState('');
+
+  // form 요소 submit 이벤트 핸들러
+  const submitHandler = (e) => {
+    e.preventDefault();
+
+    // form으로 입력 받은 데이터를 객체에 저장
+    const expenseData = {
+      date: enteredDate,
+      title: enteredTitle,
+      amount: enteredAmount,
+    }
+    // 상위 컴포넌트에서 props로 전달받은 함수에 전달하고자 하는 데이터를 인수로 넣어 호출. 상태를 상위 컴포넌트에 전달한다
+    props.onAddExpense(expenseData);    
+    setDate('');              
+    setTitle('');
+    setAmount('');
+  };
+
+  // input 요소 change 이벤트 핸들러
+  const enteredDate = (e) => {
+    setDate(e.target.value);
+  };
+
+  const enteredTitle = (e) => {
+    setTitle(e.target.value);
+  };
+
+  const enteredAmount = (e) => {
+    setAmount(e.target.value);
+  };
+
+  return (
+    <form className='new-expense__form' onSubmit={submitHandler}>
+      <div>
+        <label htmlFor='date'>날짜</label>
+        <input
+          type='date'
+          value={date}
+          onChange={enteredDate}
+          name='date'
+          id='date'
+          min='2019-01-01'
+          max='2023-12-31'
+          required
+        />
+      </div>
+      <div>
+        <label htmlFor='title'>항목 명</label>
+        <input type='text' value={title} onChange={enteredTitle} name='title' id='title' required />
+      </div>
+      <div>
+        <label htmlFor='amount'>금액</label>
+        <input type='number' value={amount} onChange={enteredAmount} name='amount' id='amount' min='1' required />
+      </div>
+      <button>등록</button>
+    </form>
+  );
+}
+
+export default ExpenseForm;
+```
+
+`form` 요소가 있는 하위 컴포넌트에서 사용자로부터 입력을 받고, `submit` 이벤트가 발생하면 해당 입력 값을 상위 컴포넌트로부터 `props`로 전달받은 함수에 인수로 전달해서 호출하여 상위 컴포넌트에 데이터를 전달하는 방식이다.
