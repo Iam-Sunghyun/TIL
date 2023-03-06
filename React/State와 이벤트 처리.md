@@ -1,10 +1,11 @@
 <h2>목차</h2>
 
 - [컴포넌트에 이벤트 핸들러 등록하기](#컴포넌트에-이벤트-핸들러-등록하기)
-- [상호작용 추가하기 (`useState()`, 상태 `Hook`,)](#상호작용-추가하기-usestate-상태-hook)
+- [상태 변수로 상호작용 추가하기 (`useState()`, 상태 `Hook`,)](#상태-변수로-상호작용-추가하기-usestate-상태-hook)
   - [HTML `Form`으로 사용자 입력받아 업데이트하기](#html-form으로-사용자-입력받아-업데이트하기)
   - [다음 렌더링 전 `state` 값을 여러 번 업데이트하기](#다음-렌더링-전-state-값을-여러-번-업데이트하기)
   - [Lifting state up - 상위 컴포넌트에 데이터 전달하기](#lifting-state-up---상위-컴포넌트에-데이터-전달하기)
+- [제어 컴포넌트 (Controlled Component), 비제어 컴포넌트 (uncontrolled component)](#제어-컴포넌트-controlled-component-비제어-컴포넌트-uncontrolled-component)
 
 # 컴포넌트에 이벤트 핸들러 등록하기
 
@@ -31,7 +32,7 @@
 
 https://ko.reactjs.org/docs/events.html
  
-# 상호작용 추가하기 (`useState()`, 상태 `Hook`,)
+# 상태 변수로 상호작용 추가하기 (`useState()`, 상태 `Hook`,)
 
 다음은 버튼 클릭 시 근처 요소의 텍스트가 변경되는 이벤트 핸들러를 등록하는 코드이다. 
 
@@ -303,12 +304,6 @@ const formSubmited = e => {
 </br>
 
 
-<!-- ## 양방향 바인딩, 상태 변수로 입력 제어 
-
-https://beta.reactjs.org/reference/react-dom/components/input#controlling-an-input-with-a-state-variable
-사용자 입력을 받아 `state` 업데이트, `state` 값 수정한 것을 기반으로 input 요소 값 결정
- -->
-
 **[React docs 여러 개의 상태 업데이트 처리]**
 
 https://beta.reactjs.org/learn/queueing-a-series-of-state-updates
@@ -411,3 +406,22 @@ export default ExpenseForm;
 ```
 
 `form` 요소가 있는 하위 컴포넌트에서 사용자로부터 입력을 받고, `submit` 이벤트가 발생하면 해당 입력 값을 상위 컴포넌트로부터 `props`로 전달받은 함수에 인수로 전달해서 호출하여 상위 컴포넌트에 데이터를 전달하는 방식이다.
+
+
+# 제어 컴포넌트 (Controlled Component), 비제어 컴포넌트 (uncontrolled component)
+<!-- 수정 및 정리 필요 -->
+제어, 비제어 컴포넌트, 상태, 무상태 컴포넌트
+제어 컴포넌트란
+제어 컴포넌트 - 사용자가 입력을 state로 직접 제어, 관리하는 컴포넌트. -> 입력될 때마다 set으로 state 업데이트. 즉각적인 상호작용 가능 ex) 사용자 입력 알파벳을 대문자로 바꿔서 form에 재출력, 즉각적인 유효성 검사로 입력을 제한하거나 요소를 다르게 출력 등
+매 입력마다 state를 갱신하고, 렌더링이 일어나기 때문에 불필요한 렌더링이 발생할 수 있다
+
+
+비제어 컴포넌트 - state 없이 출력되는 컴포넌트
+
+**[React에서 제어 vs 비제어 컴포넌트]**
+
+https://itprogramming119.tistory.com/entry/React-%EC%A0%9C%EC%96%B4-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8-VS-%EB%B9%84%EC%A0%9C%EC%96%B4-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8
+
+**[React docs controlled input]**
+
+https://beta.reactjs.org/reference/react-dom/components/input#controlling-an-input-with-a-state-variable
