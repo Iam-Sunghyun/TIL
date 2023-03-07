@@ -35,10 +35,13 @@ function Expenses(props) {
 
 하지만 이렇게만 작성하면 브라우저 콘솔 창에 `Warning: Each child in a list should have a unique "key" prop.`라고 경구 문구가 뜨는데 다음 내용에서 키에 대해 살펴본다.
 
+**[React docs Updating Arrays in State]**
 
-
+https://beta.reactjs.org/learn/updating-arrays-in-state
 
 # 리스트 키(key)
+
+<!-- 키 사용하지 않으면 성능적인 부분도 손해 반드시 사용.. 자세한 내용은?-->
 
 리액트에서 키(key)는 리스트 항목들을 구분하기 위한 고유한 식별자로 일반적인 키의 의미와 다르지 않다.
 
@@ -52,8 +55,11 @@ function Expenses(props) {
 
 컴포넌트에 집어넣을 값을 키로 사용하는 경우 다른 컴포넌트와 중복의 여지가 있고(경고 문구 뜸) 인덱스를 키로 사용하는 경우 배열 내의 컴포넌트의 순서가 변경될 여지가 있는 경우 성능적인 부분이나 `state` 관리하는데 있어서 문제가 발생할 수 있다(key를 따로 명시하지 않으면 리액트는 자동으로 인덱스를 키로 사용한다고 함). 
 
-따라서 가능한 별도의 고유한 id를 생성하여 사용하는 것이 좋을 듯.
+따라서 가능한 별도의 고유한 id를 생성후 추가하여 사용하도록 한다.
 
+**[React docs 리스트와 key]**
+
+https://ko.reactjs.org/docs/lists-and-keys.html
 
 **[React docs rendering-lists]**
 

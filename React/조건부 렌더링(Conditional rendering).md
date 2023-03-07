@@ -31,15 +31,44 @@ function Greeting(props){
 
 인라인 조건은 리액트 내에서 매우 자주 사용되는 패턴으로 `JSX` 내부에 중괄호(`{}`)를 사용하여 자바스크립트 논리 연산자로 렌더링 될 컴포넌트를 결정한다. 
 
-다음 예시는 읽지 않은 메시지가 있는 경우, 없는 경우에 따라 반환하는 엘리먼트가 달라지는 컴포넌트이다. 
+다음 예시는 삼항 조건 연산자를 사용하여 기본 값은 모두 출력, 특정 년도가 입력되면 해당 년도 값의 엘리먼트들을 반환하는 컴포넌트이다.
+
+하위 컴포넌트(`ExpenseFilter.js`)에서 사용자로부터 특정 년도를 입력받은 뒤, 상위 컴포넌트(`Expense.js`)로 끌어올리고 `state`를 업데이트하여 렌더링을 트리거한다.
 
 ```
+import Card from '../UI/Card';
+import ExpenseItem from './ExpenseItem';
+import ExpenseFilter from './ExpenseFilter';
+import './Expenses.css';
+import { useState } from 'react';
 
+function Expenses(props) {
+    
+  // 컴포넌트 리스트 저장 배열
+  const expenseItems = props.expenseList.map((expense) => 
+    <ExpenseItem key={expense.id} title={expense.title} amount={expense.amount} date={expense.date} />
+  );
+
+  // 년도 저장용 상태 변수
+  const [year, setYear] = useState('all');
+
+  // ExpenseFilter.js state 끌어올리기용 함수
+  const getExpenseYear = (selectedYear) => {
+    // 입력된 년도를 상태 변수에 업데이트
+    setYear(selectedYear);
+  };
+
+  return (
+    <div>
+      <ExpenseFilter getExpenseYear={getExpenseYear} />
+      // 삼항 조건 연산자로 출력 엘리먼트를 설정
+      <Card className='expenses'>{year === 'all' ? expenseItems : expenseItems.filter(expense => expense.props.date.split('-')[0] === year)}</Card>
+    </div>
+  );
+}
+
+export default Expenses;
 ```
-
-
-
-삼항 조건 연산자를 사용할 수도 있음.
 
 
 # 컴포넌트 렌더링 막기
