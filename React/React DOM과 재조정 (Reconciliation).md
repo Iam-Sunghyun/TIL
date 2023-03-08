@@ -8,6 +8,10 @@ React는 실제 DOM(DOM의 가상 표현)의 경량 사본과 같은 가상 DOM�
 
 그런 다음 실제 브라우저 DOM에 변경된 요소만 웹 페이지에서 업데이트하여 렌더링하는데 변경 사항을 실제 DOM으로 변환하는 이 전체 프로세스를 재조정 (Reconciliation)이라고 한다.
 
+**[※ React 성능 최적화 - React가 UI를 업데이트하는 방법 이해]**
+
+https://blog.logrocket.com/optimizing-performance-react-app/#react-update-ui
+
 **[React docs 재조정 (Reconciliation)]**
 
 https://ko.reactjs.org/docs/reconciliation.html
