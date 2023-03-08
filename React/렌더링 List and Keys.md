@@ -64,3 +64,107 @@ https://ko.reactjs.org/docs/lists-and-keys.html
 **[React docs rendering-lists]**
 
 https://beta.reactjs.org/learn/rendering-lists
+
+
+
+<!-- # 배열, 객체 상태 변수 불변성
+
+내용 수정 필요 이해 부족
+React 공식 문서에는 배열이나 객체인 상태 변수를 읽기 전용으로 즉, 불변 데이터로 취급하라고 되어있다. 
+
+배열 상태 변수로 예를 들면 `arr[0] = 'bird'`, `push()`, `pop()`같이 직접 변경하거나 요소를 추가, 삭제하는게 아닌 새로운 배열로 변경해야한다는 것(물론 `push()` 메서드와 같은 방법으로 직접 변경이 동작하지 않는 것은 아니다).
+
+이러한 이유로는 성능 최적화, 변경 사항 추적으로 렌더링 트리거
+이유는 뭘까
+
+만약 객체 상태 변수를 직접 변경하게 되면 React가 변경 사항을 추적하지 못하고 리렌더링이 발생하지 않기 때문에 성능에 문제가 생길 수 있다.
+
+
+이전 버전의 상태 값을 유지할 수 없으며(재사용 불가능) `set`
+
+배열 상태 변수를 업데이트하려면 다음과 같이 `set` 함수에 새 배열을 전달하거나 변수에 복사해서 사용해야한다.
+
+```
+setArtists([newValue, ...prevArray]);
+``` 
+
+**[※ React 성능 최적화 - 불변 데이터 구조 사용]**
+
+https://blog.logrocket.com/optimizing-performance-react-app/#immutable-data-structures
+
+**[React docs Updating Arrays in State]**
+
+https://beta.reactjs.org/learn/updating-arrays-in-state#making-other-changes-to-an-array
+
+**[React docs 불변성이 중요한 이유]**
+
+https://beta.reactjs.org/learn/tutorial-tic-tac-toe#why-immutability-is-important -->
+
+
+# 배열 상태 변수 정렬해보기
+
+배열 상태 변수의 특정 요소 값을 기준으로 정렬한다.
+
+우선 오름차순, 내림차순을 입력받는 하위 컴포넌트(`ExpenseSort.js`)로 `App.js`의 정렬 함수(`sortCheck`)를 `props`로 전달하여 입력 받은 정렬 방식을 인수로 전달받는다.
+
+오름차순('ascending'), 내림차순('descending') 여부에 따라 정렬을 실행하고 기존의 상태 변수에 업데이트하여 새롭게 정렬된 `expenseList`를 바탕으로 리렌더링 한다.
+
+여기서 중요한 것은 2레벨 하위에 있는 컴포넌트로부터 값을 전달 받았다는 것과 불변성을 위해 배열을 새로운 배열에 복사하여 정렬 후 `set` 함수로 업데이트 한다는 것이다.
+
+```
+// App.js
+      .
+      .
+      .
+  const [expenseList, setExpenseList] = useState([]);
+
+  // 하위 컴포넌트에서 입력받은 값을 전달받아 정렬하는 함수
+  const sortCheck = (order) => {
+    const orderedList = [...expenseList];
+
+    if (order === 'ascending') {
+      orderedList.sort((a, b) => {
+        if (a.date.split('-')[1] === b.date.split('-')[1]) {
+          return a.date.split('-')[2] - b.date.split('-')[2];
+        }
+        return a.date.split('-')[1] - b.date.split('-')[1];
+      });
+    }
+    if (order === 'descending') {
+      orderedList.sort((a, b) => {
+        if (b.date.split('-')[1] === a.date.split('-')[1]) {
+          return b.date.split('-')[2] - a.date.split('-')[2];
+        }
+        return b.date.split('-')[1] - a.date.split('-')[1];
+      });
+    }
+    setExpenseList([...orderedList]);
+  };
+
+    return (
+    <div className='header'>
+      <NewExpense onAddExpense={onAddExpense} />
+      <h2>지출 내역</h2>
+      <Expenses expenseList={expenseList} sortCheck={sortCheck} />
+    </div>
+  );
+}
+-------------------------
+// ExpenseSort.js
+function ExpenseSort(props) {
+  const sortChanged = (e) => {
+    // App.js로부터 전달받은 함수
+    props.sortCheck(e.target.value);
+  };
+
+  return (
+    <div className='expense-item__sort'>
+      <select className='expense-item__sort-select' onChange={sortChanged}>
+        <option value={'default'}>--정렬--</option>
+        <option value={'ascending'}>오름차순</option>
+        <option value={'descending'}>내림차순</option>
+      </select>
+    </div>
+  );
+}
+```
