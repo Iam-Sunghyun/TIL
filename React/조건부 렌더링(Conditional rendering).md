@@ -1,3 +1,8 @@
+<h2>목차</h2>
+
+- [조건부 렌더링(Conditinal rendering)](#조건부-렌더링conditinal-rendering)
+- [인라인 조건(Inline condition)](#인라인-조건inline-condition)
+
 # 조건부 렌더링(Conditinal rendering)
 
 조건부 렌더링이란 말 그대로 조건에 따라 렌더링이 달라지는 것을 말하며 자바스크립트 조건문(`if`)을 통해 컴포넌트가 반환하는 값을 달리한다.
@@ -21,8 +26,7 @@ function Greeting(props){
   return <GuestGreeting />;
 }
 ```
-
-# 엘리먼트 변수(Element variable)
+<h3>엘리먼트 변수(Element variable)</h3>
 
 컴포넌트를 할당한 변수를 말한다. 엄밀히는 컴포넌트가 반환하는 엘리먼트를 변수에 담아 사용하는 것.
 
