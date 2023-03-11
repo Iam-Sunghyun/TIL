@@ -61,7 +61,7 @@ function ExpenseItem(props) {
 }
 ```
 
-그 이유는 위와 같이 일반적인 지역변수는 렌더링 간에 값이 유지되지도 않고(매 렌더링마다 새롭게 평가, 생성), 초기 렌더링 이후 지역변수 값을 변경하는 것으로는 렌더링이 트리거 되지 않기 때문이다(**"렌더링"은 React가 함수인 컴포넌트를 호출한다는 것을 의미**). 
+그 이유는 위와 같이 일반적인 지역변수는 렌더링 간에 값이 유지되지도 않고(매 렌더링마다 새롭게 평가, 생성), 초기 렌더링 이후 지역변수 값을 변경하는 것으로는 렌더링이 트리거 되지 않기 때문이다(**리액트에서 "렌더링"은 React가 함수 컴포넌트를 호출하거나, 클래스 컴포넌트의 경우 `컴포넌트.render()`를 호출하는 것을 의미한다**). 
 
 이런 경우 `state`라고 하는 상태 변수를 사용하여 새로운 렌더링이 발생해도 이전 값을 유지하고, 또 값 변경 시 렌더링을 트리거하여 화면을 업데이트 시킬 수 있다.
 
@@ -128,6 +128,12 @@ Effect 후크
 Performance Hooks
 
 그 외 -->
+
+
+**[※ React docs 컴포넌트 렌더링에 대하여]**
+
+https://beta.reactjs.org/learn/render-and-commit
+
 **[geekforgeeks react virtual dom]**
 
 https://www.geeksforgeeks.org/reactjs-virtual-dom/
@@ -145,10 +151,6 @@ https://beta.reactjs.org/learn/state-a-components-memory
 
 https://beta.reactjs.org/reference/react/useState#avoiding-recreating-the-initial-state
 
-
-**[※ React docs 컴포넌트 렌더링에 대하여]**
-
-https://beta.reactjs.org/learn/render-and-commit
 
 
 ## HTML `Form`으로 사용자 입력받아 상태 업데이트하기
