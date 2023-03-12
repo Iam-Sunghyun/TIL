@@ -162,6 +162,8 @@ https://beta.reactjs.org/learn/updating-arrays-in-state#making-other-changes-to-
 
 https://beta.reactjs.org/learn/tutorial-tic-tac-toe#why-immutability-is-important
 
+https://velopert.com/3486
+
 
 # 배열 상태 변수 정렬해보기
 
