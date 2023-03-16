@@ -78,6 +78,11 @@ export default Expenses;
 
 https://beta.reactjs.org/learn/conditional-rendering
 
+
+**[React 조건부 렌더링에서 `&&` 사용하지 말아야하는 이유]**
+
+https://medium.com/geekculture/stop-using-for-conditional-rendering-in-react-a0f7b96200f8
+
 <!-- # 컴포넌트 렌더링 막기
 
 return null을 하면 렌더링이 발생하지 않음.
