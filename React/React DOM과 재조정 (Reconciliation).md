@@ -6,13 +6,13 @@ React는 실제 DOM(DOM의 가상 표현)의 경량 사본과 같은 가상 DOM�
 
 리액트에서 2개의 트리를 비교할 때 사용하는 알고리즘을 비교 알고리즘 (Diffing Algorithm)이라 한다. 개발자는 key prop을 통해, 여러 렌더링 사이에서 어떤 자식 엘리먼트가 변경되지 않아야 할지 표시해 줄 수 있다-> 렌더링 List and Keys.md 참고.
 
-그런 다음 실제 브라우저 DOM에 변경된 요소만 웹 페이지에서 업데이트하여 렌더링하는데 변경 사항을 실제 DOM으로 변환하는 이 전체 프로세스를 재조정 (Reconciliation)이라고 한다.
+그런 다음 실제 브라우저 DOM에 변경된 요소만 업데이트하여 브라우저에 렌더링하는데 변경 사항을 실제 DOM으로 변환하는 이 전체 프로세스를 재조정 (Reconciliation)이라고 한다.
 
-**[리액트 렌더링 과정]**
+**[리액트 렌더링 및 재조정 과정, 리렌더링 발생하는 경우]**
 
 https://dev.to/teo_garcia/understanding-rendering-in-react-i5i
 
-https://www.geeksforgeeks.org/re-rendering-components-in-reactjs/
+https://www.developerway.com/posts/react-re-renders-guide
 
 **[React 성능 최적화 - React가 UI를 업데이트하는 방법 이해]**
 
@@ -22,12 +22,8 @@ https://blog.logrocket.com/optimizing-performance-react-app/#react-update-ui
 
 https://shiharadilshan.medium.com/react-reconciliation-and-diffing-algorithm-5faa9531175
 
-**[React docs 재조정 (Reconciliation)]**
 
-https://ko.reactjs.org/docs/reconciliation.html
-
-
-**[geekforgeeks react Virtual dom, Reconciliation]**
+**[geekforgeeks react Virtual dom, Reconciliation, rerendering]**
 
 https://www.geeksforgeeks.org/reactjs-virtual-dom/
 
