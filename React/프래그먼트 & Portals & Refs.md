@@ -6,6 +6,7 @@
 - [React Portals 이란?](#react-portals-이란)
   - [1. 이동할 위치(마운트 지점) 지정](#1-이동할-위치마운트-지점-지정)
   - [2. `createPortal` 메서드로 포탈 래퍼 컴포넌트 생성](#2-createportal-메서드로-포탈-래퍼-컴포넌트-생성)
+- [useRef 훅](#useref-훅)
 
 
 # JSX의 제한 사항
@@ -89,7 +90,7 @@ https://beta.reactjs.org/reference/react/Fragment
 
 이런 경우 React 포탈을 사용해 요소를 DOM 트리의 다른 위치로 이동시킬 수 있다(EX) `<body>` 바로 밑).
 
-부모 컴포넌트 외부로 이동한 요소는 버블링되는 이벤트를 수신하여 부모 컴포넌트와 통신할 수 있으며 `Context`를 사용해 데이터를 전달할 수도 있다.
+이외에도 부모 컴포넌트 외부로 이동한 요소는 버블링되는 이벤트를 수신하여 부모 컴포넌트와 통신할 수 있으며 `Context`를 사용해 데이터를 전달할 수도 있다.
 
 포탈을 사용하기 위해서는 우선 요소를 이동시킬 위치를 지정해야하고 또 그것을 컴포넌트에게 알려야한다. 다음 챕터에서 실제 코드를 통해 그 절차를 확인해본다.
 
@@ -111,7 +112,7 @@ https://beta.reactjs.org/reference/react/Fragment
 
 ## 2. `createPortal` 메서드로 포탈 래퍼 컴포넌트 생성
 
-<!-- 내용 수정필 -->
+<!-- 내용 수정필? -->
 `createPortal` 메서드는 `react-dom`에서 제공하는 포탈 생성 메서드이다.
 
 `createPortal(children, domNode)`는 두 개의 인수를 전달하여 호출하는데 첫 번째는 렌더링 되어야하는 요소, 두 번째는 마운트 해야할 위치(요소)를 전달한다.
@@ -155,9 +156,7 @@ const ErrorModal = (props) => {
 };
 ```
 
-`Backdrop`과 `ModalOverlay` 컴포넌트는 `ErrorModal` 래퍼 컴포넌트에만 사용되므로 하나의 파일에 묶었음
-
-첫 번째 인수로 `JSX`를 전달한 것과, 두 번째 인수에 DOM API로 요소를 취득해온 것을 주의하자.
+`Backdrop`과 `ModalOverlay` 컴포넌트는 `ErrorModal` 래퍼 컴포넌트에만 사용되므로 하나의 파일에 묶어서 작성하였으며 첫 번째 인수로 `JSX`를 전달한 것과, 두 번째 인수에 DOM API로 요소를 취득해온 것을 주의하자.
 
 `ErrorModal`로 감싼 포탈 대상 컴포넌트들은 컴포넌트 트리 어느 위치에 있던 상관없이 포탈로 이동시킬 위치(두 번째 인수로 전달한 요소 위치)에 렌더링 된다.
 
@@ -188,4 +187,76 @@ https://www.geeksforgeeks.org/what-are-portals-in-react-and-when-do-we-need-them
 
 https://blog.logrocket.com/learn-react-portals-example/
 
-<!-- # Refs -->
+# useRef 훅
+
+`useRef` 훅은 'Ref'라는 이름 그대로 실제 DOM 요소를 참조하기 위한 기능이다.
+
+```
+// ref prop으로 지정한 요소의 참조가 저장 됨
+const nameInputRef = useRef();
+
+// 참조할 대상 요소
+<input.... ref={nameInputRef}></input....>
+```
+
+참조할 리액트 요소에 `ref` prop을 추가해주면, `useRef()`로 생성한 변수에 해당 요소의 참조가 저장된다.
+
+<!-- 흠,, 이벤트 객체로도 참조 가능한데 사용 장점은?-->
+드암과 같이 폼 submit 이벤트 핸들러에서 `useRef()`로 생성한 input 요소 참조 변수를 통해 state와 같은 변수없이 입력 값을 가져올 수 있다.
+
+```
+const AddUser = (props) => {
+  const nameInputRef = useRef();
+  const [error, setError] = useState();
+
+  const addUserHandler = (event) => {
+    event.preventDefault();
+    if (nameInputRef.value.trim().length === 0) {
+      setError({
+        title: 'Invalid input',
+        message: 'Please enter a valid name and age (non-empty values).',
+      });
+      return;
+    }
+    props.onAddUser(enteredUsername, enteredAge);
+  };
+
+  const errorHandler = () => {
+    setError(null);
+  };
+      .
+      .
+  return (
+    <>
+      {error && <ErrorModal title={error.title} message={error.message} onConfirm={errorHandler} />}
+      <form onSubmit={addUserHandler}>
+        <label htmlFor='username'>Username</label>
+        <input
+          id='username'
+          type='text'
+          ref={nameInputRef}
+        />
+        <Button type='submit'>Add User</Button>
+      </form>
+    </>
+  );
+};
+```
+<!-- 내용, 예시 보충 필요  -->
+submit 이벤트 핸들러 마지막에 input 요소를 리셋해주기 위해 다음과 같이 코드를 작성할 수도 있는데, 이런 식으로 DOM을 직접 조작하기 위해 `ref`을 사용하는 건 매우 드물다.
+
+```
+nameInputRef.current.value = '';
+ageInputRef.current.value = '';
+```
+
+사용자 입력으로부터 즉각적인 상호작용을 원한다면 state를 사용하는게 맞을듯.
+<!-- 
+렌더링 트리거 없이 데이터를 저장하기 위해선 Ref?
+
+useRef()로 DOM 요소를 참조하여 값을 사용하는 경우...비제어 컴포넌트 -->
+
+
+**[React docs Refs]**
+
+https://beta.reactjs.org/learn/escape-hatches
