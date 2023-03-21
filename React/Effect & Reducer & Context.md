@@ -1,6 +1,13 @@
+<h2>목차</h2>
+
+- [useEffect 훅](#useeffect-훅)
+  - [useEffect에서 Cleanup 함수 사용하기](#useeffect에서-cleanup-함수-사용하기)
+    - [Cleanup 함수로 디바운스(debounce) 구현하기](#cleanup-함수로-디바운스debounce-구현하기)
+- [useReducer 훅](#usereducer-훅)
+- [context - 여러 컴포넌트에 영향을 주는 State](#context---여러-컴포넌트에-영향을-주는-state)
+
 # useEffect 훅
 <!-- 천천히 이해하자 -->
-<!-- `useEffect`는 리액트 컴포넌트가 렌더링될 때마다 특정 작업을 수행하도록 설정할 수 있는 Hook이다. -->
 
 `useState`와 함께 가장 많이 사용되는 훅으로 컴포넌트 렌더링 후에 부수 효과(side effect)를 수행하기 위한 리액트 훅이다.
 
@@ -17,8 +24,11 @@ useEffect(() => { ... }, [ dependencies ]);
 
 즉, 렌더링 후 부수 효과를 처리하기 위해 사용하는 훅이 `useEffect`이다. 여기서 부수 효과란 외부 상태를 변경하는 것을 말한다.
 
-리액트의 범위를 벗어난 부수 효과(side effect, 부작용)를 일으키는 작업은 리액트 렌더링과 분리되어야 하며 필요시 렌더링 이후에 수행되어야 한다. 그 말은 **컴포넌트를 순수함수 이어야 한다는 것**인데 그 이유에 대한 자세한 정리는 링크 참조. 
+리액트의 범위를 벗어난 부수 효과(side effect, 부작용)를 일으키는 작업은 리액트 렌더링과 분리되어야 하며 필요시 렌더링 이후에 수행되어야 한다. 그 말은 **컴포넌트를 순수함수 이어야 한다는 것**인데 컴포넌트를 순수한 함수로만 엄격하게 작성하면 코드베이스가 커짐에 따라 예측할 수 없는 버그와 동작을 막을 수 있다.
+
+자세한 추가 내용은 링크 참조. 
 <!-- 왜? -->
+
 **[React docs 컴포넌트가 순수해야하는 이유]**
 
 https://react.dev/learn/keeping-components-pure
@@ -82,8 +92,6 @@ export default App;
 
 자주 사용되는 방법은 아니지만 만약 의존성을 아예 전달하지 않는다면 해당 `useEffect()`는 매 렌더링마다 실행된다.
 
-
-
 ## useEffect에서 Cleanup 함수 사용하기
 
 <!-- 내용 수정필 -->
@@ -114,7 +122,45 @@ useEffect
 
 페이지 첫 로드 시 컴포넌트가 DOM에 마운트 되면서 'useEffect' 문자열이 한 번 출력된다.
 
-그 후 `enteredEmail`, `enteredPassword` 상태 변수가 변경되면 이전 컴포넌트가 언마운트 되면서 cleanup 함수가 호출되고, 새 컴포넌트가 마운트 되면서 `useEffect` 함수가 호출되어 'useEffect \n cleanup'이 출력되게 되는 것이다.
+그 후 `enteredEmail`, `enteredPassword` 상태 변수가 변경되면 이전 컴포넌트가 언마운트(DOM에서 제거) 되면서 cleanup 함수가 호출되고, 새 컴포넌트가 마운트(DOM에 추가) 되면서 `useEffect` 함수가 호출되어 'cleanup \n useEffect'이 출력되게 되는 것이다.
+
+
+### Cleanup 함수로 디바운스(debounce) 구현하기
+
+<!-- 내용 다듬기 -->
+디바운스란 이벤트 핸들러 처리할 때 유용한 기법으로 짧은 시간에 이벤트가 연속해서 발생하면 이벤트 핸들러 호출을 취소하고 맨 마지막에 발생한 이벤트의 핸들러 함수만 호출한다. 즉, 이벤트를 그룹화하여 맨 마지막에만 핸들러를 호출함으로서 과도한 이벤트 핸들러 호출을 막는다. 비슷한 기법으로 스로틀(throttle)이 있다.
+
+`useEffect` cleanup 함수로 디바운스를 구현할 수 있다.
+
+```
+// 기존 코드
+useEffect(() => {
+  setFromIsValid(
+    enterdEmail.includes('@) && enteredPassword.trim().length > 6
+  );
+}, [enteredEmail, enteredPassword]);
+----------------------------
+// 디바운스를 구현한 코드
+useEffect(() => {
+  const identifier = setTimeout(() => {
+    setFormIsValid(enteredEmail.includes('@') && enteredPassword.trim().length > 6);
+  }, 500);
+
+  return () => {
+    console.log('Clean up');
+    clearTimeout(identifier);
+  };
+}, [enteredEmail, enteredPassword]);
+```
+
+위 예시의 로직은 다음과 같다.
+
+먼저 `input` 요소의 `onChange` 이벤트가 발생할 때 마다 입력 값을 `enteredEmail`,`enteredPassword`에 업데이트한다. 그 후 `useEffect`에서 입력 값을 검사하여 `formIsValid` 상태 변수에 유효성 여부를 `Boolean` 값으로 저장한다. 
+
+여기서 문제는 입력이 업데이트될 때마다 유효성 검사도 실행되기 때문에 너무 많은 렌더링이 발생할 수 있다는 것이다. 위 예제에서의 가벼운 유효성 검사 정도라면 실제로는 별 문제가 되지 않을 수 있다. 하지만 Ajax와 같은 무거운 처리를 수행하는 코드가 있다면, 매 입력마다 요청이 발생하여 서버에 부담을 주게 된다.
+
+이때 디바운스를 통해 입력이 0.5초 이내로 연속해서 발생하는 경우 타이머를 취소하고, 맨 마지막 입력 후 0.5초 이상 입력이 없는 경우 유효성 검사를 실행하도록 한다.
+
 
 **[React docs useEffect]**
 
@@ -139,9 +185,14 @@ https://react.vlpt.us/basic/16-useEffect.html
 
 <!-- 천천히 이해하자 -->
 useState와 비슷?
-복잡한 State를 관리하기 위한 훅
+복잡한 State를 관리하기 위한 훅. 여러 개의 연관된 state를 useState가 아닌 useReducer로 관리
 
 많은 이벤트 핸들러에 분산된 상태 업데이트가 많은 구성 요소는 압도적일 수 있습니다. 이러한 경우 구성 요소 외부의 모든 상태 업데이트 로직을 리듀서라는 단일 함수로 통합할 수 있습니다 .
+<!-- 다른 state를 기반으로 하는
 
 
+그 경우에는 하나의 state로 병합하는 것도 좋습니다 -->
+```
+
+```
 # context - 여러 컴포넌트에 영향을 주는 State
