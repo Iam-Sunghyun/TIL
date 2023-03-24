@@ -5,7 +5,11 @@
   - [Cleanup 함수로 디바운스(debounce) 구현하기](#cleanup-함수로-디바운스debounce-구현하기)
 - [useReducer 훅](#usereducer-훅)
   - [`dispatch` 함수](#dispatch-함수)
+    - [좀 더 복잡한 경우](#좀-더-복잡한-경우)
 - [`useContext`, `Context API`](#usecontext-context-api)
+    - [1. 컨텍스트 생성](#1-컨텍스트-생성)
+    - [2. 컨텍스트 제공(provide)](#2-컨텍스트-제공provide)
+  - [3. 컨텍스트 사용](#3-컨텍스트-사용)
 
 # useEffect 훅
 
@@ -185,7 +189,7 @@ https://react.vlpt.us/basic/16-useEffect.html
 
 # useReducer 훅
 
-`useReducer`는 `useState`처럼 `state`를 생성하고 관리하기 위한 훅으로 여러 개의 하위 값을 갖는 좀 더 복잡한 `state`를 업데이트할 때 유용하다. 사용 형식은 다음과 같다.
+`useReducer`는 `useState`처럼 `state`를 생성하고 관리하기 위한 훅으로 여러 개의 하위 값을 갖는 **좀 더 복잡한 `state`를 다양한 방식으로 업데이트 해야할 때 유용하다**. 사용 형식은 다음과 같다.
 
 ```
 const [state, dispatch] = useReducer(reducer, initialArg, init?)
@@ -278,13 +282,16 @@ export default UseReducerTest;
 
 유지보수를 고려해 `type` 값들을 별도의 객체로 만들어 사용하였다.
 
-좀 더 복잡한 경우 예시 코드.
-<!-- 내용 수정필 -->
+### 좀 더 복잡한 경우
+
+다음은 간단한 출석부 프로그램으로, 위의 예시보다 좀 더 복잡한 경우이다. 기능으로는 이름을 입력한 뒤 추가 버튼을 클릭하면 리스트에 출력되고 이름을 클릭 시 줄이 그어지는 효과와 삭제 버튼 클릭 시 해당 이름이 리스트에서 삭제된다.
+
 ```
 // Student.js
 import { useReducer, useState } from 'react';
 import StudentList from './StudentList';
 
+// 리듀서에 추가, 삭제 로직 추가
 const reducer = (state, action) => {
   switch (action.type) {
     case 'add':
@@ -309,6 +316,7 @@ const reducer = (state, action) => {
   }
 };
 
+// useReducer 상태 초기 값
 const initialState = {
   count: 1,
   students: [
@@ -385,13 +393,103 @@ function StudentList(props) {
 export default StudentList;
 ```
 
+`dispatch` 함수를 하위 컴포넌트에서 사용한 것 주의!
 
-# `useContext`, `Context API` 
+# `useContext`, `Context API`
 
-앱 규모가 커질수록, 컴포넌트 트리가 깊어지게 되고 자식 컴포넌트에 props로 데이터를 전달하는데 한계가 있다.
+앱 규모가 커질수록, 컴포넌트 트리가 깊어지게 되고 그에따라 자식 컴포넌트에 `props`로 데이터를 전달하는데 불편함이 생긴다.
 
-이런 경우 `Context`를 사용하여 여러 컴포넌트에 공통적으로 필요한 state를 전역에서 관리하여 공유할 수 있게 해준다.
+이런 경우 `context`를 사용하여 여러 컴포넌트에 공통적으로 필요한 `state`를 전역에서 관리하여 중간에 거치는 컴포넌트 없이 하위 컴포넌트에서 직접 사용할 수 있다.
 
-`Context` 데이터를 사용하려면 필요한 하위 컴포넌트에서 `useContext` 훅을 사용해 받아오면 된다.
+`context` 데이터를 사용하려면 필요한 하위 컴포넌트에서 `useContext` 훅을 사용해 받아오면 된다.
 
-`Context`가 props를 완전히 대체할 수 있어 보인다. 하지만 `Context`를 사용하면 컴포넌트를 재사용하기 어려워 질 수 있기 때문에 필요한 경우에만 사용해야 한다(prop drilling을 피하기 위한 목적이라면 컴포넌트 합성도 고려해볼 것).
+### 1. 컨텍스트 생성
+
+다음은 다크모드를 구현한 예제로, 버튼을 클릭하면 `isDark` 상태 변수의 값이 `true`/`false`로 반전되고 이에 따라 모든 컴포넌트의 색을 반전시킨다.
+
+우선 별도의 파일을 구성. `createContext`로 `context`를 생성해준다.
+
+```
+// ThemeContext.js
+import { createContext } from 'react';
+
+export const DarkTheme = createContext(null);
+```
+
+`createContext` 함수의 인수로 전달되는 값은 `Context.Provider`가 없을 경우 `useContext`로 읽어오는 초기 값이 된다. 별다른 목적이 없다면 보통 `null`을 사용한다.
+
+### 2. 컨텍스트 제공(provide)
+
+그 다음 `props`를 공유하고자 하는 부모 컴포넌트의 엘리먼트들을 `<Context.Provider>` 태그로 감싸주고 `value` `prop`에 전달하고자 하는 데이터를 넣어준다.
+
+```
+// App.js
+import { useState } from 'react;
+import Page from './components/Page';
+// `<Context.Provider>`로 사용하려는 `context`를 `import` 해주는 것 주의
+import { ThemeContext } from './context/ThemeContext';
+
+function App(){
+  const [isDark, setIsDark] = useState(false);
+
+  return (
+    // 공유할 context에 isDark 상태 변수와, set 함수를 전달
+    <ThemeContext.Provider value={{ isDark, setIsDark }}>
+      <Page />
+    </ThemeContext.Provider>
+  )
+}
+```
+
+## 3. 컨텍스트 사용
+
+이제 `<App>`의 하위 컴포넌트에서 `context` 데이터를 사용할 수 있는데 `context` 데이터가 필요한 자식 컴포넌트에서 `useContext` 훅으로 데이터를 받아와 사용한다.
+
+여기서도 생성한 `context`를 `import` 해줘야 하는 것 주의!
+
+```
+// Page.js
+import Header from './Header'
+const Page = () => {
+
+  return (
+    <div>
+      <Header />
+      <Content />
+      <Footer />
+    <div>
+  )
+}
+export default Page;
+---------------------
+// Head.js
+import { ThemeContext } from './context/ThemeContext';
+
+const Header = () => {
+    // 객체 디스트럭쳐링으로 context 데이터 전달 받음
+  const { isDark, setIsDark } = useContext(ThemeContext);
+
+  return (
+      // context로 가져온 isDark 값에 따라 backgroundColor 값을 설정
+      <header style={{ backgroundColor : isDark ? 'black' : 'white' }}>
+        .
+        .
+        .
+      </header>
+    )
+}
+export default Header;
+```
+
+`context`를 사용해보면, `props`를 완전히 대체할 수 있어 보인다. 하지만 `context`를 사용하면 컴포넌트를 재사용하기 어려워 질 수 있고, 무분별하게 사용한다면 가독성이 떨어질 수 있기 때문에 필요한 경우에만 사용해야 한다(prop drilling을 피하기 위한 목적이라면 컴포넌트 합성도 고려해보라고 되어있다).
+
+컨텍스트 사용 전 고려해봐야 할 사항과 사용 사례 등 추가 내용은 공식 문서 링크 참조.
+
+**[React docs passing data deeply with context]**
+
+https://react.dev/learn/passing-data-deeply-with-context
+
+
+**[React docs createContext]**
+
+https://react.dev/reference/react/createContext
