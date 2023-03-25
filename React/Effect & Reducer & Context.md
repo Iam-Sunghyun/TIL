@@ -1,21 +1,21 @@
 <h2>목차</h2>
 
-- [useEffect 훅](#useeffect-훅)
-  - [useEffect에서 Cleanup 함수 사용하기](#useeffect에서-cleanup-함수-사용하기)
+- [`useEffect`](#useeffect)
+  - [`useEffect`에서 Cleanup 함수 사용하기](#useeffect에서-cleanup-함수-사용하기)
   - [Cleanup 함수로 디바운스(debounce) 구현하기](#cleanup-함수로-디바운스debounce-구현하기)
-- [useReducer 훅](#usereducer-훅)
+- [`useReducer`](#usereducer)
   - [`dispatch` 함수](#dispatch-함수)
-    - [좀 더 복잡한 경우](#좀-더-복잡한-경우)
+  - [좀 더 복잡한 `state`](#좀-더-복잡한-state)
 - [`useContext`, `Context API`](#usecontext-context-api)
-    - [1. 컨텍스트 생성](#1-컨텍스트-생성)
-    - [2. 컨텍스트 제공(provide)](#2-컨텍스트-제공provide)
+  - [1. 컨텍스트 생성](#1-컨텍스트-생성)
+  - [2. 컨텍스트 제공(provide)](#2-컨텍스트-제공provide)
   - [3. 컨텍스트 사용](#3-컨텍스트-사용)
+  - [Context 문제점](#context-문제점)
+- [`forwardRef`](#forwardref)
 
-# useEffect 훅
+# `useEffect`
 
-<!-- 천천히 이해하자 -->
-
-`useState`와 함께 가장 많이 사용되는 훅으로 컴포넌트 렌더링 후에 부수 효과(side effect)를 수행하기 위한 리액트 훅이다.
+`useState`와 함께 가장 많이 사용되는 훅으로 컴포넌트 렌더링 후에 부수 효과(side effect)를 수행하기 위한 리액트 훅이다. 여기서 부수 효과란 외부 상태를 변경하는 것을 말한다.
 
 사용 방식은 다음과 같다.
 
@@ -28,10 +28,10 @@ useEffect(() => { ... }, [ dependencies ]);
 첫 번째로 전달한 함수는 **컴포넌트가 마운트 되면(컴포넌트가 DOM에 처음 추가되면)실행되며, 이후에는 의존성 데이터가 변경되면 실행된다**.
 
 <!-- 변경된 상태에서 발생한 렌더링 후에 실행된다** -->
+<!-- 
+즉, 렌더링 후에 부수 효과를 처리하기 위해 사용하는 훅이 `useEffect`이다. 여기서 부수 효과란 외부 상태를 변경하는 것을 말한다. -->
 
-즉, 렌더링 후 부수 효과를 처리하기 위해 사용하는 훅이 `useEffect`이다. 여기서 부수 효과란 외부 상태를 변경하는 것을 말한다.
-
-리액트의 범위를 벗어난 부수 효과(side effect, 부작용)를 일으키는 작업은 리액트 렌더링과 분리되어야 하며 필요시 렌더링 이후에 수행되어야 한다. 그 말은 **컴포넌트를 순수함수 이어야 한다는 것**인데 컴포넌트를 순수한 함수로만 엄격하게 작성하면 코드베이스가 커짐에 따라 예측할 수 없는 버그와 동작을 막을 수 있다.
+리액트의 범위를 벗어난 부수 효과(side effect, 부작용)를 일으키는 작업은 리액트 렌더링과 분리되어야 하며 필요시 렌더링 이후에 수행되어야 한다. 이 말은 **컴포넌트가 순수함수이어야 한다는 것**인데 컴포넌트를 순수한 함수로만 엄격하게 작성하면 코드베이스가 커짐에 따라 예측할 수 없는 버그와 동작을 막을 수 있다.
 
 자세한 추가 내용은 링크 참조.
 
@@ -99,9 +99,7 @@ export default App;
 
 자주 사용되는 방법은 아니지만 만약 의존성을 아예 전달하지 않는다면 해당 `useEffect()`는 매 렌더링마다 실행된다.
 
-## useEffect에서 Cleanup 함수 사용하기
-
-<!-- 내용 수정필 -->
+## `useEffect`에서 Cleanup 함수 사용하기
 
 `useEffect` 에서는 함수를 반환 할 수 있는데 이를 **cleanup 함수**라고 한다.
 
@@ -169,6 +167,16 @@ useEffect(() => {
 
 이때 디바운스를 통해 입력이 0.5초 이내로 연속해서 발생하는 경우 타이머를 취소하고, 맨 마지막 입력 후 0.5초 이상 입력이 없는 경우 유효성 검사를 실행하도록 한다.
 
+<h3> 추가로 아직 이해 안된 규칙 하나</h3>
+
+`useEffect` 함수 내부에서 사용되는 데이터는 브라우저나 컴포넌트 외부에서 온 데이터가 아닌 경우 즉, 컴포넌트 내부의 데이터라면 반드시 의존성 배열에 포함시켜야 한다. 
+
+<!-- useEffect 의존성 뭔소리인지 모르겠는 규칙 
+https://react.dev/reference/react/useEffect#specifying-reactive-dependencies
+-->
+
+--------------------------
+
 **[React docs useEffect]**
 
 https://react.dev/reference/react/useEffect
@@ -187,7 +195,7 @@ https://stackoverflow.com/questions/31556450/what-is-mounting-in-react-js
 
 https://react.vlpt.us/basic/16-useEffect.html
 
-# useReducer 훅
+# `useReducer`
 
 `useReducer`는 `useState`처럼 `state`를 생성하고 관리하기 위한 훅으로 여러 개의 하위 값을 갖는 **좀 더 복잡한 `state`를 다양한 방식으로 업데이트 해야할 때 유용하다**. 사용 형식은 다음과 같다.
 
@@ -282,7 +290,7 @@ export default UseReducerTest;
 
 유지보수를 고려해 `type` 값들을 별도의 객체로 만들어 사용하였다.
 
-### 좀 더 복잡한 경우
+## 좀 더 복잡한 `state`
 
 다음은 간단한 출석부 프로그램으로, 위의 예시보다 좀 더 복잡한 경우이다. 기능으로는 이름을 입력한 뒤 추가 버튼을 클릭하면 리스트에 출력되고 이름을 클릭 시 줄이 그어지는 효과와 삭제 버튼 클릭 시 해당 이름이 리스트에서 삭제된다.
 
@@ -403,7 +411,8 @@ export default StudentList;
 
 `context` 데이터를 사용하려면 필요한 하위 컴포넌트에서 `useContext` 훅을 사용해 받아오면 된다.
 
-### 1. 컨텍스트 생성
+<!-- 매끄럽지 않은 느낌 -->
+## 1. 컨텍스트 생성
 
 다음은 다크모드를 구현한 예제로, 버튼을 클릭하면 `isDark` 상태 변수의 값이 `true`/`false`로 반전되고 이에 따라 모든 컴포넌트의 색을 반전시킨다.
 
@@ -416,11 +425,21 @@ import { createContext } from 'react';
 export const DarkTheme = createContext(null);
 ```
 
-`createContext` 함수의 인수로 전달되는 값은 `Context.Provider`가 없을 경우 `useContext`로 읽어오는 초기 값이 된다. 별다른 목적이 없다면 보통 `null`을 사용한다.
+`createContext` 함수의 인수로 전달되는 값은 `Context.Provider`가 없을 경우 `useContext`로 읽어오는 초기 값이 된다. 별다른 목적이 없다면 보통 `null`을 사용한다
 
-### 2. 컨텍스트 제공(provide)
+<h3>자잘한 Tip!</h3>
 
-그 다음 `props`를 공유하고자 하는 부모 컴포넌트의 엘리먼트들을 `<Context.Provider>` 태그로 감싸주고 `value` `prop`에 전달하고자 하는 데이터를 넣어준다.
+```
+createContext()의 인수에 Provider가 제공하는 props 이름을(value로 전달한 값)을 넣으면 자동 완성 기능을 사용할 수 있다(값은 상관 없다). 
+ex) createContext({ 
+    isDark: null,
+    setIsDark: () => {}
+   })
+```
+
+## 2. 컨텍스트 제공(provide)
+
+그 다음 `props`를 제공하고자 하는 부모 컴포넌트의 엘리먼트들을 `<Context.Provider>` 태그로 감싸주고 `value` `prop`에 전달하고자 하는 데이터를 넣어준다.
 
 ```
 // App.js
@@ -480,20 +499,36 @@ const Header = () => {
 }
 export default Header;
 ```
+<!-- + 컨텍스트 파일에 <Context.Provider>로 감싸는 래퍼 컴포넌트를 만들어서 export하여 사용하는 방법도 있다. 134강 참조  -->
 
-`context`를 사용해보면, `props`를 완전히 대체할 수 있어 보인다. 
+## Context 문제점
 
-하지만 `context`를 사용하면 컴포넌트를 재사용하기 어려워 질 수 있고(예를 들면 버튼에서 `useContext`로 특정 컨텍스트를 전달받은 함수를 이벤트 핸들러로 사용한다면, 해당 용도만을 위한 버튼이 되어버려 다른 곳에서 재사용 할 수 없게 됨), 
+`context`를 사용해보면, `props`를 완전히 대체할 수 있어 보이지만 몇 가지 문제가 되는 점이 있다.
 
-무분별하게 사용한다면 가독성이 떨어질 수 있기 때문에 필요한 경우에만 사용해야 한다(prop drilling을 피하기 위한 목적이라면 컴포넌트 합성도 고려해보라고 되어있다).
+우선 `context`를 사용하면 컴포넌트를 재사용하기 어려워 질 수 있다. 예를 들어 버튼에서 `useContext`로 컨텍스트에서 전달받은 함수를 이벤트 핸들러로 사용한다면, 해당 용도만을 위한 버튼이 되어버려 다른 곳에서 재사용 할 수 없게 된다(이런 경우 보통의 `props`를 사용). 
 
-컨텍스트 사용 전 고려해봐야 할 사항과 사용 사례 등 추가 내용은 공식 문서 링크 참조.
+추가로 `context`의 상태가 변경되는 경우 `context` 상태를 사용하는 모든 자식 컴포넌트들이 자동으로 리렌더링 되는데, `context`에서 변경되지 않은 상태 값을 사용하는 자식 컴포넌트도 모두 리렌더링된다. 즉, `ContextA`가 `{ a: 1, b: 1}`를 제공하고 `ComponentA`가 `a`를 사용한다고 가정했을 때, `b`가 변경되어도 `ComponentA`가 리렌더링 된다.
+
+따라서 성능을 위해서 상태를 세분화하여 `context`를 구성하거나, `context` 데이터가 짧은 시간에 여러 번 업데이트 되는 경우에는 사용하지 않는 것이 좋다.
+
+또한 무분별하게 사용한다면 데이터 흐름을 파악하기 힘들어질 수 있기 때문에 필요한 경우에만 사용해야 한다(prop drilling을 피하기 위한 목적이라면 컴포넌트 합성을 고려해보라고 되어있다).
+
+컨텍스트 사용 전 고려해봐야 할 사항과 사용 사례 등 추가 내용은 링크 참조.
+
+-----------------
+
+**[The Issue With Using React Context API for State]**
+
+https://blog.jannikwempe.com/when-to-not-use-react-context-api-for-state#heading-the-issue-with-using-react-context-api-for-state
 
 **[React docs passing data deeply with context]**
 
 https://react.dev/learn/passing-data-deeply-with-context
 
-
 **[React docs createContext]**
 
 https://react.dev/reference/react/createContext
+
+
+
+# `forwardRef`
