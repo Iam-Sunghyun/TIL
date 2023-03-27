@@ -8,13 +8,14 @@
   - [좀 더 복잡한 `state`](#좀-더-복잡한-state)
 - [`useContext`, `Context API`](#usecontext-context-api)
   - [1. 컨텍스트 생성](#1-컨텍스트-생성)
+    - [자잘한 Tip](#자잘한-tip)
   - [2. 컨텍스트 제공(provide)](#2-컨텍스트-제공provide)
   - [3. 컨텍스트 사용](#3-컨텍스트-사용)
   - [Context 문제점](#context-문제점)
 - [`forwardRef`](#forwardref)
 
 # `useEffect`
-
+ 
 `useState`와 함께 가장 많이 사용되는 훅으로 컴포넌트 렌더링 후에 부수 효과(side effect)를 수행하기 위한 리액트 훅이다. 여기서 부수 효과란 외부 상태를 변경하는 것을 말한다.
 
 사용 방식은 다음과 같다.
@@ -25,11 +26,9 @@ useEffect(() => { ... }, [ dependencies ]);
 
 **첫 번째 인수로 함수** 전달. **두 번째 인수로는 의존성으로 구성된 배열**을 전달한다.
 
-첫 번째로 전달한 함수는 **컴포넌트가 마운트 되면(컴포넌트가 DOM에 처음 추가되면)실행되며, 이후에는 의존성 데이터가 변경되면 실행된다**.
+첫 번째로 전달한 함수는 **컴포넌트가 마운트 되면(컴포넌트가 DOM에 처음 추가되면)실행되며, 이후에는 의존성 데이터가 변경된 다음 발생한 리렌더링 후에 실행된다**.
 
-<!-- 변경된 상태에서 발생한 렌더링 후에 실행된다** -->
-<!-- 
-즉, 렌더링 후에 부수 효과를 처리하기 위해 사용하는 훅이 `useEffect`이다. 여기서 부수 효과란 외부 상태를 변경하는 것을 말한다. -->
+<!-- 개념 추가 이해 필-->
 
 리액트의 범위를 벗어난 부수 효과(side effect, 부작용)를 일으키는 작업은 리액트 렌더링과 분리되어야 하며 필요시 렌더링 이후에 수행되어야 한다. 이 말은 **컴포넌트가 순수함수이어야 한다는 것**인데 컴포넌트를 순수한 함수로만 엄격하게 작성하면 코드베이스가 커짐에 따라 예측할 수 없는 버그와 동작을 막을 수 있다.
 
@@ -95,7 +94,7 @@ export default App;
 
 `console.log('useEffect 테스트');`는 `useEffect()`가 초기 렌더링 시 호출되므로 우선 한번 출력된다.
 
-그 후 로그인을 통해(`loginHandler` 호출) `isLoggedIn` 상태 변수가 업데이트되어 리렌더링이 발생하여도 의존성에 빈 배열을 전달했기 때문에 `useEffect()`는 더 이상 호출되지 않는다(애초에 변경 될 의존성 값이 없으므로).
+그 후 로그인을 통해(`loginHandler` 호출) `isLoggedIn` 상태 변수가 업데이트 되어 리렌더링이 발생하여도 의존성에 빈 배열을 전달했기 때문에 `useEffect()`는 더 이상 호출되지 않는다(애초에 변경 될 의존성 값이 없으므로).
 
 자주 사용되는 방법은 아니지만 만약 의존성을 아예 전달하지 않는다면 해당 `useEffect()`는 매 렌더링마다 실행된다.
 
@@ -103,9 +102,10 @@ export default App;
 
 `useEffect` 에서는 함수를 반환 할 수 있는데 이를 **cleanup 함수**라고 한다.
 
-cleanup 함수는 `useEffect` 컴포넌트가 언마운트(DOM에서 제거)되기 전에 실행되는 함수이다. 다시 말하면, 렌더링이 발생하여 다음 새 컴포넌트가 마운트 되기 직전에 즉, 다음 `useEffect` 함수가 실행되기 전 실행된다(첫 마운트 제외).
+cleanup 함수는 `useEffect`의 의존성이 변경된 상태에서 리렌더링 되거나, 언마운트(DOM에서 완전히 제거)되고 나서 실행되는 함수이다. 
+<!-- 컴포넌트는 마운트 -> 업데이트 -> 언마운트 주기를 갖는다 -->
 
-cleanup 함수는 `useEffect` 에 대한 뒷정리를 해준다고 이해하면 될듯.
+cleanup 함수는 이전 `useEffect` 함수에 대한 뒷정리를 해준다고 이해하면 될듯.
 
 다음은 cleanup 함수가 호출되는 타이밍을 확인할 수 있는 예시이다.
 
@@ -128,7 +128,7 @@ useEffect
 
 페이지 첫 로드 시 컴포넌트가 DOM에 마운트 되면서 'useEffect' 문자열이 한 번 출력된다.
 
-그 후 `enteredEmail`, `enteredPassword` 상태 변수가 변경되면 이전 컴포넌트가 언마운트(DOM에서 제거) 되면서 cleanup 함수가 호출되고, 새 컴포넌트가 마운트(DOM에 추가) 되면서 `useEffect` 함수가 호출되어 'cleanup \n useEffect'이 출력되게 되는 것이다.
+그 후 `enteredEmail`, `enteredPassword` 상태 변수가 업데이트 되어 리렌더링이 발생하면 cleanup 함수가 호출된 다음, `useEffect` 함수가 호출되어 'cleanup \n useEffect'이 출력되게 되는 것이다.
 
 ## Cleanup 함수로 디바운스(debounce) 구현하기
 
@@ -183,9 +183,10 @@ https://react.dev/reference/react/useEffect
 
 **[A complete guide to the useEffect React Hook]**
 
-https://blog.logrocket.com/useeffect-hook-complete-guide/#utilizing-cleanup-functions
+https://blog.logrocket.com/useeffect-hook-complete-guide/
 
 **[The Lifecycle of React Hooks Component, 마운트 / 언마운트?]**
+
 
 https://blog.bhanuteja.dev/the-lifecycle-of-react-hooks-component
 
@@ -362,6 +363,7 @@ function Student() {
           key={student.id}
           id={student.id}
           name={student.name}
+          // 하위 컴포넌트에 props로 dispatch 함수를 전달
           dispatch={dispatch}
         ></StudentList>
       ))}
@@ -407,11 +409,10 @@ export default StudentList;
 
 앱 규모가 커질수록, 컴포넌트 트리가 깊어지게 되고 그에따라 자식 컴포넌트에 `props`로 데이터를 전달하는데 불편함이 생긴다.
 
-이런 경우 `context`를 사용하여 여러 컴포넌트에 공통적으로 필요한 `state`를 전역에서 관리하여 중간에 거치는 컴포넌트 없이 하위 컴포넌트에서 직접 사용할 수 있다.
+이런 경우 `context`를 사용하여 여러 컴포넌트에 공통적으로 필요한 `state`를 전역에서 관리하여 중간에 거치는 컴포넌트 없이 하위 컴포넌트에서 직접 사용할 수 있다. -> `state`를 전역에서 사용할 수 있게 해주는 기능.
 
 `context` 데이터를 사용하려면 필요한 하위 컴포넌트에서 `useContext` 훅을 사용해 받아오면 된다.
 
-<!-- 매끄럽지 않은 느낌 -->
 ## 1. 컨텍스트 생성
 
 다음은 다크모드를 구현한 예제로, 버튼을 클릭하면 `isDark` 상태 변수의 값이 `true`/`false`로 반전되고 이에 따라 모든 컴포넌트의 색을 반전시킨다.
@@ -427,7 +428,7 @@ export const DarkTheme = createContext(null);
 
 `createContext` 함수의 인수로 전달되는 값은 `Context.Provider`가 없을 경우 `useContext`로 읽어오는 초기 값이 된다. 별다른 목적이 없다면 보통 `null`을 사용한다
 
-<h3>자잘한 Tip!</h3>
+### 자잘한 Tip
 
 ```
 createContext()의 인수에 Provider가 제공하는 props 이름을(value로 전달한 값)을 넣으면 자동 완성 기능을 사용할 수 있다(값은 상관 없다). 
