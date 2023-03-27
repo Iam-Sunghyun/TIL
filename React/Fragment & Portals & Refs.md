@@ -6,7 +6,9 @@
 - [React Portals 이란?](#react-portals-이란)
   - [1. 이동할 위치(마운트 지점) 지정](#1-이동할-위치마운트-지점-지정)
   - [2. `createPortal` 메서드로 포탈 래퍼 컴포넌트 생성](#2-createportal-메서드로-포탈-래퍼-컴포넌트-생성)
-- [useRef 훅](#useref-훅)
+- [`useRef` 훅](#useref-훅)
+  - [`useRef`로 값 참조하기](#useref로-값-참조하기)
+  - [`useRef`로 DOM 참조하기](#useref로-dom-참조하기)
 
 
 # JSX의 제한 사항
@@ -187,9 +189,60 @@ https://www.geeksforgeeks.org/what-are-portals-in-react-and-when-do-we-need-them
 
 https://blog.logrocket.com/learn-react-portals-example/
 
-# useRef 훅
+# `useRef` 훅
 
-`useRef` 훅은 'Ref'라는 이름 그대로 실제 DOM 요소를 참조하기 위한 기능이다.
+`useRef` 훅은 렌더링이 필요하지 않은 값을 저장하기 위한 훅이다. 
+
+`useRef`에 초기 값을 인수로 전달해 호출하면 `current`라는 이름의 단일 프로퍼티를 갖는 `ref` 객체를 반환한다. `current` 프로퍼티에는 인수로 전달한 값이 설정된다.
+
+```
+const ref = useRef(initialValue);
+
+ref -> { current: initialValue }
+```
+
+`ref` 객체가 유용하게 사용되는 두 가지 경우가 있는데, 값을 저장하는 경우와 DOM을 참조하는 경우이다.
+
+## `useRef`로 값 참조하기
+
+`ref` 객체의 특징은 상태 변수와 달리 직접 변경해도 된다는 것이다(상태 변수를 참조하는 것이 아니라면). 
+
+또 `ref`와 상태 변수의 차이점은 **`ref` 객체의 경우 값을 변경해도 리렌더링이 발생하지 않으며** 일반 변수와 달리 **렌더링이 발생해도 컴포넌트가 언마운트 되지 않는 이상 값을 유지한다.**
+
+따라서 `ref`는 컴포넌트의 시각적 출력에 영향을 주지 않는 정보 즉, 렌더링이 필요하지 않은 정보를 저장하는데 적합하다.
+
+아래는 공식 문서의 예제이다.
+```
+import { useRef } from 'react';
+
+export default function Counter() {
+  let ref = useRef(0);
+  console.log('rendering?');
+  function handleClick() {
+    ref.current = ref.current + 1;
+    alert('You clicked ' + ref.current + ' times!');
+  }
+
+  return (
+    <button onClick={handleClick}>
+      Click me!
+    </button>
+  );
+}
+```
+
+DOM에 마운트 되면서 초기 렌더링으로 인한 'rendering?'이 콘솔 창에 한번 출력된다. 그 후 버튼을 클릭하면 렌더링은 발생하지 않기 때문에 콘솔 창에 더 이상 'rendering?'이 출력되지 않고, `alert`로 `ref.current` 값이 +1 씩 증가된 값이 출력되는 것을 통해 값이 유지되는 것을 확인할 수 있다.
+
+```
+공식 홈페이지에서 컴포넌트 순수성을 유지하기 위해 렌더링 중에는 ref.current 값을 새롭게 업데이트하거나 읽어들이지 않아야 한다고 되어있다.
+-> 동작은 하나 React의 최신 기능들은 순수 함수라는 것을 가정한 것들이기 때문이라고 한다.
+대신 이벤트 핸들러나, effect에서 읽거나 쓸 것을 권장하고 있다.
+```
+
+## `useRef`로 DOM 참조하기
+
+자주 사용하는 경우 - input 요소에 focus를 주고 싶을 때
+
 
 ```
 // ref prop으로 지정한 요소의 참조가 저장 됨
@@ -253,6 +306,7 @@ ageInputRef.current.value = '';
 사용자 입력으로부터 즉각적인 상호작용을 원한다면 state를 사용하는게 맞을듯.
 <!-- 
 렌더링 트리거 없이 데이터를 저장하기 위해선 Ref?
+
 
 useRef()로 DOM 요소를 참조하여 값을 사용하는 경우...비제어 컴포넌트 -->
 
