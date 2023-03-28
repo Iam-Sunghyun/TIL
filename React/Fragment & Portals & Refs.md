@@ -9,7 +9,7 @@
 - [`useRef` 훅](#useref-훅)
   - [`useRef`로 값 참조하기](#useref로-값-참조하기)
   - [`useRef`로 DOM 참조하기](#useref로-dom-참조하기)
-
+- [`forwardRef`로 `ref` 전달하기](#forwardref로-ref-전달하기)
 
 # JSX의 제한 사항
 
@@ -18,7 +18,7 @@
 이러한 `JSX`의 한계로 인해 발생하는 문제점은 불필요한 Wrapper 요소가 너무 많아질 수 있다는 것이다('div soup' 이라고도 한다).
 
 웹 사이트, 웹 애플리케이션의 규모가 커질수록 불필요한 DOM 요소 렌더링이 너무 많아져 성능이 느려질 수 있고, 중첩된 Wrapper 요소로 인해 레이아웃(ex) `Flex`, `grid`...)이 제대로 적용되지 않거나
-중첩 CSS 선택자를 사용하여 스타일을 지정한 경우(ex) `ul > li`,  `table>tr>td`...) 예상대로 적용되지 않을 수 있는 등 문제가 될 수 있다(문제 예시는 아래 링크 참조). 
+중첩 CSS 선택자를 사용하여 스타일을 지정한 경우(ex) `ul > li`, `table>tr>td`...) 예상대로 적용되지 않을 수 있는 등 문제가 될 수 있다(문제 예시는 아래 링크 참조).
 
 이러한 문제를 예방하기 위해 실제 DOM에는 영향을 주지 않는 Wrapper 컴포넌트가 필요하다.
 
@@ -56,7 +56,7 @@ Wrapper 컴포넌트가 반환하는 내용이 인접한 여러 자식 컴포넌
 
 위에서 사용했던 Wrapper 컴포넌트를 따로 만들지 않아도 동일한 기능을 하는 React 컴포넌트가 있다. 바로 `<Fragment>` 컴포넌트이다.
 
-실제 DOM에 래퍼 요소가 생성되지 않아 불필요한 요소 생성을 줄일 수 있으며 요소 중첩으로 인한 스타일 문제도 피할 수 있다. 
+실제 DOM에 래퍼 요소가 생성되지 않아 불필요한 요소 생성을 줄일 수 있으며 요소 중첩으로 인한 스타일 문제도 피할 수 있다.
 
 주로 약칭인 `<></>` 형태로 사용하며 프로젝트 설정에 따라 지원하지 않는 경우도 있다고 한다.
 
@@ -85,7 +85,9 @@ https://beta.reactjs.org/reference/react/Fragment
 # React Portals 이란?
 
 포탈(Portals)이란 HTML 요소를 DOM 트리의 다른 위치로 옮기는 기능이다.
+
 <!-- 내용 수정필 -->
+
 포탈의 사용 예시를 하나 들자면, 화면 가장 위에 표시되는 모달의 경우 DOM의 깊은 곳에 있는 컴포넌트가 모달을 생성한다면 웹 페이지 가장 상위에 표시되는 모달이 DOM 트리 레벨 깊은 곳에 추가될 것.
 
 이는 페이지의 구조적으로도 좋지 않고 스크린 리더를 사용하는 경우 화면 최상위에 오버레이되는 모달인 것이 확실하지 않아져 접근성에도 좋지 않다.
@@ -96,9 +98,7 @@ https://beta.reactjs.org/reference/react/Fragment
 
 포탈을 사용하기 위해서는 우선 요소를 이동시킬 위치를 지정해야하고 또 그것을 컴포넌트에게 알려야한다. 다음 챕터에서 실제 코드를 통해 그 절차를 확인해본다.
 
-
 ## 1. 이동할 위치(마운트 지점) 지정
-
 
 `index.html`에 요소가 이동할 위치를 지정해준다.
 
@@ -115,6 +115,7 @@ https://beta.reactjs.org/reference/react/Fragment
 ## 2. `createPortal` 메서드로 포탈 래퍼 컴포넌트 생성
 
 <!-- 내용 수정필? -->
+
 `createPortal` 메서드는 `react-dom`에서 제공하는 포탈 생성 메서드이다.
 
 `createPortal(children, domNode)`는 두 개의 인수를 전달하여 호출하는데 첫 번째는 렌더링 되어야하는 요소, 두 번째는 마운트 해야할 위치(요소)를 전달한다.
@@ -191,7 +192,7 @@ https://blog.logrocket.com/learn-react-portals-example/
 
 # `useRef` 훅
 
-`useRef` 훅은 렌더링이 필요하지 않은 값을 저장하기 위한 훅이다. 
+`useRef` 훅은 렌더링이 필요하지 않은 값을 저장하기 위한 훅이다.
 
 `useRef`에 초기 값을 인수로 전달해 호출하면 `current`라는 이름의 단일 프로퍼티를 갖는 `ref` 객체를 반환한다. `current` 프로퍼티에는 인수로 전달한 값이 설정된다.
 
@@ -205,13 +206,14 @@ ref -> { current: initialValue }
 
 ## `useRef`로 값 참조하기
 
-`ref` 객체의 특징은 상태 변수와 달리 직접 변경해도 된다는 것이다(상태 변수를 참조하는 것이 아니라면). 
+`ref` 객체의 특징은 상태 변수와 달리 직접 변경해도 된다는 것이다(상태 변수를 참조하는 것이 아니라면).
 
 또 `ref`와 상태 변수의 차이점은 **`ref` 객체의 경우 값을 변경해도 리렌더링이 발생하지 않으며** 일반 변수와 달리 **렌더링이 발생해도 컴포넌트가 언마운트 되지 않는 이상 값을 유지한다.**
 
 따라서 `ref`는 컴포넌트의 시각적 출력에 영향을 주지 않는 정보 즉, 렌더링이 필요하지 않은 정보를 저장하는데 적합하다.
 
 아래는 공식 문서의 예제이다.
+
 ```
 import { useRef } from 'react';
 
@@ -231,31 +233,49 @@ export default function Counter() {
 }
 ```
 
-DOM에 마운트 되면서 초기 렌더링으로 인한 'rendering?'이 콘솔 창에 한번 출력된다. 그 후 버튼을 클릭하면 렌더링은 발생하지 않기 때문에 콘솔 창에 더 이상 'rendering?'이 출력되지 않고, `alert`로 `ref.current` 값이 +1 씩 증가된 값이 출력되는 것을 통해 값이 유지되는 것을 확인할 수 있다.
+DOM에 마운트 되면서 초기 렌더링으로 인한 'rendering?'이 콘솔 창에 한번 출력된다.
+
+그 후 버튼을 클릭하면 렌더링은 발생하지 않기 때문에 콘솔 창에 더 이상 'rendering?'이 출력되지 않고, `alert`로 `ref.current` 값이 +1 씩 증가된 값이 출력되는 것을 통해 값이 유지되는 것을 확인할 수 있다.
 
 ```
-공식 홈페이지에서 컴포넌트 순수성을 유지하기 위해 렌더링 중에는 ref.current 값을 새롭게 업데이트하거나 읽어들이지 않아야 한다고 되어있다.
--> 동작은 하나 React의 최신 기능들은 순수 함수라는 것을 가정한 것들이기 때문이라고 한다.
-대신 이벤트 핸들러나, effect에서 읽거나 쓸 것을 권장하고 있다.
+공식 홈페이지에서 컴포넌트 순수성을 유지하기 위해 렌더링 중에는 ref.current 값을 새롭게 업데이트하거나 읽어들이지 않아야 한다고 되어있다. 즉, 컴포넌트 내부에서 ref.current를 읽거나 쓰지 말라는 것. -> 동작에는 문제가 없으나 React의 최신 기능들은 순수 함수라는 것을 가정한 것들이기 때문이라고 한다. 대신 이벤트 핸들러나, effect에서 읽거나 쓸 것을 권장하고 있다.
+꼭 렌더링 중에 무언가 읽거나, 써야하는 경우 state를 사용할 것.
 ```
+
+<!-- https://react.dev/reference/react/useRef#examples-value -->
 
 ## `useRef`로 DOM 참조하기
 
-자주 사용하는 경우 - input 요소에 focus를 주고 싶을 때
-
+참조할 리액트 요소의 `ref` prop에 `useRef`로 생성한 객체를 추가해주면, `useRef`로 생성한 변수에 해당 요소의 참조가 저장된다.
 
 ```
-// ref prop으로 지정한 요소의 참조가 저장 됨
+// ref prop에 전달한 요소의 참조가 저장 됨
 const nameInputRef = useRef();
 
 // 참조할 대상 요소
-<input.... ref={nameInputRef}></input....>
+<input ref={nameInputRef}></input>
 ```
 
-참조할 리액트 요소에 `ref` prop을 추가해주면, `useRef()`로 생성한 변수에 해당 요소의 참조가 저장된다.
+아래는 자주 사용하는 예시 중 하나로 `useRef`를 사용해 `input` 요소에 자동으로 `focus()`되게 만드는 코드이다.
 
-<!-- 흠,, 이벤트 객체로도 참조 가능한데 사용 장점은?-->
-드암과 같이 폼 submit 이벤트 핸들러에서 `useRef()`로 생성한 input 요소 참조 변수를 통해 state와 같은 변수없이 입력 값을 가져올 수 있다.
+```
+const App = () => {
+  const inputRef = useRef();
+
+  useEffect(() => {
+    inputRef.currnet.focus();
+  }, []);
+
+  return (
+    <div>
+      // ref prop에 전달
+      <ipnut ref={inputRef} type='text' placeholder='username' />
+    </div>
+  )
+}
+```
+
+다음과 같이 폼 `submit` 이벤트 핸들러에서 `useRef()`로 생성한 `input` 요소 참조 변수를 통해 `state`와 같은 변수 없이 입력 값을 가져올 수 있다.
 
 ```
 const AddUser = (props) => {
@@ -264,7 +284,8 @@ const AddUser = (props) => {
 
   const addUserHandler = (event) => {
     event.preventDefault();
-    if (nameInputRef.value.trim().length === 0) {
+    // ref 객체로 DOM 참조
+    if (nameInputRef.current.value.trim().length === 0) {
       setError({
         title: 'Invalid input',
         message: 'Please enter a valid name and age (non-empty values).',
@@ -295,22 +316,62 @@ const AddUser = (props) => {
   );
 };
 ```
+
 <!-- 내용, 예시 보충 필요  -->
-submit 이벤트 핸들러 마지막에 input 요소를 리셋해주기 위해 다음과 같이 코드를 작성할 수도 있는데, 이런 식으로 DOM을 직접 조작하기 위해 `ref`을 사용하는 건 매우 드물다.
+
+`submit` 이벤트 핸들러 마지막에 `input` 요소를 리셋해주기 위해 다음과 같이 코드를 작성할 수도 있는데, 이런 식으로 DOM을 직접 조작하기 위해 `ref`을 사용하는 건 매우 드물다.
 
 ```
 nameInputRef.current.value = '';
 ageInputRef.current.value = '';
 ```
 
-사용자 입력으로부터 즉각적인 상호작용을 원한다면 state를 사용하는게 맞을듯.
-<!-- 
-렌더링 트리거 없이 데이터를 저장하기 위해선 Ref?
+<!-- 사용자 입력으로부터 즉각적인 상호작용을 원한다면 state를 사용하는게 맞을듯. -->
 
-
+<!-- useRef 사용 예시 https://react.dev/reference/react/useRef#examples-dom -->
+<!--
 useRef()로 DOM 요소를 참조하여 값을 사용하는 경우...비제어 컴포넌트 -->
-
 
 **[React docs Refs]**
 
 https://beta.reactjs.org/learn/escape-hatches
+
+# `forwardRef`로 `ref` 전달하기
+
+`forwardRef`는 부모 컴포넌트에서 자녀 컴포넌트로 `ref`를 전달해주는 기능으로 부모 컴포넌트에서 자녀 컴포넌트의 요소에 접근해야될 때 사용한다.
+
+사용법은 아주 간단하다. `forwardRef`로 일반적인 `ref` 전달 방식으로 자녀 컴포넌트에 `ref`를 전달하며 `ref`를 전달받고자 하는 자녀 컴포넌트를 `export`할 때 `forwardRef()` 함수로 감싸주면 된다. 
+
+해당 자녀 컴포넌트는 2번째 매개변수로 `ref`를 전달받는다.
+
+```
+// App.js
+function App() {
+  const inputRef = useRef();
+
+  const focus = () => {
+    inputRef.current.focus();
+  }
+
+  return (
+    <div>
+    // 일반 ref 전달하는 방식과 동일
+      <MyInput ref={inputRef} />
+      <button onClick={focus}>포커스</button>
+    </div>
+  )
+}
+---------------------
+// MyInput.js
+const MyInput = (props, ref) => {
+  return <input ref={ref} />;
+}
+
+export default forwardRef(MyInput);
+or--------------------------
+const MyInput = forwardRef((props, ref) => {
+  return <input ref={ref} />;
+})
+
+export default MyInput;
+```
