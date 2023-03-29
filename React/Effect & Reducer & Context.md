@@ -12,7 +12,6 @@
   - [2. 컨텍스트 제공(provide)](#2-컨텍스트-제공provide)
   - [3. 컨텍스트 사용](#3-컨텍스트-사용)
   - [Context 문제점](#context-문제점)
-- [`forwardRef`](#forwardref)
 
 # `useEffect`
  
@@ -33,8 +32,6 @@ useEffect(() => { ... }, [ dependencies ]);
 리액트의 범위를 벗어난 부수 효과(side effect, 부작용)를 일으키는 작업은 리액트 렌더링과 분리되어야 하며 필요시 렌더링 이후에 수행되어야 한다. 이 말은 **컴포넌트가 순수함수이어야 한다는 것**인데 컴포넌트를 순수한 함수로만 엄격하게 작성하면 코드베이스가 커짐에 따라 예측할 수 없는 버그와 동작을 막을 수 있다.
 
 자세한 추가 내용은 링크 참조.
-
-<!-- 왜? -->
 
 **[React docs 컴포넌트가 순수해야하는 이유]**
 
@@ -128,7 +125,7 @@ useEffect
 
 페이지 첫 로드 시 컴포넌트가 DOM에 마운트 되면서 'useEffect' 문자열이 한 번 출력된다.
 
-그 후 `enteredEmail`, `enteredPassword` 상태 변수가 업데이트 되어 리렌더링이 발생하면 cleanup 함수가 호출된 다음, `useEffect` 함수가 호출되어 'cleanup \n useEffect'이 출력되게 되는 것이다.
+그 후 의존성 배열의 요소인 `enteredEmail`, `enteredPassword` 상태 변수가 업데이트 되어 리렌더링이 발생하면 cleanup 함수가 호출된 다음, `useEffect` 함수가 호출되어 'cleanup \n useEffect'이 출력되게 되는 것이다.
 
 ## Cleanup 함수로 디바운스(debounce) 구현하기
 
@@ -529,7 +526,3 @@ https://react.dev/learn/passing-data-deeply-with-context
 **[React docs createContext]**
 
 https://react.dev/reference/react/createContext
-
-
-
-# `forwardRef`
