@@ -16,9 +16,9 @@ https://dev.to/teo_garcia/understanding-rendering-in-react-i5i
 
 https://www.developerway.com/posts/react-re-renders-guide
 
-**[React 성능 최적화 - React가 UI를 업데이트하는 방법 이해]**
+**[What Is The Virtual DOM and How Does It Work]**
 
-https://blog.logrocket.com/optimizing-performance-react-app/#react-update-ui
+https://vegibit.com/what-is-the-virtual-dom-and-how-does-it-work/
 
 **[React Reconciliation and diffing algorithm]**
 

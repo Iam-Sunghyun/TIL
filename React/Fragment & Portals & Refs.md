@@ -336,6 +336,12 @@ useRef()로 DOM 요소를 참조하여 값을 사용하는 경우...비제어 �
 
 https://beta.reactjs.org/learn/escape-hatches
 
+**[React refs vs querySelector]**
+
+https://stackoverflow.com/questions/59198952/using-document-queryselector-in-react-should-i-use-refs-instead-how
+
+https://meje.dev/blog/useref-not-queryselector
+
 # `forwardRef`로 `ref` 전달하기
 
 `forwardRef`는 부모 컴포넌트에서 자녀 컴포넌트로 `ref`를 전달해주는 기능으로 부모 컴포넌트에서 자녀 컴포넌트의 요소에 접근해야될 때 사용한다.
@@ -375,3 +381,9 @@ const MyInput = forwardRef((props, ref) => {
 
 export default MyInput;
 ```
+
+공식 문서에서는 무분별한 `ref` 사용을 지양하라고 되어있다. `props`로 가능한 작업이라면 `ref`를 사용하지 말 것.
+
+**[React docs forwarRef]**
+
+https://react.dev/reference/react/forwardRef
