@@ -3,6 +3,7 @@
 - [`useEffect`](#useeffect)
   - [`useEffect`에서 Cleanup 함수 사용하기](#useeffect에서-cleanup-함수-사용하기)
   - [Cleanup 함수로 디바운스(debounce) 구현하기](#cleanup-함수로-디바운스debounce-구현하기)
+    - [`useEffect` 의존성 배열에 대한 규칙](#useeffect-의존성-배열에-대한-규칙)
 - [`useReducer`](#usereducer)
   - [`dispatch` 함수](#dispatch-함수)
   - [좀 더 복잡한 `state`](#좀-더-복잡한-state)
@@ -25,7 +26,7 @@ useEffect(() => { ... }, [ dependencies ]);
 
 **첫 번째 인수로 함수** 전달. **두 번째 인수로는 의존성으로 구성된 배열**을 전달한다.
 
-첫 번째로 전달한 함수는 **컴포넌트가 마운트 되면(컴포넌트가 DOM에 처음 추가되면)실행되며, 이후에는 의존성 데이터가 변경된 다음 발생한 리렌더링 후에 실행된다**.
+첫 번째로 전달한 함수는 **컴포넌트가 마운트 되면(컴포넌트가 DOM에 처음 추가되면)실행되며, 이후에는 의존성 데이터가 변경된 다음 발생한 리렌더링 후에 실행된다**(`Object.is` 함수로 이전 렌더링 값과 비교).
 
 <!-- 개념 추가 이해 필-->
 
@@ -164,13 +165,9 @@ useEffect(() => {
 
 이때 디바운스를 통해 입력이 0.5초 이내로 연속해서 발생하는 경우 타이머를 취소하고, 맨 마지막 입력 후 0.5초 이상 입력이 없는 경우 유효성 검사를 실행하도록 한다.
 
-<h3> 추가로 아직 이해 안된 규칙 하나</h3>
+### `useEffect` 의존성 배열에 대한 규칙
 
-`useEffect` 함수 내부에서 사용되는 데이터는 브라우저나 컴포넌트 외부에서 온 데이터가 아닌 경우 즉, 컴포넌트 내부의 데이터라면 반드시 의존성 배열에 포함시켜야 한다. 
-
-<!-- useEffect 의존성 뭔소리인지 모르겠는 규칙 
-https://react.dev/reference/react/useEffect#specifying-reactive-dependencies
--->
+`useEffect` 함수 내부에서 사용되는 데이터가 브라우저나 컴포넌트 외부에서 온 데이터가 아닌 경우 즉, 리렌더링으로 인하여 변경될 여지가 있는 컴포넌트 내부의 데이터(`state`, `props`, 함수, 변수 등..)라면 반드시 의존성 배열에 포함시켜야 한다(실행 시 에러는 발생하지 않으나 `linter`가 콘솔에 오류로 표시함).
 
 --------------------------
 
@@ -178,20 +175,18 @@ https://react.dev/reference/react/useEffect#specifying-reactive-dependencies
 
 https://react.dev/reference/react/useEffect
 
-**[A complete guide to the useEffect React Hook]**
+**[React docs useEffect 의존성 배열 규칙]**
 
-https://blog.logrocket.com/useeffect-hook-complete-guide/
+https://react.dev/reference/react/useEffect#specifying-reactive-dependencies
+
+https://react.dev/learn/lifecycle-of-reactive-effects#effects-react-to-reactive-values
 
 **[The Lifecycle of React Hooks Component, 마운트 / 언마운트?]**
-
 
 https://blog.bhanuteja.dev/the-lifecycle-of-react-hooks-component
 
 https://stackoverflow.com/questions/31556450/what-is-mounting-in-react-js
 
-**[벨로퍼트 리액트 useEffect]**
-
-https://react.vlpt.us/basic/16-useEffect.html
 
 # `useReducer`
 
