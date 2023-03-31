@@ -10,24 +10,20 @@ React는 실제 DOM(DOM의 가상 표현)의 경량 사본과 같은 가상 DOM�
 
 ----------
 
+**[React 함수 컴포넌트의 수명 주기]**
+
+https://shash68i.hashnode.dev/lifecycle-of-react-functional-components#heading-stages-in-a-components-lifecycle
+
 **[리액트 렌더링 및 재조정 과정, 리렌더링 발생하는 경우]**
 
 https://dev.to/teo_garcia/understanding-rendering-in-react-i5i
 
-https://www.developerway.com/posts/react-re-renders-guide
-
-**[What Is The Virtual DOM and How Does It Work]**
+**[What Is The Virtual DOM and How Does It Work, + 장점]**
 
 https://vegibit.com/what-is-the-virtual-dom-and-how-does-it-work/
 
-**[React Reconciliation and diffing algorithm]**
 
-https://shiharadilshan.medium.com/react-reconciliation-and-diffing-algorithm-5faa9531175
-
-https://medium.com/javarevisited/react-reconciliation-algorithm-86e3e22c1b40
-
-
-**[How does React’s Reconciliation Algorithm work? / fiber에 대하여]**
+**[How does React’s Reconciliation Algorithm work? fiber 장점]**
 
 https://upmostly.com/tutorials/how-does-reconciliation-in-react-work
 
@@ -35,5 +31,4 @@ https://upmostly.com/tutorials/how-does-reconciliation-in-react-work
 
 https://www.codingninjas.com/codestudio/library/react-reconciliation
 
-https://taran.hashnode.dev/reconciliation-and-diffing-in-react#heading-reconciliation
 <!-- 브라우저 DOM을 생성하거나 변경된 경우 **변경된 곳만을 동기화**하여 브라우저 출력을 업데이트하는데(React는 렌더링 간에 차이가 있는 경우에만 DOM 노드를 변경한다),  -->
