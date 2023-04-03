@@ -72,6 +72,8 @@ export default Expenses;
 
 ```
 
+추가로 반환 값이 `false`, `null`, `undefined`인 경우에 리액트는 아무것도 출력하지 않는다
+
 `&&` 연산자 사용 예시는 아래 링크 참조. 
 
 **[React docs conditional-rendering]**
@@ -83,7 +85,6 @@ https://beta.reactjs.org/learn/conditional-rendering
 
 https://medium.com/geekculture/stop-using-for-conditional-rendering-in-react-a0f7b96200f8
 
-<!-- # 컴포넌트 렌더링 막기
 
-return null을 하면 렌더링이 발생하지 않음.
-중괄호{}에 false 집어넣으면 아무것도 출력되지 않는다 -->
+<!-- # 컴포넌트 렌더링 막기
+false, null, undefined 값들은 아무것도 출력하지 않는다-->
