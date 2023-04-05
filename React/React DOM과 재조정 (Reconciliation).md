@@ -10,7 +10,7 @@ React는 실제 DOM(DOM의 가상 표현)의 경량 사본과 같은 가상 DOM�
 
 ----------
 
-**[React 함수 컴포넌트의 수명 주기]**
+**[React 함수 컴포넌트의 수명 주기, re-renders 발생하는 경우 등등]**
 
 https://shash68i.hashnode.dev/lifecycle-of-react-functional-components#heading-stages-in-a-components-lifecycle
 

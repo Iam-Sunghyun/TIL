@@ -86,7 +86,7 @@ https://beta.reactjs.org/reference/react/Fragment
 
 포탈(Portals)이란 HTML 요소를 DOM 트리의 다른 위치로 옮기는 기능이다.
 
-<!-- 내용 수정필 -->
+<!-- 내용 수정필? -->
 
 포탈의 사용 예시를 하나 들자면, 화면 가장 위에 표시되는 모달의 경우 DOM의 깊은 곳에 있는 컴포넌트가 모달을 생성한다면 웹 페이지 가장 상위에 표시되는 모달이 DOM 트리 레벨 깊은 곳에 추가될 것.
 
@@ -152,7 +152,7 @@ const ErrorModal = (props) => {
       {createPortal(<Backdrop onConfirm={props.onConfirm} />, document.getElementById('backdrop-root'))}
       {createPortal(
         <ModalOverlay title={props.title} message={props.message} onConfirm={props.onConfirm} />,
-        document.getElementById('backdrop-root')
+        document.getElementById('overlay-root')
       )}
     </>
   );
@@ -172,7 +172,8 @@ const ErrorModal = (props) => {
     <div id="backdrop-root">
       <div class="ErrorModal_backdrop__i7dT4"></div>
     </div>
-      <div id="overlay-root">...</div>
+    <div id="overlay-root">
+      ...
     </div>
     <div id="root"></div>
   </body>
