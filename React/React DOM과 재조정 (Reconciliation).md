@@ -27,8 +27,5 @@ https://vegibit.com/what-is-the-virtual-dom-and-how-does-it-work/
 
 https://upmostly.com/tutorials/how-does-reconciliation-in-react-work
 
-**[React Reconciliation]**
-
-https://www.codingninjas.com/codestudio/library/react-reconciliation
 
 <!-- 브라우저 DOM을 생성하거나 변경된 경우 **변경된 곳만을 동기화**하여 브라우저 출력을 업데이트하는데(React는 렌더링 간에 차이가 있는 경우에만 DOM 노드를 변경한다),  -->
