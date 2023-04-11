@@ -3,7 +3,6 @@
 - [클라이언트에서 직접 DB에 연결하면 안되는 이유](#클라이언트에서-직접-db에-연결하면-안되는-이유)
 - [`fetch API`로 API 서버와 통신하기](#fetch-api로-api-서버와-통신하기)
 - [에러 처리하기](#에러-처리하기)
-- [요청에 `useEffect()` 사용하기](#요청에-useeffect-사용하기)
 
 # 클라이언트에서 직접 DB에 연결하면 안되는 이유
 
@@ -11,7 +10,7 @@
 
 이것은 클라이언트 자바스크립트에서 DB에 직접 연결하지 않는 이유이기도 하다. 데이터베이스 자격 증명이나 쿼리를 브라우저에서 읽을 수 있게 된다면 모든 사용자가 데이터베이스에 접근하거나 쿼리를 조작할 수 있게 되기 때문에 심각한 보안 문제가 발생할 수 있다.
 
-따라서 데이터베이스와 통신할 때는 직접하는 것이 아닌 백엔드 서버를 통해(백엔드 API를 통해) 통신하도록 한다(NodeJS, PHP, ASP.NET 등). 
+따라서 데이터베이스와 통신할 때는 직접하는 것이 아닌 백엔드를 통해 통신하도록 한다(NodeJS, PHP, ASP.NET 등). 
 
 **[클라이언트 자바스크립트 코드에서 숨겨야 할 것들]**
 
@@ -148,7 +147,7 @@ function App() {
   const fetchHandler = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    const result = await fetch(`${SWAPI_URL}`);
+    const result = await fetch(`${SWAPI_URL}`);  // await을 사용하면 await 이전의 set 함수도 같이 실행된다 
 
     // 응답 상태 코드 2xx일 경우 나머지 절차 수행
    if (result.ok) {
@@ -198,7 +197,7 @@ export default App;
 <!-- 
 프로미스를 반환한다는 것 -> 비동기로 동작한다는 것. -->
 
-추가로 `fetch`가 반환하는 응답(프로미스)은 에러가 발생해도 에러를 `reject`하지 않는다. 네트워크에 오류가 있었거나, 서버의 CORS 설정이 잘못된 경우에만 `TypeError`로 `reject`하며, 응답 코드가 404, 500과 같은 경우에도 `status` 값이 에러 코드일 뿐, 일반적인 응답 객체를 담은 프로미스를 반환한다. 
+추가로 `fetch`가 반환하는 응답(프로미스)은 에러가 발생해도 에러를 `reject`하지 않는다. 네트워크에 오류가 있었거나, 서버의 CORS 설정이 잘못된 경우에만 `TypeError`로 `reject`하며, 응답 코드가 404, 500과 같은 경우에도 `status` 값이 에러 코드일 뿐, 일반적인 응답 객체를 `resolve`한 프로미스를 반환한다. 
 
 ```
 // fetch로 잘못된 경로로 요청했을때 응답
@@ -217,9 +216,10 @@ Response {type: 'cors', url: 'https://swapi.dev/api/sfilms', redirected: false, 
 
 따라서 `fetch`의 응답은 `Response.ok` 프로퍼티를 확인하여 필요에 따라 에러 객체를 직접 `throw` 해줘야한다.
 
-다음은 `async`함수에서 `fetch`를 수행하고, `try/catch`로 에러를 캐치하는 예시이다.
+다음은 `fetch`의 에러를 `try/catch`, `then/catch`로 처리하는 예시이다.
 
 ```
+// async 함수에서 try/catch로 에러 처리
 const fetchHandler = useCallback(async () => {
   setIsLoading(true);
   setError(null);
@@ -244,6 +244,21 @@ const fetchHandler = useCallback(async () => {
     setError(e);
   }
 }, []);
+-------------------------------
+// then/catch를 사용하는 경우
+fetch('flowers.jpg')
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error('네트워크 응답이 올바르지 않습니다.');
+    }
+    return response.blob();
+  })
+  .then((myBlob) => {
+    myImage.src = URL.createObjectURL(myBlob);
+  })
+  .catch((error) => {
+    console.error('fetch에 문제가 있었습니다.', error);
+  });
 ```
 
 **[MDN fetch의 성공 여부 확인]**
@@ -255,4 +270,3 @@ https://developer.mozilla.org/ko/docs/Web/API/Fetch_API/Using_Fetch#fetch%EC%9D%
 https://developer.mozilla.org/ko/docs/Web/HTTP/Status
 
 
-# 요청에 `useEffect()` 사용하기
