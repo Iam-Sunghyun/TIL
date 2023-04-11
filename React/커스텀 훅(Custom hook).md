@@ -35,7 +35,7 @@ function App(){
       <button onClick={() => fetchUrl('users')}>Users</button>
       <button onClick={() => fetchUrl('posts')}>Posts</button>
       <button onClick={() => fetchUrl('todos')}>Todos</button>
-      {/* 일반 자바스크립트 객체는 리액트 자식요소로 유효하지 않아 stringify로 JSON 변환 후 출력해주었다 */}
+      {/* 일반 자바스크립트 객체를 직접 {}안에 출력하는 것은 불가능하기 때문에 stringify로 JSON 변환 후 출력해주었다() 템플릿 리터럴로 출력도 가능하다) */}
       <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );
