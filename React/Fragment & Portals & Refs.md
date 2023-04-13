@@ -3,13 +3,17 @@
 - [JSX의 제한 사항](#jsx의-제한-사항)
   - [컴포넌트 Wrapper 만들기](#컴포넌트-wrapper-만들기)
   - [`<Fragment>`로 래핑하기](#fragment로-래핑하기)
+  - [Reference](#reference)
 - [React Portals 이란?](#react-portals-이란)
   - [1. 이동할 위치(마운트 지점) 지정](#1-이동할-위치마운트-지점-지정)
   - [2. `createPortal` 메서드로 포탈 래퍼 컴포넌트 생성](#2-createportal-메서드로-포탈-래퍼-컴포넌트-생성)
+  - [Reference](#reference-1)
 - [`useRef` 훅](#useref-훅)
   - [`useRef`로 값 참조하기](#useref로-값-참조하기)
   - [`useRef`로 DOM 참조하기](#useref로-dom-참조하기)
+  - [Reference](#reference-2)
 - [`forwardRef`로 `ref` 전달하기](#forwardref로-ref-전달하기)
+  - [Reference](#reference-3)
 
 # JSX의 제한 사항
 
@@ -73,6 +77,8 @@ return (
   </>
 );
 ```
+
+## Reference
 
 **[Fragment 사용 이유, 중첩 요소로 인한 문제점 이해]**
 
@@ -178,6 +184,8 @@ const ErrorModal = (props) => {
     <div id="root"></div>
   </body>
 ```
+
+## Reference
 
 **[React docs createPortal]**
 
@@ -332,6 +340,7 @@ ageInputRef.current.value = '';
 <!-- useRef 사용 예시 https://react.dev/reference/react/useRef#examples-dom -->
 <!--
 useRef()로 DOM 요소를 참조하여 값을 사용하는 경우...비제어 컴포넌트 -->
+## Reference
 
 **[React docs Refs]**
 
@@ -384,6 +393,8 @@ export default MyInput;
 ```
 
 공식 문서에서는 무분별한 `ref` 사용을 지양하라고 되어있다. `props`로 가능한 작업이라면 `ref`를 사용하지 말 것.
+
+## Reference
 
 **[React docs forwarRef]**
 

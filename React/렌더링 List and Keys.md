@@ -1,10 +1,13 @@
 <h2>목차</h2>
 
 - [배열로 리스트(list) 렌더링하기](#배열로-리스트list-렌더링하기)
+  - [Reference](#reference)
 - [리스트 키(key)](#리스트-키key)
   - [리스트에서 key를 사용해야하는 이유?](#리스트에서-key를-사용해야하는-이유)
   - [키 설정하는 방법](#키-설정하는-방법)
-- [배열, 객체 상태 변수 불변성](#배열-객체-상태-변수-불변성)
+  - [Reference](#reference-1)
+- [배열, 객체 상태 변수 불변성(immutability)](#배열-객체-상태-변수-불변성immutability)
+  - [Reference](#reference-2)
 - [배열 상태 변수 정렬해보기](#배열-상태-변수-정렬해보기)
 
 # 배열로 리스트(list) 렌더링하기
@@ -51,9 +54,11 @@ function Expenses(props) {
 
 하지만 이렇게만 작성하면 브라우저 콘솔 창에 `Warning: Each child in a list should have a unique "key" prop.`라고 경구 문구가 뜨는데 다음 내용에서 키에 대해 살펴본다.
 
-**[React docs Updating Arrays in State]**
+## Reference
 
-https://beta.reactjs.org/learn/updating-arrays-in-state
+**[React docs Rendering Lists]**
+
+https://react.dev/learn/rendering-lists
 
 # 리스트 키(key)
 
@@ -115,13 +120,12 @@ Key를 사용하지 않고 리스트 맨 앞에 요소를 추가한 경우 React
 
 따라서 가능한 별도의 **고유한 id를 생성후 추가하여 사용하도록 한다.**
 
+
+## Reference
+
 **[React에서 key가 중요한 이유]**
 
 https://betterprogramming.pub/why-react-keys-matter-an-introduction-136b7447cefc
-
-**[React docs 리스트와 key]**
-
-https://ko.reactjs.org/docs/lists-and-keys.html
 
 **[React docs rendering-lists]**
 
@@ -129,7 +133,7 @@ https://beta.reactjs.org/learn/rendering-lists
 
 
 
-# 배열, 객체 상태 변수 불변성
+# 배열, 객체 상태 변수 불변성(immutability)
 
 <!-- 80% 완 -->
 React 공식 문서에는 배열이나 객체인 상태 변수를 읽기 전용으로 즉, 불변 데이터로 취급하라고 되어있다. 
@@ -157,7 +161,7 @@ React 공식 문서에는 배열이나 객체인 상태 변수를 읽기 전용�
 ```
 setArtists([newValue, ...prevArray]);
 ```  -->
-
+## Reference
 
 **[React docs 불변성이 중요한 이유]**
 
