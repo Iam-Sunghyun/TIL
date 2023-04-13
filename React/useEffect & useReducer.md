@@ -1,18 +1,15 @@
 <h2>목차</h2>
 
 - [`useEffect`](#useeffect)
+  - [Reference](#reference)
   - [`useEffect`에서 Cleanup 함수 사용하기](#useeffect에서-cleanup-함수-사용하기)
   - [Cleanup 함수로 디바운스(debounce) 구현하기](#cleanup-함수로-디바운스debounce-구현하기)
     - [`useEffect` 의존성 배열에 대한 규칙](#useeffect-의존성-배열에-대한-규칙)
+  - [Reference](#reference-1)
 - [`useReducer`](#usereducer)
   - [`dispatch` 함수](#dispatch-함수)
   - [좀 더 복잡한 `state`](#좀-더-복잡한-state)
-- [`useContext`, `Context API`](#usecontext-context-api)
-  - [1. 컨텍스트 생성](#1-컨텍스트-생성)
-    - [자잘한 Tip](#자잘한-tip)
-  - [2. 컨텍스트 제공(provide)](#2-컨텍스트-제공provide)
-  - [3. 컨텍스트 사용](#3-컨텍스트-사용)
-  - [Context 문제점](#context-문제점)
+  - [Reference](#reference-2)
 
 # `useEffect`
  
@@ -33,6 +30,8 @@ useEffect(() => { ... }, [ dependencies ]);
 리액트의 범위를 벗어난 부수 효과(side effect, 부작용)를 일으키는 작업은 리액트 렌더링과 분리되어야 하며 필요시 렌더링 이후에 수행되어야 한다. 이 말은 **컴포넌트가 순수함수이어야 한다는 것**인데 컴포넌트를 순수한 함수로만 엄격하게 작성하면 코드베이스가 커짐에 따라 예측할 수 없는 버그와 동작을 막을 수 있다.
 
 자세한 추가 내용은 링크 참조.
+
+## Reference
 
 **[React docs 컴포넌트가 순수해야하는 이유]**
 
@@ -100,10 +99,10 @@ export default App;
 
 `useEffect` 에서는 함수를 반환 할 수 있는데 이를 **cleanup 함수**라고 한다.
 
-cleanup 함수는 `useEffect`의 의존성이 변경된 상태에서 리렌더링 되거나, 언마운트(DOM에서 완전히 제거)되고 나서 실행되는 함수이다. 
+cleanup 함수는 `useEffect`의 의존성이 변경된 상태에서 리렌더링 된 경우 `useEffect` 함수 전에 먼저 호출되는 함수이다. + 컴포넌트가 언마운트(DOM에서 완전히 제거)되고 나서는 단독적으로 실행되는 함수이다. 
 <!-- 컴포넌트는 마운트 -> 업데이트 -> 언마운트 주기를 갖는다 -->
 
-cleanup 함수는 이전 `useEffect` 함수에 대한 뒷정리를 해준다고 이해하면 될듯.
+cleanup 함수는 필요에 따라 이전 `useEffect` 함수에 대한 뒷정리를 해주기 위한 함수라고 이해하면 될듯.
 
 다음은 cleanup 함수가 호출되는 타이밍을 확인할 수 있는 예시이다.
 
@@ -169,11 +168,13 @@ useEffect(() => {
 
 `useEffect` 함수 내부에서 사용되는 데이터가 브라우저나 컴포넌트 외부에서 온 데이터가 아닌 경우 즉, 리렌더링으로 인하여 변경될 여지가 있는 컴포넌트 내부의 데이터(`state`, `props`, 함수, 변수 등..)라면 반드시 의존성 배열에 포함시켜야 한다(실행 시 에러는 발생하지 않으나 `linter`가 콘솔에 오류로 표시함).
 
---------------------------
+## Reference
 
 **[React docs useEffect]**
 
 https://react.dev/reference/react/useEffect
+
+https://react.dev/learn/escape-hatches -> ※ Effect 관련 내용 목록 확인
 
 **[React docs useEffect 의존성 배열 규칙]**
 
@@ -181,16 +182,20 @@ https://react.dev/reference/react/useEffect#specifying-reactive-dependencies
 
 https://react.dev/learn/lifecycle-of-reactive-effects#effects-react-to-reactive-values
 
-**[The Lifecycle of React Hooks Component, 마운트 / 언마운트?]**
+**[The Lifecycle of React Hooks Component - useEffect, cleanup 함수]**
 
 https://blog.bhanuteja.dev/the-lifecycle-of-react-hooks-component
 
+
+**[마운트 / 언마운트?]**
 https://stackoverflow.com/questions/31556450/what-is-mounting-in-react-js
 
 
 # `useReducer`
 
-`useReducer`는 `useState`처럼 `state`를 생성하고 관리하기 위한 훅으로 여러 개의 하위 값을 갖는 **좀 더 복잡한 `state`를 다양한 방식으로 업데이트 해야할 때 유용하다**. 사용 형식은 다음과 같다.
+`useReducer`는 `useState`처럼 `state`를 생성하고 관리하기 위한 훅으로 여러 개의 하위 값을 갖는 **좀 더 복잡한 `state`를 다양한 방식으로 업데이트 해야할 때 유용하다**. 
+
+사용 형식은 다음과 같다.
 
 ```
 const [state, dispatch] = useReducer(reducer, initialArg, init?)
@@ -397,127 +402,8 @@ export default StudentList;
 
 `dispatch` 함수를 하위 컴포넌트에서 사용한 것 주의!
 
-# `useContext`, `Context API`
+## Reference
 
-앱 규모가 커질수록, 컴포넌트 트리가 깊어지게 되고 그에따라 자식 컴포넌트에 `props`로 데이터를 전달하는데 불편함이 생긴다.
+**[React docs useReducer]**
 
-이런 경우 `context`를 사용하여 여러 컴포넌트에 공통적으로 필요한 `state`를 전역에서 관리하여 중간에 거치는 컴포넌트 없이 하위 컴포넌트에서 직접 사용할 수 있다. -> `state`를 전역에서 사용할 수 있게 해주는 기능.
-
-`context` 데이터를 사용하려면 필요한 하위 컴포넌트에서 `useContext` 훅을 사용해 받아오면 된다.
-
-## 1. 컨텍스트 생성
-
-다음은 다크모드를 구현한 예제로, 버튼을 클릭하면 `isDark` 상태 변수의 값이 `true`/`false`로 반전되고 이에 따라 모든 컴포넌트의 색을 반전시킨다.
-
-우선 별도의 파일을 구성. `createContext`로 `context`를 생성해준다.
-
-```
-// ThemeContext.js
-import { createContext } from 'react';
-
-export const DarkTheme = createContext(null);
-```
-
-`createContext` 함수의 인수로 전달되는 값은 `Context.Provider`가 없을 경우 `useContext`로 읽어오는 초기 값이 된다. 별다른 목적이 없다면 보통 `null`을 사용한다
-
-### 자잘한 Tip
-
-```
-createContext()의 인수에 Provider가 제공하는 props 이름을(value로 전달한 값)을 넣으면 자동 완성 기능을 사용할 수 있다(값은 상관 없다). 
-ex) createContext({ 
-    isDark: null,
-    setIsDark: () => {}
-   })
-```
-
-## 2. 컨텍스트 제공(provide)
-
-그 다음 `props`를 제공하고자 하는 부모 컴포넌트의 엘리먼트들을 `<Context.Provider>` 태그로 감싸주고 `value` `prop`에 전달하고자 하는 데이터를 넣어준다.
-
-```
-// App.js
-import { useState } from 'react;
-import Page from './components/Page';
-// `<Context.Provider>`로 사용하려는 `context`를 `import` 해주는 것 주의
-import { ThemeContext } from './context/ThemeContext';
-
-function App(){
-  const [isDark, setIsDark] = useState(false);
-
-  return (
-    // 공유할 context에 isDark 상태 변수와, set 함수를 전달
-    <ThemeContext.Provider value={{ isDark, setIsDark }}>
-      <Page />
-    </ThemeContext.Provider>
-  )
-}
-```
-
-## 3. 컨텍스트 사용
-
-이제 `<App>`의 하위 컴포넌트에서 `context` 데이터를 사용할 수 있는데 `context` 데이터가 필요한 자식 컴포넌트에서 `useContext` 훅으로 데이터를 받아와 사용한다.
-
-여기서도 생성한 `context`를 `import` 해줘야 하는 것 주의!
-
-```
-// Page.js
-import Header from './Header'
-const Page = () => {
-
-  return (
-    <div>
-      <Header />
-      <Content />
-      <Footer />
-    <div>
-  )
-}
-export default Page;
----------------------
-// Head.js
-import { ThemeContext } from './context/ThemeContext';
-
-const Header = () => {
-    // 객체 디스트럭쳐링으로 context 데이터 전달 받음
-  const { isDark, setIsDark } = useContext(ThemeContext);
-
-  return (
-      // context로 가져온 isDark 값에 따라 backgroundColor 값을 설정
-      <header style={{ backgroundColor : isDark ? 'black' : 'white' }}>
-        .
-        .
-        .
-      </header>
-    )
-}
-export default Header;
-```
-<!-- + 컨텍스트 파일에 <Context.Provider>로 감싸는 래퍼 컴포넌트를 만들어서 export하여 사용하는 방법도 있다. 134강 참조  -->
-
-## Context 문제점
-
-`context`를 사용해보면, `props`를 완전히 대체할 수 있어 보이지만 몇 가지 문제가 되는 점이 있다.
-
-우선 `context`를 사용하면 컴포넌트를 재사용하기 어려워 질 수 있다. 예를 들어 버튼에서 `useContext`로 컨텍스트에서 전달받은 함수를 이벤트 핸들러로 사용한다면, 해당 용도만을 위한 버튼이 되어버려 다른 곳에서 재사용 할 수 없게 된다(이런 경우 보통의 `props`를 사용). 
-
-추가로 `context`의 상태가 변경되는 경우 `context` 상태를 사용하는 모든 자식 컴포넌트들이 자동으로 리렌더링 되는데, `context`에서 변경되지 않은 상태 값을 사용하는 자식 컴포넌트도 모두 리렌더링된다. 즉, `ContextA`가 `{ a: 1, b: 1}`를 제공하고 `ComponentA`가 `a`를 사용한다고 가정했을 때, `b`가 변경되어도 `ComponentA`가 리렌더링 된다.
-
-따라서 성능을 위해서 상태를 세분화하여 `context`를 구성하거나, `context` 데이터가 짧은 시간에 여러 번 업데이트 되는 경우에는 사용하지 않는 것이 좋다.
-
-또한 무분별하게 사용한다면 데이터 흐름을 파악하기 힘들어질 수 있기 때문에 필요한 경우에만 사용해야 한다(prop drilling을 피하기 위한 목적이라면 컴포넌트 합성을 고려해보라고 되어있다).
-
-컨텍스트 사용 전 고려해봐야 할 사항과 사용 사례 등 추가 내용은 링크 참조.
-
------------------
-
-**[The Issue With Using React Context API for State]**
-
-https://blog.jannikwempe.com/when-to-not-use-react-context-api-for-state#heading-the-issue-with-using-react-context-api-for-state
-
-**[React docs passing data deeply with context]**
-
-https://react.dev/learn/passing-data-deeply-with-context
-
-**[React docs createContext]**
-
-https://react.dev/reference/react/createContext
+https://react.dev/reference/react/useReducer
