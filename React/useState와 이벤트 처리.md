@@ -119,7 +119,7 @@ function ExpenseItem(props) {
 
 함수 컴포넌트가 다시 호출되면(렌더링) 위의 `title` 상태 변수는 `setTitle()`로 설정한 가장 최신 값이 할당되는데 이는 상태 변수가 지역 변수와 달리 매 호출마다 새롭게 평가되고 값이 할당되는 것이 아니라 리액트에 의해 유지되기 때문이다.
 
-맨 처음 `useState()`를 호출했을 때 전달한 값을 초기 값으로 갖고 `set` 함수로 상태 값이 업데이트되면 컴포넌트가 재호출 되는데 이때 `useState()`의 인수로 또 다시 초기화되는 것이 아닌 `set` 함수로 업데이트 된 가장 최신의 값을 할당한다(초기 렌더링 이후 초기 인수 값은 무시 됨).
+맨 처음 `useState()`를 호출했을 때 전달한 값을 초기 값으로 갖고 `set` 함수로 상태 값이 업데이트되면 컴포넌트가 재호출 되는데 이때 `useState()`의 인수로 또 다시 초기화되는 것이 아닌 `set` 함수로 업데이트 된 가장 최신의 값을 할당한다(초기 렌더링 이후 초기 인수 값은 무시 된 상태로 호출 됨).
 
 추가로 `set` 함수를 통한 `state` 값의 변경은 비동기적으로 이루어진다. 따라서 `setTitle()` 다음에 `console.log()`가 위치하여도 콘솔 창에는 업데이트 전 값이 출력된다. 
 
@@ -130,12 +130,6 @@ function ExpenseItem(props) {
 **[※ React docs 컴포넌트 렌더링에 대하여]**
 
 https://beta.reactjs.org/learn/render-and-commit
-
-**[geekforgeeks react virtual dom]**
-
-https://www.geeksforgeeks.org/reactjs-virtual-dom/
-
-https://reactjs.org/docs/reconciliation.html#the-diffing-algorithm
 
 **[React docs 내장 hooks 종류]**
 
