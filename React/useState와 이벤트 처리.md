@@ -9,10 +9,6 @@
   - [다음 렌더링 전 `state` 값을 여러 번 업데이트하기](#다음-렌더링-전-state-값을-여러-번-업데이트하기)
   - [Reference](#reference-2)
   - [Lifting state up - 상위 컴포넌트에 데이터 전달하기](#lifting-state-up---상위-컴포넌트에-데이터-전달하기)
-- [제어 컴포넌트 (Controlled Component), 비제어 컴포넌트 (uncontrolled component)](#제어-컴포넌트-controlled-component-비제어-컴포넌트-uncontrolled-component)
-  - [제어 컴포넌트?](#제어-컴포넌트)
-  - [비제어 컴포넌트?](#비제어-컴포넌트)
-  - [Reference](#reference-3)
 
 # 컴포넌트에 이벤트 핸들러 등록하기
 
@@ -406,40 +402,3 @@ export default ExpenseForm;
 ```
 
 `form` 요소가 있는 하위 컴포넌트에서 사용자로부터 입력을 받고, `submit` 이벤트가 발생하면 해당 입력 값을 상위 컴포넌트로부터 `props`로 전달받은 함수에 인수로 전달해서 호출하여 상위 컴포넌트에 데이터를 전달하는 방식이다.
-
-
-# 제어 컴포넌트 (Controlled Component), 비제어 컴포넌트 (uncontrolled component)
-
-## 제어 컴포넌트?
-<!-- 한번 더 수정 및 정리 필요 -->
-<!-- 제어, 비제어 컴포넌트, 상태, 무상태 컴포넌트 -->
-
-제어 컴포넌트란 DOM 요소의 값이 리액트 state에 의해 저장되고 출력되는 컴포넌트를 말한다.
-
-<!-- 즉, 사용자의 입력을 state에 저장하고 출력도 state로 결정되는 컴포넌트를 말하는데 이를 'Single source of truth' 즉, 신뢰 가능한 단일 출처라고도 한다. -->
-
-<!-- 출력이 반드시 state로 이루어져야 하는가? -->
-
-제어 컴포넌트를 사용하면 입력될 때마다 state에 업데이트 하고, 또 요소와 동기화시켜 즉각적인 상호작용 가능하다는 장점이 있다.
-
-예를 들면 입력을 대문자로 받아야 하는 경우 사용자 입력 알파벳을 즉시 대문자로 바꿔서 form에 재출력하는 것과 같이 즉각적인 유효성 검사로 입력을 제한하거나 요소를 다르게 출력 등 유용하게 사용할 수 있다.
-
-하지만 매 입력마다 state를 업데이트 하기 때문에 불필요한 렌더링이 발생할 수 있다.
-
-## 비제어 컴포넌트?
-
-비제어 컴포넌트란 제어 컴포넌트와 반대로 리액트에 의해 요소의 값이 제어되지 않는 컴포넌트를 말한다.
-
-React 없이 DOM을 통해 입력 값을 제어하는 경우, 혹은 useRef()로 특정 DOM 요소를 참조하여 값을 가져오거나 설정하는 경우( DOM 자체에서 폼 데이터가 다루어지는 것) 비제어 컴포넌트라 할 수 있다.
-
-간단한 입력 양식에는 상태 업데이트로 인한 불필요한 렌더링이 없는 비제어 컴포넌트가 적합하다.
-
-## Reference
-
-**[React에서 제어 vs 비제어 컴포넌트 차이, 사용 방법]**
-
-https://itprogramming119.tistory.com/entry/React-%EC%A0%9C%EC%96%B4-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8-VS-%EB%B9%84%EC%A0%9C%EC%96%B4-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8
-
-**[React docs controlled input]**
-
-https://beta.reactjs.org/reference/react-dom/components/input#controlling-an-input-with-a-state-variable
