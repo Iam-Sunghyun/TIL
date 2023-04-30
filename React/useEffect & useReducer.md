@@ -1,6 +1,7 @@
 <h2>목차</h2>
 
 - [`useEffect`](#useeffect)
+    - [순수 함수의 장점?](#순수-함수의-장점)
   - [Reference](#reference)
   - [`useEffect`에서 Cleanup 함수 사용하기](#useeffect에서-cleanup-함수-사용하기)
   - [Cleanup 함수로 디바운스(debounce) 구현하기](#cleanup-함수로-디바운스debounce-구현하기)
@@ -27,7 +28,14 @@ useEffect(() => { ... }, [ dependencies ]);
 
 <!-- 개념 추가 이해 필-->
 
-리액트의 범위를 벗어난 부수 효과(side effect, 부작용)를 일으키는 작업은 리액트 렌더링과 분리되어야 하며 필요시 렌더링 이후에 수행되어야 한다. 이 말은 **컴포넌트가 순수함수이어야 한다는 것**인데 컴포넌트를 순수한 함수로만 엄격하게 작성하면 코드베이스가 커짐에 따라 예측할 수 없는 버그와 동작을 막을 수 있다.
+리액트의 범위를 벗어난 부수 효과(side effect, 부작용)를 일으키는 작업은 리액트 렌더링과 분리되어야 하며 필요시 렌더링 이후에 수행되어야 한다. 이 말은 **컴포넌트가 순수함수이어야 한다는 것**인데 컴포넌트를 순수한 함수로만 엄격하게 작성하면 코드베이스가 커짐에 따라 예측할 수 없는 버그와 동작을 막을 수 있고 또 리액트는 컴포넌트가 순수 함수일 것을 가정하여 설계되었기 때문에 반드시 순수 함수로 작성되어야 한다.
+
+
+### 순수 함수의 장점?
+
+1. 재사용성
+2. 캐시에 안전
+3. 버그 가능성 ↓ 예측하기 쉬우므로 테스트 용이
 
 자세한 추가 내용은 링크 참조.
 
@@ -36,6 +44,8 @@ useEffect(() => { ... }, [ dependencies ]);
 **[React docs 컴포넌트가 순수해야하는 이유]**
 
 https://react.dev/learn/keeping-components-pure
+
+https://react.dev/learn/keeping-components-pure#why-does-react-care-about-purity
 
 **[순수 함수의 장점]**
 
@@ -178,7 +188,7 @@ https://react.dev/reference/react/useEffect
 
 https://react.dev/learn/escape-hatches -> ※ Effect 관련 내용 목록 확인
 
-**[React docs useEffect 의존성 배열 규칙]**
+**[React docs useEffect 의존성 배열 규칙, 반응형(reactive) 값이란?]**
 
 https://react.dev/reference/react/useEffect#specifying-reactive-dependencies
 
@@ -187,10 +197,6 @@ https://react.dev/learn/lifecycle-of-reactive-effects#effects-react-to-reactive-
 **[The Lifecycle of React Hooks Component - useEffect, cleanup 함수]**
 
 https://blog.bhanuteja.dev/the-lifecycle-of-react-hooks-component
-
-
-**[마운트 / 언마운트?]**
-https://stackoverflow.com/questions/31556450/what-is-mounting-in-react-js
 
 
 # `useReducer`
