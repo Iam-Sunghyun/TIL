@@ -6,8 +6,6 @@
   - [리스트에서 key를 사용해야하는 이유?](#리스트에서-key를-사용해야하는-이유)
   - [키 설정하는 방법](#키-설정하는-방법)
   - [Reference](#reference-1)
-- [배열, 객체 상태 변수 불변성(immutability)](#배열-객체-상태-변수-불변성immutability)
-  - [Reference](#reference-2)
 - [배열 상태 변수 정렬해보기](#배열-상태-변수-정렬해보기)
 
 # 배열로 리스트(list) 렌더링하기
@@ -130,52 +128,6 @@ https://betterprogramming.pub/why-react-keys-matter-an-introduction-136b7447cefc
 **[React docs rendering-lists]**
 
 https://beta.reactjs.org/learn/rendering-lists
-
-
-
-# 배열, 객체 상태 변수 불변성(immutability)
-
-<!-- 80% 완 -->
-React 공식 문서에는 배열이나 객체인 상태 변수를 읽기 전용으로 즉, 불변 데이터로 취급하라고 되어있다. 
-
-배열 상태 변수로 예를 들면 `arr[0] = 'bird'`, `push()`, `pop()`같이 직접 변경하거나 요소를 추가, 삭제하는게 아닌 새로운 배열로 변경해야한다는 것(물론 `push()` 메서드와 같은 방법으로 직접 변경이 동작하지 않는 것은 아니다)
-
-공식 문서에서 말하는 불변성의 장점은 다음과 같다.
-
-+ 직접적인 데이터 변형을 피하면 이전 버전의 데이터를 그대로 유지하고 나중에 재사용할 수 있습니다.
-+ 불변성은 컴포넌트의 데이터가 변경되었는지 여부를 비교하는 데 매우 저렴합니다 -> 주소 값 변경 여부만으로 쉽게 변경을 감지할 수 있기 때문.
-  
-<!-- 배열같은 객체를 저장하는 state는 직접 변경하면 안되고, set 함수를 이용해 새 값으로 교체하는 식으로 사용해야 된다고 했다. 정확한 이유는? -> 리액트의 state 변화 감지 기준은 주소 값이기 때문. https://hsp0418.tistory.com/171-->
-
-<!-- 
-이러한 이유로는 성능 최적화, 변경 사항 추적으로 렌더링 트리거
-이유는 뭘까
-
-만약 객체 상태 변수를 직접 변경하게 되면 React가 변경 사항을 추적하지 못하고 리렌더링이 발생하지 않기 때문에 성능에 문제가 생길 수 있다.
-
-
-이전 버전의 상태 값을 유지할 수 없으며(재사용 불가능) `set`
-
-배열 상태 변수를 업데이트하려면 다음과 같이 `set` 함수에 새 배열을 전달하거나 변수에 복사해서 사용해야한다.
-
-```
-setArtists([newValue, ...prevArray]);
-```  -->
-## Reference
-
-**[React docs 불변성이 중요한 이유]**
-
-https://beta.reactjs.org/learn/tutorial-tic-tac-toe#why-immutability-is-important
-
-https://velopert.com/3486
-
-**[※ React 성능 최적화 - 불변 데이터 구조 사용]**
-
-https://blog.logrocket.com/optimizing-performance-react-app/#immutable-data-structures
-
-**[React docs Updating Arrays in State]**
-
-https://beta.reactjs.org/learn/updating-arrays-in-state#making-other-changes-to-an-array
 
 
 # 배열 상태 변수 정렬해보기
