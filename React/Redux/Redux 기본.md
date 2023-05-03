@@ -1,22 +1,45 @@
 <h2>목차</h2>
 
-- [Redux란? - `Context API`의 대안](#redux란---context-api의-대안)
+- [Redux란?](#redux란)
   - [Redux 사용 이유?](#redux-사용-이유)
 - [Redux 사용 방식 개괄](#redux-사용-방식-개괄)
-  - [Redux 사용 예제](#redux-사용-예제)
+    - [1. `store` 생성](#1-store-생성)
+    - [2. `reducer` 함수 설정](#2-reducer-함수-설정)
+    - [3. `dispatch(action)` 함수로 상태 변경 요청](#3-dispatchaction-함수로-상태-변경-요청)
+- [Redux 사용 예제](#redux-사용-예제)
 - [React-redux](#react-redux)
 - [Redux toolkit](#redux-toolkit)
 - [Redux DevTools](#redux-devtools)
 
-# Redux란? - `Context API`의 대안
+# Redux란?
 
-`Redux`는 오픈 소스 자바스크립트 라이브러리로 리액트 앱에서 가장 많이 사용하는 상태 관리 라이브러리이다.
+`Redux`는 오픈 소스 자바스크립트 라이브러리로 리액트 앱에서 가장 많이 사용하는 전역 상태 관리 라이브러리이다.
 
 `Redux` 자체는 리액트에 종속된 라이브러리가 아니며 순수 자바스크립트, 혹은 `Vue.js`나 `Angular.js`와 같은 뷰 프레임워크와도 사용할 수 있다.
 
 ## Redux 사용 이유?
 
-큰 역할은 리액트의 `Context API`와 비슷하나 좀 더 편리하게 전역 상태를 사용, 업데이트하고 관리하기 위한 도구가 `Redux`라고 보면 된다(리액트 앱에서는 리액트에서 더 쉽게 `Redux`를 사용할 수 있게 해주는 `React-redux`라는 라이브러리를 사용하긴 한다).
+리액트의 내장 기능인 `Context API`가 있는데도 `Redux`를 사용하는 이유는 `Context`의 단점 중 하나는 규모가 큰 애플리케이션에서 아래와 같이 매우 복잡해질 수 있다는 것이다.
+
+```
+return (
+  <AuthContextProvider>
+    <ThemeContextProvider>
+      <UIINteractionContextProvider>
+        <MultiStepFormContextProvider>
+          <UserRegistration />
+        </MultiStepFormContextProvider>
+      </UIINteractionContextProvider>
+    </ThemeContextProvider>
+  </AuthContextProvider>
+)
+```
+
+그렇다고 하나의 `Context`에 모든 것을 담기엔 너무 복잡해지고, 또 잦은 업데이트로 인해 불필요한 렌더링도 발생하게 된다(`Context`의 일부만 업데이트 해도 모든 컴포넌트가 리렌더링되는 성질때문).
+
+이러한 것들의 대안으로 `Redux`를 사용한다.
+
+말 그대로 대안이기 때문에 역할은 리액트의 `Context API`와 비슷하나 좀 더 편리하게 전역 상태를 사용, 업데이트하고 관리하기 위해 만들어졌다(리액트 앱에서는 리액트에서 더 쉽게 `Redux`를 사용할 수 있게 해주는 `React-redux`라는 라이브러리를 사용한다).
 
 `Redux` 공식 문서에서는 `Redux`를 다음과 같이 설명하고있다.
 
@@ -33,10 +56,23 @@ Redux는 "액션"이라는 이벤트를 사용하여 애플리케이션 상태�
 
 # Redux 사용 방식 개괄
 
-위에서 중앙 저장소 역할을 하는 중요한 요소가 `store`이다. 이곳에 `state`가 저장되고, `dispatch`, `subscribe`, `getState`와 같은 메서드로 값을 간접적으로 업데이트하거나 조회한다(직접적으로 접근하는 것은 원본이 변경될 가능성이 있기 때문).
+위에서 말한 중앙 저장소 역할을 하는 중요한 요소가 `store`이다. 하나의 `store`에 전역 `state`가 저장되고, `dispatch`, `subscribe`, `getState`와 같은 메서드로 값을 간접적으로 업데이트하거나 조회한다(직접적으로 접근하는 것은 원본이 변경될 가능성이 있기 때문).
 
-`state`를 업데이트하는 것은 리액트의 `useReducer` 훅과 매우 흡사하다(거의 동일). 
+`Redux`사용을 위한 기본적인 순서는 다음과 같다.
+
+### 1. `store` 생성
+
+우선 `store`를 생성하고 상태를 사용할 컴포넌트들을 이 저장소에 `subscribe` 한다. `store`의 데이터가 변경될 때마다 `subscribe`한 컴포넌트에게 이를 알리고 변경된 데이터를 전달한다(데이터는 항상 단방향으로 `store` -> 컴포넌트로 흐른다).
+
+### 2. `reducer` 함수 설정
+
+`reducer`는 `useReducer` 훅처럼 상태를 업데이트하는 역할을 한다. 상태 업데이트를 수행하는 `ruducer` 함수를 정의하고 `store`에 등록한다. 
+
+### 3. `dispatch(action)` 함수로 상태 변경 요청
+
 `store.dispatch(action)`를 통해 `reducer`를 호출하고 `action` 객체의 값에 따라 `reducer`에 작성된 로직을 실행해 반환된 값으로 `state`를 업데이트한다.
+
+
 
 그 후 `store.subcribe()`로 등록한 UI를 반환하는 모든 `render` 함수를 재호출하여 새롭게 값이 업데이트된 UI를 반환하게 한다. 이러한 매커니즘으로 공통적으로 사용되는 값을 전역 값으로 관리해 로직을 간단하게 만든다.
 
@@ -54,7 +90,15 @@ Redux는 "액션"이라는 이벤트를 사용하여 애플리케이션 상태�
 
 flux 패턴? -->
 
-## Redux 사용 예제
+# Redux 사용 예제
+
+<!-- ## 1. `store` 생성
+
+
+```
+
+``` -->
+
 
 # React-redux
 
