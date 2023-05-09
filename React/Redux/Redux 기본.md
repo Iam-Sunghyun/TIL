@@ -1,7 +1,11 @@
 <h2>목차</h2>
 
-- [Redux란?](#redux란)
-  - [Context API 대신 Redux 사용 이유?](#context-api-대신-redux-사용-이유)
+- [Redux 등장 배경 및 사용이유](#redux-등장-배경-및-사용이유)
+  - [MVC(Model-View-Controller) 패턴](#mvcmodel-view-controller-패턴)
+  - [Flux 패턴](#flux-패턴)
+  - [Redux](#redux)
+  - [Reference](#reference)
+- [Context API vs Redux](#context-api-vs-redux)
 - [Redux 사용 방식](#redux-사용-방식)
   - [`store` 생성 및 `reducer` 함수 설정](#store-생성-및-reducer-함수-설정)
   - [`dispatch(action)` 함수로 상태 변경 요청](#dispatchaction-함수로-상태-변경-요청)
@@ -12,15 +16,91 @@
 - [Redux toolkit](#redux-toolkit)
 - [Redux DevTools](#redux-devtools)
 
-# Redux란?
+# Redux 등장 배경 및 사용이유
 
-`Redux`는 오픈 소스 자바스크립트 라이브러리로 리액트 앱에서 가장 많이 사용하는 전역 상태 관리 라이브러리이다.
+## MVC(Model-View-Controller) 패턴
 
-`Redux` 자체는 리액트에 종속된 라이브러리가 아니며 순수 자바스크립트, 혹은 `Vue.js`나 `Angular.js`와 같은 뷰 프레임워크와도 사용할 수 있다.
+MVC 패턴은 1970년대에 'Smalltalk-76'이라는 언어에 도입되어 지금까지 사용되는 소프트웨어 디자인 패턴 중 하나이다. 3가지 개념(Model, View, Controller)으로 애플리케이션을 구조화 하는데 Model에 데이터를 저장하고, Controller를 사용해 Model의 데이터를 관리하며 변경된 데이터를 View에 출력한다.
 
-<!-- mvc -> flux -> redux 리덕스를 쓰는 이유, 만들어진 이유 내용 추가 필 -->
+MVC는 애플리케이션을 간단한 형태로 구조화하여 이해하기 쉽게 만든다. 또 내부 로직과 데이터, UI를 분리하여 관리하기 쉽게 만든다는 장점이 있다.
 
-## Context API 대신 Redux 사용 이유?
+<div style="text-align: center">
+  <img src="./500px-MVC-Process.svg.png" width="300px" heigth="550px" style="margin: 0 auto"/>
+  <p style="color: gray">[위키피디아](https://ko.wikipedia.org/wiki/모델-뷰-컨트롤러)</p>
+</div>
+
+</br>
+위 그림처럼 본질적인 MVC 패턴의 데이터 흐름은 단방향이다. 하지만 이는 엄격한 것이 아닌 하나의 추상적인 개념이므로 실제 웹 애플리케이션에선 아래와 같은 구조가 일반화되어 사용된다.
+</br>
+
+
+<div style="text-align: center">
+  <img src="./300px-Router-MVC-DB.svg.png" width="320px" height="250px" style="margin: 0 auto"/>
+  <p style="color: gray">[위키피디아](https://ko.wikipedia.org/wiki/모델-뷰-컨트롤러)</p>
+</div>
+
+</br>
+<!-- 내용 깊은 이해 부족, 이미지 변경 고려-->
+위와 같은 패턴의 특징은 양방향으로 데이터가 흐를 수 있다는 것이다. Model의 데이터가 변경되면 View도 변경되고, 또 View를 통해 데이터를 입력받아 Model을 업데이트할 수도 있다. 규모가 커질수록 많은 Model과 View가 생성되게 되고 서로 의존도가 높아지게 된다면 데이터의 흐름이 복잡해지고 일부의 변경이 연쇄적인 변경을 일으켜 예측하기 어렵게 만들 수 있다.
+
+이러한 단점들로 인해 애플리케이션을 확장하는데 한계가 있다고 판단한 Meta(전 Facebook)은 2014년 Flux 패턴이라는 새로운 소프트웨어 아키텍처를 제안한다.
+
+## Flux 패턴 
+
+Flux 패턴은 크게 4가지 개념(Store, Dispatcher, Action, View)으로 구성되어 있다. 애플리케이션의 사용자 입력을 기반으로 Action을 생성하고, 이를 Dispatcher에 전달하여 Store의 데이터를 변경한 뒤 View에 반영하는 단방향의 데이터 흐름을 가지는 소프트웨어 아키텍처이다.
+
+</br>
+<!-- 내용 추가 및 이미지 변경 고려 -->
+<div style="text-align: center">
+  <img src="./flux_pattern.png" width="450px"  style="margin: 0 auto"/>
+  <p style="color: gray">https://github.com/facebookarchive/flux</p>
+</div>
+</br>
+
+**https://github.com/facebookarchive/flux 플럭스 깃헙 문서**
+
+Flux 패턴은 데이터 흐름을 단방향으로 강제하기 때문에 흐름을 파악하기가 용이하고, 그 결과를 쉽게 예측할 수 있다는 장점이 있다.
+
+하지만 일부에서는 Flux 패턴도 본질적으로 MVC와 크게 다를 바가 없으며 약간 개선된 형태에 새로운 이름을 붙인 것이라고 하기도 한다. 결국 Flux의 등장 배경은 페이스북 측에서 MVC를 잘못 사용한 것 때문이지, MVC의 한계 때문이 아니라는 것.
+
+## Redux
+
+이러한 Flux 패턴에 Dan Abramov이라는 개발자가 Reducer를 결합하여 만든 라이브러리가 바로 `Redux`이다.
+
+`Redux`는 오픈 소스 자바스크립트 라이브러리로 리액트 앱에서 가장 많이 사용하는 전역 상태 관리 라이브러리이다. `Redux` 자체는 리액트에 종속된 라이브러리가 아니며 순수 자바스크립트, 혹은 `Vue.js`나 `Angular.js`와 같은 뷰 프레임워크와도 사용할 수 있다.
+
+`Redux`는 상태를 하나의 중앙 저장소(store)에 저장하여 관리하기 때문에 데이터 흐름을 이해하고 예측하기 쉬우며 디버깅도 용이하다.
+
+## Reference
+
+**[위키피디아 MVC 아키텍처]** https://ko.wikipedia.org/wiki/%EB%AA%A8%EB%8D%B8-%EB%B7%B0-%EC%BB%A8%ED%8A%B8%EB%A1%A4%EB%9F%AC
+
+**[MERN을 통한 MVC 예시]** https://www.freecodecamp.org/news/mvc-architecture-what-is-a-model-view-controller-framework/
+
+**[MVx 아키텍처]** https://www.clariontech.com/blog/evaluating-design-patterns-for-mobile-development
+
+**[페이스북의 결정: MVC는 확장에 용이하지 않다. 그렇다면 Flux다.]**
+
+https://blog.coderifleman.com/2015/06/19/mvc-does-not-scale-use-flux-instead/
+
+**[MVC vs. Flux ? Bidirectional vs. Unidirectional?]** 
+
+https://stackoverflow.com/questions/33447710/mvc-vs-flux-bidirectional-vs-unidirectional
+
+**[Flux 패턴, Redux 개요]** 
+
+https://www.freecodecamp.org/news/an-introduction-to-the-flux-architectural-pattern-674ea74775c9/
+
+https://www.tcpschool.com/react/react_redux_intro
+
+**[Redux 쓰는 이유?]** 
+
+https://wooder2050.medium.com/%EB%A6%AC%EB%8D%95%EC%8A%A4-redux-%EB%8A%94-%EC%99%9C-%EC%93%B0%EB%8A%94-%EA%B1%B4%EB%8D%B0-2eaafce30f27
+
+https://devlog-h.tistory.com/26
+
+
+# Context API vs Redux 
 
 리액트의 내장 기능인 `Context API`가 있는데도 `Redux`를 사용하는 이유는 `Context`의 단점 중 하나가 규모가 큰 애플리케이션에서 아래와 같이 매우 복잡해질 수 있다는 것이다.
 
@@ -44,18 +124,12 @@ return (
 
 이러한 문제들의 대안으로 애플리케이션의 규모가 커지게 될수록 `Redux` 사용을 고려해볼 수 있다.
 
-<!-- Context API 대신 Redux 사용 이유, 차이점 어렴풋이 이해하는 중. 내용 수정 필 -->
+<!-- Context API 대신 Redux 사용 이유, 차이점 어렴풋이 이해하는 중. 내용 보완 필 -->
 `Redux`는 상태를 하나의 중앙 저장소에 저장하여 관리하기 때문에 데이터 흐름을 이해하기 쉽고 디버깅도 용이하다. `Redux`는 MVC 패턴의 양방향 데이터 흐름으로 인한 복잡성을 해결하기 위해 만들어진 flux 패턴에 `reducer` 개념을 도입하여 만들어졌다(리액트 앱에서는 리액트에서 더 쉽게 `Redux`를 사용할 수 있게 해주는 `Redux-toolkit`이라는 라이브러리를 사용한다).
 
 **결론적으로 `Redux`를 사용하는 이유는 여러 곳에서 사용하는 상태 값을 하나의 중앙 저장소에서 저장하여, 단방향 데이터 흐름을 통해 앱의 복잡도를 줄이고 예기치 못한 변경을 방지해 예측하기 쉬운 코드를 작성하기 위한 것이다.**
 
 먼저 `Redux`의 주요 개념과 순수 자바스크립트로 `Redux`를 사용해보고, 그 후 `react-redux`를 통해 리액트에 리덕스를 적용해볼 것이다.
-
-**[redux 쓰는 이유?]**
-
-https://wooder2050.medium.com/%EB%A6%AC%EB%8D%95%EC%8A%A4-redux-%EB%8A%94-%EC%99%9C-%EC%93%B0%EB%8A%94-%EA%B1%B4%EB%8D%B0-2eaafce30f27
-
-https://devlog-h.tistory.com/26
 
 **[Redux / Context API 장단점]**
 
@@ -301,7 +375,7 @@ https://react-redux.js.org/api/hooks#useselector
 앱의 규모가 커짐에 따라 생길 수 있는 redux의 문제점.
 
 1. 액션 type 명 충돌 가능성
-2. 상태 객체의 크기가 커질수록 매번 복사 해야되는 양도 많아지고, reducer의 내용도 매우 길어짐
+2. 상태 객체의 크기가 커질수록 불변성을 위해 복사 해야되는 양도 많아져 `reducer`의 내용도 매우 길어짐.
 3. 결국 store을 사용하기 위한 파일들, 내용들이 복잡해지게 된다.
 
 이러한 일반적인 문제를 해결하기 위해 만들어 진 것이 `Redux-toolkit` 이다.
