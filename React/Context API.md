@@ -112,7 +112,9 @@ export default Header;
 
 우선 `context`를 사용하면 컴포넌트를 재사용하기 어려워 질 수 있다. 예를 들어 버튼에서 `useContext`로 컨텍스트에서 전달받은 함수를 이벤트 핸들러로 사용한다면, 해당 용도만을 위한 버튼이 되어버려 다른 곳에서 재사용 할 수 없게 된다(이런 경우 보통의 `props`를 사용).
 
-추가로 `context`의 상태가 변경되는 경우 `context` 상태를 사용하는 모든 자식 컴포넌트들이 자동으로 리렌더링 되는데, `context`에서 변경되지 않은 상태 값을 사용하는 자식 컴포넌트도 모두 리렌더링된다. 즉, `ContextA`가 `{ a: 1, b: 1}`를 제공하고 `ComponentA`가 `a`를 사용한다고 가정했을 때, `b`가 변경되어도 `ComponentA`가 리렌더링 된다.
+추가로 `context`의 상태가 변경되는 경우 `context`로 감싼 컴포넌트의 모든 하위 컴포넌트들이 리렌더링 된다. 이 경우 `memo`를 사용해서 불필요한 렌더링을 막을 수 있다. 
+
+하지만 `context` 상태를 사용하는 자손 컴포넌트들의 경우, `memo`로 메모이제이션 해주더라도 무조건적으로 리렌더링 되는데 이때 `context`에서 변경되지 않은 상태 값을 사용하는 자식 컴포넌트도 모두 리렌더링된다. 즉, `ContextA`가 `{ a: 1, b: 1}`를 제공하고 `ComponentA`가 `a`를 사용한다고 가정했을 때, `b`가 변경되어도 `ComponentA`는 리렌더링 된다.
 
 따라서 성능을 위해서 상태를 세분화하여 `context`를 구성하거나, `context` 데이터가 짧은 시간에 여러 번 업데이트 되는 경우에는 사용하지 않는 것이 좋다.
 
@@ -122,7 +124,6 @@ export default Header;
 
 
 ## Reference
----
 
 **[The Issue With Using React Context API for State]**
 
