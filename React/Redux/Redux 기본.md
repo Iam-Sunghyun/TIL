@@ -42,7 +42,7 @@ MVC는 애플리케이션을 간단한 형태로 구조화하여 이해하기 �
 
 </br>
 <!-- 양방향 바인딩 깊은 이해 부족, 이미지 변경 고려-->
-위와 같은 패턴의 특징은 양방향으로 데이터가 흐를 수 있다는 것이다. Model의 데이터가 변경되면 View도 변경되고, 또 View를 통해 데이터를 입력받아 Model을 업데이트할 수도 있다. 규모가 커질수록 많은 Model과 View가 생성되게 되고 서로 의존도가 높아지게 된다면 데이터의 흐름이 복잡해지고 일부의 변경이 연쇄적인 변경을 일으켜 예측하기 어렵게 만들 수 있다.
+위와 같은 패턴의 특징은 양방향으로 데이터가 흐를 수 있다는 것이다. Model의 데이터가 변경되면 View도 변경되고, 또 View를 통해 데이터를 입력받아 직접 Model을 업데이트할 수도 있다. 규모가 커질수록 많은 Model과 View가 생성되게 되고 서로 의존도가 높아지게 된다면 데이터의 흐름이 복잡해지고 일부의 변경이 연쇄적인 변경을 일으켜 예측하기 어렵게 만들 수 있다.
 
 이러한 단점들로 인해 애플리케이션을 확장하는데 한계가 있다고 판단한 Meta(전 Facebook)은 2014년 Flux 패턴이라는 새로운 소프트웨어 아키텍처를 제안한다.
 
@@ -84,11 +84,13 @@ Flux 패턴에 Dan Abramov이라는 개발자가 Reducer를 결합하여 좀 더
 
 + Flux는 아키텍처 패턴이고 `Redux`는 Flux 패턴의 구현이다.
 
-+ `Redux`는 일반적으로 단일 저장소(store)를 사용하고 Flux 패턴은 다중 저장소 접근 방식을 사용한다.
-  
-+ Flux에는 Dispather가 있고 `Redux`에는 디스패처가 따로 없으며 store 내부에 디스패치 프로세스가 내장되어있다.
++ `Redux`는 일반적으로 단일 저장소(store)를 사용하고 Flux 패턴은 여러 개의 저장소를 사용한다.
+  + 여러 저장소마다 개별적인 처리 로직이 필요하기 때문에 내용 추적이 좀 더 까다로울 수 있다.
+   
 <!-- + 디스패치 프로세스? -->
-+ 
++ Flux 패턴에는 싱글톤 객체인 단일 Dispather가 있으며 action을 전달하여 상태를 업데이트 한다. `Redux`에는 디스패처가 따로 없으며 reducer를 통해 상태 업데이트가 이루어진다(store 내부에 디스패치 프로세스가 내장 되어있다).
+
++ Flux 패턴에서 action에 따른 상태 업데이트 로직은 각각의 store에 저장되며 `Redux`에선 reducer에 저장된다(reducer없이 store을 정의할 수 없다).
 
 
 ## Reference
@@ -99,6 +101,14 @@ https://medium.com/edge-coders/the-difference-between-flux-and-redux-71d31b118c1
 
 https://sunscrapers.com/blog/flux-and-redux-differences/
 
+https://baeharam.netlify.app/posts/architecture/flux-redux (이미지 참고용)
+
+**[Flux 패턴에 대하여]** 
+
+http://fluxxor.com/what-is-flux.html
+
+https://www.freecodecamp.org/news/an-introduction-to-the-flux-architectural-pattern-674ea74775c9/
+
 **[페이스북의 결정: MVC는 확장에 용이하지 않다. 그렇다면 Flux다.]**
 
 https://blog.coderifleman.com/2015/06/19/mvc-does-not-scale-use-flux-instead/
@@ -106,10 +116,6 @@ https://blog.coderifleman.com/2015/06/19/mvc-does-not-scale-use-flux-instead/
 **[MVC vs. Flux ? Bidirectional vs. Unidirectional?]** 
 
 https://stackoverflow.com/questions/33447710/mvc-vs-flux-bidirectional-vs-unidirectional
-
-**[Flux 패턴에 대하여]** 
-
-https://www.freecodecamp.org/news/an-introduction-to-the-flux-architectural-pattern-674ea74775c9/
 
 **[Redux 쓰는 이유?]** 
 
@@ -397,19 +403,22 @@ https://react-redux.js.org/api/hooks#useselector
 <!-- 내용보충 필 -->
 앱의 규모가 커짐에 따라 생길 수 있는 redux의 문제점.
 
-1. 기본 boilerplate를 위한 구성이 필요함(reducer, 필요에 따라 추가적인 미들웨어 설치 등)
-2. 상태 객체의 크기가 커질수록 불변성을 위해 복사 해야되는 양도 많아지고, `reducer`의 내용도 매우 길어짐.
-3. 액션 type 명 충돌 가능성
++ 기본 boilerplate를 위한 구성이 필요함(reducer, 필요에 따라 추가적인 미들웨어 설치 등)
++ 상태 객체의 크기가 커질수록 불변성을 위해 복사 해야되는 양도 많아지고, `reducer`의 내용도 매우 길어짐.
++ 액션 type 명 충돌 가능성
 
+```
 저희는 수동으로 작성하는 Redux 로직에서 "보일러 플레이트"를 제거하고, 흔한 실수를 방지하고, 기본적인 Redux 작업을 간단하게 만드는 API를 제공하기 위해 Redux Toolkit을 만들었습니다.
+```
 
 이러한 일반적인 문제를 해결하기 위해 만들어 진 것이 `Redux-toolkit` 이다.
 
 `Redux Toolkit`은 `Redux` 로직을 작성하는데 필요한 패키지와 기능이 포함되어 있는 도구로 리덕스 측에서 사용을 공식적으로 추천하고 있다(리액트 CRA와 같은 역할). `Redux Toolkit` 패키지에서는 코어 `redux` 패키지에 추가로 필수적인 API 메서드와 모듈들을 포함 하고있다.
 
-**[Redux / Context API 장단점 위에도 중복링크 있음]**
 
-https://likims.com/blog/context-vs-redux-pros-and-cons
+**[Redux Toolkit이 오늘날 Redux를 사용하는 방법인 이유]**
+
+https://ko.redux.js.org/introduction/why-rtk-is-redux-today
 
 # Redux DevTools
 
