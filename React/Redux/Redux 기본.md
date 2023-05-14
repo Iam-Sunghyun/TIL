@@ -14,7 +14,11 @@
   - [리덕스 `store` 생성 및 제공](#리덕스-store-생성-및-제공)
   - [컴포넌트에서 `store` 데이터 사용하기](#컴포넌트에서-store-데이터-사용하기)
     - [`useSelector()` 훅](#useselector-훅)
-- [Redux toolkit](#redux-toolkit)
+- [Redux toolkit(RTK)](#redux-toolkitrtk)
+- [Redux toolkit API](#redux-toolkit-api)
+  - [`configureStore`](#configurestore)
+  - [`createSlice`](#createslice)
+  - [Reference](#reference-1)
 - [Redux DevTools](#redux-devtools)
 
 # Redux 등장 배경 및 사용이유
@@ -44,11 +48,11 @@ MVC는 애플리케이션을 간단한 형태로 구조화하여 이해하기 �
 <!-- 양방향 바인딩 깊은 이해 부족, 이미지 변경 고려-->
 위와 같은 패턴의 특징은 양방향으로 데이터가 흐를 수 있다는 것이다. Model의 데이터가 변경되면 View도 변경되고, 또 View를 통해 데이터를 입력받아 직접 Model을 업데이트할 수도 있다. 규모가 커질수록 많은 Model과 View가 생성되게 되고 서로 의존도가 높아지게 된다면 데이터의 흐름이 복잡해지고 일부의 변경이 연쇄적인 변경을 일으켜 예측하기 어렵게 만들 수 있다.
 
-이러한 단점들로 인해 애플리케이션을 확장하는데 한계가 있다고 판단한 Meta(전 Facebook)은 2014년 Flux 패턴이라는 새로운 소프트웨어 아키텍처를 제안한다.
+이러한 문제로 애플리케이션을 확장하는데 한계가 있다고 판단한 Meta(전 Facebook)는 2014년 Flux라는 새로운 소프트웨어 아키텍처를 제안했고 이 패턴과 React를 통해 좀 더 예측하기 쉬운 형태로 코드를 구조화할 수 있을 것이라고 말한다.
 
 ## Flux 패턴 
 
-Flux 패턴은 크게 4가지 개념(Store, Dispatcher, Action(+ Action 생성자), View)으로 구성되어 있다. 애플리케이션의 사용자 입력을 기반으로 Action을 생성하고, 이를 Dispatcher에 전달하여 Store의 데이터를 업데이트한 뒤 View에 반영하는 식의 단방향의 데이터 흐름을 가지는 소프트웨어 아키텍처이다.
+Flux 패턴은 크게 4가지 개념(Store, Dispatcher, Action(Action 생성자), View)으로 구성되어 있다. 애플리케이션의 사용자 입력을 기반으로 Action을 생성하고, 이를 Dispatcher에 전달하여 Store의 데이터를 업데이트한 뒤 View에 반영하는 식의 단방향의 데이터 흐름을 가지는 소프트웨어 아키텍처이다.
 
 </br>
 
@@ -90,7 +94,7 @@ Flux 패턴에 Dan Abramov이라는 개발자가 Reducer를 결합하여 좀 더
 <!-- + 디스패치 프로세스? -->
 + Flux 패턴에는 싱글톤 객체인 단일 Dispather가 있으며 action을 전달하여 상태를 업데이트 한다. `Redux`에는 디스패처가 따로 없으며 reducer를 통해 상태 업데이트가 이루어진다(store 내부에 디스패치 프로세스가 내장 되어있다).
 
-+ Flux 패턴에서 action에 따른 상태 업데이트 로직은 각각의 store에 저장되며 `Redux`에선 reducer에 저장된다(reducer없이 store을 정의할 수 없다).
++ Flux 패턴에서 상태 업데이트 로직은 각각의 store에 저장되며 `Redux`에선 reducer에 저장된다(reducer없이 store을 정의할 수 없다).
 
 
 ## Reference
@@ -394,27 +398,53 @@ const Counter = () => {
 export default Counter;
 ```
 
-**[reacr-redux `useSelector()`]**
+**[react-redux `useSelector()`]**
 
 https://react-redux.js.org/api/hooks#useselector
 
-# Redux toolkit
+# Redux toolkit(RTK)
 
 <!-- 내용보충 필 -->
 앱의 규모가 커짐에 따라 생길 수 있는 redux의 문제점.
 
-+ 기본 boilerplate를 위한 구성이 필요함(reducer, 필요에 따라 추가적인 미들웨어 설치 등)
++ 기본 boilerplate를 위한 구성이 필요함(reducer, 필요에 따라 추가적인 미들웨어(redux-thunk 같은) 설치 등)
 + 상태 객체의 크기가 커질수록 불변성을 위해 복사 해야되는 양도 많아지고, `reducer`의 내용도 매우 길어짐.
 + 액션 type 명 충돌 가능성
+
+이러한 일반적인 문제를 해결하기 위해 만들어 진 것이 `redux-toolkit` 이다.
+
+`Redux Toolkit`은 `redux` 로직을 작성하는데 필요한 패키지와 기능이 포함되어 있는 리덕스 측에서 사용을 공식적으로 추천하는 도구이다(리액트 CRA와 같은 역할).
 
 ```
 저희는 수동으로 작성하는 Redux 로직에서 "보일러 플레이트"를 제거하고, 흔한 실수를 방지하고, 기본적인 Redux 작업을 간단하게 만드는 API를 제공하기 위해 Redux Toolkit을 만들었습니다.
 ```
 
-이러한 일반적인 문제를 해결하기 위해 만들어 진 것이 `Redux-toolkit` 이다.
+`Redux Toolkit` 패키지에서는 코어 `redux` 패키지에 추가로 필수적인 API 메서드와 모듈들을 포함 하고있으며 store 설정, 리듀서 생성 및 불변 수정 로직 작성, 상태 슬라이스 등과 같은 기능으로 `redux` 작업을 좀 더 단순화하고 실수를 방지하여 `redux` 코드 작성을 더 쉽게 만들어준다.
 
-`Redux Toolkit`은 `Redux` 로직을 작성하는데 필요한 패키지와 기능이 포함되어 있는 도구로 리덕스 측에서 사용을 공식적으로 추천하고 있다(리액트 CRA와 같은 역할). `Redux Toolkit` 패키지에서는 코어 `redux` 패키지에 추가로 필수적인 API 메서드와 모듈들을 포함 하고있다.
+# Redux toolkit API
 
+Redux Toolkit은 모든 Redux 앱에서 가장 일반적으로 하는 작업을 간소화하는 두 가지 주요 API로 시작합니다:
+
+## `configureStore`
+
+`configureStore`는 한 번의 호출로 Redux 스토어를 설정하며, 리듀서를 결합하고 thunk 미들웨어를 추가하고, Redux DevTools 통합을 하는 등의 작업을 수행합니다. 또한, 이름이 있는 옵션 매개변수를 사용하기 때문에 createStore보다 구성이 쉽습니다.
+
+## `createSlice`
+
+`createSlice`는 Immer 라이브러리를 사용하는 리듀서를 작성할 수 있게 해줍니다. 이를 통해 state.value = 123과 같은 "변형 (mutating)" JS 문법을 spreads 없이도 불변성을 유지하며 업데이트할 수 있습니다. 또한, 각 리듀서에 대한 액션 생성자 함수를 자동으로 생성하고, 리듀서 이름에 기반하여 내부적으로 액션 타입 문자열을 생성합니다. 마지막으로, TypeScript와 잘 호환됩니다.
+
+Redux Toolkit은 이 외에도, 다음과 같은 일반적인 Redux 작업을 수행할 수 있는 API를 제공합니다:
+
+`createAsyncThunk`: "비동기 요청 전후에 액션을 디스패치"하는 표준 패턴을 추상화합니다
+
+`createEntityAdapter`: 정규화된 상태에서 CRUD 작업을 수행하기 위한 미리 만들어진 리듀서와 셀렉터
+
+`createSelector`: 메모이제이션된 셀렉터를 위한 표준 Reselect API 다시 내보내기(re-export)
+
+`createListenerMiddleware`: 디스패치된 액션에 대한 응답으로 로직을 실행하기 위한 사이드 이펙트 미들웨어
+
+
+## Reference
 
 **[Redux Toolkit이 오늘날 Redux를 사용하는 방법인 이유]**
 
