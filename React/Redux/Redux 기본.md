@@ -10,14 +10,16 @@
 - [Redux 사용 방식](#redux-사용-방식)
   - [`store` 생성 및 `reducer` 함수 설정](#store-생성-및-reducer-함수-설정)
   - [`dispatch(action)` 함수로 상태 변경 요청](#dispatchaction-함수로-상태-변경-요청)
+    - [`reducer`가 순수해야 하는 이유?](#reducer가-순수해야-하는-이유)
 - [React-redux](#react-redux)
   - [리덕스 `store` 생성 및 제공](#리덕스-store-생성-및-제공)
   - [컴포넌트에서 `store` 데이터 사용하기](#컴포넌트에서-store-데이터-사용하기)
     - [`useSelector()` 훅](#useselector-훅)
 - [Redux toolkit(RTK)](#redux-toolkitrtk)
-- [Redux toolkit API](#redux-toolkit-api)
-  - [`configureStore`](#configurestore)
+- [Redux toolkit 시작하기](#redux-toolkit-시작하기)
   - [`createSlice`](#createslice)
+  - [`configureStore`](#configurestore)
+  - [store 생성하기](#store-생성하기)
   - [Reference](#reference-1)
 - [Redux DevTools](#redux-devtools)
 
@@ -70,7 +72,7 @@ Flux 패턴은 데이터 흐름을 단방향으로 강제하기 때문에 흐름
 
 ## Redux
 
-Flux 패턴에 Dan Abramov이라는 개발자가 Reducer를 결합하여 좀 더 단순화하여 만든 라이브러리가 바로 `Redux`이다. `Redux`는 구체적인 부분에서 Flux와 약간 다르게 동작하는데 Dispatcher가 존재하지 않고 action을 Dispatch하면 reducer가 상태를 업데이트한다(상태는 store에 저장된다).  
+Flux 패턴에 Dan Abramov이라는 개발자가 Reducer를 결합하여 좀 더 단순화하여 만든 라이브러리가 바로 `Redux`이다. `Redux`는 구체적인 부분에서 Flux와 약간 다르게 동작하는데 Dispatcher가 존재하지 않고 action을 Dispatch하면 `reducer`가 상태를 업데이트한다(상태는 store에 저장된다).  
 
 `Redux`는 오픈 소스 자바스크립트 라이브러리이며 리액트 앱에서 가장 많이 사용하는 전역 상태 관리 라이브러리이다. `Redux`는 리액트에 종속된 라이브러리가 아니므로 순수 자바스크립트, 혹은 `Vue.js`나 `Angular.js`와 같은 뷰 프레임워크와도 사용할 수 있다.
 
@@ -92,9 +94,9 @@ Flux 패턴에 Dan Abramov이라는 개발자가 Reducer를 결합하여 좀 더
   + 여러 저장소마다 개별적인 처리 로직이 필요하기 때문에 내용 추적이 좀 더 까다로울 수 있다.
    
 <!-- + 디스패치 프로세스? -->
-+ Flux 패턴에는 싱글톤 객체인 단일 Dispather가 있으며 action을 전달하여 상태를 업데이트 한다. `Redux`에는 디스패처가 따로 없으며 reducer를 통해 상태 업데이트가 이루어진다(store 내부에 디스패치 프로세스가 내장 되어있다).
++ Flux 패턴에는 싱글톤 객체인 단일 Dispather가 있으며 action을 전달하여 상태를 업데이트 한다. `Redux`에는 디스패처가 따로 없으며 `reducer`를 통해 상태 업데이트가 이루어진다(store 내부에 디스패치 프로세스가 내장 되어있다).
 
-+ Flux 패턴에서 상태 업데이트 로직은 각각의 store에 저장되며 `Redux`에선 reducer에 저장된다(reducer없이 store을 정의할 수 없다).
++ Flux 패턴에서 상태 업데이트 로직은 각각의 store에 저장되며 `Redux`에선 `reducer`에 저장된다(`reducer`없이 `store`을 정의할 수 없다).
 
 
 ## Reference
@@ -156,7 +158,7 @@ return (
 <!-- Context API 대신 Redux 사용 이유, 차이점 어렴풋이 이해하는 중. 내용 보완 필 -->
 `Redux`는 상태를 하나의 중앙 저장소에 저장하여 관리하기 때문에 데이터 흐름을 이해하기 쉽고 디버깅도 용이하다. `Redux`는 MVC 패턴의 양방향 데이터 흐름으로 인한 복잡성을 해결하기 위해 만들어진 flux 패턴에 `reducer` 개념을 도입하여 만들어졌다(리액트 앱에서는 리액트에서 더 쉽게 `Redux`를 사용할 수 있게 해주는 `Redux-toolkit`이라는 라이브러리를 사용한다).
 
-**결론적으로 `Redux`를 사용하는 이유는 여러 곳에서 사용하는 상태 값을 하나의 중앙 저장소에서 저장하여 관리하고 단방향 데이터 흐름을 통해 앱의 복잡도를 줄이고 예측하기 쉬운 코드를 작성하기 위한 것이다.**
+**결론적으로 `Redux`를 사용하는 이유는 전역 상태 값을 하나의 중앙 저장소에서 저장하여 관리하고 단방향 데이터 흐름을 통해 앱의 복잡도를 줄이고 예측하기 쉬운 코드를 작성하기 위한 것이다.**
 
 먼저 `Redux`의 주요 개념과 순수 자바스크립트로 `Redux`를 사용해보고, 그 후 `react-redux`를 통해 리액트에 리덕스를 적용해볼 것이다.
 
@@ -219,7 +221,7 @@ console.log(counterSubscriber());
 
 그 후 `store`의 상태를 사용할 컴포넌트들은(`store.getState()`로 상태를 사용하는 함수들) `store.subscribe(component)` 메서드를 사용하여 저장소를 `subscribe` 해줘야 한다.  
 
-그러면 `redux`는 `store`의 데이터가 `dispatch`로 업데이트될 때마다 `subscribe`한 컴포넌트를 재호출한다. 여기서 알아야 할 것은 **데이터는 항상 단방향으로 `store` -> 컴포넌트로 흐른다는 것**. -> 이러한 방식으로 예기치 못한 변경을 방지한다.
+그러면 `redux`는 `store`의 데이터가 `dispatch`로 업데이트될 때마다 `subscribe`한 컴포넌트를 재호출한다. 여기서 알아야 할 것은 **데이터는 항상 단방향으로 `store` -> 컴포넌트로 흐른다는 것**. -> 이러한 방식으로 데이터 흐름을 단순화 한다.
 
 ## `dispatch(action)` 함수로 상태 변경 요청
 
@@ -257,14 +259,15 @@ store.dispatch({ type: 'multiple', payload: 10 });
    { counter: 50 }
 ```
 
-
 위와 같은 매커니즘으로 공통적으로 사용되는 값을 하나의 `store`에서 관리해 로직을 간단하게 만들 수 있다.
+
+### `reducer`가 순수해야 하는 이유?
 
 여기까지는 다른 여타 상태 관리 라이브러리와 크게 다를 바가 없다.
 
 `Redux`만의 강점이라고 할 수 있는 것은 브라우저의 `Redux DevTools` 확장 프로그램을 사용해 마치 버전 관리 시스템처럼 `store`에 저장된 `state`의 변경 히스토리를 확인하고, 또 원하는 지점으로 돌아갈 수 있다는 것!(공식 문서에서는 **'time-travel debugging'** 이라 표현한다).
 
-여기서 **상태가 변경되는 것을 제대로 기록하기 위해서는 `reducer`는 순수 함수로 작성되어야 한다.**
+여기서 **상태가 변경되는 것을 제대로 기록하기 위해서는 `reducer`는 순수 함수로 작성되어야 한다.** 또한 `Redux`와 `React-Redux`는 성능을 위해 모두 얕은 평등 검사(shallow equality checking)를 사용하기 때문에 새 값으로 교체하지 않게 되면 변경을 감지하지 못한다. 
 
 ```
 성능이나 다른 이유 때문에 위해 순수하지 않은 리듀서를 작성하는 것도 기술적으로는 가능하지만, 이렇게 하지 않을 것을 권장합니다. 순수하지 않은 리듀서 구현은 시간 여행, 기록/재생, 핫 로딩과 같은 개발 지원 기능을 망가뜨립니다. 더욱이 불변성 때문에 대부분의 실제 애플리케이션에서 성능 문제가 있을 것 같아보이지만, Om이 증명했듯이 객체 할당에 있어서 성능에서 불리할 지라도 순수 함수를 통해 무엇이 바뀌었는지 정확히 판단할 수 있기 때문에 재렌더링이나 재계산 같은 값비싼 연산을 피한다는 점에서는 여전히 유리합니다.
@@ -288,8 +291,7 @@ npm install react-redux
 
 ## 리덕스 `store` 생성 및 제공
 
-`redux`의 `createStore` 메서드에 리듀서를 전달하여 `store`를 생성해준다. 그 다음
-`react-redux`에서 제공하는 `<Provider />` 컴포넌트로 `store`를 제공할 수 있다.
+`redux`의 `createStore` 메서드에 리듀서를 전달하여 `store`를 생성해준다. 그 다음 `react-redux`에서 제공하는 `<Provider />` 컴포넌트로 `store`를 제공할 수 있다.
 
 `<Provider />` 컴포넌트의 사용 방식은 `Context API`와 비슷하다. 상태를 공유할 하위 컴포넌트들을 포함하는 부모 컴포넌트를 감싸주어 `store` `prop`으로 전달해주면 된다. 
 
@@ -407,7 +409,7 @@ https://react-redux.js.org/api/hooks#useselector
 <!-- 내용보충 필 -->
 앱의 규모가 커짐에 따라 생길 수 있는 redux의 문제점.
 
-+ 기본 boilerplate를 위한 구성이 필요함(reducer, 필요에 따라 추가적인 미들웨어(redux-thunk 같은) 설치 등)
++ 기본 boilerplate를 위한 구성이 필요함(action 생성자, reducer, 필요에 따라 추가적인 미들웨어(redux-thunk 같은) 설치 등)
 + 상태 객체의 크기가 커질수록 불변성을 위해 복사 해야되는 양도 많아지고, `reducer`의 내용도 매우 길어짐.
 + 액션 type 명 충돌 가능성
 
@@ -419,19 +421,55 @@ https://react-redux.js.org/api/hooks#useselector
 저희는 수동으로 작성하는 Redux 로직에서 "보일러 플레이트"를 제거하고, 흔한 실수를 방지하고, 기본적인 Redux 작업을 간단하게 만드는 API를 제공하기 위해 Redux Toolkit을 만들었습니다.
 ```
 
-`Redux Toolkit` 패키지에서는 코어 `redux` 패키지에 추가로 필수적인 API 메서드와 모듈들을 포함 하고있으며 store 설정, 리듀서 생성 및 불변 수정 로직 작성, 상태 슬라이스 등과 같은 기능으로 `redux` 작업을 좀 더 단순화하고 실수를 방지하여 `redux` 코드 작성을 더 쉽게 만들어준다.
+`Redux Toolkit` 패키지에서는 코어 `redux` 패키지에 추가로 필수적인 API 메서드와 모듈들을 포함하고 있으며 store 설정, 리듀서 생성 및 불변 수정 로직 작성, 상태 슬라이스 등과 같은 기능으로 `redux` 작업을 좀 더 단순화하고 실수를 방지하여 `redux` 코드 작성을 더 쉽게 만들어준다.
 
-# Redux toolkit API
+**[redux-toolkit 공식 사이트]**
 
-Redux Toolkit은 모든 Redux 앱에서 가장 일반적으로 하는 작업을 간소화하는 두 가지 주요 API로 시작합니다:
+https://redux-toolkit.js.org/introduction/getting-started
+
+# Redux toolkit 시작하기
+
+```
+npm install @reduxjs/toolkit
+
+// 리액트 환경이라면 +
+npm install react-redux
+```
+
+`Redux Toolkit`에서 제공하는 `Redux` 앱에서 가장 일반적으로 하는 작업(`reducer` 정의, `store` 생성)을 간소화하는 두 가지 주요 API는 `createSlice`, `configureStore`이다.
+
+## `createSlice`
+
+`createSlice`는 Immer 라이브러리를 사용하는 불변 리듀서를 생성할 수 있게 해준다. 이를 통해 `state.value = 123`과 같은 "변형 (mutating)" JS 문법을 전개 연산자 없이도 불변성을 유지하며 업데이트할 수 있다. 또한, 각 리듀서에 대한 `action` 생성자 함수를 자동으로 생성하고, 리듀서 이름에 기반하여 내부적으로 액션 타입 문자열을 생성합니다. 마지막으로, TypeScript와 잘 호환됩니다.
 
 ## `configureStore`
 
 `configureStore`는 한 번의 호출로 Redux 스토어를 설정하며, 리듀서를 결합하고 thunk 미들웨어를 추가하고, Redux DevTools 통합을 하는 등의 작업을 수행합니다. 또한, 이름이 있는 옵션 매개변수를 사용하기 때문에 createStore보다 구성이 쉽습니다.
 
-## `createSlice`
+## store 생성하기
 
-`createSlice`는 Immer 라이브러리를 사용하는 리듀서를 작성할 수 있게 해줍니다. 이를 통해 state.value = 123과 같은 "변형 (mutating)" JS 문법을 spreads 없이도 불변성을 유지하며 업데이트할 수 있습니다. 또한, 각 리듀서에 대한 액션 생성자 함수를 자동으로 생성하고, 리듀서 이름에 기반하여 내부적으로 액션 타입 문자열을 생성합니다. 마지막으로, TypeScript와 잘 호환됩니다.
+```
+// store.js
+const counterSlice = createSlice({
+  name: 'counterSlice',
+  initilaState: {value: 0},
+  reducers: {
+    up: (state, action) => {
+      state.value = state.value = action.payload;
+    }
+  }
+});
+
+const store = configureStore({
+  reducer: {
+    counter: counterSlice.reducer;
+  }
+});
+
+export default store;
+```
+
+
 
 Redux Toolkit은 이 외에도, 다음과 같은 일반적인 Redux 작업을 수행할 수 있는 API를 제공합니다:
 
