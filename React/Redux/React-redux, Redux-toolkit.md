@@ -9,6 +9,7 @@
   - [`createSlice()`로 `reducer` 생성](#createslice로-reducer-생성)
     - [slice란?](#slice란)
   - [`configureStore()`로 `store` 생성](#configurestore로-store-생성)
+  - [`reducer` 로직 식별을 위한 `action` 객체 생성하기](#reducer-로직-식별을-위한-action-객체-생성하기)
   - [생성한 `store` 제공하기](#생성한-store-제공하기)
   - [Reference](#reference)
 - [Redux DevTools](#redux-devtools)
@@ -179,11 +180,14 @@ npm install react-redux
 
 ## `createSlice()`로 `reducer` 생성
 
-`createSlice`는 **내부적으로 `Immer` 라이브러리를 사용하는 불변 리듀서 조각(slice)을 생성할 수 있게 해준다.** 이를 통해 `state.value = 123`과 같은 변형(mutating) JS 문법을 전개 연산자로 복사 없이도 불변성을 유지하며 업데이트할 수 있다.
+`createSlice`는 **내부적으로 `Immer` 라이브러리를 사용하는 불변 리듀서를 생성할 수 있게 해준다.** 이를 통해 `state.value = 123`과 같은 변형(mutating) JS 문법을 전개 연산자로 복사 없이도 불변성을 유지하며 업데이트할 수 있다(내부에서 `createReducer()`를 사용한다).
 
-또한, 각 리듀서에 대한 `action` 생성자 함수를 자동으로 생성하고, 리듀서 이름에 기반하여 내부적으로 고유의 액션 타입 문자열을 생성한다. 추가로, TypeScript와도 호환된다.
+또한, **각 리듀서에 대한 `action` 생성자 함수를 자동으로 생성하고, 이 액션 생성자 함수는 리듀서 이름에 기반하여 내부적으로 고유의 액션 타입 문자열을 갖는 액션 객체를 생성한다**(내부에서 `createAction()`를 사용한다). 
+
+추가로, `createSlice()`는 TypeScript와도 호환된다.
 
 `createSlice()`의 인수는 하나의 객체를 받는다. 객체에 포함되어야 하는 프로퍼티는 다음 3가지 이다.
+
  + `name`- `slice`의 이름. 생성된 `action` 유형의 접두사로 사용된다 
  + `initialState` - 리듀서의 초기 상태
  + `reducers` - 리듀서 함수 로직을 담은 객체
@@ -197,33 +201,26 @@ const counterSlice = createSlice({
   initialState,
   reducers: {
     increment(state) {
-      state.value++
+      state.counter++;
     },
     decrement(state) {
-      state.value--
+      state.counter--;
     },
     incrementByAmount(state, action) {
-      state.value += action.payload
+      state.counter += action.payload;
     },
     toggle(state) {
-      state.toggle = !state.toggle;
+      state.show = !state.show;
     },
   },
-})
+});
 ```
-
-각 리듀서 함수를 실행하는 액션은 다음과 같다(슬라이스 이름이 액션의 접두사로 사용됨).
-
-+ `{type: "counter/increment"}`
-+ `{type: "counter/decrement"}`
-+ `{type: "counter/incrementByAmount"}`
-
 슬라이스의 `reducers`에 전달한 객체의 로직은 상태 객체를 직접 변경하는 것처럼 보이지만, 내부적으로 `Immer` 라이브러리를 사용하기 때문에 전개 연산자로 복사하여 새 객체를 생성하는 것과 같이 동작한다(따로 복사가 필요 없으므로 편리하다). 
 
 ### slice란?
 
 <!-- 이해 좀더 필요 -->
-슬라이스(slice)란 `reducer` 논리와 `action` 모음으로, 보통 하나의 파일에 정의되며 슬라이스란 이름은 하나의 루트 `Redux` 상태 객체를 여러 조각(slice)로 분할 한다는 의미에서 유래한다(단일 루트 리듀서를 이루는 조각 리듀서라 생각하면 된다).
+슬라이스(slice)란 `reducer` 논리와 특정 논리에 매칭되는 `action` 모음으로 단일 루트 리듀서를 이루는 조각 리듀서라 생각하면 된다. 보통 하나의 파일에 정의되며 슬라이스란 이름은 하나의 루트 `Redux` 상태 객체를 여러 조각(slice)로 분할 한다는 의미에서 유래한다.
 
 ```
 import { configureStore } from '@reduxjs/toolkit'
@@ -260,34 +257,62 @@ const counterSlice = createSlice({
   initialState,
   reducers: {
     increment(state) {
-      state.value++;
+      state.counter++;
     },
     decrement(state) {
-      state.value--;
+      state.counter--;
     },
     incrementByAmount(state, action) {
-      state.value += action.payload;
+      state.counter += action.payload;
     },
     toggle(state) {
-      state.toggle = !state.toggle;
+      state.show = !state.show;
     },
   },
 });
 
-// 객체의 reducer 프로퍼티에 슬라이스를 담은 객체를 전달
+// 객체의 reducer 프로퍼티에 슬라이스를 담은 객체를 전달(슬라이스가 하나이므로 객체에 담지 않고 직접 전달)
 const store = configureStore({
-  reducer: {
-    counter: counterSlice.reducer;
-  }
+  reducer: counterSlice.reducer
 });
 
 export default store;
 ```
 주의할 것은 슬라이스의 '`reducer`'(단수) 프로퍼티를 전달해야 한다는 것.
 
-`configureStore()` 함수로 스토어를 생성할 때 기본적으로 단일 루트 리듀서를 인수로 전달 해야한다. 만약 `configureStore()`에 전달되는 객체에 여러 슬라이스 리듀서가 전달될 경우 자동으로 `redux` 코어의 `combineReducers()` 함수를 사용해 단일 루트 리듀서로 결합하여 전달된다.
+`configureStore()` 함수로 스토어를 생성할 때 기본적으로 단일 루트 리듀서를 인수로 전달 해야한다. 만약 `configureStore()`에 전달되는 객체의 `reducer` 프로퍼티에 여러 슬라이스 리듀서가 전달될 경우 자동으로 `redux` 코어의 `combineReducers()` 함수를 사용해 단일 루트 리듀서로 결합하여 전달된다.
+
+## `reducer` 로직 식별을 위한 `action` 객체 생성하기
+
+`counterSlice.actions` 프로퍼티로 액션 생성자 함수가 담긴 객체를 참조할 수 있다. 
+
+`counterSlice.actions` 객체에는 슬라이스 리듀서에 정의한 메서드와 동일한 이름의 프로퍼티가 존재하며 각 프로퍼티에는 액션 생성자 함수가 바인딩 되어있다. 액션 생성자 함수를 호출하면 해당되는 리듀서 로직을 실행하는 액션 객체를 반환한다.
+
+이것으로 개발자는 액션 생성자와, 액션 타입 중복이나 오타 같은 사소한 문제를 신경쓰지 않아도 된다.
+
+```
+console.log(counterSlice.actions);
+
+>> {increment: ƒ, decrement: ƒ, incrementByAmount: ƒ, toggle: ƒ}
+```
+
+액션 생성자 함수가 생성하는 액션 객체는 다음과 같은 형태를 띄고있다.
+
+```
+counterSlice.actions.increment();
+
+>> {type: 'counter/increment', payload: undefined}
+```
+
+슬라이스 리듀서의 이름이 접두사로 붙고 리듀서 메서드 이름이 그 뒤에 붙는다.  
+
++ `{type: "counter/increment"}`
++ `{type: "counter/decrement"}`
++ `{type: "counter/incrementByAmount"}`
++ `{type: "counter/toggle"}`
 
 ## 생성한 `store` 제공하기
+
 
 Redux Toolkit은 이 외에도, 다음과 같은 일반적인 Redux 작업을 수행할 수 있는 API를 제공합니다:
 
