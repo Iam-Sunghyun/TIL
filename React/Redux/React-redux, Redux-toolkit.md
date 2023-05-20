@@ -10,7 +10,7 @@
     - [slice란?](#slice란)
   - [`configureStore()`로 `store` 생성](#configurestore로-store-생성)
   - [`reducer` 로직 식별을 위한 `action` 객체 생성하기](#reducer-로직-식별을-위한-action-객체-생성하기)
-  - [생성한 `store` 제공하기](#생성한-store-제공하기)
+  - [`action` `dispatch`하기](#action-dispatch하기)
   - [Reference](#reference)
 - [Redux DevTools](#redux-devtools)
 
@@ -215,7 +215,24 @@ const counterSlice = createSlice({
   },
 });
 ```
+
+`createSlice()`로 생성된 객체는 다음과 같은 형태를 띈다.
+
+```
+{
+    name : string,
+    reducer : ReducerFunction,
+    actions : Record<string, ActionCreator>,
+    caseReducers: Record<string, CaseReducer>.
+    getInitialState: () => State
+}
+```
+
 슬라이스의 `reducers`에 전달한 객체의 로직은 상태 객체를 직접 변경하는 것처럼 보이지만, 내부적으로 `Immer` 라이브러리를 사용하기 때문에 전개 연산자로 복사하여 새 객체를 생성하는 것과 같이 동작한다(따로 복사가 필요 없으므로 편리하다). 
+
+**[redux-toolkit createSlice]**
+
+https://redux-toolkit.js.org/api/createSlice
 
 ### slice란?
 
@@ -278,17 +295,14 @@ const store = configureStore({
 
 export default store;
 ```
-주의할 것은 슬라이스의 '`reducer`'(단수) 프로퍼티를 전달해야 한다는 것.
 
 `configureStore()` 함수로 스토어를 생성할 때 기본적으로 단일 루트 리듀서를 인수로 전달 해야한다. 만약 `configureStore()`에 전달되는 객체의 `reducer` 프로퍼티에 여러 슬라이스 리듀서가 전달될 경우 자동으로 `redux` 코어의 `combineReducers()` 함수를 사용해 단일 루트 리듀서로 결합하여 전달된다.
 
 ## `reducer` 로직 식별을 위한 `action` 객체 생성하기
 
-`counterSlice.actions` 프로퍼티로 액션 생성자 함수가 담긴 객체를 참조할 수 있다. 
+`createSlice()`로 리듀서 슬라이스를 생성하면 `Redux Toolkit`에 의해 자동적으로 액션 객체를 생성하는 액션 생성자 함수를 갖게 된다(이것으로 개발자는 액션 생성자와, 액션 객체의 타입명 중복이나 `dispatch`시 액션 타입 오타 같은 사소한 문제를 신경쓰지 않아도 된다). 
 
-`counterSlice.actions` 객체에는 슬라이스 리듀서에 정의한 메서드와 동일한 이름의 프로퍼티가 존재하며 각 프로퍼티에는 액션 생성자 함수가 바인딩 되어있다. 액션 생성자 함수를 호출하면 해당되는 리듀서 로직을 실행하는 액션 객체를 반환한다.
-
-이것으로 개발자는 액션 생성자와, 액션 타입 중복이나 오타 같은 사소한 문제를 신경쓰지 않아도 된다.
+`counterSlice.actions` 프로퍼티를 통해 액션 생성자 함수가 담긴 객체를 참조할 수 있다. 
 
 ```
 console.log(counterSlice.actions);
@@ -296,22 +310,80 @@ console.log(counterSlice.actions);
 >> {increment: ƒ, decrement: ƒ, incrementByAmount: ƒ, toggle: ƒ}
 ```
 
-액션 생성자 함수가 생성하는 액션 객체는 다음과 같은 형태를 띄고있다.
+`counterSlice.actions` 객체에는 슬라이스 리듀서에 정의한 리듀서 함수와 동일한 이름의 프로퍼티가 존재하며 각 프로퍼티에는 액션 생성자 함수가 바인딩 되어있다. 액션 생성자 함수를 호출하면 해당되는 리듀서 함수를 식별하기 위한 액션 객체를 반환한다.
 
 ```
 counterSlice.actions.increment();
 
+// increment()를 식별하기 위한 액션 객체
 >> {type: 'counter/increment', payload: undefined}
 ```
 
-슬라이스 리듀서의 이름이 접두사로 붙고 리듀서 메서드 이름이 그 뒤에 붙는다.  
+액션 타입은 슬라이스 리듀서의 이름이 접두사로 붙고 `'/'`를 구분자로 리듀서 함수 이름이 그 뒤에 붙는다.  
 
-+ `{type: "counter/increment"}`
-+ `{type: "counter/decrement"}`
-+ `{type: "counter/incrementByAmount"}`
-+ `{type: "counter/toggle"}`
+```
+counterSlice.actions.increment();
+{type: "counter/increment"}
 
-## 생성한 `store` 제공하기
+counterSlice.actions.decrement();
+{type: "counter/decrement"}
+
+counterSlice.actions.incrementByAmount();
+{type: "counter/incrementByAmount"}
+
+counterSlice.actions.toggle();
+{type: "counter/toggle"}
+```
+
+## `action` `dispatch`하기
+
+다음은 액션 생성자로 액션 객체를 생성하고, 필요시 `payload`를 전달하여 `state`를 업데이트하는 코드이다.
+
+```
+import { useDispatch, useSelector } from 'react-redux/es/exports';
+import classes from './Counter.module.css';
+import { counterActions } from '../store/store';
+
+const Counter = () => {
+  const counter = useSelector(state => state.counter);
+  const show = useSelector(state => state.show);
+  const dispatch = useDispatch();
+ 
+
+  const increseHandler = () => {
+    dispatch(counterActions.increment());
+  };
+
+  const increseByAmountHandler = () => {
+    dispatch(counterActions.incrementByAmount(5));
+  };
+
+  const decreseHandler = () => {
+    dispatch(counterActions.decrement());
+  };
+
+  const toggleCounterHandler = () => {
+    dispatch(counterActions.toggle());
+  };
+
+  return (
+    <main className={ classes.counter }>
+      <h1>Redux Counter</h1>
+      {show && <div className={ classes.value }>{ counter }</div>}
+      <div>
+        <button onClick={ increseHandler }>증가</button>
+        <button onClick={ decreseHandler }>감소</button>
+        <button onClick={ increseByAmountHandler }>+5 증가</button>
+      </div>
+      <button onClick={ toggleCounterHandler }>Toggle Counter</button>
+    </main>
+  );
+};
+
+export default Counter;
+```
+
+`action`객체의 `payload`는 액션 생성자 함수의 인수로 전달할 수 있다. 
 
 
 Redux Toolkit은 이 외에도, 다음과 같은 일반적인 Redux 작업을 수행할 수 있는 API를 제공합니다:
