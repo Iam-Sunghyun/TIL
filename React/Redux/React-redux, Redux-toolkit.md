@@ -11,6 +11,7 @@
   - [`configureStore()`로 `store` 생성](#configurestore로-store-생성)
   - [`reducer` 로직 식별을 위한 `action` 객체 생성하기](#reducer-로직-식별을-위한-action-객체-생성하기)
   - [`action` `dispatch`하기](#action-dispatch하기)
+  - [여러 개의 슬라이스 사용하기](#여러-개의-슬라이스-사용하기)
   - [Reference](#reference)
 - [Redux DevTools](#redux-devtools)
 
@@ -95,7 +96,7 @@ root.render(
 
 `useSelector()`의 인수로는 함수(선택기 함수라고 함)를 전달하는데, 이 함수는 컴포넌트가 렌더링될 때마다 인수로 `store`의 상태를 전달받아 호출되며 이 선택기 함수의 반환 값이 곧 `useSelector()`의 반환 값이 된다.
 
-`useSelector()`는 `action`이 `dispatch` 될 때마다 선택기 함수를 호출한다. 이때 선택기 함수의 이전 반환 값과 `dispatch` 후 새 반환 값을 비교하여(`===`사용) 값이 다른 경우 컴포넌트를 리렌더링 하고, 같을 경우 리렌더링 하지 않는다(따라서 상태가 객체인 경우에 다른 참조를 갖는 새 객체로 교체해줘야(불변성을 지켜야) 변경을 추적할 수 있다 -> `reducer`가 객체인 상태를 직접 변경하지 않는 순수함수이어야 하는 이유).
+`useSelector()`는 `action`이 `dispatch` 될 때마다 선택기 함수를 호출한다. 이때 선택기 함수의 이전 반환 값과 `dispatch` 후 새 반환 값을 비교하여(`===`사용) 값이 다른 경우 컴포넌트를 리렌더링 하고, 같을 경우 리렌더링 하지 않는다.
 
 아래 코드는 `store`의 `state`를 가져오고, `dispatch`로 새 값을 전달받는 간단한 예제이다.
 
@@ -148,7 +149,7 @@ https://react-redux.js.org/api/hooks#useselector
 앱의 규모가 커짐에 따라 생길 수 있는 redux의 문제점.
 
 - 기본 boilerplate를 위한 구성이 필요함(action 생성자, reducer, 필요에 따라 추가적인 미들웨어(redux-thunk 같은) 설치 등)
-- 상태 객체의 크기가 커질수록 불변성을 위해 복사 해야되는 양도 많아지고, `reducer`의 내용도 매우 길어짐.
+- 상태 객체의 크기가 커질수록 불변성을 위해 복사해야 되는 양도 많아지고, `reducer`의 내용도 매우 길어짐.
 - 액션 type 명 오타 및 충돌 가능성
 
 이러한 일반적인 문제를 해결하기 위해 만들어 진 것이 `redux-toolkit` 이다.
@@ -228,7 +229,7 @@ const counterSlice = createSlice({
 }
 ```
 
-슬라이스의 `reducers`에 전달한 객체의 로직은 상태 객체를 직접 변경하는 것처럼 보이지만, 내부적으로 `Immer` 라이브러리를 사용하기 때문에 전개 연산자로 복사하여 새 객체를 생성하는 것과 같이 동작한다(따로 복사가 필요 없으므로 편리하다). 
+슬라이스의 `reducers`에 전달한 슬라이스 리듀서 함수의 로직은 상태 객체를 직접 변경하는 것처럼 보이지만, 내부적으로 `Immer` 라이브러리를 사용하기 때문에 전개 연산자로 복사하여 새 객체를 생성하는 것과 같이 동작한다(따로 복사가 필요 없으므로 편리하다). 
 
 **[redux-toolkit createSlice]**
 
@@ -237,7 +238,7 @@ https://redux-toolkit.js.org/api/createSlice
 ### slice란?
 
 <!-- 이해 좀더 필요 -->
-슬라이스(slice)란 `reducer` 논리와 특정 논리에 매칭되는 `action` 모음으로 단일 루트 리듀서를 이루는 조각 리듀서라 생각하면 된다. 보통 하나의 파일에 정의되며 슬라이스란 이름은 하나의 루트 `Redux` 상태 객체를 여러 조각(slice)로 분할 한다는 의미에서 유래한다.
+슬라이스(slice)란 `reducer` 논리와 `action` 모음으로 단일 루트 리듀서를 이루는 조각 리듀서라 생각하면 된다. 보통 하나의 파일에 정의되며 슬라이스란 이름은 하나의 루트 `Redux` 상태 객체를 여러 조각(slice)로 분할 한다는 의미에서 유래한다.
 
 ```
 import { configureStore } from '@reduxjs/toolkit'
@@ -254,9 +255,16 @@ export default configureStore({
 })
 ```
 
-위 예시에서 `reducer`에 전달한 객체의 각 프로퍼티 이름은 슬라이스 리듀서에서 사용하고자 하는 상태의 조각을 의미한다. 하나의 큰 상태에서 `state.users`, `state.posts`, `state.comments`라는 조각을 `createSlice`로 생성한 각각의 슬라이스 리듀서에 전달하게 되고 해당 슬라이스의 로직으로 업데이트 된다.
+위 예시에서 `state.users`, `state.posts`, `state.comments`가 하나의 큰 상태의 조각(슬라이스)이 되고, `createSlice`로 생성한 각각의 슬라이스 리듀서에 전달되어 슬라이스의 리듀서 함수로 업데이트 된다.
 
 결론적으로 슬라이스는 하나의 큰 상태의 일부를 사용하고 업데이트하는 서브 리듀서로 생각하면 될듯. 
+
+</br>
+
+<div style="text-align: center">
+  <img src="./img/redux-toolkit-img.png" width="500px" style="margin: 0 auto"/>
+</div>
+</br>
 
 ## `configureStore()`로 `store` 생성
 
@@ -296,7 +304,23 @@ const store = configureStore({
 export default store;
 ```
 
-`configureStore()` 함수로 스토어를 생성할 때 기본적으로 단일 루트 리듀서를 인수로 전달 해야한다. 만약 `configureStore()`에 전달되는 객체의 `reducer` 프로퍼티에 여러 슬라이스 리듀서가 전달될 경우 자동으로 `redux` 코어의 `combineReducers()` 함수를 사용해 단일 루트 리듀서로 결합하여 전달된다.
+`configureStore()` 함수로 스토어를 생성할 때 기본적으로 단일 루트 리듀서를 인수로 전달 해야한다. 만약 `configureStore()`에 전달되는 객체의 `reducer` 프로퍼티에 여러 슬라이스 리듀서가 포함된 객체를 전달할 경우 자동으로 `redux` 코어의 `combineReducers()` 함수를 사용해 단일 루트 리듀서로 결합하여 전달된다.
+
+```
+// store.js
+import { configureStore } from '@reduxjs/toolkit';
+import counterReducer from '../slices/counter';
+import authReducer from '../slices/auth';
+
+const store = configureStore({
+  reducer: {
+    counter: counterReducer,
+    auth: authReducer,
+  }
+});
+
+export default store;
+```
 
 ## `reducer` 로직 식별을 위한 `action` 객체 생성하기
 
@@ -383,7 +407,33 @@ const Counter = () => {
 export default Counter;
 ```
 
-`action`객체의 `payload`는 액션 생성자 함수의 인수로 전달할 수 있다. 
+`action`객체의 `payload`는 `increseByAmountHandler` 함수처럼 액션 생성자 함수의 인수로 전달할 수 있다. 
+
+## 여러 개의 슬라이스 사용하기
+
+여러 개의 슬라이스 리듀서를 사용할 때, `configureStore`로 스토어 생성 시 `reducer` 프로퍼티에 슬라이스들이 값으로 바인딩되어 있는 객체를 전달해준다.  
+
+```
+// store.js
+import { configureStore } from '@reduxjs/toolkit';
+import counterReducer from '../slices/counter';
+import authReducer from '../slices/auth';
+
+const store = configureStore({
+  reducer: {
+    counter: counterReducer,
+    auth: authReducer,
+  }
+});
+
+export default store;
+```
+
+컴포넌트에서 `useSelector()`로 슬라이스의 상태를 사용할 때, 슬라이스 리듀서의 키 값을 참조해줘야 하는것 주의
+
+```
+const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+```
 
 
 Redux Toolkit은 이 외에도, 다음과 같은 일반적인 Redux 작업을 수행할 수 있는 API를 제공합니다:
