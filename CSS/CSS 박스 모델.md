@@ -223,9 +223,9 @@ https://developer.mozilla.org/en-US/docs/Web/HTML/Block-level_elements
 
 - width, height 속성이 적용되지 않는다.
    
-- margin-top, margin-bottom 속성이 적용되지 않으며 다른 요소를 밀어내지 않는다(개발자 도구 Computed 상에선 입력이 된걸로 뜨나 출력엔 적용 안됨). padding, border - top/bottom은 적용되나 주변 요소를 밀어내지 않는다. 상, 하 여백은 line-height로 지정한다.
+- margin-top, margin-bottom 속성이 적용되지 않는다(개발자 도구 Computed 상에선 입력이 된걸로 뜨나 출력엔 적용 안됨). padding, border - top/bottom은 적용되나 주변 요소를 밀어내지 않는다. 상, 하 여백은 line-height로 지정한다.
 
-- 수평 padding, margin, border를 설정한 경우 다른 인라인 요소들이 밀려난다.
+- 수평 padding, margin, border 속성은 적용되며 다른 인라인 요소들이 밀려난다.
 
 - 요소 내에 block 레벨 요소를 포함할 수 없다.
 
@@ -249,7 +249,7 @@ https://developer.mozilla.org/en-US/docs/Web/HTML/Inline_elements
   
 - width와 height 속성이 적용된다.
 
-- padding, margin, border로 인해 다른 요소들이 박스로부터 밀려난다.
+- padding, margin, border 속성이 적용되며 다른 요소들이 박스로부터 밀려난다.
 
 - block 레벨 요소 내에 block, inline 레벨 요소를 포함할 수 있다.
   

@@ -50,7 +50,7 @@ NoSQL은 SQL같은 쿼리 언어를 사용하지 않고 Document, graph, 키/값
 
 NoSQL 데이터베이스로는 MongoDB, Couch DB, Neo4j, Cassandra, Redis 등 여러가지가 있다.
 
-일반적으로 문서(Document) 형식에 많이들 데이터를 저장하는데 `xml`, `json`, `yaml` 등과 같은 익숙한 형식들(반정형 데이터)도 문서 형식에 포함된다.
+일반적으로 문서(Document) 형식에 많이들 데이터를 저장하는데 `xml`, `json`, `yaml`, `bson`과 같은 익숙한 형식들(반정형 데이터)도 문서 형식에 포함된다.
 
 **[SQL, NOSQL비교]**
 
