@@ -92,11 +92,11 @@ root.render(
 
 `useSelector()` 훅을 사용하여 리액트 컴포넌트 내부에서 `store`의 `state`를 사용할 수 있다(`useStore` 함수로도 `store` 데이터 사용. 클래스 컴포넌트에선 `connect API` 사용).
 
-`useSelector()`를 사용하면 자동으로 `store`에 `subscribe` 되며 사용 중인 `state`가 변경될 때마다 컴포넌트가 렌더링된다. 또 컴포넌트가 언마운트 되면 자동으로 `subscribe`가 해제된다.
-
 `useSelector()`의 인수로는 함수(선택기 함수라고 함)를 전달하는데, 이 함수는 컴포넌트가 렌더링될 때마다 인수로 `store`의 상태를 전달받아 호출되며 이 선택기 함수의 반환 값이 곧 `useSelector()`의 반환 값이 된다.
 
-`useSelector()`는 `action`이 `dispatch` 될 때마다 선택기 함수를 호출한다. 이때 선택기 함수의 이전 반환 값과 `dispatch` 후 새 반환 값을 비교하여(`===`사용) 값이 다른 경우 컴포넌트를 리렌더링 하고, 같을 경우 리렌더링 하지 않는다.
+`useSelector()`를 사용하면 자동으로 `store`에 `subscribe` 되며 사용 중인 `state`의 값이 변경될 때마다 컴포넌트가 리렌더링된다. 또 컴포넌트가 언마운트 되면 자동으로 `subscribe`가 해제된다.
+
+또 `useSelector()`는 `action`이 `dispatch` 될 때마다 선택기 함수를 호출한다. 이때 선택기 함수의 이전 반환 값과 `dispatch` 후 새 반환 값을 비교하여(`===`사용) 값이 다른 경우 컴포넌트를 리렌더링 하고, 같을 경우 리렌더링 하지 않는다.
 
 아래 코드는 `store`의 `state`를 가져오고, `dispatch`로 새 값을 전달받는 간단한 예제이다.
 
