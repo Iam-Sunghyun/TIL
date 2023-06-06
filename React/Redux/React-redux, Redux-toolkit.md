@@ -9,9 +9,9 @@
   - [`createSlice()`로 `reducer` 생성](#createslice로-reducer-생성)
     - [slice란?](#slice란)
   - [`configureStore()`로 `store` 생성](#configurestore로-store-생성)
+  - [여러 개의 슬라이스 사용하기](#여러-개의-슬라이스-사용하기)
   - [`reducer` 로직 식별을 위한 `action` 객체 생성하기](#reducer-로직-식별을-위한-action-객체-생성하기)
   - [`action` `dispatch`하기](#action-dispatch하기)
-  - [여러 개의 슬라이스 사용하기](#여러-개의-슬라이스-사용하기)
   - [Reference](#reference)
 - [Redux DevTools](#redux-devtools)
 
@@ -306,6 +306,10 @@ export default store;
 
 `configureStore()` 함수로 스토어를 생성할 때 기본적으로 단일 루트 리듀서를 인수로 전달 해야한다. 만약 `configureStore()`에 전달되는 객체의 `reducer` 프로퍼티에 여러 슬라이스 리듀서가 포함된 객체를 전달할 경우 자동으로 `redux` 코어의 `combineReducers()` 함수를 사용해 단일 루트 리듀서로 결합하여 전달된다.
 
+## 여러 개의 슬라이스 사용하기
+
+여러 개의 슬라이스 리듀서를 사용할 때, `configureStore`로 스토어 생성 시 `reducer` 프로퍼티에 슬라이스들이 값으로 바인딩되어 있는 객체를 전달해준다.  
+
 ```
 // store.js
 import { configureStore } from '@reduxjs/toolkit';
@@ -321,6 +325,13 @@ const store = configureStore({
 
 export default store;
 ```
+
+컴포넌트에서 `useSelector()`로 슬라이스의 상태를 사용할 때, 슬라이스 리듀서의 키 값을 참조해줘야 하는것 주의
+
+```
+const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+```
+
 
 ## `reducer` 로직 식별을 위한 `action` 객체 생성하기
 
@@ -409,32 +420,8 @@ export default Counter;
 
 `action`객체의 `payload`는 `increseByAmountHandler` 함수처럼 액션 생성자 함수의 인수로 전달할 수 있다. 
 
-## 여러 개의 슬라이스 사용하기
 
-여러 개의 슬라이스 리듀서를 사용할 때, `configureStore`로 스토어 생성 시 `reducer` 프로퍼티에 슬라이스들이 값으로 바인딩되어 있는 객체를 전달해준다.  
-
-```
-// store.js
-import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../slices/counter';
-import authReducer from '../slices/auth';
-
-const store = configureStore({
-  reducer: {
-    counter: counterReducer,
-    auth: authReducer,
-  }
-});
-
-export default store;
-```
-
-컴포넌트에서 `useSelector()`로 슬라이스의 상태를 사용할 때, 슬라이스 리듀서의 키 값을 참조해줘야 하는것 주의
-
-```
-const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
-```
-
+---
 
 Redux Toolkit은 이 외에도, 다음과 같은 일반적인 Redux 작업을 수행할 수 있는 API를 제공합니다:
 
