@@ -164,7 +164,10 @@ https://www.youtube.com/watch?v=RP_f5dMoHFc&ab_channel=naverd2
 
 https://en.wikipedia.org/wiki/Representational_state_transfer
 
-https://gmlwjd9405.github.io/2018/09/21/rest-and-restful.html
+
+**[REST API 모범사례]**
+
+https://www.freecodecamp.org/korean/news/rest-api-mobeom-sarye-rest-endeupointeu-seolgye-yesi/
 
 # 요청 리디렉션(방향 수정)
 

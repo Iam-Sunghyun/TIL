@@ -303,3 +303,5 @@ store.dispatch({ type: 'multiple', payload: 10 });
 https://ko.redux.js.org/faq/immutable-data 
 
 https://ko.redux.js.org/understanding/history-and-design/prior-art/#flux
+
+https://www.freecodecamp.org/news/why-redux-needs-reducers-to-be-pure-functions-d438c58ae468/
