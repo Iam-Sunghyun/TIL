@@ -101,9 +101,9 @@ https://developer.mozilla.org/ko/docs/Web/CSS/position
 
 위 두가지 `position`에서 컨테이닝 블록이 변경되는 경우가 있는데, 요소의 조상 중 다음을 만족하는 요소가 있는 경우 컨테이닝 블록이 해당 조상 요소의 `padding` 박스로 변경된다.
 
-+ `transform`, `perspective` 속성이 `none`이 아닌 경우
-+ `filter` 프로퍼티가 `none`인 경우 
-+ `will-change` 프로퍼티가 `transform`, `perspective`인 경우
++ `transform`, `perspective` 속성이 있는 경우
++ `filter` 프로퍼티가 `none`이 아닌 경우 
++ `will-change` 프로퍼티가 `transform`인 경우
 + `contain` 프로퍼티 값이 `paint`인 경우
 + `backdrop-filter` 값이 `none` 이외의 값인 경우
 
