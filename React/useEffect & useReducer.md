@@ -143,7 +143,28 @@ useEffect
 
 페이지 첫 로드 시 컴포넌트가 DOM에 마운트 되면서 'useEffect' 문자열이 한 번 출력된다.
 
-그 후 의존성 배열의 요소인 `enteredEmail`, `enteredPassword` 상태 변수가 업데이트 되어 리렌더링이 발생하면 cleanup 함수가 호출된 다음, `useEffect` 함수가 호출되어 'cleanup \n useEffect'이 출력되게 되는 것이다.
+그 후 의존성 배열의 요소인 `enteredEmail`, `enteredPassword` 상태 변수가 업데이트 되어 리렌더링이 발생하여 컴포넌트가 리페인트 된 후 cleanup 함수가 호출된 다음, `useEffect` 함수가 호출되어 'cleanup \n useEffect'이 출력되게 되는 것이다.
+
+추가로 `useEffect`는 `cleanup` 함수 이외에 반환 값이 있어선 안된다. 따라서 `async/await`을 사용하는 경우는 다음과 같이 작성해줘야 한다.
+
+```
+// async 함수는 암묵적으로 항상 프로미스를 반환한다. 그러므로 useEffect의 중첩 함수로 선언하여 cleanup 함수가 아닌 값을 반환하는 일이 없도록 해준다.
+useEffect(() => {
+  async function testFetch() {
+    try{
+      const result = await fetch('https://test.com');
+      const data = await result.json();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  testFetch();
+  return () => {
+      console.log('Clean up')
+    }
+}, [testDependency])
+```
 
 ## Cleanup 함수로 디바운스(debounce) 구현하기
 
