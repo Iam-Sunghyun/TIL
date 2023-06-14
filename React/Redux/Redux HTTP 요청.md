@@ -79,6 +79,7 @@ const CartButton = (props) => {
 export default CartButton;
 ```
 
+참고로 `useEffect()`에 전달되는 `setup` 함수의 반환 값은 `cleanup` 함수만 가능하기 때문에, 항상 프로미스를 반환하는 `async` 함수의 경우 내부함수로 정의해줘야 한다.
 
 # 2. 리덕스 리듀서에서 HTTP 요청 처리하기
 
