@@ -1,7 +1,25 @@
+<h2>목차</h2>
+
+- [리액트 동작 방식](#리액트-동작-방식)
+- [렌더링 동작 방식](#렌더링-동작-방식)
+  - [렌더링 단계(Render Phase)](#렌더링-단계render-phase)
+  - [커밋 단계(Commit Phase)](#커밋-단계commit-phase)
+- [React 가상 DOM, 재조정 (Reconciliation)](#react-가상-dom-재조정-reconciliation)
+  - [Diifing 알고리즘 동작 방식](#diifing-알고리즘-동작-방식)
+  - [Reference](#reference)
+
 # 리액트 동작 방식 
 <!-- react, react-dom 내용 추가 필 -->
 React가 컴포넌트 트리 생성,
 React dom이 컴포넌트가 반환한 jsx코드를 기반으로 가상 dom 구성
+
+
+
+# 렌더링 동작 방식
+
+## 렌더링 단계(Render Phase)
+
+## 커밋 단계(Commit Phase)
 
 # React 가상 DOM, 재조정 (Reconciliation)
 <!-- 재조정 디테일하게, 딥하게 한번 봐야될 듯. 재조정 엔진 fider 포함 -->
@@ -14,6 +32,8 @@ React는 실제 DOM(DOM의 가상 표현)의 경량 사본과 같은 가상 DOM�
 <!-- 그런 다음 실제 브라우저 DOM에 변경된 요소만 업데이트하여 브라우저에 렌더링한다 -> 커밋 phase. -->
 
 <!-- 브라우저 DOM을 생성하거나 변경된 경우 **변경된 곳만을 동기화**하여 브라우저 출력을 업데이트하한다(즉 React는 렌더링 간에 차이가 있는 경우에만 DOM 노드를 변경한다),  -->
+
+## Diifing 알고리즘 동작 방식
 
 ## Reference
 
