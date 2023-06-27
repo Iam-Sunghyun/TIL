@@ -1,8 +1,8 @@
 <h2>목차</h2>
 
 - [리액트 동작 방식](#리액트-동작-방식)
-- [렌더링 동작 방식](#렌더링-동작-방식)
-  - [렌더링 단계(Render Phase)](#렌더링-단계render-phase)
+- [렌더링 과정](#렌더링-과정)
+  - [렌더 단계(Render Phase)](#렌더-단계render-phase)
   - [커밋 단계(Commit Phase)](#커밋-단계commit-phase)
 - [React 가상 DOM, 재조정 (Reconciliation)](#react-가상-dom-재조정-reconciliation)
   - [Diifing 알고리즘 동작 방식](#diifing-알고리즘-동작-방식)
@@ -15,9 +15,9 @@ React dom이 컴포넌트가 반환한 jsx코드를 기반으로 가상 dom 구�
 
 
 
-# 렌더링 동작 방식
+# 렌더링 과정
 
-## 렌더링 단계(Render Phase)
+## 렌더 단계(Render Phase)
 
 ## 커밋 단계(Commit Phase)
 
@@ -53,9 +53,6 @@ https://vegibit.com/what-is-the-virtual-dom-and-how-does-it-work/
 
 https://upmostly.com/tutorials/how-does-reconciliation-in-react-work
 
-**[geekforgeeks react virtual dom]**
-
-https://www.geeksforgeeks.org/reactjs-virtual-dom/
 
 **[React 구버전 docs - Diffing Algorithm]**
 
