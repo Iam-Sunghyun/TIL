@@ -5,14 +5,14 @@
   - [리액트 엘리먼트 `$$type` 프로퍼티](#리액트-엘리먼트-type-프로퍼티)
   - [컴포넌트를 직접 호출하게 되면?](#컴포넌트를-직접-호출하게-되면)
 - [컴포넌트 렌더링 과정](#컴포넌트-렌더링-과정)
-- [1. 렌더링이 트리거](#1-렌더링이-트리거)
-    - [1. 초기 렌더링(애플리케이션 시작)](#1-초기-렌더링애플리케이션-시작)
-    - [2. 컴포넌트(혹은 조상 컴포넌트)의 상태 업데이트(리렌더링)](#2-컴포넌트혹은-조상-컴포넌트의-상태-업데이트리렌더링)
+- [1. 렌더링 트리거](#1-렌더링-트리거)
+    - [초기 렌더링(애플리케이션 시작)](#초기-렌더링애플리케이션-시작)
+    - [컴포넌트(혹은 조상 컴포넌트)의 상태 업데이트(리렌더링)](#컴포넌트혹은-조상-컴포넌트의-상태-업데이트리렌더링)
 - [2. 렌더링 단계(Render Phase)](#2-렌더링-단계render-phase)
   - [재조정(reconciliation)이란?](#재조정reconciliation이란)
   - [재조정(Reconciliatioin) 과정](#재조정reconciliatioin-과정)
   - [1. 초기 렌더링 시 Fiber 트리 생성](#1-초기-렌더링-시-fiber-트리-생성)
-    - [Fiber 트리와 가상 DOM 그리고 Fiber 엔진의 특성](#fiber-트리와-가상-dom-그리고-fiber-엔진의-특성)
+    - [Fiber 트리와 가상 DOM, Fiber 엔진의 특성](#fiber-트리와-가상-dom-fiber-엔진의-특성)
   - [2. 컴포넌트 렌더링, 새 가상 DOM 생성](#2-컴포넌트-렌더링-새-가상-dom-생성)
   - [3 .커밋 단계(Commit Phase)](#3-커밋-단계commit-phase)
   - [브라우저 리페인팅](#브라우저-리페인팅)
@@ -54,10 +54,14 @@ console.log(React.createElement('h1', { test: 'test' }, 'Hello'));
   [[Prototype]]: Object
 ```
 
+**[ReactElement.js]**
+
+https://github.com/facebook/react/blob/b53ea6ca05d2ccb9950b40b33f74dfee0421d872/packages/react/src/ReactElement.js#L111
+
 ## 리액트 엘리먼트 `$$type` 프로퍼티
 
 <!-- 내용 보완 react 엘리먼트 $$typeof-->
-컴포넌트가 반환하는 객체는 리액트 엘리먼트(자바스크립트 객체)이다. 리액트 엘리먼트의 `$$type` 프로퍼티는 보안을 위해 `Symbol` 값을 갖고 있다. 
+컴포넌트가 반환하는 객체는 리액트 엘리먼트(자바스크립트 객체)이다. 리액트 엘리먼트의 `$$type` 프로퍼티는 보안을 위해(리액트 엘리먼트라는 것을 식별하기 위한 고유 값) `Symbol` 값을 갖고 있다. 
 
 `Symbol` 값은 외부로 노출되지 않는 특성 때문에 `JSON`으로 전송할 수 없으며 API 호출로 가져올 수 없기 때문에 XSS(Cross Site Scripting)과 같은 보안 공격을 방지하기 위하여 사용된다.
 <!-- 
@@ -78,11 +82,11 @@ console.log(React.createElement('h1', { test: 'test' }, 'Hello'));
 
 # 컴포넌트 렌더링 과정
 
-# 1. 렌더링이 트리거
+# 1. 렌더링 트리거
 
 다음과 같은 경우 렌더링을 일으킨다.
 
-### 1. 초기 렌더링(애플리케이션 시작)
+### 초기 렌더링(애플리케이션 시작)
 
 애플리케이션 시작 시 초기 렌더링이 일어나는데 이때 컴포넌트 인스턴스로 이루어진 컴포넌트 트리가 생성되고, 루트 컴포넌트부터 호출하여 가상 DOM을 생성한다. 아래와 같이 `react-dom`의 `createRoot` 메서드로 타겟 DOM 요소를 지정하고 `render` 메서드에 루트 컴포넌트(최상위 컴포넌트)를 전달하여 호출하면 초기 렌더링이 일어난다. 
 
@@ -102,7 +106,7 @@ root.render(
 );
 ```
 
-### 2. 컴포넌트(혹은 조상 컴포넌트)의 상태 업데이트(리렌더링)
+### 컴포넌트(혹은 조상 컴포넌트)의 상태 업데이트(리렌더링)
 
 컴포넌트의 상태가 업데이트 되면 렌더링이 트리거 된다. 초기 렌더링과 차이점은 루트 컴포넌트부터 모두 호출하는 것이 아닌 렌더링을 트리거한 컴포넌트를 호출한다. 그리고 해당 컴포넌트가 반환하는 하위 컴포넌트까지 재귀적으로 리렌더링된다.
 
@@ -116,7 +120,7 @@ root.render(
 
 이때 가상 DOM을 통해 변경된 부분을 확인하고 어떤 업데이트가 필요한지 결정하는 작업을 **재조정(Reconciliatioin)** 이라고 한다.
 
-Reconciliation은 **Fiber**라고 하는**리액트 Reconciliatioin 엔진**에 의해 이루어지며(Fiber는 리액트 v16에 도입된 새 reconciliation 엔진으로 reconciler 라고도 한다) Fiber는 실제 DOM을 직접 조작하진 않고 리액트에게 다음 UI의 모습이 어떻게 보여야하는지 알려준다.
+Reconciliation은 **Fiber**라고 하는**리액트 Reconciliatioin 엔진(혹은 알고리즘, 아키텍처)**에 의해 이루어지며(Fiber는 리액트 v16에 도입된 새 reconciliation 엔진으로 reconciler 라고도 한다) Fiber는 실제 DOM을 직접 조작하진 않고 리액트에게 다음 UI의 모습이 어떻게 보여야하는지 알려준다.
 
 가상 DOM을 통한 Reconciliation의 목적은 효율이다. 컴포넌트 렌더링이 일어날 때마다 실제 DOM을 매번 다시 그리는 것보다 가상 DOM을 통해 필요한 작업만 계산하여 실제 DOM에 적용하는 것이 훨신 효율적이고 빠르다. 게다가 가상 DOM은 단순한 자바스크립트 객체이므로 매번 생성하고 조작하는 것에 큰 비용이 들지 않는다.
 
@@ -125,10 +129,12 @@ Reconciliation은 **Fiber**라고 하는**리액트 Reconciliatioin 엔진**에 
 
 ## 1. 초기 렌더링 시 Fiber 트리 생성
 
-우선 Fiber 엔진은 초기 렌더링이 일어난 후 만들어진 리액트 엘리먼트 트리(가상 DOM)을 기반으로 내부적으로 **Fiber 트리**를 만든다. **Fiber 트리는 각 컴포넌트 인스턴스 및 DOM 요소(리액트 내장 컴포넌트)에 대하여 'Fiber'라고 하는 객체를 갖고 있는 트리이다.**
+우선 Fiber 엔진은 초기 렌더링이 일어난 후 만들어진 리액트 엘리먼트 트리(가상 DOM)을 기반으로 내부적으로 **Fiber 트리**를 만든다. **Fiber 트리는 각 컴포넌트 인스턴스 및 DOM 요소(리액트 내장 브라우저 컴포넌트)에 대응되는 'Fiber'라고 하는 객체로 이루어진 트리이다.**
 
-Fiber 트리의 각 컴포넌트에 연결 되어있는 Fiber 객체에는 `state`, `props`, `effect`, 사용된 `hook` 같은 것들이 저장되어 있고, 또 `state`, `refs`, DOM 업데이트, 등록된 `effect` 호출과 같은 작업들이 푸시되는 큐도 포함되어 있다(이런 이유로 Fiber 객체는 '작업 단위'로 정의되기도 한다).
-
+Fiber 트리를 구성하는 Fiber 노드 객체에는 `state`, `props`, `effect`, 사용된 `hook` 같은 것들이 저장되어 있고, 또 `state`, `refs`, DOM 업데이트, 등록된 `effect` 호출과 같은 작업들이 푸시되는 큐도 포함되어 있다(이런 이유로 Fiber 노드 객체는 '작업 단위'로 정의되기도 한다).
+<!-- 
+리액트 엘리먼트 트리 === 가상DOM 으로 알고있었는데, 블로그에선 FIBER 트리 === 가상dom이라 설명한다. 맞는 것은? 아마 블로그가 잘못된듯. 
+-->
 <br>
 
 <div style="text-align: center">
@@ -136,17 +142,21 @@ Fiber 트리의 각 컴포넌트에 연결 되어있는 Fiber 객체에는 `stat
   <p style="color: gray">(https://www.udemy.com/course/the-ultimate-react-course/)</p>
 </div>
 
+**[ReactFiber.js]**
+
+https://github.com/facebook/react/blob/b53ea6ca05d2ccb9950b40b33f74dfee0421d872/packages/react-reconciler/src/ReactFiber.js#L255C2-L255C2
+
 <br>
 
-### Fiber 트리와 가상 DOM 그리고 Fiber 엔진의 특성
+### Fiber 트리와 가상 DOM, Fiber 엔진의 특성
 
-```
-Fiber 트리와 리액트 엘리먼트 트리(가상 DOM)의 차이는 Fiber 트리는 매 렌더링마다 새롭게 생성되지 않고 유지되며, 데이터가 변형되는 형태로 계속해서 사용된다는 것. 또 Fiber 트리는 리액트 트리와 동일한 요소를 갖지만 각 컴포넌트에 연결된 Fiber 객체를 통해서 작업할 때 효율을 위해 일반적인 트리 형태가 아닌 연결 리스트 형태로 구현 되어있다.
-```
+Fiber 트리와 리액트 엘리먼트 트리(가상 DOM)의 차이는 Fiber 트리는 매 렌더링마다 새롭게 생성되지 않고 유지되며, 데이터가 변형되는 형태로 계속해서 사용된다는 것이다(따라서 상태를 추적하기 좋다). 
 
-Fiber 트리를 다루는 **Fiber 엔진의 매우 중요한 특성 중 하나는 작업을 비동기적으로 처리할 수 있다는 것이다.** 이런 특성 때문에 Fiber가 수행하는 렌더링 프로세스를 청크로 분할할 수 있고, 일부 작업을 다른 작업보다 우선적으로 처리할 수 있으며 작업을 일시 중지하거나, 혹은 재사용하거나 더 이상 유효하지 않은 경우 폐기할 수도 있다. 
+또 Fiber 트리는 리액트 트리와 동일한 요소를 갖지만 작업의 효율을 위해 일반적인 트리 형태와 좀 다르게 연결 리스트 형태로 구현 되어있다. Fiber 트리의 자식 노드들 중 첫 번째 노드가 부모 노드에 연결되어 있고 형제 노드는 첫 번째 노드에 연결 리스트로 형태로 연결 되어있다.
 
-이러한 비동기 렌더링은 React 18의 Suspense, transition과 같은 동시성을 지원하는 기능을 가능하게 한다. 또 렌더링 시간이 긴 경우 일시중지 했다가 나중에 재개하는 식으로 자바스크립트 엔진이 블록킹되는 것을 막을 수 있다.
+Fiber 트리를 다루는 **Fiber 엔진의 매우 중요한 특성 중 하나는 렌더링 작업을 비동기적으로 처리할 수 있다는 것이다.** 이런 특성 때문에 Fiber가 수행하는 렌더링 프로세스를 청크로 분할할 수 있고, 일부 작업을 다른 작업보다 우선적으로 처리할 수 있으며 작업을 일시 중지하거나, 혹은 재사용하거나 더 이상 유효하지 않은 경우 폐기할 수도 있다. 
+
+이러한 비동기 렌더링은 React 18의 Suspense, transition과 같은 동시성을 지원하는 기능을 가능하게 하며 렌더링 시간이 긴 경우 일시중지 했다가 나중에 재개하는 식으로 자바스크립트 엔진이 블록킹되는 것을 막을 수 있다.
 
 ## 2. 컴포넌트 렌더링, 새 가상 DOM 생성
 
@@ -189,19 +199,17 @@ Fiber 트리를 다루는 **Fiber 엔진의 매우 중요한 특성 중 하나�
 
 ## Reference
 
-**[understand-how-rendering-works-react]**
+**[react-fiber-algorithm]** https://www.velotio.com/engineering-blog/react-fiber-algorithm
 
-https://www.telerik.com/blogs/understand-how-rendering-works-react
+**[understand-how-rendering-works-react]** https://www.telerik.com/blogs/understand-how-rendering-works-react
 
-https://velog.io/@superlipbalm/blogged-answers-a-mostly-complete-guide-to-react-rendering-behavior
+**[(번역) 블로그 답변: React 렌더링 동작에 대한 (거의) 완벽한 가이드]**
 
-**[React 함수 컴포넌트의 수명 주기, re-renders 발생하는 경우 등등]**
+ https://velog.io/@superlipbalm/blogged-answers-a-mostly-complete-guide-to-react-rendering-behavior
+
+**[React 함수 컴포넌트의 수명 주기, re-renders 발생하는 경우 등등]** 
 
 https://shash68i.hashnode.dev/lifecycle-of-react-functional-components#heading-stages-in-a-components-lifecycle
-
-**[리액트 렌더링 및 재조정 과정, 리렌더링 발생하는 경우]**
-
-https://dev.to/teo_garcia/understanding-rendering-in-react-i5i
 
 **[What Is The Virtual DOM and How Does It Work, + 장점]**
 
