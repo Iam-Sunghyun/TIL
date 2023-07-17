@@ -13,8 +13,8 @@
   - [재조정(Reconciliatioin) 과정](#재조정reconciliatioin-과정)
   - [1. 초기 렌더링 - 가상 DOM과 Fiber 트리 생성](#1-초기-렌더링---가상-dom과-fiber-트리-생성)
     - [Fiber 트리와 가상 DOM, Fiber 엔진의 특성](#fiber-트리와-가상-dom-fiber-엔진의-특성)
-  - [2. 컴포넌트 리렌더링 - 새 가상 DOM 생성](#2-컴포넌트-리렌더링---새-가상-dom-생성)
-  - [3 .커밋 단계(Commit Phase)](#3-커밋-단계commit-phase)
+  - [2. 컴포넌트 리렌더링 - 새 가상 DOM 생성, diffing 및 reconciliation](#2-컴포넌트-리렌더링---새-가상-dom-생성-diffing-및-reconciliation)
+  - [3. 커밋 단계(Commit Phase)](#3-커밋-단계commit-phase)
   - [브라우저 리페인팅](#브라우저-리페인팅)
   - [Diifing 알고리즘](#diifing-알고리즘)
   - [추가 내용](#추가-내용)
@@ -112,7 +112,7 @@ root.render(
 
 # 2. 렌더링 단계(Render Phase)
 
-렌더 단계에서는 컴포넌트가 렌더링되어 업데이트된 새 가상 DOM이 생성되고 가상 DOM을 기반으로 **Reconciliation**이 일어난다.
+렌더링 단계에서는 컴포넌트가 렌더링되어 업데이트된 새 가상 DOM이 생성되고 가상 DOM을 기반으로 **Reconciliation**이 일어난다.
 
 ## 재조정(reconciliation)이란?
 
@@ -131,7 +131,7 @@ Reconciliation은 **Fiber**라고 하는 **리액트 Reconciliatioin 엔진(혹�
 
 우선 Fiber 엔진은 초기 렌더링이 일어난 후 만들어진 리액트 엘리먼트 트리(가상 DOM)을 기반으로 내부적으로 **Fiber 트리**를 만든다. **Fiber 트리는 각 컴포넌트 인스턴스 및 DOM 요소(리액트 내장 브라우저 컴포넌트)에 대응되는 'Fiber'라고 하는 객체로 이루어진 트리이다.**
 
-Fiber 트리를 구성하는 Fiber 노드 객체에는 `state`, `props`, `effect`, 사용된 `hook` 같은 것들이 저장되어 있고, 또 `state`, `refs`, DOM 업데이트, 등록된 `effect` 호출과 같은 작업들이 푸시되는 큐도 포함되어 있다(이런 이유로 Fiber 노드 객체는 '작업 단위'로 정의되기도 한다).
+Fiber 트리를 구성하는 Fiber 노드 객체에는 `state`, `props`, `effect`, 사용된 `hook` 같은 것들이 저장되어 있고, 또 `state`, `refs`, DOM 업데이트, 등록된 `effect` 호출과 같은 작업이 푸시되는 큐도 포함되어 있다(이런 이유로 Fiber 노드 객체는 '작업 단위'로 정의되기도 한다).
 
 <br>
 
@@ -159,18 +159,18 @@ Fiber 트리와 리액트 엘리먼트 트리(가상 DOM)의 차이는 **Fiber �
   <p style="color: gray">(https://www.alibabacloud.com/blog/a-closer-look-at-react-fiber_598138/)</p>
 </div>
 
-Fiber 트리를 다루는 **Fiber 엔진의 매우 중요한 특성 중 하나는 작업을 비동기적으로 처리할 수 있다는 것이다.** 이런 특성 때문에 Fiber가 수행하는 렌더링 프로세스를 청크로 분할할 수 있고, 일부 **작업을 다른 작업보다 우선적으로 처리할 수 있으며 작업을 일시 중지하거나, 혹은 재사용하거나 더 이상 유효하지 않은 경우 폐기할 수도 있다.**
+Fiber 트리를 다루는 **Fiber 엔진의 매우 중요한 특성 중 하나는 렌더링 작업을 비동기적으로 처리할 수 있다는 것이다**(15v 에선 동기식이었다고 한다). 이런 특성 때문에 Fiber가 수행하는 렌더링 프로세스를 청크로 분할할 수 있고, 일부 **작업을 다른 작업보다 우선적으로 처리할 수 있으며 작업을 일시 중지하거나, 혹은 재사용하거나 더 이상 유효하지 않은 경우 폐기할 수도 있다.**
 
 이러한 비동기 렌더링은 React 18의 Suspense, transition과 같은 동시성을 지원하는 기능을 가능하게 하며 렌더링 시간이 긴 경우 일시중지 했다가 나중에 재개하는 식으로 자바스크립트 엔진이 블록킹되는 것을 막을 수 있다.
 
-## 2. 컴포넌트 리렌더링 - 새 가상 DOM 생성
+## 2. 컴포넌트 리렌더링 - 새 가상 DOM 생성, diffing 및 reconciliation
 
 컴포넌트의 상태가 업데이트 되면 렌더링을 트리거한 컴포넌트부터 하위 컴포넌트까지 재귀적으로 렌더링이 발생하고 **새로운 가상 DOM을 생성한다.**
 
 그런 다음 current Fiber 트리와 새롭게 만들어진 가상 DOM을 diffing 알고리즘으로 하나하나 비교하면서 변경 사항을 반영하여 현재 Fiber 트리를 새롭게 업데이트 하는데 이때 만들어진 새 Fiber 트리를 **'workInProgress' 트리** 라고 한다.
 
-변경된 내용은 'workInProgress' 트리의 각 Fiber 노드에 기록되고, DOM 조작에 필요한 모든 작업은 effect 리스트에 담겨 commit 단계에서 실행된다. 
-<!-- diffing이 어떤 트리끼리 이루어지는 것인지-->
+변경된 내용은 'workInProgress' 트리의 각 Fiber 노드에 기록되고, DOM 조작에 필요한 모든 작업은 'list of effects'에 담겨 commit 단계에서 실행된다. 
+<!-- workLoop 함수를 통해 workInProgress 트리를 순회하고 작업 리스트를 생성하는듯-->
 
 <div style="text-align: center">
   <img src="./img/reconciliation process.jpg" width="650px" heigth="550px" style="margin: 0 auto"/>
@@ -178,7 +178,7 @@ Fiber 트리를 다루는 **Fiber 엔진의 매우 중요한 특성 중 하나�
   <p style="color: gray">(https://www.udemy.com/course/the-ultimate-react-course/)</p>
 </div>
 
-<h2> 렌더 페이즈 요약</h2>
+<h2> 렌더링 페이즈 요약</h2>
 
 <div style="text-align: center">
   <img src="./img/render phase.jpg" width="650px" heigth="550px" style="margin: 0 auto"/>
@@ -186,11 +186,13 @@ Fiber 트리를 다루는 **Fiber 엔진의 매우 중요한 특성 중 하나�
 </div>
 
 
+## 3. 커밋 단계(Commit Phase)
 
+이후 렌더링 페이즈가 완료되면 만들어지는 DOM 업데이트 리스트를 기반으로 커밋 페이즈에서 실제 DOM을 업데이트를 적용하고(삽입, 삭제, 업데이트 등) 브라우저는 리페인팅한다(이때 커밋 페이즈를 담당하는 것은 React-DOM이다!).
 
+**렌더링 페이즈와 달리 커밋 페이즈의 DOM 업데이트 작업은 한번에 동기적으로 이루어진다.** 따라서 렌더링 페이즈처럼 중단, 재개, 취소 등이 불가능하다(DOM이 부분적으로만 완료된 상태로 출력되는 것을 막기 위함).
 
-
-## 3 .커밋 단계(Commit Phase)
+커밋 단계가 완료되면 'workInProgress' 트리가 곧 다음 렌더링에서 current 트리가 된다.
 
 ## 브라우저 리페인팅
 
