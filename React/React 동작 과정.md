@@ -2,7 +2,7 @@
 
 - [React 가상 DOM, 재조정 (Reconciliation) 요약](#react-가상-dom-재조정-reconciliation-요약)
   - [리액트 엘리먼트(React element) 구조](#리액트-엘리먼트react-element-구조)
-  - [리액트 엘리먼트 `$$type` 프로퍼티](#리액트-엘리먼트-type-프로퍼티)
+    - [리액트 엘리먼트 `$$type` 프로퍼티](#리액트-엘리먼트-type-프로퍼티)
   - [컴포넌트를 직접 호출하게 되면?](#컴포넌트를-직접-호출하게-되면)
 - [컴포넌트 렌더링 과정](#컴포넌트-렌더링-과정)
 - [1. 렌더링 트리거](#1-렌더링-트리거)
@@ -10,12 +10,11 @@
     - [컴포넌트(혹은 조상 컴포넌트)의 상태 업데이트(리렌더링)](#컴포넌트혹은-조상-컴포넌트의-상태-업데이트리렌더링)
 - [2. 렌더링 단계(Render Phase)](#2-렌더링-단계render-phase)
   - [재조정(reconciliation)이란?](#재조정reconciliation이란)
-  - [재조정(Reconciliatioin) 과정](#재조정reconciliatioin-과정)
+- [재조정(Reconciliatioin) 과정](#재조정reconciliatioin-과정)
   - [1. 초기 렌더링 - 가상 DOM과 Fiber 트리 생성](#1-초기-렌더링---가상-dom과-fiber-트리-생성)
     - [Fiber 트리와 가상 DOM, Fiber 엔진의 특성](#fiber-트리와-가상-dom-fiber-엔진의-특성)
   - [2. 컴포넌트 리렌더링 - 새 가상 DOM 생성, diffing 및 reconciliation](#2-컴포넌트-리렌더링---새-가상-dom-생성-diffing-및-reconciliation)
   - [3. 커밋 단계(Commit Phase)](#3-커밋-단계commit-phase)
-  - [브라우저 리페인팅](#브라우저-리페인팅)
   - [Diifing 알고리즘](#diifing-알고리즘)
   - [추가 내용](#추가-내용)
   - [Reference](#reference)
@@ -58,7 +57,7 @@ console.log(React.createElement('h1', { test: 'test' }, 'Hello'));
 
 https://github.com/facebook/react/blob/b53ea6ca05d2ccb9950b40b33f74dfee0421d872/packages/react/src/ReactElement.js#L111
 
-## 리액트 엘리먼트 `$$type` 프로퍼티
+### 리액트 엘리먼트 `$$type` 프로퍼티
 
 <!-- 내용 보완 react 엘리먼트 $$typeof-->
 컴포넌트가 반환하는 객체는 리액트 엘리먼트(자바스크립트 객체)이다. 리액트 엘리먼트의 `$$type` 프로퍼티는 보안을 위해(리액트 엘리먼트라는 것을 식별하기 위한 고유 값) `Symbol` 값을 갖고 있다. 
@@ -88,7 +87,7 @@ https://github.com/facebook/react/blob/b53ea6ca05d2ccb9950b40b33f74dfee0421d872/
 
 ### 초기 렌더링(애플리케이션 시작)
 
-애플리케이션 시작 시 초기 렌더링이 일어나는데 이때 컴포넌트 인스턴스로 이루어진 컴포넌트 트리가 생성되고, 루트 컴포넌트부터 호출하여 가상 DOM을 생성한다. 아래와 같이 `react-dom`의 `createRoot` 메서드로 타겟 DOM 요소를 지정하고 `render` 메서드에 루트 컴포넌트(최상위 컴포넌트)를 전달하여 호출하면 초기 렌더링이 일어난다. 
+애플리케이션 시작 시 초기 렌더링이 일어나는데 이때 컴포넌트 인스턴스로 이루어진 컴포넌트 트리가 생성되고, 루트 컴포넌트부터 호출하여 리액트 엘리먼트 트리(가상 DOM)을 생성한다. 아래와 같이 `react-dom`의 `createRoot` 메서드로 타겟 DOM 요소를 지정하고 `render` 메서드에 루트 컴포넌트(최상위 컴포넌트)를 전달하여 호출하면 초기 렌더링이 일어난다. 
 
 ```
 import React from "react";
@@ -125,13 +124,13 @@ Reconciliation은 **Fiber**라고 하는 **리액트 Reconciliatioin 엔진(혹�
 **가상 DOM을 통한 Reconciliation의 목적은 효율이다.** 컴포넌트 렌더링이 일어날 때마다 실제 DOM을 매번 다시 그리는 것보다 가상 DOM을 통해 필요한 작업만 계산하여 실제 DOM에 적용하는 것이 훨신 효율적이고 빠르다. 게다가 가상 DOM은 단순한 자바스크립트 객체이므로 매번 생성하고 조작하는 것에 큰 비용이 들지 않는다.
 
 
-## 재조정(Reconciliatioin) 과정
+# 재조정(Reconciliatioin) 과정
 
 ## 1. 초기 렌더링 - 가상 DOM과 Fiber 트리 생성
 
 우선 Fiber 엔진은 초기 렌더링이 일어난 후 만들어진 리액트 엘리먼트 트리(가상 DOM)을 기반으로 내부적으로 **Fiber 트리**를 만든다. **Fiber 트리는 각 컴포넌트 인스턴스 및 DOM 요소(리액트 내장 브라우저 컴포넌트)에 대응되는 'Fiber'라고 하는 객체로 이루어진 트리이다.**
 
-Fiber 트리를 구성하는 Fiber 노드 객체에는 `state`, `props`, `effect`, 사용된 `hook` 같은 것들이 저장되어 있고, 또 `state`, `refs`, DOM 업데이트, 등록된 `effect` 호출과 같은 작업이 푸시되는 큐도 포함되어 있다(이런 이유로 Fiber 노드 객체는 '작업 단위'로 정의되기도 한다).
+Fiber 트리를 구성하는 Fiber 노드 객체에는 컴포넌트의 `state`, `props`, `effect`, 사용된 `hook` 같은 것들이 저장되어 있고, 또 `state`, `refs`, DOM 업데이트, 등록된 `effect` 호출과 같은 작업이 푸시되는 큐도 포함되어 있다(이런 이유로 Fiber 노드 객체는 '작업 단위'로 정의되기도 한다).
 
 <br>
 
@@ -147,38 +146,37 @@ https://github.com/facebook/react/blob/b53ea6ca05d2ccb9950b40b33f74dfee0421d872/
 
 ### Fiber 트리와 가상 DOM, Fiber 엔진의 특성
 
-<!-- 유지되는 것이 맞나? -->
-Fiber 트리와 리액트 엘리먼트 트리(가상 DOM)의 차이는 **Fiber 트리는 매 렌더링마다 새롭게 생성되지 않고 유지되며, 데이터가 변형되는 형태로 계속해서 사용된다는 것이다**(따라서 상태를 추적, 유지하기 좋다). 
+Fiber 트리와 리액트 엘리먼트 트리(가상 DOM)의 차이는 **Fiber 트리는 매 렌더링마다 새롭게 생성되지 않고 유지되며, 업데이트되는 형태로 계속해서 사용된다는 것이다**(따라서 상태를 추적, 유지하기 좋다). 
+<!-- Fiber 트리 자체는 불변 자료구조인듯. -> 리액트 앨리먼트 트리가 불변 -->
 
-또 Fiber 트리는 리액트 트리와 동일한 요소를 갖지만 작업의 효율을 위해 일반적인 트리 형태와 좀 다르게 **연결 리스트 형태로 구현 되어있다.** Fiber 트리의 자식 노드들 중 첫 번째 노드가 부모 노드에 연결되어 있고 형제 노드는 첫 번째 노드에 연결 리스트로 형태로 연결 되어있다.
+또 Fiber 트리는 순회할 때의 효율을 위해 일반적인 트리 형태와 좀 다르게 **연결 리스트 형태로 구현 되어있다.** Fiber 트리의 자식 노드들 중 첫 번째 노드가 부모 노드에 연결되어 있고 형제 노드는 첫 번째 노드에 연결 리스트로 형태로 연결 되어있다.
 
 
 <div style="text-align: center">
   <img src="./img/fiber tree.png" width="650px" heigth="550px" style="margin: 0 auto"/>
-  <p>fiber 트리</p>
   <p style="color: gray">(https://www.alibabacloud.com/blog/a-closer-look-at-react-fiber_598138/)</p>
 </div>
 
-Fiber 트리를 다루는 **Fiber 엔진의 매우 중요한 특성 중 하나는 렌더링 작업을 비동기적으로 처리할 수 있다는 것이다**(15v 에선 동기식이었다고 한다). 이런 특성 때문에 Fiber가 수행하는 렌더링 프로세스를 청크로 분할할 수 있고, 일부 **작업을 다른 작업보다 우선적으로 처리할 수 있으며 작업을 일시 중지하거나, 혹은 재사용하거나 더 이상 유효하지 않은 경우 폐기할 수도 있다.**
+**Fiber 엔진의 매우 중요한 특성 중 하나는 렌더링 작업을 비동기적으로 처리할 수 있다는 것이다**(15v 에선 동기식이었다고 한다). 즉, Fiber가 수행하는 렌더링 프로세스를 청크로 분할할 수 있고, 일부 **작업을 다른 작업보다 우선적으로 처리할 수 있으며 작업을 일시 중지하거나, 혹은 재사용하거나 더 이상 유효하지 않은 경우 폐기할 수도 있다.**
 
-이러한 비동기 렌더링은 React 18의 Suspense, transition과 같은 동시성을 지원하는 기능을 가능하게 하며 렌더링 시간이 긴 경우 일시중지 했다가 나중에 재개하는 식으로 자바스크립트 엔진이 블록킹되는 것을 막을 수 있다.
+이러한 비동기 렌더링은 React 18의 Suspense, transition과 같은 동시성을 지원하는 기능을 가능하게 하며 렌더링 시간이 긴 경우 일시중지 했다가 나중에 재개하는 식으로 **자바스크립트 엔진이 블록킹되는 것을 막을 수 있다.**
 
 ## 2. 컴포넌트 리렌더링 - 새 가상 DOM 생성, diffing 및 reconciliation
 
 컴포넌트의 상태가 업데이트 되면 렌더링을 트리거한 컴포넌트부터 하위 컴포넌트까지 재귀적으로 렌더링이 발생하고 **새로운 가상 DOM을 생성한다.**
 
-그런 다음 current Fiber 트리와 새롭게 만들어진 가상 DOM을 diffing 알고리즘으로 하나하나 비교하면서 변경 사항을 반영하여 현재 Fiber 트리를 새롭게 업데이트 하는데 이때 만들어진 새 Fiber 트리를 **'workInProgress' 트리** 라고 한다.
+그런 다음 `current` Fiber 트리와 새롭게 만들어진 가상 DOM을 diffing 알고리즘으로 하나하나 비교하면서 변경 사항을 반영하여 현재 Fiber 트리를 새롭게 업데이트 하는데 이때 만들어진 새 Fiber 트리를 **`workInProgress` 트리** 라고 한다.
 
-변경된 내용은 'workInProgress' 트리의 각 Fiber 노드에 기록되고, DOM 조작에 필요한 모든 작업은 'list of effects'에 담겨 commit 단계에서 실행된다. 
+변경된 내용은 `workInProgress` 트리의 각 Fiber 노드에 기록되고, DOM 조작에 필요한 모든 작업은 'list of effects'에 담겨 commit 단계에서 실행된다. 
 <!-- workLoop 함수를 통해 workInProgress 트리를 순회하고 작업 리스트를 생성하는듯-->
 
 <div style="text-align: center">
   <img src="./img/reconciliation process.jpg" width="650px" heigth="550px" style="margin: 0 auto"/>
-  <p>reconciliation 과정 추상화</p>
+
   <p style="color: gray">(https://www.udemy.com/course/the-ultimate-react-course/)</p>
 </div>
 
-<h2> 렌더링 페이즈 요약</h2>
+<h2>렌더링 페이즈 요약</h2>
 
 <div style="text-align: center">
   <img src="./img/render phase.jpg" width="650px" heigth="550px" style="margin: 0 auto"/>
@@ -188,17 +186,50 @@ Fiber 트리를 다루는 **Fiber 엔진의 매우 중요한 특성 중 하나�
 
 ## 3. 커밋 단계(Commit Phase)
 
-이후 렌더링 페이즈가 완료되면 만들어지는 DOM 업데이트 리스트를 기반으로 커밋 페이즈에서 실제 DOM을 업데이트를 적용하고(삽입, 삭제, 업데이트 등) 브라우저는 리페인팅한다(이때 커밋 페이즈를 담당하는 것은 React-DOM이다!).
+커밋 페이즈에서는 렌더링 페이즈 완료 후 생성된 `workInProgress` 트리를 기반으로 실제 DOM을 업데이트(삽입, 삭제, 업데이트 등)하고 브라우저는 리페인팅한다. **렌더링 페이즈와 달리 커밋 페이즈의 DOM 업데이트 작업은 한번에 동기적으로 이루어지기 때문에** 렌더링 페이즈처럼 중단, 재개, 취소 등이 불가능하다(DOM이 부분적으로만 완료된 상태로 출력되는 것을 막기 위함).
 
-**렌더링 페이즈와 달리 커밋 페이즈의 DOM 업데이트 작업은 한번에 동기적으로 이루어진다.** 따라서 렌더링 페이즈처럼 중단, 재개, 취소 등이 불가능하다(DOM이 부분적으로만 완료된 상태로 출력되는 것을 막기 위함).
+**이때(커밋 페이즈) 실제 DOM 업데이트를 담당하는 것은 'React-DOM' 라이브러리**이다(렌더링까지 작업은 React가 담당한다).
 
-커밋 단계가 완료되면 'workInProgress' 트리가 곧 다음 렌더링에서 current 트리가 된다.
+이렇게 렌더링과 커밋을 담당하는 라이브러리가 분리되어있는 이유는 **여러 플랫폼에 적용하기 위함이다.** 이말은, **React는 렌더링을 통해 화면을 구성하는 요소를 어떻게 업데이트해야 하는지 계산하는 역할**이고(reconciler) 환경(IOS, Android, Windows, 동영상, 문서까지..)에 따라 커밋 단계를 담당하는 라이브러리는 웹의 경우 React-Dom, 모바일은 React-Native, 동영상 제작은 Remotion 등 각각 다르다(커밋 페이즈를 담당하는 라이브러리들을 'renderer' 라고 한다).
 
-## 브라우저 리페인팅
+웹 개발 맥락에서는 렌더링 페이즈의 결과물이 'DOM' 업데이트 방법인 것이지만 엄밀히 말하지면 화면 구성요소를 업데이트해야 될 방법이 되는 것이다. 따라서 새 React 공식 홈페이지에선 가상 DOM이라는 용어는 없고 리액트 엘리먼트 트리, 리액트 트리, UI 트리와 같은 용어를 사용하고 있다.
+
+<div style="text-align: center">
+  <img src="./img/commit phase.jpg" width="650px" heigth="550px" style="margin: 0 auto"/>
+  <p style="color: gray">(https://www.udemy.com/course/the-ultimate-react-course/)</p>
+</div>
+
+커밋 단계가 완료되면 `workInProgress` 트리가 곧 다음 렌더링에서 `current` 트리가 된다.
+
+<h2> 커밋 페이즈 요약</h2>
+<div style="text-align: center">
+  <img src="./img/rendering process recap.jpg" width="650px" heigth="550px" style="margin: 0 auto"/>
+  <p style="color: gray">(https://www.udemy.com/course/the-ultimate-react-course/)</p>
+</div>
 
 
 ## Diifing 알고리즘 
 
+Diffing은 컴포넌트 리렌더링 시 `current` 트리(현재 DOM 형태)와 새로운 엘리먼트 트리(가상 DOM)를 비교하는 알고리즘으로 루트요소부터 같은 위치에 있는 요소들을 하나하나 비교한다. Diffing은 기본적으로 다음 2가지를 가정에 기반하여 O(n<sup>3</sup>)였던 복잡도를 O(n)로 가능하게 하였다. 
+
+1. diffing으로 비교 시 `current` 트리와 새 엘리먼트 트리(가상 DOM) **요소의 타입이 다르면 새로운 트리를 생성한다** -> 상태도 리셋된다.   
+2. 컴포넌트에 고유한 `Key` prop을 설정하여 다음 렌더링때 변경되지 않아도 될 요소를 표시해줄 수 있다. -> 렌더링 List and Keys.md 참고
+
+diffing 시 같은 타입의 요소의 경우 요소의 어트리뷰트만 확인하여 동일한 부분은 유지하고 변경된 부분을 갱신한다. 
+
+```
+// className 어트리뷰트 값만 수정한다.
+<div className="before" title="stuff" />
+
+<div className="after" title="stuff" />
+```
+
+같은 타입의 요소라도 `Key` 값이 변경되면 기존 요소를 버리고 새 요소를 생성한다. 이 경우 당연히 `state`가 초기화되게 되는데 이것을 목적으로 의도적으로 `key`를 변경하는 경우도 있다.
+
+
+**[Diffing 알고리즘]**
+
+https://ko.legacy.reactjs.org/docs/reconciliation.html#the-diffing-algorithm
 
 ## 추가 내용
 
@@ -215,6 +246,10 @@ Fiber 트리를 다루는 **Fiber 엔진의 매우 중요한 특성 중 하나�
 
 
 ## Reference
+
+**[Inside Fiber: in-depth overview of the new reconciliation algorithm in React]**
+
+https://indepth.dev/posts/1008/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react
 
 **[react-fiber-algorithm]** https://www.velotio.com/engineering-blog/react-fiber-algorithm
 
