@@ -4,12 +4,12 @@
   - [Reference](#reference)
 - [상태 변수로 상호작용 추가하기 (`useState()`, 상태 `Hook`,)](#상태-변수로-상호작용-추가하기-usestate-상태-hook)
 - [`useState` 훅(`Hook`)이란?](#usestate-훅hook이란)
-  - [`setSomething(nextState)` 함수로 상태 업데이트](#setsomethingnextstate-함수로-상태-업데이트)
-  - [Reference](#reference-1)
+- [`setSomething(nextState)` 함수로 상태 업데이트](#setsomethingnextstate-함수로-상태-업데이트)
   - [HTML `Form`으로 사용자 입력받아 상태 업데이트하기](#html-form으로-사용자-입력받아-상태-업데이트하기)
+  - [`set` 함수의 상태 업데이트 일괄처리(Batching)](#set-함수의-상태-업데이트-일괄처리batching)
   - [다음 렌더링 전 `state` 값을 여러 번 업데이트하기](#다음-렌더링-전-state-값을-여러-번-업데이트하기)
-  - [Reference](#reference-2)
   - [Lifting state up - 상위 컴포넌트에 데이터 전달하기](#lifting-state-up---상위-컴포넌트에-데이터-전달하기)
+  - [Reference](#reference-1)
 
 # 컴포넌트에 이벤트 핸들러 등록하기
 
@@ -112,7 +112,7 @@ function ExpenseItem(props) {
 }
 ```
 
-## `setSomething(nextState)` 함수로 상태 업데이트
+# `setSomething(nextState)` 함수로 상태 업데이트
 
 `useState()`가 반환한 `set` 함수에 인수를 전달해 호출하면 상태 변수 값을 업데이트하고 렌더링을 트리거 할 수 있다.
 
@@ -121,26 +121,6 @@ function ExpenseItem(props) {
 함수 컴포넌트가 다시 호출되면(리렌더링) 위의 `title` 상태 변수는 `useState()`의 인수로 또 다시 초기화되는 것이 아닌 `setTitle()`로 설정한 가장 최신 값이 할당되는데 이는 상태 변수가 지역 변수와 달리 매 호출마다 새롭게 평가되고 값이 할당되는 것이 아니라 리액트에 의해 유지되기 때문이다.
 
 추가로 `set` 함수를 통한 `state` 업데이트는 비동기로 일괄적으로 처리된다. 따라서 위에서 `setTitle()` 다음에 `console.log()`가 위치하여도 콘솔 창에는 업데이트 전 값이 출력된다. 
-
-
-## Reference
-
-**[※ React docs 컴포넌트 렌더링에 대하여]**
-
-https://beta.reactjs.org/learn/render-and-commit
-
-**[React docs 내장 hooks 종류]**
-
-https://beta.reactjs.org/reference/react
-
-
-**[※ React docs State 특징, useState()]**
-
-https://beta.reactjs.org/learn/state-a-components-memory
-
-https://beta.reactjs.org/reference/react/useState#avoiding-recreating-the-initial-state
-
-
 
 ## HTML `Form`으로 사용자 입력받아 상태 업데이트하기
 
@@ -183,10 +163,15 @@ function ExpenseForm() {
 
 export default ExpenseForm;
 ```
+## `set` 함수의 상태 업데이트 일괄처리(Batching)
 
-상태 업데이트에 대해서 알아야 할 것은 `set` 함수는 다음 렌더링에서만 상태 변수를 업데이트한다는 것과 **React는 `set` 함수를 일괄 처리한다는 것**이다. 즉, `set` 함수는 비동기적으로 동작하여 따로 큐에 푸시되고, 이벤트 핸들러의 모든 코드가 실행되고 난 뒤 일괄적으로 실행되어 상태가 업데이트되고 리렌더링이 발생한다. 
+상태 업데이트에 대해서 알아야 할 것은 `set` 함수는 다음 렌더링에서만 상태 변수를 업데이트한다는 것과 **React는 `set` 함수를 일괄 처리한다는 것**이다(batching 이라고 한다). 즉, `set` 함수는 비동기적으로 동작하여 따로 큐에 푸시되고, 이벤트 핸들러의 모든 코드가 실행되고 난 뒤 일괄적으로 실행되어 한번의 리렌더링이 발생하고 상태가 업데이트된다. 이때 `Object.is()` 메서드로 이전 상태와 새 상태를 비교하여 값이 변경된 경우 렌더링된다. 
 
-정리하면 **`set` 함수 호출마다 렌더링이 발생하는 것이 아니라는 것이다.** 이런 방식으로 동작하는 이유는 단일 이벤트 중에 여러 번 렌더링되는 것을 방지하여 성능 저하를 막고 변수 전체가 업데이트되지 않은 미완성 상태로 화면을 출력하지 않기 위함이다. 
+정리하면 **`set` 함수 호출마다 렌더링이 발생하는 것이 아니라는 것이다.** 이런 방식으로 동작하는 이유는 **단일 이벤트 중에 여러 번 렌더링되는 것을 방지하여 성능 저하를 막고 변수 전체가 업데이트되지 않은 미완성 상태로 화면을 출력하지 않기 위함**이다. 
+
+```
+추가로 리액트 18 이전에는 리액트 컴포넌트에 등록한 이벤트 핸들러의 set 함수만 일괄처리 됐었으나, 18 버전 이후로 DOM api(ex) addEventListner())로 요소에 추가한 이벤트 핸들러, 프로미스(후속 메서드), 타이머 함수와 같은 모든 비동기 작업에서도 일괄처리가 적용되게 되었다. 
+```
 
 따라서 아래와 같이 동일한 `set` 함수를 여러 번 호출하여도 일괄적으로 실행되며 한번의 렌더링이 발생하기 때문에 상태 값이 거듭해서 업데이트 되는 것이 아니다(예상대로 +3이 나오려면 각각의 `set` 함수마다 렌더링이 발생해야 가능한 것).
 
@@ -246,7 +231,6 @@ const formSubmited = e => {
 
 **`set` 함수는 이전 값과 병합하는게 아닌 새롭게 업데이트하는 것**이기 때문에 `set` 함수에 전달하지 않은 프로퍼티는 사라진다. 
 
-
 ## 다음 렌더링 전 `state` 값을 여러 번 업데이트하기
 
 이전 상태 값에 의존하여 다음 렌더링 전에 상태를 여러 번 업데이트해야 되는 경우가 있을 수 있다.
@@ -299,13 +283,6 @@ const formSubmited = e => {
 }
 ```
 </br>
-
-## Reference
-
-**[React docs 여러 개의 상태 업데이트 일괄 처리]**
-
-https://beta.reactjs.org/learn/queueing-a-series-of-state-updates
-
 
 ## Lifting state up - 상위 컴포넌트에 데이터 전달하기
 
@@ -404,3 +381,25 @@ export default ExpenseForm;
 ```
 
 `form` 요소가 있는 하위 컴포넌트에서 사용자로부터 입력을 받고, `submit` 이벤트가 발생하면 해당 입력 값을 상위 컴포넌트로부터 `props`로 전달받은 함수에 인수로 전달해서 호출하여 상위 컴포넌트에 데이터를 전달하는 방식이다.
+
+
+## Reference
+
+**[React docs 여러 개의 상태 업데이트 일괄 처리]**
+
+https://beta.reactjs.org/learn/queueing-a-series-of-state-updates
+
+**[※ React docs 컴포넌트 렌더링에 대하여]**
+
+https://beta.reactjs.org/learn/render-and-commit
+
+**[React docs 내장 hooks 종류]**
+
+https://beta.reactjs.org/reference/react
+
+
+**[※ React docs State 특징, useState()]**
+
+https://beta.reactjs.org/learn/state-a-components-memory
+
+https://beta.reactjs.org/reference/react/useState#avoiding-recreating-the-initial-state
