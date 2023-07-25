@@ -85,6 +85,8 @@ https://github.com/facebook/react/blob/b53ea6ca05d2ccb9950b40b33f74dfee0421d872/
 
 <!-- 아래와 같이 `react-dom`의 `createRoot` 메서드로 타겟 DOM 요소를 지정하고 `render` 메서드에 루트 컴포넌트(최상위 컴포넌트)를 전달하여 호출하면 초기 렌더링이 일어난다.  -->
 
+<!-- render 메서드의 결과로 리액트 엘리먼트 트리가 생성되는듯 -->
+
 ```
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -145,7 +147,7 @@ https://github.com/facebook/react/blob/b53ea6ca05d2ccb9950b40b33f74dfee0421d872/
 Fiber 트리와 리액트 엘리먼트 트리(가상 DOM)의 차이는 **Fiber 트리는 매 렌더링마다 새롭게 생성되지 않고 유지되며, 업데이트되는 형태로 계속해서 사용된다는 것이다**(따라서 상태를 추적, 유지하기 좋다). 
 <!-- Fiber 트리 자체는 불변 자료구조인듯. -> 리액트 앨리먼트 트리가 불변 -->
 
-또 Fiber 트리는 순회할 때의 효율을 위해 일반적인 트리 형태와 좀 다르게 **연결 리스트 형태로 구현 되어있다.** Fiber 트리의 자식 노드들 중 첫 번째 노드가 부모 노드에 연결되어 있고 형제 노드는 첫 번째 노드에 연결 리스트로 형태로 연결 되어있다.
+또 Fiber 트리는 순회할 때의 효율을 위해 일반적인 트리 형태가 아닌 **연결 리스트 형태로 구현 되어있다.** Fiber 트리의 자식 노드들 중 첫 번째 노드가 부모 노드에 연결되어 있고 형제 노드는 첫 번째 노드에 연결 리스트로 형태로 연결 되어있다.
 
 
 <div style="text-align: center">
@@ -161,9 +163,9 @@ Fiber 트리와 리액트 엘리먼트 트리(가상 DOM)의 차이는 **Fiber �
 
 컴포넌트의 상태가 업데이트 되면 루트 컴포넌트부터 타고 내려가 렌더링을 트리거한 컴포넌트부터 하위 컴포넌트까지 재귀적으로 호출하여 **새로운 가상 DOM을 생성한다.**
 
-그런 다음 `current` Fiber 트리와 새롭게 만들어진 가상 DOM을 diffing 알고리즘으로 하나하나 비교하면서 변경 사항을 반영하여 현재 Fiber 트리를 새롭게 업데이트 하는데 이때 만들어진 새 Fiber 트리를 **`workInProgress` 트리** 라고 한다.
+그런 다음 `current` Fiber 트리와 새롭게 만들어진 리액트 엘리먼트 트리(가상 DOM)의 요소를 diffing 알고리즘으로 하나하나 비교하면서 변경 사항을 반영하여 `current` Fiber 트리를 새롭게 업데이트 하는데 이때 만들어진 새 Fiber 트리를 **`workInProgress` 트리** 라고 한다.
 
-변경된 내용은 `workInProgress` 트리의 각 Fiber 노드에 기록되고, DOM 조작에 필요한 모든 작업은 'list of effects'에 담겨 commit 단계에서 실행된다. 
+변경된 내용은 `workInProgress` 트리의 각 Fiber 노드에 기록되고, DOM 조작에 필요한 모든 작업은 'Effects list'에 담겨 commit 단계에서 실행된다. 
 <!-- workLoop 함수를 통해 workInProgress 트리를 순회하고 작업 리스트를 생성하는듯-->
 
 <div style="text-align: center">
