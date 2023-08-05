@@ -21,9 +21,9 @@ React에서 컴포넌트에 등록하는 모든 이벤트 핸들러는 해당 �
 
 React에서도 vanilla JS와 마찬가지로 이벤트가 발생했을때 타입에 따른 이벤트 객체가 생성되고 이벤트 핸들러의 인수로 전달된다. 다만 React에선 `SyntheticEvent` 라고 하는 객체에 래핑되어 전달된다.
 
-이 객체는 표준 DOM 이벤트 객체를 따르지만 모든 브라우저에서 동일하게 동작시키기 위해 위해 일부 기능이 추가되거나 변경되어 만들어졌다.
+이 객체는 표준 DOM 이벤트 객체를 따르지만 모든 브라우저에서 동일하게 동작시키기 위해 일부 기능이 추가되거나 변경되어 만들어졌다.
 <!-- ? -->
-순수 JS 이벤트 객체의 메서드인 `preventDefault()`, `stopPropagation()`를 포함하고 있으며 일부 버블링되지 않는 이벤트들이 버블링되게 만들어져있다(ex) `focus`, `blur`, `change`).
+순수 JS 이벤트 객체의 메서드인 `preventDefault()`, `stopPropagation()`를 포함하고 있으며 일부 버블링되지 않는 이벤트들이 버블링되게 만들어져있다(ex) `focus`, `blur`, `change`, `scroll` 이벤트는 제외).
 
 vanilla JS에선 요소의 기본 동작을 취소하고자 할 때, 이벤트 객체의 `preventDefault()` 메서드를 호출하거나, 이벤트 핸들러가 `false`를 반환하면 된다. 하지만 React의 이벤트 핸들러에선 `preventDefault()`만 동작한다.
 
