@@ -8,6 +8,7 @@
 - [1. 렌더링 트리거](#1-렌더링-트리거)
     - [초기 렌더링(애플리케이션 시작)](#초기-렌더링애플리케이션-시작)
     - [컴포넌트(혹은 조상 컴포넌트)의 상태 업데이트(리렌더링)](#컴포넌트혹은-조상-컴포넌트의-상태-업데이트리렌더링)
+    - [Context 업데이트](#context-업데이트)
 - [2. 렌더링 단계(Render Phase)](#2-렌더링-단계render-phase)
   - [재조정(reconciliation)이란?](#재조정reconciliation이란)
 - [재조정(Reconciliatioin) 과정](#재조정reconciliatioin-과정)
@@ -107,6 +108,9 @@ root.render(
 
 컴포넌트의 상태가 업데이트 되면 렌더링이 트리거 된다(이때 `Object.is()` 메서드로 이전 상태와 새 상태를 비교하여 값이 변경된 경우 렌더링된다). 초기 렌더링과 차이점은 루트 컴포넌트부터 모두 호출하는 것이 아닌 렌더링을 트리거한 컴포넌트를 호출한다. 그리고 해당 컴포넌트가 반환하는 하위 컴포넌트까지 재귀적으로 리렌더링된다.
 
+### Context 업데이트
+
+
 # 2. 렌더링 단계(Render Phase)
 
 렌더링 단계에서는 컴포넌트가 렌더링되어 업데이트된 새 가상 DOM이 생성되고 가상 DOM을 기반으로 **Reconciliation**이 일어난다(**DOM 업데이트가 일어나는 단계가 아니다**).
@@ -117,7 +121,7 @@ root.render(
 
 이때 가상 DOM을 통해 변경된 부분을 확인하고 어떤 업데이트가 필요한지 확인하는 작업을 **재조정(Reconciliatioin)** 이라고 한다.
 
-Reconciliation은 **Fiber**라고 하는 **리액트 Reconciliatioin 엔진(혹은 알고리즘, 아키텍처)** 에 의해 이루어지며(Fiber는 리액트 v16에 도입된 새 reconciliation 엔진으로 reconciler 라고도 한다) Fiber는 실제 DOM을 직접 조작하진 않고 리액트에게 다음 UI의 모습이 어떻게 보여야하는지 알려준다.
+Reconciliation은 **Fiber**라고 하는 **리액트 Reconciliation 엔진(혹은 알고리즘, 아키텍처)** 에 의해 이루어지며(Fiber는 리액트 v16에 도입된 새 reconciliation 엔진으로 reconciler 라고도 한다) Fiber는 실제 DOM을 직접 조작하진 않고 리액트에게 다음 UI의 모습이 어떻게 보여야하는지 알려준다.
 
 **가상 DOM을 통한 Reconciliation의 목적은 효율이다.** 컴포넌트 렌더링이 일어날 때마다 실제 DOM을 매번 다시 그리는 것보다 가상 DOM을 통해 필요한 작업만 계산하여 실제 DOM에 적용하는 것이 훨신 효율적이고 빠르다. 게다가 가상 DOM은 단순한 자바스크립트 객체이므로 매번 생성하고 조작하는 것에 큰 비용이 들지 않는다.
 
@@ -141,10 +145,13 @@ Fiber 트리를 구성하는 Fiber 노드 객체에는 컴포넌트의 `state`, 
 
 https://github.com/facebook/react/blob/b53ea6ca05d2ccb9950b40b33f74dfee0421d872/packages/react-reconciler/src/ReactFiber.js#L255C2-L255C2
 
+**[Fiber node structure]**
+
+https://indepth.dev/posts/1008/inside-fiber-in-depth-overview-of-the-new-reconciliation-algorithm-in-react#fiber-node-structure
 
 ### Fiber 트리와 가상 DOM, Fiber 엔진의 특성
 
-Fiber 트리와 리액트 엘리먼트 트리(가상 DOM)의 차이는 **Fiber 트리는 매 렌더링마다 새롭게 생성되지 않고 유지되며, 업데이트되는 형태로 계속해서 사용된다는 것이다**(따라서 상태를 추적, 유지하기 좋다). 
+Fiber 트리와 리액트 엘리먼트 트리(가상 DOM)의 차이는 **Fiber 트리는 매 렌더링마다 새롭게 생성되지 않고 유지되며, 업데이트되는 형태로 계속해서 사용된다는 것이다**. 따라서 상태를 추적, 유지하기 좋다. 
 <!-- Fiber 트리 자체는 불변 자료구조인듯. -> 리액트 앨리먼트 트리가 불변 -->
 
 또 Fiber 트리는 순회할 때의 효율을 위해 일반적인 트리 형태가 아닌 **연결 리스트 형태로 구현 되어있다.** Fiber 트리의 자식 노드들 중 첫 번째 노드가 부모 노드에 연결되어 있고 형제 노드는 첫 번째 노드에 연결 리스트로 형태로 연결 되어있다.
