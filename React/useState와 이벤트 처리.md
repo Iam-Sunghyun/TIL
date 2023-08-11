@@ -72,7 +72,7 @@ function ExpenseItem(props) {
 
 # `useState` 훅(`Hook`)이란?
 
-리액트 훅(React Hook)은 React 버전 16.8부터 추가된 기능으로, 함수형 컴포넌트에서 상태(state)와 클래스 컴포넌트의 라이프 사이클(lifecycle) 메서드 기능을 사용할 수 있도록 해주는 리액트의 새로운 기능이다.
+리액트 훅(React Hook)은 React 버전 16.8부터 추가된 기능으로, 함수형 컴포넌트에서 상태(state)와 클래스 컴포넌트의 라이프 사이클(lifecycle) 메서드 기능을 사용할 수 있도록 해주는 리액트의 내장 함수이다.
 
 ```
 React 훅에는 `state`를 제어하는 `Hook` 말고도 useState, useEffect, useContex과 같은 여러 `Hook`이 있으며 모든 `Hook`은 컴포넌트 내부의 최상위 수준에서 호출되어야 한다.
