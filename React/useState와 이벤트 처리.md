@@ -4,6 +4,7 @@
   - [Reference](#reference)
 - [상태 변수로 상호작용 추가하기 (`useState()`, 상태 `Hook`,)](#상태-변수로-상호작용-추가하기-usestate-상태-hook)
 - [`useState` 훅(`Hook`)이란?](#usestate-훅hook이란)
+  - [`useState` 게으른 초기화(lazy initialize)](#usestate-게으른-초기화lazy-initialize)
 - [`setSomething(nextState)` 함수로 상태 업데이트](#setsomethingnextstate-함수로-상태-업데이트)
   - [HTML `Form`으로 사용자 입력받아 상태 업데이트하기](#html-form으로-사용자-입력받아-상태-업데이트하기)
   - [`set` 함수의 상태 업데이트 일괄처리(Batching)](#set-함수의-상태-업데이트-일괄처리batching)
@@ -72,13 +73,11 @@ function ExpenseItem(props) {
 
 # `useState` 훅(`Hook`)이란?
 
+**`state`란 컴포넌트 자기 자신 안에서 생성되고 제어되는 데이터로 렌더링 간에 유지되며(언마운트 시 사라짐) `set` 함수로 값 변경 시 렌더링을 트리거하여 반응성을 추가하는데 사용되는 데이터이다**.
+
 리액트 훅(React Hook)은 React 버전 16.8부터 추가된 기능으로, 함수형 컴포넌트에서 상태(state)와 클래스 컴포넌트의 라이프 사이클(lifecycle) 메서드 기능을 사용할 수 있도록 해주는 리액트의 내장 함수이다.
 
-```
-React 훅에는 `state`를 제어하는 `Hook` 말고도 useState, useEffect, useContex과 같은 여러 `Hook`이 있으며 모든 `Hook`은 컴포넌트 내부의 최상위 수준에서 호출되어야 한다.
-```
-
-**`state`란 컴포넌트 자기 자신 안에서 생성되고 제어되는 데이터로 렌더링 간에 유지되며(언마운트 시 사라짐) `set` 함수로 값 변경 시 렌더링을 트리거하여 반응성을 추가하는데 사용되는 데이터이다**.
+React 훅에는 `state`를 제어하는 `Hook` 말고도 `useState`, `useEffect`, `useContext`와 같은 여러 `Hook`이 있으며 모든 `Hook`은 컴포넌트 내부의 최상위 수준에서 호출되어야 한다.
 
 아래와 같이 `useState()` 훅을 호출하여 인수를 초기 값으로 갖는 상태 변수(`state`)와, `state`를 업데이트 할 수 있는 `set` 함수를 요소로 갖는 배열을 반환받아 `state`를 제어할 수 있다.
 
@@ -110,6 +109,26 @@ function ExpenseItem(props) {
     </Card>
   );
 }
+```
+
+## `useState` 게으른 초기화(lazy initialize)
+
+컴포넌트의 `state`는 초기 렌더링 시 `useState()`에 전달한 인수로 한번 초기화되고 다음 렌더링부터 무시된다. 이때 콜백 함수(initializer 함수)를 전달하여 값을 초기화해줄 수 있는데 이를 게으른 초기화(lazy initiliize)라고도 한다.
+ 
+주의할 것은 다음과 같이 초기화 함수를 호출해버리면 초기 렌더링 후 반환 값은 무시되지만 함수는 계속해서 호출되는 불필요한 작업이 일어나므로 함수 자체를 전달해줘야 한다.
+
+```
+function TodoList() {
+  const [todos, setTodos] = useState(createInitialTodos());
+  // ...
+```
+
+다음과 같이 함수 자체를 전달하면 리액트는 초기 렌더링 때만 호출하고 그 다음 렌더링부턴 호출하지 않는다.
+
+```
+function TodoList() {
+  const [todos, setTodos] = useState(createInitialTodos);
+  // ...
 ```
 
 # `setSomething(nextState)` 함수로 상태 업데이트
@@ -165,7 +184,7 @@ export default ExpenseForm;
 ```
 ## `set` 함수의 상태 업데이트 일괄처리(Batching)
 
-상태 업데이트에 대해서 알아야 할 것은 `set` 함수는 다음 렌더링에서만 상태 변수를 업데이트한다는 것과 **React는 `set` 함수를 일괄 처리한다는 것**이다(batching 이라고 한다). 즉, `set` 함수는 비동기적으로 동작하여 따로 큐에 푸시되고, 이벤트 핸들러의 모든 코드가 실행되고 난 뒤 일괄적으로 실행되어 한번의 리렌더링이 발생하고 상태가 업데이트된다. 이때 `Object.is()` 메서드로 이전 상태와 새 상태를 비교하여 값이 변경된 경우 렌더링된다. 
+상태 업데이트에 대해서 알아야 할 것은 `set` 함수는 **다음 렌더링에서만 상태 변수를 업데이트한다는 것**과 **React는 `set` 함수를 일괄 처리한다는 것**이다(batching 이라고 한다). 즉, `set` 함수는 **비동기적으로** 동작하여 따로 큐에 푸시되고, 이벤트 핸들러의 모든 코드가 실행되고 난 뒤 일괄적으로 실행되어 한번의 리렌더링이 발생하고 상태가 업데이트된다. 이때 `Object.is()` 메서드로 이전 상태와 새 상태를 비교하여 값이 변경된 경우 렌더링된다. 
 
 정리하면 **`set` 함수 호출마다 렌더링이 발생하는 것이 아니라는 것이다.** 이런 방식으로 동작하는 이유는 **단일 이벤트 중에 여러 번 렌더링되는 것을 방지하여 성능 저하를 막고 변수 전체가 업데이트되지 않은 미완성 상태로 화면을 출력하지 않기 위함**이다. 
 
