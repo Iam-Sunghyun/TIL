@@ -145,7 +145,7 @@ input type="range" min="최소 값" max="최대 값" step="단위" value="최초
 <br>
 
 **[MDN input type]** <br>
-https://developer.mozilla.org/ko/docs/Web/HTML/Element/Input#%3Cinput%3E_%EC%9C%A0%ED%98%95
+https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
 
 **[HTML 폼 요소가이드]**
 
@@ -182,7 +182,7 @@ https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps/Website_s
 일부 입력 요소는 유효성 검사가 내장되어 있으며(ex) input type="email", "tel" , "url" ....) HTML 유효성 검사를 위한 기본 속성의 예시는 다음과 같다.
 
 + ```required``` - 속성을 명시하여 필수 입력 값으로 만든다.
-+ ```minlength```, ```maxlength``` - 최소, 최대 입력 가능 값을 지정한다.
++ ```minlength```, ```maxlength``` - 문자열 최소, 최대 입력 가능 값을 지정한다.
 + ```min```, ```max``` 숫자 입력 유형의 최소값 및 최대값을 지정한다.
 + ```type``` - 데이터가 숫자, 이메일 주소 또는 기타 특정 사전 설정 유형이어야 하는지 여부를 지정한다.
 + ```pattern``` - 입력된 데이터가 따라야 하는 패턴을 정의하는 정규표현식을 지정한다.

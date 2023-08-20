@@ -71,7 +71,7 @@ JSON과 유사한 BSON 형식의 NoSQL 문서 지향 데이터베이스이다(BS
 
 ## mongoDB 구조
 
-<img src="https://github.com/Iam-Sunghyun/TIL/blob/main/DB/img/MongoDB.webp" width="450" height="400">
+<img src="../DB/img/MongoDB.webp" width="450" height="400">
 
 <!-- 아래 비교 자료 참조 -->
 
