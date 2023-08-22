@@ -2,7 +2,7 @@
 
 - [클라이언트 브라우저에 데이터를 저장하는 방법](#클라이언트-브라우저에-데이터를-저장하는-방법)
   - [브라우저에 데이터를 저장했을 때 이점](#브라우저에-데이터를-저장했을-때-이점)
-- [Web Storage - LocalStorage와 SessionStorage](#web-storage---localstorage와-sessionstorage)
+- [Web Storage란?](#web-storage란)
   - [LocalStorage와 SessionStorage](#localstorage와-sessionstorage)
   - [Reference](#reference)
 
@@ -38,7 +38,7 @@ https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_
 + **오프라인 상태에서 데이터 사용**<BR> 데이터와 자산(asset)을 로컬에 저장하여 웹 페이지를 더 빨리(잠재적으로 더 저렴하게) 다운로드하거나 네트워크 연결 없이 사용할 수 있다. 또 네트워크 연결 끊김으로 인한 작업 손실 방지.
 + **RPC 호출의 캐시 데이터**
 
-# Web Storage - LocalStorage와 SessionStorage
+# Web Storage란?
 
 Web Storage는 HTML5이 호환되는 브라우저에서 사용할 수 있는 브라우저 내에 데이터를 저장하기 위한 클라이언트 측 저장소이다.
 
