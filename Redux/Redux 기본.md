@@ -151,6 +151,10 @@ https://wooder2050.medium.com/%EB%A6%AC%EB%8D%95%EC%8A%A4-redux-%EB%8A%94-%EC%99
 
 **[MVx 아키텍처]** https://www.clariontech.com/blog/evaluating-design-patterns-for-mobile-development
 
+**[프론트엔드 아키텍처의 가장 최근 트렌드는?]**
+
+https://yozm.wishket.com/magazine/detail/1663/
+
 # Context API vs Redux 
 
 리액트의 내장 기능인 `Context API`가 있는데도 `Redux`를 사용하는 이유는 `Context`의 단점 중 하나가 규모가 큰 애플리케이션에서 아래와 같이 매우 복잡해질 수 있다는 것이다.
