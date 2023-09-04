@@ -62,8 +62,7 @@ module.exports = mongoose.model('User', userSchema);
 
 ## 2. `passport`/`passport-local` 설정하기
 
-`passport`, `passport-local`를 사용하기 위해선 다음 3가지 준비가 필요한데 
-순서대로 필요한 설정을 작성해본다.
+`passport`, `passport-local`를 사용하기 위해선 다음 3가지 준비가 필요한데 순서대로 필요한 설정을 작성해본다.
 
 + 미들웨어 설정
 + 전략(strategy) 설정
