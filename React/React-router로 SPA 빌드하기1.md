@@ -5,6 +5,9 @@
   - [vite 프로젝트 생성](#vite-프로젝트-생성)
   - [`vite`용 `eslint` 플러그인 설치](#vite용-eslint-플러그인-설치)
   - [`.eslintrc.json`, `vite.config.js` 파일 설정 및 실행](#eslintrcjson-viteconfigjs-파일-설정-및-실행)
+  - [`react-router-dom` 설치](#react-router-dom-설치)
+- [라우트(Route) 정의](#라우트route-정의)
+- [페이지 연걸(linking) 하기](#페이지-연걸linking-하기)
 
 <!-- vite - 빌드 툴
 webpack - 모듈 번들러
@@ -16,9 +19,12 @@ create-react-app과 달리 Vite는 기본적으로 다양한 프레임워크(vue
 
 리액트로 만들어진 SPA(Single Page Applicatino)은 클라이언트 사이드에서 동적으로 페이지를 변경하여 보여주기 때문에 화면 전환이 빨라 좋은 사용자 경험을 제공할 수 있다. 다만 리액트만을 사용하여 만들어진 경우 하나의 URL을 갖고 페이지가 클라이언트 사이드에서 자바스크립트를 통해 동적으로 변경되기 때문에 페이지가 변경돼도 URL이 유지되게 된다. 이것은 뒤로가기나, 특정 페이지를 URL로 요청할 수 없게 하고 제대로된 웹 사이트의 기능을 하지 못하게 한다(웹 애플리케이션은 다양한 URL 경로에 따라 다른 기능 또는 페이지를 제공할 수 있어야 한다).
 
-이때 라우팅 기능을 사용하면 페이지마다 그에 상응하는 Route를 설정하여 각각 다른 URL을 갖게할 수 있다. 이로서 웹 페이지 history를 기록할 수 있게 되고 뒤로 가기, 앞으로 가기 기능을 가능해진다. 또 URL에 따라 다른 페이지를 보여줄 수 있으며 페이지 북마크도 가능해진다. 즉, 제대로 된 SPA가 되는 셈이다.
+<!-- 확인 필요 -->
+이때 라우팅 기능을 사용하면 페이지마다 그에 상응하는 Route를 설정하여 각각 다른 URL을 갖게할 수 있다. 즉, URL이 변경되면 그에 맞는 컴포넌트가 렌더링되게 만들 수 있다. 이로서 웹 페이지 history를 기록할 수 있게 되고 뒤로 가기, 앞으로 가기 기능을 가능해진다. 또 URL에 따라 다른 페이지를 보여줄 수 있으며 페이지 북마크도 가능해진다. 즉, 제대로 된 SPA가 되는 셈이다.
 
 대부분의 프런트 엔드 프레임워크에는 이러한 클라이언트 측 라우팅 기능이 프레임워크에 바로 포함되어 있다. 하지만 리액트는 라이브러리이기 때문에 써드 파티 라이브러리를 사용해줘야 하는데 이때 가장 많이 사용되는 라우팅 라이브러리가 `react-router`이다.
+
+사용자가 Router 링크를 클릭하여 URL이 변경되면 `react-route`는 DOM을 업데이트한다.
 
 # 프로젝트 준비
 
@@ -85,15 +91,56 @@ export default defineConfig({
 npm run dev
 ```
 
+## `react-router-dom` 설치
+
+`react-router`에는 웹과 모바일을 위한 `react-router-dom`, `react-router-native`를 모두 포함하고 있다. 웹 프로젝트이므로 `react-router-dom`만 다운로드 받아준다.
+
+```
+npm i react-router-dom
+```
+
+
 **[npm install (plugin) --save와 --save-dev 차이점]**
 
 https://ithub.tistory.com/165
 
 **[vscode에서 자주 쓰는 코드 스니펫(조각) 설정하는 법]**
 
+https://code.visualstudio.com/docs/editor/userdefinedsnippets#_variables
+
 https://react.vlpt.us/basic/27-useful-tools.html
 
 
+# 라우트(Route) 정의
 
+크게 2가지 방법이 존재
+방법1
+```
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Homepage from './pages/Homepage';
+import PageNotFound from './pages/PageNotFound';
+import Pricing from './pages/Pricing';
+import Product from './pages/Products';
 
+function App() {
+  return (
+      /* react-router의 전통적인 라우트 정의 방법 */
+      <BrowserRouter>
+        <Routes>
+          {/* path="요청 경로", element="컴포넌트가 반환하는 리액트 엘리먼트"   */}
+          {/* 요청시 특정 path에 대응되는 컴포넌트가 화면에 렌더링되고 나머지는 무시된다*/}
+          <Route path='/' element={<Homepage />} />
+          <Route path='product' element={<Product />} />
+          <Route path='pricing' element={ <Pricing /> } />
+          <Route path='*' element={<PageNotFound />} />
+        </Routes>
+      </BrowserRouter>
+  );
+}
 
+export default App;
+```
+
+이대로면 페이지가 변경 시 리로드가 일어남. SPA의 부드러운 화면 전환이 아니게 됨 
+
+# 페이지 연걸(linking) 하기
