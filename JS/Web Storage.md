@@ -48,11 +48,11 @@ HTML5가 지원되지 않는 이전 브라우저에선 쿠키를 이용해 브�
 
 웹 스토리지 객체(web storage object)인 `localStorage`와 `sessionStorage`를 통해 브라우저 내에 키-값 쌍을 저장할 수 있게 해준다. 둘 다 약 5MB로 제한되며 각 출처(origin)마다 연결되어있다. 두 객체는 다음과 같은 특성을 갖는다.
 
-`sessionStorage`
+`window.sessionStorage`
 + 각각의 출처(origin)에 대해 독립적인 저장 공간을 페이지 세션이 유지되는 동안(브라우저 또는 탭이 닫힐 때까지만) 저장된다.
 + 데이터를 절대 서버로 전송하지 않는다.
 
-`localStorage`
+`window.localStorage`
 + 브라우저를 닫았다 열어도 데이터가 남아있다.
 + 유효기간 없이 데이터를 저장하고, JavaScript를 사용하거나 브라우저 캐시 또는 로컬 저장 데이터를 지워야만 사라진다.
 
