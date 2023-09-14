@@ -8,6 +8,8 @@
   - [`react-router-dom` 설치](#react-router-dom-설치)
 - [라우트(Route) 정의](#라우트route-정의)
 - [페이지 연걸(linking) 하기](#페이지-연걸linking-하기)
+  - [`<Link>` 컴포넌트](#link-컴포넌트)
+  - [`<NavLink>` 컴포넌트](#navlink-컴포넌트)
 - [Reference](#reference)
 
 <!-- vite - 빌드 툴
@@ -137,7 +139,11 @@ export default App;
 
 # 페이지 연걸(linking) 하기
 
-**`react-router-dom`의 `<Link>` 컴포넌트 사용하면 새로고침 없이 경로와 대응되는 페이지로 전환할 수 있다.** 다음과 같이 `to` prop에 이동하고자 하는 페이지의 경로를 넣어주면 링크가 생섣된다. 생성된 링크를 클릭하면 새로고침 없이 링크의 경로에 맞는 페이지로 전환된다.
+## `<Link>` 컴포넌트
+
+**`react-router-dom`의 `<Link>` 컴포넌트를 사용하면 경로와 대응되는 페이지로 전환할 수 있다.** 다음과 같이 `to` prop에 이동하고자 하는 페이지의 경로를 넣어주면 링크가 생섣된다. **생성된 링크를 클릭하면 새로고침 없이 링크의 경로에 맞는 페이지로 전환된다.**
+
+`<Link>` 컴포넌트는 `<a href='...'>`를 사용하여 만들어진다.
 
 ```
 import { Link } from 'react-router-dom';
@@ -154,7 +160,26 @@ function Homepage() {
 export default Homepage;
 ```
 
-`<Link>` 컴포넌트 대신 **`<NavLink>` 컴포넌트를 사용하면 활성화 된 컴포넌트에 `class='active'`어트리튜브가 자동으로 추가**되어 스타일을 지정하기 용이하다. 
+## `<NavLink>` 컴포넌트
+
+`<Link>` 컴포넌트 대신 **`<NavLink>` 컴포넌트를 사용하면 해당 요소가 활성화(active) 혹은 보류(pending) 상태인지를 식별할 수 있어 네비게이션 바를 생성할 때 유용하다.** 
+
+컴포넌트가 활성화되면 해당 컴포넌트의 여러 `props`에(`style`, `children`, `class` 등..) 활성 상태를 알리는 객체가 전달되어 다음과 같이 `props` 값을 동적으로 설정해줄 수 있다. 
+
+```
+import { NavLink } from "react-router-dom";
+
+<NavLink
+  to="/messages"
+  className={({ isActive, isPending }) =>
+    isPending ? "pending" : isActive ? "active" : ""
+  }
+>
+  Messages
+</NavLink>;
+```
+
+또한 활성화된 컴포넌트에는 `class='active'` 속성이 자동으로 추가되어 스타일을 지정하기 용이하다. 참고로 vite로 생성한 리액트 프로젝트에선 className을 class로 작성할 경우 제대로 적용이 안되거나 에러가 발생한다.
 
 ```
 import { NavLink } from 'react-router-dom';
@@ -181,7 +206,7 @@ function NavigationBar() {
 export default NavigationBar;
 -----------------------------------
 // test.css 
-.active {
+a.active {
   color: red;
 }
 
@@ -224,6 +249,10 @@ export default App;
 
 
 # Reference
+
+**[react-router]**
+
+https://reactrouter.com/en/main/
 
 **[npm install (plugin) --save와 --save-dev 차이점]**
 
