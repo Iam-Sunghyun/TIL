@@ -37,6 +37,10 @@
 **[React 지원하는 event]**
 
 https://ko.reactjs.org/docs/events.html
+
+https://react.dev/reference/react-dom/components/common#reference
+
+https://react.dev/reference/react-dom/components/input
  
 # 상태 변수로 상호작용 추가하기 (`useState()`, 상태 `Hook`,)
 

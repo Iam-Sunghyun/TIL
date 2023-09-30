@@ -255,7 +255,7 @@ DOM에 마운트 되면서 초기 렌더링으로 인한 'rendering?'이 콘솔 
 
 ## `useRef`로 DOM 참조하기
 
-참조할 리액트 요소의 `ref` prop에 `useRef`로 생성한 객체를 추가해주면, `useRef`로 생성한 변수에 해당 DOM 요소의 참조가 저장된다.
+참조할 리액트 요소의 `ref` prop에 `useRef`로 생성한 객체를 할당해주면, `useRef`로 생성한 객체의 `current` 프로퍼티에 해당 DOM 요소의 참조가 저장된다.
 
 ```
 // ref prop에 전달한 요소의 참조가 저장 됨
