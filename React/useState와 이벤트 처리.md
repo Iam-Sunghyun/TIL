@@ -117,9 +117,9 @@ function ExpenseItem(props) {
 
 ## `useState` 게으른 초기화(lazy initialize)
 
-컴포넌트의 `state`는 초기 렌더링 시 `useState()`에 전달한 인수로 한번 초기화되고 다음 렌더링부터 무시된다. 이때 콜백 함수(initializer 함수)를 전달하여 값을 초기화해줄 수 있는데 이를 게으른 초기화(lazy initiliize)라고도 한다.
+컴포넌트의 `state`는 초기 렌더링 시 `useState()`에 전달한 인수로 한번 초기화되고 다음 렌더링부터 무시된다. 이때 콜백 함수(initializer 함수)를 전달하여 값을 초기화해줄 수 있는데 이를 게으른 초기화(lazy initiliize)라고도 한다. 함수를 사용하면 초기 상태 값을 동적으로 계산할 수 있으며 이는 경우에 따라 유용할 수 있다.
  
-주의할 것은 다음과 같이 초기화 함수를 호출해버리면 초기 렌더링 후 반환 값은 무시되지만 함수는 계속해서 호출되는 불필요한 작업이 일어나므로 함수 자체를 전달해줘야 한다.
+주의할 것은 다음과 같이 초기화 함수를 호출해버리면 초기 렌더링 후 반환 값은 무시되지만 함수는 계속해서 호출되는 불필요한 작업이 일어나므로 **함수 자체를 전달해줘야 한다.**
 
 ```
 function TodoList() {
@@ -407,6 +407,10 @@ export default ExpenseForm;
 
 
 ## Reference
+
+**[usestate-lazy-initialization]**
+
+https://blog.logrocket.com/initialize-state-react-hooks/#bonus-usestate-lazy-initialization
 
 **[React docs 여러 개의 상태 업데이트 일괄 처리]**
 
