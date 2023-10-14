@@ -161,7 +161,7 @@ Fiber 트리와 리액트 엘리먼트 트리(가상 DOM)의 차이는 **Fiber �
   <p style="color: gray">(https://www.alibabacloud.com/blog/a-closer-look-at-react-fiber_598138/)</p>
 </div>
 
-**Fiber 엔진의 매우 중요한 특성 중 하나는 렌더링 작업을 비동기적으로 처리할 수 있다는 것이다**(15v 에선 동기식이었다고 한다). 즉, Fiber가 수행하는 렌더링 프로세스를 청크로 분할할 수 있고, 일부 **작업을 다른 작업보다 우선적으로 처리할 수 있으며 작업을 일시 중지하거나, 혹은 재사용하거나 더 이상 유효하지 않은 경우 폐기할 수도 있다.**
+**Fiber 엔진의 매우 중요한 특성 중 하나는 렌더링 작업을 비동기적으로 처리할 수 있다는 것이다**(15v 에선 동기식). 즉, Fiber가 수행하는 렌더링 프로세스를 청크로 분할할 수 있고, 일부 **작업을 다른 작업보다 우선적으로 처리할 수 있으며 작업을 일시 중지하거나, 혹은 재사용하거나 더 이상 유효하지 않은 경우 폐기할 수도 있다.**
 
 이러한 비동기 렌더링은 React 18의 Suspense, transition과 같은 동시성을 지원하는 기능을 가능하게 하며 렌더링 시간이 긴 경우 일시중지 했다가 나중에 재개하는 식으로 **자바스크립트 엔진이 블록킹되는 것을 막을 수 있다.**
 
@@ -175,7 +175,7 @@ Fiber 트리와 리액트 엘리먼트 트리(가상 DOM)의 차이는 **Fiber �
 <!-- workLoop 함수를 통해 workInProgress 트리를 순회하고 작업 리스트를 생성하는듯-->
 
 <div style="text-align: center">
-  <img src="./img/reconciliation process.jpg" width="650px" heigth="550px" style="margin: 0 auto"/>
+  <img src="./img/reconciliation process.JPG" width="650px" heigth="550px" style="margin: 0 auto"/>
 
   <p style="color: gray">(https://www.udemy.com/course/the-ultimate-react-course/)</p>
 </div>
@@ -183,7 +183,7 @@ Fiber 트리와 리액트 엘리먼트 트리(가상 DOM)의 차이는 **Fiber �
 <h2>렌더링 페이즈 요약</h2>
 
 <div style="text-align: center">
-  <img src="./img/render phase.jpg" width="650px" heigth="550px" style="margin: 0 auto"/>
+  <img src="./img/render phase.JPG" width="650px" heigth="550px" style="margin: 0 auto"/>
   <p style="color: gray">(https://www.udemy.com/course/the-ultimate-react-course/)</p>
 </div>
 
@@ -200,7 +200,7 @@ Fiber 트리와 리액트 엘리먼트 트리(가상 DOM)의 차이는 **Fiber �
 웹 개발 맥락에서는 렌더링 페이즈의 결과물이 'DOM' 업데이트 방법인 것이지만 엄밀히 말하지면 화면 구성요소를 업데이트해야 될 방법이 되는 것이다. 따라서 새 React 공식 홈페이지에선 가상 DOM이라는 용어는 없고 리액트 엘리먼트 트리, 리액트 트리, UI 트리와 같은 용어를 사용하고 있다.
 
 <div style="text-align: center">
-  <img src="./img/commit phase.jpg" width="650px" heigth="550px" style="margin: 0 auto"/>
+  <img src="./img/commit phase.JPG" width="650px" heigth="550px" style="margin: 0 auto"/>
   <p style="color: gray">(https://www.udemy.com/course/the-ultimate-react-course/)</p>
 </div>
 
@@ -208,7 +208,7 @@ Fiber 트리와 리액트 엘리먼트 트리(가상 DOM)의 차이는 **Fiber �
 
 <h2> 커밋 페이즈 요약</h2>
 <div style="text-align: center">
-  <img src="./img/rendering process recap.jpg" width="650px" heigth="550px" style="margin: 0 auto"/>
+  <img src="./img/rendering process recap.JPG" width="650px" heigth="550px" style="margin: 0 auto"/>
   <p style="color: gray">(https://www.udemy.com/course/the-ultimate-react-course/)</p>
 </div>
 
