@@ -229,6 +229,7 @@ https://react.dev/learn/lifecycle-of-reactive-effects#effects-react-to-reactive-
 
 https://blog.bhanuteja.dev/the-lifecycle-of-react-hooks-component
 
+https://blog.isquaredsoftware.com/2020/05/blogged-answers-a-mostly-complete-guide-to-react-rendering-behavior/#render-and-commit-phases
 
 # `useReducer`
 

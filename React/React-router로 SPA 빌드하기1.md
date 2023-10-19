@@ -28,7 +28,7 @@ create-react-app과 달리 Vite는 기본적으로 다양한 프레임워크(vue
 
 대부분의 프런트 엔드 프레임워크에는 이러한 클라이언트 측 라우팅 기능이 프레임워크에 바로 포함되어 있다. 하지만 리액트는 라이브러리이기 때문에 써드 파티 라이브러리를 사용해줘야 하는데 이때 가장 많이 사용되는 라우팅 라이브러리가 `react-router`이다.
 
-사용자가 Router 링크를 클릭하여 URL이 변경되면 `react-route`는 DOM을 업데이트한다.
+사용자가 Router 링크를 클릭하여 URL이 변경되면 `react-router`는 DOM을 업데이트한다.
 
 # 프로젝트 준비
 
@@ -260,6 +260,6 @@ https://ithub.tistory.com/165
 
 **[vscode에서 자주 쓰는 코드 스니펫(조각) 설정하는 법]**
 
-https://code.visualstudio.com/docs/editor/userdefinedsnippets#_variables
+https://code.visualstudio.com/docs/editor/userdefinedsnippets
 
 https://react.vlpt.us/basic/27-useful-tools.html

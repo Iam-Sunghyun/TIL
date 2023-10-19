@@ -49,7 +49,7 @@ ex) createContext({
 // App.js
 import { useState } from 'react;
 import Page from './components/Page';
-// `<Context.Provider>`로 사용하려는 `context`를 `import` 해주는 것 주의
+// `<Context.Provider>`로 사용하려는 `context`를 `import`
 import { ThemeContext } from './context/ThemeContext';
 
 function App(){
@@ -59,6 +59,9 @@ function App(){
     // 공유할 context에 isDark 상태 변수와, set 함수를 전달
     <ThemeContext.Provider value={{ isDark, setIsDark }}>
       <Page />
+        .
+        .
+        .
     </ThemeContext.Provider>
   )
 }
@@ -71,20 +74,6 @@ function App(){
 여기서도 생성한 `context`를 `import` 해줘야 하는 것 주의!
 
 ```
-// Page.js
-import Header from './Header'
-const Page = () => {
-
-  return (
-    <div>
-      <Header />
-      <Content />
-      <Footer />
-    <div>
-  )
-}
-export default Page;
----------------------
 // Head.js
 import { ThemeContext } from './context/ThemeContext';
 
@@ -95,9 +84,10 @@ const Header = () => {
   return (
       // context로 가져온 isDark 값에 따라 backgroundColor 값을 설정
       <header style={{ backgroundColor : isDark ? 'black' : 'white' }}>
-        .
-        .
-        .
+        <button onClick={ () => { setIsDark(prev => !prev); }>다크모드</button>
+          .
+          .
+          .
       </header>
     )
 }
