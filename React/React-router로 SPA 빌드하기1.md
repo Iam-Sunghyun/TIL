@@ -5,7 +5,7 @@
   - [vite 프로젝트 생성](#vite-프로젝트-생성)
   - [`vite`용 `eslint` 플러그인 설치](#vite용-eslint-플러그인-설치)
   - [`.eslintrc.json`, `vite.config.js` 파일 설정 및 실행](#eslintrcjson-viteconfigjs-파일-설정-및-실행)
-  - [`react-router-dom` 설치](#react-router-dom-설치)
+  - [리액트 라우터: `react-router-dom` 설치](#리액트-라우터-react-router-dom-설치)
 - [라우트(Route) 정의](#라우트route-정의)
 - [페이지 연걸(linking) 하기](#페이지-연걸linking-하기)
   - [`<Link>` 컴포넌트](#link-컴포넌트)
@@ -20,15 +20,17 @@ create-react-app과 달리 Vite는 기본적으로 다양한 프레임워크(vue
 
 # 리액트 라우터가 뭔지 역할, 필요 이유 및 장점
 
-리액트로 만들어진 SPA(Single Page Applicatino)은 클라이언트 사이드에서 동적으로 페이지를 변경하여 보여주기 때문에 화면 전환이 빨라 좋은 사용자 경험을 제공할 수 있다. 다만 리액트만을 사용하여 만들어진 경우 하나의 URL을 갖고 페이지가 클라이언트 사이드에서 자바스크립트를 통해 동적으로 변경되기 때문에 페이지가 변경돼도 URL이 유지되게 된다. 이것은 뒤로가기나, 특정 페이지를 URL로 요청할 수 없게 하고 제대로된 웹 사이트의 기능을 하지 못하게 한다(웹 애플리케이션은 다양한 URL 경로에 따라 다른 기능 또는 페이지를 제공할 수 있어야 한다).
+`React Router`는 "클라이언트 측 라우팅" 기능을 갖는다.
 
-<!-- 확인 필요 -->
+리액트로 만들어진 SPA(Single Page Applicatino)은 클라이언트 사이드에서 동적으로 페이지를 변경하여 보여주기 때문에 화면 전환이 빨라 좋은 사용자 경험을 제공할 수 있다. 
 
-이때 라우팅 기능을 사용하면 페이지마다 그에 상응하는 Route를 설정하여 각각 다른 URL을 갖게할 수 있다. 즉, URL이 변경되면 그에 맞는 컴포넌트가 렌더링되게 만들 수 있다. 이로서 웹 페이지 history를 기록할 수 있게 되고 뒤로 가기, 앞으로 가기 기능을 가능해진다. 또 URL에 따라 다른 페이지를 보여줄 수 있으며 페이지 북마크도 가능해진다. 즉, 제대로 된 SPA가 되는 셈이다.
+하지만 하나의 URL을 갖고 페이지가 서버에 요청하는 것이 아닌 클라이언트 사이드에서 자바스크립트를 통해 동적으로 변경되기 때문에 페이지가 변경돼도 URL은 변경되지 않게된다. 이것은 뒤로가기나, 특정 페이지를 URL로 요청할 수 없게 하여 제대로된 웹 사이트의 기능을 하지 못하게 한다(웹 애플리케이션은 다양한 URL 경로에 따라 다른 기능 또는 페이지를 제공할 수 있어야 한다).
 
-대부분의 프런트 엔드 프레임워크에는 이러한 클라이언트 측 라우팅 기능이 프레임워크에 바로 포함되어 있다. 하지만 리액트는 라이브러리이기 때문에 써드 파티 라이브러리를 사용해줘야 하는데 이때 가장 많이 사용되는 라우팅 라이브러리가 `react-router`이다.
+이때 클라이언트 측 라우팅 기능을 사용하면 페이지마다 고유의 URL을 설정하여 클라이언트 측에서 링크 클릭으로 URL을 업데이트하고, 서버 요청 없이 URL에 대응되는 컴포넌트로 전환되게 만들 수 있다. 이로서 브라우저는 웹 사이트의 history를 기록할 수 있게 되고 뒤로 가기, 앞으로 가기와 같은 기능이 가능해지며 페이지마다 고유의 URL을 같기 때문에 북마크도 가능해진다. 제대로 된 SPA가 되는 셈이다.
 
-사용자가 Router 링크를 클릭하여 URL이 변경되면 `react-router`는 DOM을 업데이트한다.
+대부분의 프런트 엔드 프레임워크에는 이러한 클라이언트 측 라우팅 기능이 프레임워크에 바로 포함되어 있다. 하지만 리액트는 라이브러리이기 때문에 써드 파티 라이브러리를 사용해줘야 하는데 이때 가장 많이 사용되는 클라이언트 측 라우팅 라이브러리가 `react-router`이다.
+
+<!-- 사용자가 Router 링크를 클릭하여 URL이 변경되면 `react-router`는 DOM을 업데이트한다. -->
 
 # 프로젝트 준비
 
@@ -95,7 +97,7 @@ export default defineConfig({
 npm run dev
 ```
 
-## `react-router-dom` 설치
+## 리액트 라우터: `react-router-dom` 설치
 
 `react-router`에는 웹과 모바일을 위한 `react-router-dom`, `react-router-native`를 모두 포함하고 있다. 웹 프로젝트이므로 `react-router-dom`만 다운로드 받아준다.
 
@@ -105,9 +107,15 @@ npm i react-router-dom
 
 # 라우트(Route) 정의
 
-크게 2가지 방법이 존재,
+`React Router`의 라우트 정의에는 바닐라 자바스크립트와 `JSX`를 사용하는 방법이 있다.
 
-`<BrowserRouter>` 컴포넌트로 감싼 내부에 다음과 같이 라우트를 정의해준다. `path` prop에 경로를 정의하고 `element` prop에 대응되는 컴포넌트(리액트 엘리먼트)를 할당해준다.
+<!-- ## `JSX` 컴포넌트 -->
+
+`<BrowserRouter>` 컴포넌트로 감싼 내부에 `<Route>` 컴포넌트를 사용하여 라우트를 정의해준다. 리액트 라우터에서 아주 중요한 `<Route>` 컴포넌트는 URL을 컴포넌트 혹은 데이터 로딩, 데이터 변형 로직에 연결시켜주는 역할을 한다.
+
+`path` props에 경로를 정의하고 대응되는 컴포넌트(리액트 엘리먼트)를 `element` props에 할당해준다.
+
+<!-- 라우트는 특정 (요청)경로에 대응되는 로직, 응답 정도로 이해하자. -->
 
 ```
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -141,9 +149,9 @@ export default App;
 
 ## `<Link>` 컴포넌트
 
-**`react-router-dom`의 `<Link>` 컴포넌트를 사용하면 새로고침 없이 경로와 대응되는 페이지로 전환할 수 있다.** 다음과 같이 `to` prop에 이동하고자 하는 페이지의 경로를 넣어주면 링크가 생섣된다. **생성된 링크를 클릭하면 링크의 경로에 맞는 페이지로 전환된다.**
+**`react-router-dom`의 `<Link>` 컴포넌트를 사용하면 새로고침 없이 다른 경로의 페이지로 전환하는 링크를 생성할 수 있다.** 다음과 같이 `to` props에 이동하고자 하는 페이지의 경로를 넣어주면 링크가 생성된다. `<Link>` 컴포넌트는 `<a href='...'>`를 사용하여 만들어지는데 클릭시 URL이 업데이트되고 해당 경로에 맞는 페이지로 전환된다. 
 
-`<Link>` 컴포넌트는 `<a href='...'>`를 사용하여 만들어진다.
+만약 클라이언트 측 라우팅이 아닌 일반적인 화면전환을 원한다면 `<Link reloadDocument>` 속성을 사용해줄 수 있다(새로고침 발생).
 
 ```
 import { Link } from 'react-router-dom';
@@ -162,21 +170,47 @@ export default Homepage;
 
 ## `<NavLink>` 컴포넌트
 
-`<Link>` 컴포넌트 대신 **`<NavLink>` 컴포넌트를 사용하면 해당 요소가 활성화(active) 혹은 보류(pending) 상태인지를 식별할 수 있어 네비게이션 바를 생성할 때 유용하다.** 
+`<Link>` 컴포넌트 대신 **`<NavLink>` 컴포넌트를 사용하면 해당 요소가 활성화(active), 보류(pending), 전환 중(transitioning) 상태인지를 식별할 수 있어 네비게이션 바를 생성할 때 유용하다.** 
 
-컴포넌트가 활성화되면 해당 컴포넌트의 여러 `props`에(`style`, `children`, `class` 등..) 활성 상태를 알리는 객체가 전달되어 다음과 같이 `props` 값을 동적으로 설정해줄 수 있다. 
+컴포넌트가 활성화되면 해당 컴포넌트의 여러 `propss`에(`style`, `children`, `className` 등..) 활성 상태를 알리는 객체가 전달되어 다음과 같이 `propss` 값을 동적으로 설정해줄 수 있다. 
 
 ```
+// className props 설정
 import { NavLink } from "react-router-dom";
 
 <NavLink
   to="/messages"
-  className={({ isActive, isPending }) =>
-    isPending ? "pending" : isActive ? "active" : ""
+  className={({ isActive, isPending, isTransitioning }) =>
+    [
+      isPending ? "pending" : "",
+      isActive ? "active" : "",
+      isTransitioning ? "transitioning" : "",
+    ].join(" ")
   }
 >
   Messages
-</NavLink>;
+</NavLink>
+--------------------------------------
+// style props 설정
+<NavLink
+  to="/messages"
+  style={({ isActive, isPending, isTransitioning }) => {
+    return {
+      fontWeight: isActive ? "bold" : "",
+      color: isPending ? "red" : "black",
+      viewTransitionName: isTransitioning ? "slide" : "",
+    };
+  }}
+>
+  Messages
+</NavLink>
+---------------------------------------
+// 자식 요소 영역에 상태 객체 전달
+<NavLink to="/tasks">
+  {({ isActive, isPending, isTransitioning }) => (
+    <span className={isActive ? "active" : ""}>Tasks</span>
+  )}
+</NavLink>
 ```
 
 또한 활성화된 컴포넌트에는 `class='active'` 속성이 자동으로 추가되어 스타일을 지정하기 용이하다. 참고로 vite로 생성한 리액트 프로젝트에선 className을 class로 작성할 경우 제대로 적용이 안되거나 에러가 발생한다.
