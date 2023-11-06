@@ -20,9 +20,7 @@ create-react-app과 달리 Vite는 기본적으로 다양한 프레임워크(vue
 
 # 리액트 라우터가 뭔지 역할, 필요 이유 및 장점
 
-`React Router`는 "클라이언트 측 라우팅" 기능을 갖는다.
-
-리액트로 만들어진 SPA(Single Page Applicatino)은 클라이언트 사이드에서 동적으로 페이지를 변경하여 보여주기 때문에 화면 전환이 빨라 좋은 사용자 경험을 제공할 수 있다. 
+리액트로 만들어진 SPA(Single Page Applicatino)은 클라이언트 사이드에서 동적으로 페이지를 변경하여 보여주기 때문에 화면 전환이 빨라 좋은 사용자 경험을 제공할 수 있다.
 
 하지만 하나의 URL을 갖고 페이지가 서버에 요청하는 것이 아닌 클라이언트 사이드에서 자바스크립트를 통해 동적으로 변경되기 때문에 페이지가 변경돼도 URL은 변경되지 않게된다. 이것은 뒤로가기나, 특정 페이지를 URL로 요청할 수 없게 하여 제대로된 웹 사이트의 기능을 하지 못하게 한다(웹 애플리케이션은 다양한 URL 경로에 따라 다른 기능 또는 페이지를 제공할 수 있어야 한다).
 
@@ -33,6 +31,8 @@ create-react-app과 달리 Vite는 기본적으로 다양한 프레임워크(vue
 <!-- 사용자가 Router 링크를 클릭하여 URL이 변경되면 `react-router`는 DOM을 업데이트한다. -->
 
 # 프로젝트 준비
+
+`vite`, `react-router`, `css module`로 간단한 지도 검색 웹 애플리케이션을 만들어본다.
 
 ## vite 프로젝트 생성
 
@@ -111,7 +111,7 @@ npm i react-router-dom
 
 <!-- ## `JSX` 컴포넌트 -->
 
-`<BrowserRouter>` 컴포넌트로 감싼 내부에 `<Route>` 컴포넌트를 사용하여 라우트를 정의해준다. 리액트 라우터에서 아주 중요한 `<Route>` 컴포넌트는 URL을 컴포넌트 혹은 데이터 로딩, 데이터 변형 로직에 연결시켜주는 역할을 한다.
+`<BrowserRouter>` 컴포넌트로 감싼 내부에 `<Routes>`로 다시한번 감싸주고, 그 안에 `<Route>` 컴포넌트를 사용하여 라우트를 정의해준다. 리액트 라우터에서 아주 중요한 `<Route>` 컴포넌트는 URL을 컴포넌트 혹은 데이터 로딩, 데이터 변형 로직에 연결시켜주는 역할을 한다.
 
 `path` props에 경로를 정의하고 대응되는 컴포넌트(리액트 엘리먼트)를 `element` props에 할당해준다.
 
@@ -143,25 +143,37 @@ function App() {
 export default App;
 ```
 
-각각의 경로로 요청하면 그에 대응되는 컴포넌트가 화면에 출력되는 것을 확인할 수 있다. 하지만 이대로면 페이지가 변경 시 리로드가 발생하여 SPA의 부드러운 화면 전환이 아니게 된다. 이럴 땐 `<Link>` 컴포넌트를 사용하여 새로고침 없이 페이지를 전환할 수 있다. 
+각각의 경로로 요청하면 그에 대응되는 컴포넌트가 화면에 출력되는 것을 확인할 수 있다. 하지만 이대로면 페이지가 변경 시 리로드가 발생하여 SPA의 부드러운 화면 전환이 아니게 된다. 이럴 땐 `<Link>` 컴포넌트를 사용하여 새로고침 없이 페이지를 전환할 수 있다.
 
 # 페이지 연걸(linking) 하기
 
 ## `<Link>` 컴포넌트
 
-**`react-router-dom`의 `<Link>` 컴포넌트를 사용하면 새로고침 없이 다른 경로의 페이지로 전환하는 링크를 생성할 수 있다.** 다음과 같이 `to` props에 이동하고자 하는 페이지의 경로를 넣어주면 링크가 생성된다. `<Link>` 컴포넌트는 `<a href='...'>`를 사용하여 만들어지는데 클릭시 URL이 업데이트되고 해당 경로에 맞는 페이지로 전환된다. 
+**`react-router-dom`의 `<Link>` 컴포넌트를 사용하면 새로고침 없이 다른 경로의 페이지로 전환하는 링크를 생성할 수 있다.** 다음과 같이 `to` props에 이동하고자 하는 페이지의 경로를 넣어주면 링크가 생성된다. `<Link>` 컴포넌트는 `<a href='...'>`를 사용하여 만들어지는데 클릭시 URL이 업데이트되고 해당 경로에 맞는 페이지로 전환된다(`<BrowserRouter>` 내부 영역에 정의해줘야 한다).
 
-만약 클라이언트 측 라우팅이 아닌 일반적인 화면전환을 원한다면 `<Link reloadDocument>` 속성을 사용해줄 수 있다(새로고침 발생).
+만약 클라이언트 측 라우팅이 아닌 새로고침 발생하는 일반적인 화면전환을 원한다면 `<Link reloadDocument>` 속성을 사용해주면 된다.
 
 ```
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 function Homepage() {
   return (
-    <div>
+    <>
+      <nav>
+        <ul >
+          <li>
+            <NavLink to='/' reloadDocument>Home</NavLink>
+          </li>
+          <li>
+            <NavLink to='/pricing'>Pricing</NavLink>
+          </li>
+          <li>
+            <NavLink to='/products'>Products</NavLink>
+          </li>
+        </ul>
+      </nav>
       <h1>HomePage</h1>
-      <Link to='/pricing'>pricing</Link>
-    </div>
+    </>
   );
 }
 
@@ -170,13 +182,12 @@ export default Homepage;
 
 ## `<NavLink>` 컴포넌트
 
-`<Link>` 컴포넌트 대신 **`<NavLink>` 컴포넌트를 사용하면 해당 요소가 활성화(active), 보류(pending), 전환 중(transitioning) 상태인지를 식별할 수 있어 네비게이션 바를 생성할 때 유용하다.** 
+`<Link>` 컴포넌트 대신 **`<NavLink>` 컴포넌트를 사용하면 해당 요소가 활성화(active), 보류(pending), 전환 중(transitioning) 상태인지를 식별할 수 있어 네비게이션 바를 생성할 때 유용하다.** `<NavLink>` 도 `<Link>` 컴포넌트와 마찬가지로 `<BrowserRouter>` 내부에 정의되어야 한다.
 
-컴포넌트가 활성화되면 해당 컴포넌트의 여러 `propss`에(`style`, `children`, `className` 등..) 활성 상태를 알리는 객체가 전달되어 다음과 같이 `propss` 값을 동적으로 설정해줄 수 있다. 
+컴포넌트가 활성화되면 해당 컴포넌트의 여러 `propss`에(`style`, `children`, `className` 등..) 활성 상태를 알리는 객체가 전달되어 다음과 같이 `props` 값을 동적으로 설정해줄 수 있다.
 
 ```
 // className props 설정
-import { NavLink } from "react-router-dom";
 
 <NavLink
   to="/messages"
@@ -213,7 +224,7 @@ import { NavLink } from "react-router-dom";
 </NavLink>
 ```
 
-또한 활성화된 컴포넌트에는 `class='active'` 속성이 자동으로 추가되어 스타일을 지정하기 용이하다. 참고로 vite로 생성한 리액트 프로젝트에선 className을 class로 작성할 경우 제대로 적용이 안되거나 에러가 발생한다.
+또한 활성화된 컴포넌트에는 `class='active'` 속성이 자동으로 추가되어 스타일을 지정하기 용이하다. 참고로 vite로 생성한 리액트 프로젝트에선 `className`을 `class`로 작성할 경우 제대로 적용이 안되거나 에러가 발생한다.
 
 ```
 import { NavLink } from 'react-router-dom';
@@ -239,7 +250,7 @@ function NavigationBar() {
 
 export default NavigationBar;
 -----------------------------------
-// test.css 
+// test.css
 a.active {
   color: red;
 }
@@ -248,39 +259,6 @@ li::marker {
   content: '✝ ';
 }
 ```
-
-**이때 `<NavLink>`는 `<BrowserRouter>` 내부에 정의되어야 한다.**
-
-```
-import NavigationBar from "../components/NavigationBar";
-
-function Homepage() {
-  return (
-    <div>
-      <NavigationBar />  // <NavLink>가 정의된 컴포넌트
-      <h1>HomePage</h1>
-    </div>
-  );
-}
-
-export default Homepage;
------------------------------------
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Homepage from './pages/Homepage';
-
-function App() {
-  return (
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<Homepage />} />
-        </Routes>
-      </BrowserRouter>
-  );
-}
-
-export default App;
-```
-
 
 # Reference
 

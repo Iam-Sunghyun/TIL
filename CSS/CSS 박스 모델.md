@@ -7,10 +7,6 @@
   - [패딩(Padding, 안쪽 여백)](#패딩padding-안쪽-여백)
   - [여백(Margin, 바깥쪽 여백)](#여백margin-바깥쪽-여백)
   - [margin: auto;](#margin-auto)
-  - [여백 상쇄(margin collapsing)](#여백-상쇄margin-collapsing)
-- [display, visibility 속성](#display-visibility-속성)
-  - [display 속성](#display-속성)
-  - [visibility 속성](#visibility-속성)
 - [CSS 박스 유형](#css-박스-유형)
   - [블록 레벨 박스(블록 레벨 요소의 박스 모델)](#블록-레벨-박스블록-레벨-요소의-박스-모델)
   - [인라인 박스 (인라인 요소의 박스 모델)](#인라인-박스-인라인-요소의-박스-모델)
@@ -23,9 +19,9 @@
 
 HTML 문서를 출력할 때, 브라우저의 렌더링 엔진은 HTML 요소들을 하나의 박스로 표현한다.
 
-즉, HTML 요소들은 박스 형태로 이루어져 있고 CSS는 박스의 크기, 위치, 속성(property)과 같은 출력 스타일을 결정하는데 이 박스 형태의 영역을 **박스 모델(box model)**이라고 한다.
+즉, HTML 요소들은 박스 형태로 이루어져 있고 CSS는 박스의 크기, 위치, 속성(property)과 같은 출력 스타일을 결정하는데 이 박스 형태의 영역을 **박스 모델(box model)** 이라고 한다.
 
-<img src="https://github.com/Iam-Sunghyun/TIL/blob/main/CSS/img/css-box-model.png" width="350" height="250">
+<img src="./img/css-box-model.png" width="350" height="250">
 
 CSS 박스 모델의 구성과 제어하기 위한 속성은 다음과 같다.
 
@@ -38,13 +34,11 @@ CSS 박스 모델의 구성과 제어하기 위한 속성은 다음과 같다.
 요소(elements)는 HTML 문서의 논리적 구성요소 관점의 용어이고, 태그(tag)는 문서 작성 관점에서, 박스(box)는 출력스타일(CSS) 관점에서 사용하는 용어로 모두 같은 대상에 대한 표현이다.
 ```
 
-<br>
+**[MDN 박스 모델]** <br>
+https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/The_box_model
 
 **[포이마 웹 박스 모델]** <br>
 https://poiemaweb.com/css3-box-model
-
-**[MDN 박스 모델]** <br>
-https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/The_box_model
 
 ## 콘텐츠(Contents)
 
@@ -77,15 +71,12 @@ border: unset;
 
 ### border-radius
 
-테두리 박스 모서리에 곡률을 지정하기 위한 속성. `border-radius` 또한 단축 속성으로 4 꼭지점 설정을 한번에 설정하거나 '/'를 사용해 타원형으로 만들 수도 있다.
-
-<br>
+테두리 박스 모서리에 곡률을 지정하기 위한 속성. `border-radius` 또한 단축 속성으로 4 꼭지점 설정을 한번에 설정하거나 선택적으로 "/" 이후에 한 개에서 네 개의 `<length>` 또는 `<percentage>` 값을 사용해 추가 반지름을 설정해서 타원형 꼭짓점을 만들 수 있다.
 
 **[CSS border-radius]** <br>
 https://developer.mozilla.org/ko/docs/Web/CSS/border-radius
 
 **[CSS 테두리 박스 속성]** <br>
-
 https://developer.mozilla.org/ko/docs/Web/CSS/border
 
 ## 패딩(Padding, 안쪽 여백)
@@ -115,11 +106,9 @@ padding: unset;
 
 ## 여백(Margin, 바깥쪽 여백)
 
-테두리 박스 밖 영역으로 다른 요소와의 공간을 말하며 `margin-top`, `margin-right`,`margin-bottom,` `margin-left`의 단축 속성이다.
+테두리 박스 밖 영역으로 다른 요소와의 공간을 말하며 `margin-top`, `margin-right`,`margin-bottom,` `margin-left`의 단축 속성이다. 양수, 음수 값을 설정 할 수 있는데 음수 값을 설정 할 경우 다른 요소와 겹칠 수 있다.
 
-양수, 음수 값을 설정 할 수 있는데 음수 값을 설정 할 경우 다른 요소와 겹칠 수 있다.
-
-브라우저마다 `<body>` 자체에 기본 margin값이 있다.
+브라우저마다 `<body>` 자체에 기본 `margin`값이 있다.
 
 ```
 /* 네 면 모두 적용 */
@@ -140,58 +129,11 @@ margin: inherit;
 margin: initial;
 margin: unset;
 ```
+
 ## margin: auto;
 
-```
 브라우저가 적절한 바깥 여백(margin) 값을 설정하여 요소를 중앙 정렬할 때 사용한다.
 주의할 것은 `width`가 명시된 블록 레벨 요소에서만 적용된다는 것!
-```
-
-## 여백 상쇄(margin collapsing)
-
-여러 블록의 위쪽 및 아래쪽 바깥 여백(마진)은 경우에 따라 제일 큰 여백의 크기를 가진 단일 여백으로 결합(상쇄)되는데, 이것을 여백 상쇄라고 한다.
-
-다만 플로팅 요소와 절대 위치(`position: absolute`)를 지정한 요소의 경우 상쇄되지 않는다. 링크 참조.
-
-<br>
-
-**[여백 상쇄가 발생하는 경우]** <br>
-
-https://developer.mozilla.org/ko/docs/Web/CSS/CSS_Box_Model/Mastering_margin_collapsing
-
-https://www.udemy.com/course/css-flexbox-grid-sass/learn/lecture/33257658#overview
-
-
-# display, visibility 속성
-
-## display 속성
-
-`display` 속성은 `block`, `inline`, `block-inline`같은 키워드로 출력되는 요소의 박스 형식을 설정할 수 있는 레이아웃 정의에 중요한 속성이다.
-
-다음은 자주 사용하는 속성 값들이다.
-
-- `block` - block 특성을 가지는 요소(block 레벨 요소)로 지정한다.
-- `inline` - inline 특성을 가지는 요소(inline 레벨 요소)로 지정한다.
-- `inline-block` - inline, block 특성을 모두 가지는 요소로 지정한다.
-- `none` - 해당 요소를 화면에 표시하지 않는다 (공간조차 사라진다).
-
-<br>
-
-**[CSS display 속성]** <br>
-https://developer.mozilla.org/ko/docs/Web/CSS/display
-
-## visibility 속성
-
-`visibility` 속성은 문서의 레이아웃을 변경하지 않고 요소를 보이게 하거나 숨길 수 있다. `visibility`로 `<table>`의 행이나 열을 숨길 수도 있다.
-
-```
-/* visibility 값 */
-visibility: visible;
-visibility: hidden; // 레이아웃은 사라지지 않고 숨김.
-visibility: collapse;
-```
-
-`display: none;`의 경우 레이아웃에서도 사라지지만 `visibility: hidden;`은 출력은 숨기지만 레이아웃은 유지된다.
 
 # CSS 박스 유형
 
@@ -199,14 +141,15 @@ CSS에는 크게 2가지 박스(인라인 박스, 블록 레벨 박스)가 있�
 
 ## 블록 레벨 박스(블록 레벨 요소의 박스 모델)
 
-- 박스의 너비는 상위 콘테이너 너비만큼 채워진다(콘텐츠 영역 크기를 줄여도 상위 요소 너비 만큼 여백(margin)이 채워진다).
+- 박스의 너비는 상위 콘테이너 너비만큼 채워진다.
+  
+ <!-- (콘텐츠 영역 크기를 줄여도 상위 요소 너비 만큼 여백(margin)이 채워진다). -->
 
 - 줄 바꿈이 발생해 항상 새 줄에서 시작한다.
 
 - width, height 속성이 적용된다.
 
 - padding, margin, border로 인해 다른 요소들이 박스로부터 밀려난다.
-  
 - block 레벨 요소 내에 block, inline 레벨 요소를 포함할 수 있다.
 
 - ex) `<div>` `<h1~6>` `<p>` `<ol>` `<ul>` `<li>` `<hr>` `<table>` `<form>`
@@ -222,8 +165,7 @@ https://developer.mozilla.org/en-US/docs/Web/HTML/Block-level_elements
 - 박스는 줄 바꿈이 발생하지 않으며 그 줄에 포함된다.
 
 - width, height 속성이 적용되지 않는다.
-   
-- margin-top, margin-bottom 속성이 적용되지 않는다(개발자 도구 Computed 상에선 입력이 된걸로 뜨나 출력엔 적용 안됨). padding, border - top/bottom은 적용되나 주변 요소를 밀어내지 않는다. 상, 하 여백은 line-height로 지정한다.
+- margin-top, margin-bottom 속성이 적용되지 않는다(개발자 도구 Computed 상에선 입력이 된걸로 뜨나 출력엔 적용 안됨). padding, border - top/bottom은 적용되나 주변 요소를 밀어내지 않는다. 인라인 요소의 높이는 line-height로 지정한다.
 
 - 수평 padding, margin, border 속성은 적용되며 다른 인라인 요소들이 밀려난다.
 
@@ -246,19 +188,15 @@ https://developer.mozilla.org/en-US/docs/Web/HTML/Inline_elements
 - content의 너비만큼 가로폭을 차지한다.
 
 - 박스는 줄 바꿈이 발생하지 않으며 그 줄에 포함된다.
-  
 - width와 height 속성이 적용된다.
 
 - padding, margin, border 속성이 적용되며 다른 요소들이 박스로부터 밀려난다.
 
 - block 레벨 요소 내에 block, inline 레벨 요소를 포함할 수 있다.
-  
 - inline 레벨 요소처럼 뒤에 공백(엔터, 스페이스 등)이 있는 경우, 정의하지 않은 space(4px)가 자동 지정된다.
-
 
 **[inline 뒤 공백을 제거하는 법]** <br>
 https://css-tricks.com/fighting-the-space-between-inline-block-elements/
-
 
 # 내부 및 외부 디스플레이 유형
 
@@ -266,13 +204,9 @@ https://css-tricks.com/fighting-the-space-between-inline-block-elements/
 
 CSS에는 내부 디스플레이 유형도 있는데 이는 말 그대로 박스 내부의 요소가 배치되는 방식을 결정한다.
 
-HTML 요소는 기본적으로 `normal flow`가 적용되며 그 외에 `flex`, `grid`같은 `display` 값을 사용해 내부 디스플레이 유형(박스 내부의 배치 유형)을 설정할 수 있다.
+HTML 요소의 내부 디스플레이 유형은 기본적으로 `normal flow`가 적용되며 그 외에 `flex`, `grid`같은 `display` 값을 사용해 내부 디스플레이 유형(박스 내부의 배치 유형)을 설정할 수 있다.
 
 `normal flow`는 해당 요소 유형의 특성(블록, 인라인)을 그대로 따른다.
-
-**[MDN normal flow]**
-
-https://developer.mozilla.org/ko/docs/Learn/CSS/CSS_layout/Normal_Flow
 
 # 표준 CSS 박스 모델, 대체 CSS 박스 모델
 
@@ -304,13 +238,8 @@ html {
 }
 ```
 
-<br>
-
 **[MDN box-sizing]** <br>
 https://developer.mozilla.org/ko/docs/Web/CSS/box-sizing
-
-**[CSS 박스 모델]** <br>
-https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/The_box_model
 
 # 박스 그림자 효과 box-shadow
 
