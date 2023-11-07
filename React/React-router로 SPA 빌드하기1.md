@@ -149,7 +149,7 @@ export default App;
 
 ## `<Link>` 컴포넌트
 
-**`react-router-dom`의 `<Link>` 컴포넌트를 사용하면 새로고침 없이 다른 경로의 페이지로 전환하는 링크를 생성할 수 있다.** 다음과 같이 `to` props에 이동하고자 하는 페이지의 경로를 넣어주면 링크가 생성된다. `<Link>` 컴포넌트는 `<a href='...'>`를 사용하여 만들어지는데 클릭시 URL이 업데이트되고 해당 경로에 맞는 페이지로 전환된다(`<BrowserRouter>` 내부 영역에 정의해줘야 한다).
+**`react-router-dom`의 `<Link>` 컴포넌트를 사용하면 새로고침 없이 다른 경로의 페이지로 전환하는 링크를 생성할 수 있다.** 다음과 같이 `to` props에 이동하고자 하는 페이지의 경로를 넣어주면 링크가 생성된다. **`<Link>` 컴포넌트는 `<a href='...'>`를 사용하여 만들어지는데** 클릭시 URL이 업데이트되고 해당 경로에 맞는 페이지로 전환된다(`<BrowserRouter>` 내부 영역에 정의해줘야 한다).
 
 만약 클라이언트 측 라우팅이 아닌 새로고침 발생하는 일반적인 화면전환을 원한다면 `<Link reloadDocument>` 속성을 사용해주면 된다.
 
@@ -182,13 +182,12 @@ export default Homepage;
 
 ## `<NavLink>` 컴포넌트
 
-`<Link>` 컴포넌트 대신 **`<NavLink>` 컴포넌트를 사용하면 해당 요소가 활성화(active), 보류(pending), 전환 중(transitioning) 상태인지를 식별할 수 있어 네비게이션 바를 생성할 때 유용하다.** `<NavLink>` 도 `<Link>` 컴포넌트와 마찬가지로 `<BrowserRouter>` 내부에 정의되어야 한다.
+`<Link>` 컴포넌트와 비슷한 종류인 **`<NavLink>` 컴포넌트를 사용하면 해당 요소가 활성화(active), 보류(pending), 전환 중(transitioning) 상태인지를 식별할 수 있어 네비게이션 바를 생성할 때 유용하다.** `<NavLink>` 도 `<Link>` 컴포넌트와 마찬가지로 `<BrowserRouter>` 내부에 정의되어야 한다.
 
-컴포넌트가 활성화되면 해당 컴포넌트의 여러 `propss`에(`style`, `children`, `className` 등..) 활성 상태를 알리는 객체가 전달되어 다음과 같이 `props` 값을 동적으로 설정해줄 수 있다.
+컴포넌트가 활성화되면 해당 컴포넌트의 여러 `props`에(`style`, `children`, `className` 등..) 활성 상태를 알리는 객체가 전달되어 다음과 같이 `props` 값을 동적으로 설정해줄 수 있다.
 
 ```
 // className props 설정
-
 <NavLink
   to="/messages"
   className={({ isActive, isPending, isTransitioning }) =>
