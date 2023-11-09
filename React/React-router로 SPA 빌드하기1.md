@@ -7,9 +7,12 @@
   - [`.eslintrc.json`, `vite.config.js` 파일 설정 및 실행](#eslintrcjson-viteconfigjs-파일-설정-및-실행)
   - [리액트 라우터: `react-router-dom` 설치](#리액트-라우터-react-router-dom-설치)
 - [라우트(Route) 정의](#라우트route-정의)
-- [페이지 연걸(linking) 하기](#페이지-연걸linking-하기)
+- [네비게이션 바 생성 - 페이지 연결(linking) 하기](#네비게이션-바-생성---페이지-연결linking-하기)
   - [`<Link>` 컴포넌트](#link-컴포넌트)
   - [`<NavLink>` 컴포넌트](#navlink-컴포넌트)
+- [활성화 된 `<NavLink>` 링크 스타일링하기](#활성화-된-navlink-링크-스타일링하기)
+  - [인라인 스타일](#인라인-스타일)
+  - [CSS modules 전역 클래스 사용](#css-modules-전역-클래스-사용)
 - [Reference](#reference)
 
 <!-- vite - 빌드 툴
@@ -145,7 +148,7 @@ export default App;
 
 각각의 경로로 요청하면 그에 대응되는 컴포넌트가 화면에 출력되는 것을 확인할 수 있다. 하지만 이대로면 페이지가 변경 시 리로드가 발생하여 SPA의 부드러운 화면 전환이 아니게 된다. 이럴 땐 `<Link>` 컴포넌트를 사용하여 새로고침 없이 페이지를 전환할 수 있다.
 
-# 페이지 연걸(linking) 하기
+# 네비게이션 바 생성 - 페이지 연결(linking) 하기
 
 ## `<Link>` 컴포넌트
 
@@ -257,6 +260,89 @@ a.active {
 li::marker {
   content: '✝ ';
 }
+```
+
+# 활성화 된 `<NavLink>` 링크 스타일링하기
+
+## 인라인 스타일
+
+```
+import { NavLink } from 'react-router-dom';
+import style from './NavigationBar.module.css';
+
+const isActive = ({ isActive, isPending, isTransitioning }) => {
+  return {
+    fontWeight: isActive ? 'bold' : '',
+    color: isPending ? 'red' : 'black',
+    viewTransitionName: isTransitioning ? 'slide' : '',
+  };
+};
+
+function NavigationBar() {
+  return (
+    <nav className={style.nav}>
+      <ul>
+        <li>
+          <NavLink to='/' style={isActive}>
+            Home
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to='/pricing' style={isActive}>
+            Pricing
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to='/products' style={isActive}>
+            Products
+          </NavLink>
+        </li>
+      </ul>
+    </nav>
+  );
+}
+
+export default NavigationBar;
+```
+
+## CSS modules 전역 클래스 사용
+
+`:global()` 함수로 전역적으로 선언된 클래스는 기존의 CSS modules 클래스처럼 고유한 값으로 변환되는 것이 아닌 일반 CSS처럼 이름 그대로 전역에서 사용할 수 있게 된다.
+
+아래 예시는 `.nav` 하위 컴포넌트 중 `active` 상태인 컴포넌트의 스타일을 지정하는 CSS이다. 여기서 `:global(.active)` 클래스를 사용하는 이유는 이 클래스를 HTML 문서에서 전역적으로 사용하기 위함이 아닌 `.active` 클래스가 고유한 형태로 변환되지 않게 하여 `.nav` 컴포넌트 하위의 활성화된 `<NavLink>`에 적용되도록 하기 위함이다.
+
+```
+.nav :global(.active) {
+  font-weight: bold;
+  color: red;
+}
+// 실행시 아래와 같이 변환
+._nav_1urp0_1 .active {
+  font-weight: bold;
+  color: red;
+}
+--------------------------------
+import style from './NavigationBar.module.css';
+
+  <nav className={style.nav}>
+    <ul>
+      <li>
+        <NavLink to='/'>
+          Home
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to='/pricing'>
+          Pricing
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to='/products'>
+          Products
+        </NavLink>
+      </li>
+    </ul>
+  </nav>
 ```
 
 # Reference
