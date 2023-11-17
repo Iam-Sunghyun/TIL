@@ -13,6 +13,9 @@
 - [활성화 된 `<NavLink>` 링크 스타일링하기](#활성화-된-navlink-링크-스타일링하기)
   - [인라인 스타일](#인라인-스타일)
   - [CSS modules 전역 클래스 사용](#css-modules-전역-클래스-사용)
+  - [Vite 프로젝트 에셋(asset) 디렉토리 구분](#vite-프로젝트-에셋asset-디렉토리-구분)
+    - [`/assets 폴더`](#assets-폴더)
+    - [`/public 폴더`](#public-폴더)
 - [Reference](#reference)
 
 <!-- vite - 빌드 툴
@@ -44,7 +47,7 @@ create-react-app과 달리 Vite는 기본적으로 다양한 프레임워크(vue
 ```
 // vite 최신 버전으로 프로젝트 생성
 npm create vite@latest
-```
+```  
 
 ## `vite`용 `eslint` 플러그인 설치
 
@@ -344,6 +347,21 @@ import style from './NavigationBar.module.css';
     </ul>
   </nav>
 ```
+
+## Vite 프로젝트 에셋(asset) 디렉토리 구분
+
+### `/assets 폴더` 
+
+- 자바스크립트 소스 코드에 직접 import 되어 URL을 반환 받아 사용되는 정적 에셋 위치
+
+### `/public 폴더` 
+
+- robots.txt와 같이 소스 코드에서 참조되지 않는 에셋
+  
+- 해싱 없이 항상 같은 이름을 갖는 에셋
+  
+- 또는 URL을 얻기 위해 굳이 import 할 필요 없는 에셋
+
 
 # Reference
 
