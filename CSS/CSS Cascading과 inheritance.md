@@ -1,13 +1,13 @@
 **목차**
 
-- [CSS Cascading](#css-cascading)
+- [CSS Cascading(캐스케이딩, 종속성, 계단식)](#css-cascading캐스케이딩-종속성-계단식)
   - [소스 순서와 Specificity(명시도, 특이도, 우선순위)](#소스-순서와-specificity명시도-특이도-우선순위)
   - [!important 키워드](#important-키워드)
   - [CSS 선언 출처에 따른 중요도(Importance)](#css-선언-출처에-따른-중요도importance)
   - [CSS 상속(Inheritance)](#css-상속inheritance)
   - [상속 제어 값](#상속-제어-값)
 
-# CSS Cascading
+# CSS Cascading(캐스케이딩, 종속성, 계단식)
 
 CSS Cascading이란 CSS 스타일 적용 우선순위를 제어하는 규칙, 방법이다.
 
@@ -80,6 +80,10 @@ https://specificity.keegan.st/
 
 사용자 스타일 시트는 말 그대로 사용자(클라이언트)가 설정한 스타일 시트를 말한다.
 
+**[MDN cascading]**
+
+https://developer.mozilla.org/en-US/docs/Web/CSS/Cascade
+
 **[W3C Cascade Sorting Order]**<br>
 https://www.w3.org/TR/css-cascade-4/#cascade-sort
 
@@ -113,7 +117,7 @@ https://www.w3.org/TR/css-cascade-4/#cascade-sort
 https://www.w3.org/TR/css-cascade-4/#defaulting-keywords <br>
 
 **[계단식(Cascade) 및 상속(Inheritence)]** <br>
-https://developer.mozilla.org/ko/docs/Learn/CSS/Building_blocks/Cascade_and_inheritance
+https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Cascade_and_inheritance
 
 **[자주 사용하는 속성 상속 여부]** <br>
 https://poiemaweb.com/css3-inheritance-cascading
