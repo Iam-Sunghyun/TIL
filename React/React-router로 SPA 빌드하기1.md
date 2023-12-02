@@ -2,8 +2,8 @@
 
 - [리액트 라우터가 뭔지 역할, 필요 이유 및 장점](#리액트-라우터가-뭔지-역할-필요-이유-및-장점)
 - [프로젝트 준비](#프로젝트-준비)
-  - [vite 프로젝트 생성](#vite-프로젝트-생성)
-  - [`vite`용 `eslint` 플러그인 설치](#vite용-eslint-플러그인-설치)
+  - [`vite` 프로젝트 생성](#vite-프로젝트-생성)
+  - [`vite` + `React` 전용 `eslint` 플러그인 설치](#vite--react-전용-eslint-플러그인-설치)
   - [`.eslintrc.json`, `vite.config.js` 파일 설정 및 실행](#eslintrcjson-viteconfigjs-파일-설정-및-실행)
   - [리액트 라우터: `react-router-dom` 설치](#리액트-라우터-react-router-dom-설치)
 - [라우트(Route) 정의](#라우트route-정의)
@@ -13,9 +13,6 @@
 - [활성화 된 `<NavLink>` 링크 스타일링하기](#활성화-된-navlink-링크-스타일링하기)
   - [인라인 스타일](#인라인-스타일)
   - [CSS modules 전역 클래스 사용](#css-modules-전역-클래스-사용)
-  - [Vite 프로젝트 에셋(asset) 디렉토리 구분](#vite-프로젝트-에셋asset-디렉토리-구분)
-    - [`/assets 폴더`](#assets-폴더)
-    - [`/public 폴더`](#public-폴더)
 - [Reference](#reference)
 
 <!-- vite - 빌드 툴
@@ -34,22 +31,23 @@ create-react-app과 달리 Vite는 기본적으로 다양한 프레임워크(vue
 
 대부분의 프런트 엔드 프레임워크에는 이러한 클라이언트 측 라우팅 기능이 프레임워크에 바로 포함되어 있다. 하지만 리액트는 라이브러리이기 때문에 써드 파티 라이브러리를 사용해줘야 하는데 이때 가장 많이 사용되는 클라이언트 측 라우팅 라이브러리가 `react-router`이다.
 
+`react-router`를 사용하면 주요 로직과 라우팅을 분리하고 중첩 라우팅, 동적 라우팅을 통해 라우트를 관리하기 쉽다.
 <!-- 사용자가 Router 링크를 클릭하여 URL이 변경되면 `react-router`는 DOM을 업데이트한다. -->
 
 # 프로젝트 준비
 
 `vite`, `react-router`, `css module`로 간단한 지도 검색 웹 애플리케이션을 만들어본다.
 
-## vite 프로젝트 생성
+## `vite` 프로젝트 생성
 
 `npm create vite@버전`으로 버전명을 명시하여 `vite` 프로젝트를 생성한다.
 
 ```
 // vite 최신 버전으로 프로젝트 생성
 npm create vite@latest
-```  
+``` 
 
-## `vite`용 `eslint` 플러그인 설치
+## `vite` + `React` 전용 `eslint` 플러그인 설치
 
 ```
 // eslint 및 설정 플러그인 설치
@@ -105,7 +103,7 @@ npm run dev
 
 ## 리액트 라우터: `react-router-dom` 설치
 
-`react-router`에는 웹과 모바일을 위한 `react-router-dom`, `react-router-native`를 모두 포함하고 있다. 웹 프로젝트이므로 `react-router-dom`만 다운로드 받아준다.
+`react-router`는 `react-router-dom`, `react-router-native`에 필요한 코어 패키지이다. 웹 프로젝트이므로 `react-router-dom`를 다운받아 주는데 이때 의존성으로 `react-router`가 다운받아 진다
 
 ```
 npm i react-router-dom
@@ -155,9 +153,9 @@ export default App;
 
 ## `<Link>` 컴포넌트
 
-**`react-router-dom`의 `<Link>` 컴포넌트를 사용하면 새로고침 없이 다른 경로의 페이지로 전환하는 링크를 생성할 수 있다.** 다음과 같이 `to` props에 이동하고자 하는 페이지의 경로를 넣어주면 링크가 생성된다. **`<Link>` 컴포넌트는 `<a href='...'>`를 사용하여 만들어지는데** 클릭시 URL이 업데이트되고 해당 경로에 맞는 페이지로 전환된다(`<BrowserRouter>` 내부 영역에 정의해줘야 한다).
+**`react-router-dom`의 `<Link>` 컴포넌트를 사용하면 새로고침 없이 다른 경로의 페이지로 전환하는 링크를 생성할 수 있다.** 다음과 같이 `to` props에 이동하고자 하는 페이지의 경로를 넣어주면 링크가 생성된다. **`<Link>` 컴포넌트는 `<a href='...'>`를 사용하여 만들어지는데** 클릭시 URL이 업데이트되고 해당 경로에 맞는 라우트의 페이지가 화면에 출력된다(`<BrowserRouter>` 내부 영역에 정의해줘야 한다).
 
-만약 클라이언트 측 라우팅이 아닌 새로고침 발생하는 일반적인 화면전환을 원한다면 `<Link reloadDocument>` 속성을 사용해주면 된다.
+만약 클라이언트 측 라우팅이 아닌 새로고침이 발생하는 일반적인 화면전환을 원한다면 `<Link reloadDocument>` 속성을 사용해주면 된다.
 
 ```
 import { NavLink } from 'react-router-dom';
@@ -347,14 +345,15 @@ import style from './NavigationBar.module.css';
     </ul>
   </nav>
 ```
+---
 
-## Vite 프로젝트 에셋(asset) 디렉토리 구분
+<h2> 참고 - Vite 프로젝트 에셋(asset) 디렉토리 구분 </h2>
 
-### `/assets 폴더` 
+<h3> /assets 폴더 </h3>
 
 - 자바스크립트 소스 코드에 직접 import 되어 URL을 반환 받아 사용되는 정적 에셋 위치
 
-### `/public 폴더` 
+<h3> /public 폴더 </h3>
 
 - robots.txt와 같이 소스 코드에서 참조되지 않는 에셋
   
