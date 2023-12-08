@@ -1,13 +1,13 @@
 <h2>목차</h2>
 
-- [사용자 지정 CSS 속성이란?](#사용자-지정-css-속성이란)
+- [CSS 사용자 지정 속성(CSS custom properties, CSS variables)이란?](#css-사용자-지정-속성css-custom-properties-css-variables이란)
   - [사용법](#사용법)
 - [사용자 지정 속성의 상속](#사용자-지정-속성의-상속)
 - [사용자 지정 속성 대체 값](#사용자-지정-속성-대체-값)
 - [유효하지 않은 값을 사용했을 때](#유효하지-않은-값을-사용했을-때)
   - [Reference](#reference)
 
-# 사용자 지정 CSS 속성이란?
+# CSS 사용자 지정 속성(CSS custom properties, CSS variables)이란?
 
 사용자 지정 속성(CSS 변수, 종속 변수)은 CSS 저작자가 정의하는 속성으로, 반복해서 사용되는 값을 변수처럼 선언하여 문서 전반에서 재사용하기 위한 속성이다.
 
