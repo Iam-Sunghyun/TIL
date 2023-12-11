@@ -2,7 +2,6 @@
 
 - [Custom Hook이란?](#custom-hook이란)
 - [커스텀 훅 명명 규칙](#커스텀-훅-명명-규칙)
-- [리액트 훅(hook)의 규칙?](#리액트-훅hook의-규칙)
 - [커스텀 훅 사용 예시](#커스텀-훅-사용-예시)
   - [HTTP 요청 로직 커스텀 훅으로 추출하기](#http-요청-로직-커스텀-훅으로-추출하기)
   - [추출 전](#추출-전)
@@ -23,13 +22,6 @@
 <!-- 컴포넌트 처럼 대문자로 시작해도 에러가 발생하지 않긴 함.  -->
 
 **또 함수 내부에서 리액트 내장 훅(`useState`,`useEffect` 등)을 호출하지 않는다면 `use` 접두사를 붙이지 않고 일반 함수로 정의해야한다.** -> 일반 함수의 이름에 `use` 접두사가 붙는다고 해서 에러가 발생하진 않지만 가독성을 해치고 리액트 훅의 규칙에 의해 컴포넌트 최상위가 아닌 곳에서는 호출할 수 없게 된다.
-
-# 리액트 훅(hook)의 규칙?
-
-1. 오직 React 함수 내에서 Hook을 호출해야 한다.<br/> 
-Hook을 일반적인 JavaScript 함수에서 호출하면 에러가 발생한다. 따라서 리액트 컴포넌트, 혹은 커스텀 훅의 내부에서만 호출되어야 한다.
-
-2. 최상위(at the Top Level)에서만 Hook을 호출해야 한다.<br/> 반복문, 조건문 혹은 중첩된 함수 내에서 Hook을 호출하면 안되며 early return이 실행되기 전에 항상 React 함수의 최상위(at the top level)에서 Hook을 호출해야 한다. **이 규칙을 따르면 컴포넌트가 렌더링 될 때마다 항상 동일한 순서로 Hook이 호출되는 것이 보장되고 이러한 점은 React가 `useState`와 `useEffect`가 여러 번 호출되는 중에도 Hook의 상태를 올바르게 유지할 수 있도록 해준다.** <br/> -> 호출 순서 보장이 중요한 이유는 **React는 특정 `state`가 어떤 `useState` 호출에 해당되는 것 인지를 Hook이 호출되는 순서에 의존하여 아는 것이기 때문.** 만약 최상위가 아닌 곳에서 hook이 호출되면 렌더링 간에 hook 호출 순서가 달라질 수 있고 이것은 에러를 발생시킨다.
 
 # 커스텀 훅 사용 예시
 
@@ -362,11 +354,6 @@ const NewTask = (props) => {
 **[React docs Custom Hooks]**
 
 https://react.dev/learn/reusing-logic-with-custom-hooks
-
-
-**[React hook의 규칙과 컴포넌트 최상위(the top of level)에서 Hook이 호출되어야만 하는 이유]**
-
-https://ko.reactjs.org/docs/hooks-rules.html
 
 **[커스텀 훅이 use로 시작해야되는 이유]**
 
