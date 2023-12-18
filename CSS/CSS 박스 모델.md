@@ -165,7 +165,9 @@ https://developer.mozilla.org/en-US/docs/Web/HTML/Block-level_elements
 - 박스는 줄 바꿈이 발생하지 않으며 그 줄에 포함된다.
 
 - width, height 속성이 적용되지 않는다.
-- margin-top, margin-bottom 속성이 적용되지 않는다(개발자 도구 Computed 상에선 입력이 된걸로 뜨나 출력엔 적용 안됨). padding, border - top/bottom은 적용되나 주변 요소를 밀어내지 않는다. 인라인 요소의 높이는 line-height로 지정한다.
+- margin, padding, border - top/bottom은 적용되나 주변 요소를 밀어내지 않는다. 인라인 요소의 높이는 line-height로 지정한다.
+
+<!-- margin-top, margin-bottom 속성이 적용되지 않는다(개발자 도구 Computed 상에선 입력이 된걸로 뜨나 출력엔 적용 안됨). 잘못 알고 있었는듯 -->
 
 - 수평 padding, margin, border 속성은 적용되며 다른 인라인 요소들이 밀려난다.
 
