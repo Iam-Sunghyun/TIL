@@ -247,13 +247,15 @@ navigate(2);  // 앞으로 2번
 
 다음 코드의 경우 `/app`으로 요청 시 `<AppLayout />` 컴포넌트가 화면에 렌더링된다. 그 후 하위에 `index` 라우트의 `<Navigate />` 컴포넌트와 매핑되는데 이때 `<Navigate />`는 `to`에 지정한 경로로 이동한다. 즉, `<Navigate />` 렌더링 될 때 지정한 경로로 이동시키는 기능을 한다.
 
+또한 `replace` 속성을 `true`로 설정하면 `<Navigate />`가 리다이렉션하는 URL이 history 스택에 push 되는 것이 아닌 현재 항목을 대체한다.
+
 ```
   return (
     <>
       <BrowserRouter>
         <Routes>
           <Route path='/app' element={<AppLayout />}>
-            <Route index element={<Navigate to='cities' /> } />
+            <Route index element={<Navigate replace={ true }to='cities' /> } />
             <Route path='cities' element={<CityList cities={cities} isLoading={isLoading} />} />
             <Route path='cities/:id' element={<City />} />
       </BrowserRouter>
