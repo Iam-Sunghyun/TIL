@@ -185,7 +185,7 @@ function City() {
 
 `useSearchParams()`는 `useState()` 훅처럼 [`URLSearchParams` 객체, `set`함수] 두 요소를 값으로 갖는 배열을 반환한다.
 
-반환받은 `URLSearchParams` 객체의 `get()` 메서드를 통해 쿼리스트링에 접근할 수 있다. `useSearchParams()` 훅이 반환하는 `set` 함수를 통해 쿼리스트링 값을 업데이트하면 그에 맞게 URL이 변경되고 `useSearchParams()`로 쿼리스트링을 참조하고 있던 모든 컴포넌트가 리렌더링된다.
+반환받은 `URLSearchParams` 객체의 `get()` 메서드를 통해 쿼리스트링에 접근할 수 있다. `useSearchParams()` 훅이 반환하는 `set` 함수를 통해 쿼리스트링 값을 업데이트하면 그에 맞게 URL이 변경되고 `useSearchParams()`로 쿼리스트링을 참조하고 있던 모든 컴포넌트가 리렌더링된다(`set` 함수를 통하지 않고 직접 변경하면 렌더링이 발생하지 않는다).
 
 <!-- 그럼 set함수 존재이유? -->
 
@@ -228,13 +228,13 @@ https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
 
 ## `useNavigate()` 훅
 
-`useNavigate(URL, option)`는 함수를 반환하는데 이 함수에 2개의 인수를 전달하여 원하는 URL로 이동할 수 있다.
+`useNavigate(URL, option)`는 함수를 반환한다. 이 함수는 URL, `option` 객체, 2가지 인수를 전달하여 원하는 URL로 이동할 수 있다.
 
 ```
 navigate("/new-route", { state: { key: "value" } });
 ```
 
-다음과 같이 숫자를 전달하여 history 스택을 이동할 수 있다.
+다음과 같이 숫자를 전달하여 history 스택을 이동할 수도 있다.
 
 ```
 navigate(-1); // 뒤로가기
