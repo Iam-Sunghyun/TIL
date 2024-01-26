@@ -3,7 +3,6 @@
 - [래퍼 컴포넌트로 컨텍스트 분리하기](#래퍼-컴포넌트로-컨텍스트-분리하기)
 - [컨텍스트로 객체를 전달할 시 주의할 점](#컨텍스트로-객체를-전달할-시-주의할-점)
 
-
 # 래퍼 컴포넌트로 컨텍스트 분리하기
 
 다음은 `Context`를 반환하는 래퍼 컴포넌트를 정의한 코드로 컨텍스트 공급시 흔히 사용되는 패턴이다.
@@ -69,7 +68,7 @@ function PostProvider({ children }) {
 // PostContext를 참조하는 커스텀 훅
 function usePosts() {
   const Context = useContext(PostContext);
-  
+
   // ContextProvider 범위 밖에서 참조할 경우 좀 더 가독성있는 메시지로 에러처리
   if (Context === undefined)
     throw new Error("PostContext was used outside of the PostProvider");
@@ -127,7 +126,7 @@ function PostProvider({ children }) {
 
 위와 같이 컨텍스트의 `value`에 객체를 직접 전달하게 되면 래퍼 컴포넌트(`PostContext`)에 리렌더링이 발생했을 경우 `value`에 전달한 객체도 재생성되기 때문에 컨텍스트를 사용하고있는 컴포넌트에 불필요한 렌더링이 발생할 수 있다.
 
-따라서 불필요한 렌더링을 피하기 위해 다음과 같이 `useMemo()`를 사용하며 따로 객체를 생성하여 전달하는 것이 좋다.
+따라서 혹시나 있을수 있는 불필요한 렌더링을 피하기 위해 다음과 같이 `useMemo()`를 사용하며 따로 객체를 생성하여 전달하는 것이 좋다.
 
 ```
 // PostProvider.js
