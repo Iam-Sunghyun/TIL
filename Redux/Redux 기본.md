@@ -7,12 +7,10 @@
     - [`reducer`란?](#reducer란)
   - [Flux와 Redux 차이](#flux와-redux-차이)
   - [Reference](#reference)
-- [Context API vs Redux](#context-api-vs-redux)
 - [Redux 사용 방식](#redux-사용-방식)
   - [`reducer` 함수 생성 및 `store` 생성](#reducer-함수-생성-및-store-생성)
   - [`dispatch(action)` 함수로 상태 변경 요청](#dispatchaction-함수로-상태-변경-요청)
   - [`action` 생성자 함수](#action-생성자-함수)
-
 
 # Redux 등장 배경 및 사용이유
 
@@ -157,39 +155,6 @@ https://wooder2050.medium.com/%EB%A6%AC%EB%8D%95%EC%8A%A4-redux-%EB%8A%94-%EC%99
 
 https://yozm.wishket.com/magazine/detail/1663/
 
-# Context API vs Redux 
-
-리액트의 내장 기능인 `Context API`가 있는데도 `Redux`를 사용하는 이유는 `Context`의 단점 중 하나가 규모가 큰 애플리케이션에서 아래와 같이 매우 복잡해질 수 있다는 것이다.
-
-```
-return (
-  <AuthContextProvider>
-    <ThemeContextProvider>
-      <UIINteractionContextProvider>
-        <MultiStepFormContextProvider>
-          <UserRegistration />
-        </MultiStepFormContextProvider>
-      </UIINteractionContextProvider>
-    </ThemeContextProvider>
-  </AuthContextProvider>
-)
-```
-
-그렇다고 하나의 `Context`에 모든 상태를 담기엔 너무 복잡해지고 잦은 업데이트로 인해 불필요한 렌더링도 발생하게 된다. `Context`의 일부만 업데이트 해도 `Context`를 사용하는 모든 컴포넌트가 리렌더링되는 성질 때문(업데이트한 값을 사용하지 않더라도).
-
-`React Redux`는 내부적으로 많은 성능 최적화를 구현하므로 컴포넌트가 사용하는 상태가 변경되었을 때만 다시 렌더링된다. 따라서 업데이트가 잦거나 서버에서 fetch해온 원격 상태같은 경우 `Redux`를 통해 전역에서 관리하는 것이 일반적이라고 한다.
-
-<!-- Context API 대신 Redux 사용 이유, 차이점 어렴풋이 이해하는 중. 내용 보완 필 -->
-`Redux`는 상태를 하나의 중앙 저장소에 저장하여 관리하기 때문에 데이터 흐름을 이해하기 쉽고 디버깅도 용이하다. `Redux`는 MVC 패턴의 양방향 데이터 흐름으로 인한 복잡성을 해결하기 위해 만들어진 flux 패턴에 `reducer` 개념을 도입하여 만들어졌다(리액트 앱에서는 리액트에서 더 쉽게 `Redux`를 사용할 수 있게 해주는 `Redux-toolkit`이라는 라이브러리를 사용한다).
-
-**결론적으로 `Redux`를 사용하는 이유는 전역 상태 값을 하나의 중앙 저장소에서 저장하여 관리하고 단방향 데이터 흐름을 통해 앱의 복잡도를 줄이고 데이터 흐름을 예측하기 쉬운 코드를 작성하기 위한 것이다.**
-
-먼저 `Redux`의 주요 개념과 순수 자바스크립트로 `Redux`를 사용해보고, 그 후 `react-redux`를 통해 리액트에 리덕스를 적용해볼 것이다.
-
-**[Redux / Context API 장단점]**
-
-https://likims.com/blog/context-vs-redux-pros-and-cons
-
 # Redux 사용 방식
 
 `Redux` 공식 문서에서는 `Redux`를 다음과 같이 설명하고 있다.
@@ -217,8 +182,11 @@ npm install redux
  
 `reducer`는 `useReducer` 훅처럼 상태를 업데이트하는 역할을 한다. 상태 업데이트를 수행하는 `ruducer` 함수를 정의하고 `store`에 등록한다. 
 
+리듀서가 여러 개인 경우 `redux`의 `combineReducers()` 함수로 결합을 해줘야 한다.
+
 ```
-import redux from 'redux';
+import {  combineReducers, createStore } from "redux";
+import accountReducer from "./features/accounts/accountSlice";
 
 // reducer 함수. 초기 값 설정 주의
 const counterReducer = (state = { counter: 0 }, action) => {
@@ -227,8 +195,13 @@ const counterReducer = (state = { counter: 0 }, action) => {
   }
 };
 
+const rootReducer = combineReducers({
+  account: accountReducer,
+  counter: counterReducer,
+});
+
 // reducer 전달하여 store 생성
-const store = redux.createStore(counterReducer);
+const store = createStore(counterReducer);
 
 // 임시 컴포넌트
 const counterSubscriber = () => {
@@ -252,7 +225,7 @@ console.log(counterSubscriber());
 `store.dispatch(action)` 메서드로 `reducer`를 호출하고 `action` 객체의 값에 따라 `reducer`에 작성된 로직을 실행한다. `reducer`가 반환한 값으로 `state`를 업데이트하고 `subscribe()` 중인 컴포넌트를 호출하여 새 값을 전달한다.
 
 ```
-import redux from 'redux';
+import {  combineReducers, createStore } from "redux";
 
 const counterReducer = (state = { counter: 0 }, action) => {
 
@@ -268,7 +241,7 @@ const counterReducer = (state = { counter: 0 }, action) => {
   }
 };
 
-const store = redux.createStore(counterReducer);
+const store = createStore(counterReducer);
 
 const counterSubscriber = () => {
   const latestsState = store.getState();
@@ -307,7 +280,7 @@ const counterReducer = (state = { counter: 0 }, action) => {
   }
 };
 
-const store = redux.createStore(counterReducer);
+const store = createStore(counterReducer);
 
 function multiple(amount) {
   return { type: 'multiple', payload: amount };
@@ -320,5 +293,6 @@ store.dispatch(plus(10));
 store.dispatch(multiple(5));
 
 console.log(store.getState());
->> 50
+>> { counter: 50 }
 ```
+
