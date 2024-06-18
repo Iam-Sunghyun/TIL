@@ -27,7 +27,7 @@
 // ThemeContext.js
 import { createContext } from 'react';
 
-export const DarkTheme = createContext(null);
+export const ThemeContext = createContext(null);
 ```
 
 `createContext` 함수의 인수로 전달되는 값은 `Context.Provider`가 없을 경우 `useContext`로 읽어오는 초기 값이 된다. 별다른 목적이 없다면 보통 `null`을 사용한다

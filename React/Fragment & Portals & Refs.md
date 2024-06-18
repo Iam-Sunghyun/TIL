@@ -272,7 +272,7 @@ const App = () => {
   const inputRef = useRef();
 
   useEffect(() => {
-    inputRef.currnet.focus();
+    inputRef.current.focus();
   }, []);
 
   return (

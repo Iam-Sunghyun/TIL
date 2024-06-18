@@ -2,6 +2,7 @@
 
 - [래퍼 컴포넌트로 컨텍스트 분리하기](#래퍼-컴포넌트로-컨텍스트-분리하기)
 - [컨텍스트로 객체를 전달할 시 주의할 점](#컨텍스트로-객체를-전달할-시-주의할-점)
+    - [주의할 점](#주의할-점)
 
 # 래퍼 컴포넌트로 컨텍스트 분리하기
 
@@ -151,4 +152,10 @@ function PostProvider({ children }) {
     <PostContext.Provider value={value}>{children}</PostContext.Provider>
   );
 }
+```
+
+### 주의할 점
+
+```
+useContext() 는 항상 호출하는 컴포넌트 상위에서 가장 가까운 provider를 찾는다. 즉, 조상 범위에서 찾고 useContext()를 호출하는 컴포넌트 안의 provider는 고려하지 않는다.
 ```
