@@ -1,6 +1,6 @@
 <h2>목차</h2>
 
-- [중첩 라우트(Nested Route)](#중첩-라우트nested-route)
+- [중첩 라우트(Nested Route) (구 방식)](#중첩-라우트nested-route-구-방식)
 - [Index Route](#index-route)
 - [경로 매개변수(path parameter)와 쿼리 스트링(query string)으로 동적 라우팅](#경로-매개변수path-parameter와-쿼리-스트링query-string으로-동적-라우팅)
   - [경로 매개변수(path params, URL params) 참조](#경로-매개변수path-params-url-params-참조)
@@ -9,7 +9,7 @@
   - [`useNavigate()` 훅](#usenavigate-훅)
   - [`<Navigate />` 컴포넌트](#navigate--컴포넌트)
 
-# 중첩 라우트(Nested Route)
+# 중첩 라우트(Nested Route) (구 방식)
 
 중첩 라우트는 **부모 라우트 하위에 자식 라우트를 중첩시켜 부모 컴포넌트 내부에서 요청 경로에 따라 자식 컴포넌트를 변경하여 화면에 렌더링 해주고자 할 때** 사용하는 기능이다. **요청 경로는 상위 라우트의 경로를 기반으로 결정된다.**
 
@@ -146,7 +146,8 @@ function App() {
     <Routes>
       <Route path='/app' element={<AppLayout />}>
         <Route index element={<CityList cities={cities} isLoading={isLoading} />} />
-        <Route path='cities' element={<CityList cities={cities} isLoading={isLoading} />} />      <Route path='cities/:id' element={<City />} />  // id 경로 매개변수 선언
+        <Route path='cities' element={<CityList cities={cities} isLoading={isLoading} />} />     
+        <Route path='cities/:id' element={<City />} />  // id 경로 매개변수 선언
       </Route>
       <Route path='*' element={<PageNotFound />} />
     </Routes>
@@ -186,8 +187,6 @@ function City() {
 `useSearchParams()`는 `useState()` 훅처럼 [`URLSearchParams` 객체, `set`함수] 두 요소를 값으로 갖는 배열을 반환한다.
 
 반환받은 `URLSearchParams` 객체의 `get()` 메서드를 통해 쿼리스트링에 접근할 수 있다. `useSearchParams()` 훅이 반환하는 `set` 함수를 통해 쿼리스트링 값을 업데이트하면 그에 맞게 URL이 변경되고 `useSearchParams()`로 쿼리스트링을 참조하고 있던 모든 컴포넌트가 리렌더링된다(`set` 함수를 통하지 않고 직접 변경하면 렌더링이 발생하지 않는다).
-
-<!-- 그럼 set함수 존재이유? -->
 
 ```
 function City() {

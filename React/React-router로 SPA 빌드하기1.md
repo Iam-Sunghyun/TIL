@@ -6,7 +6,7 @@
   - [`vite` + `React` 전용 `eslint` 플러그인 설치](#vite--react-전용-eslint-플러그인-설치)
   - [`.eslintrc.json`, `vite.config.js` 파일 설정 및 실행](#eslintrcjson-viteconfigjs-파일-설정-및-실행)
   - [리액트 라우터: `react-router-dom` 설치](#리액트-라우터-react-router-dom-설치)
-- [라우트(Route) 정의](#라우트route-정의)
+- [라우트(Route) 정의(구 방식)](#라우트route-정의구-방식)
 - [네비게이션 바 생성 - 페이지 연결(linking) 하기](#네비게이션-바-생성---페이지-연결linking-하기)
   - [`<Link>` 컴포넌트](#link-컴포넌트)
   - [`<NavLink>` 컴포넌트](#navlink-컴포넌트)
@@ -109,7 +109,7 @@ npm run dev
 npm i react-router-dom
 ```
 
-# 라우트(Route) 정의
+# 라우트(Route) 정의(구 방식)
 
 `React Router`의 라우트 정의에는 바닐라 자바스크립트와 `JSX`를 사용하는 방법이 있다.
 
