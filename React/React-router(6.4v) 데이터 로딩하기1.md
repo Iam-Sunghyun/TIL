@@ -307,11 +307,11 @@ export default Menu;
 
 # `useNavigation`로 로딩 확인하기
 
-`useNavigation` 훅으로 페이지가 로드 중일때를 식별할 수 있다(프로그래매틱 네비게이션의 `useNavigate` 훅과 다르다).
+`useNavigation` 훅으로 애플리케이션의 페이지 상태를 식별할 수 있다(프로그래매틱 네비게이션의 `useNavigate` 훅과 다르다).
 
-`useNavigation` 훅이 반환하는 객체의 `state` 프로퍼티를 통해 페이지가 `idle`, `submitting`(폼 작업 로딩), `loading` 상태인지 확인할 수 있으며 이때 `useNavigation`이 반환하는 객체의 상태는 한 페이지에만 적용되는 것이 아니라 라우터 전체에 대해(애플리케이션 전체 페이지) 적용된다.
+`useNavigation` 훅이 반환하는 객체의 `state` 프로퍼티를 통해 페이지가 `idle`, `submitting`(폼 `submit` 실행 중), `loading`(`loader` 함수 실행 중) 상태인지 확인할 수 있으며 이때 `useNavigation`이 반환하는 객체의 상태는 한 페이지에만 적용되는 것이 아니라 라우터 전체에서(애플리케이션 전체 페이지) 확인할 수 있다.
 
-라우트의 로더가 호출중일 때 `loading` 상태가 되며 이를 통해 로딩 여부를 식별하여 화면에 표시 해줄 수 있다.
+라우트의 로더가 호출 중일 때 `loading` 상태가 되며 이를 통해 로딩 여부를 식별하여 화면에 표시 해줄 수 있다.
 
 ```
 import { Outlet, useNavigation } from 'react-router-dom';
@@ -344,7 +344,7 @@ https://reactrouter.com/en/main/hooks/use-navigation
 
 에러가 발생하면 에러 객체가 해당 컴포넌트부터 부모 컴포넌트로 버블링된다. 따라서 다음과 같이 에러가 발생한 컴포넌트 자체에서 처리해주거나, 상위 컴포넌트에서 처리해줄 수 있다.
 
-에러 객체를 참조하기 위해선 컴포넌트 내부에서 `useRouterError` 훅을 사용해준다.
+에러 객체를 참조하기 위해선 `errorElement`에 등록한 컴포넌트 내부에서 `useRouterError` 훅을 사용해준다.
 
 ```
 const router = createBrowserRouter([
