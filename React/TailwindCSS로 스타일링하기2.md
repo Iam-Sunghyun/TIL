@@ -90,9 +90,25 @@ https://tailwindcss.com/docs/responsive-design
 </div>
 ```
 
-**[TailwindCSS spacing space between]**
+## `flexbox`, `grid` 자식 요소 사이에 여백(margin) 설정하기
+
+`gap`을 사용해 `flexbox`와 `grid` 자식 요소 간 간격을 설정할 수 있다.
+
+```
+gap-0	-> gap: 0px;
+gap-x-0	-> column-gap: 0px;
+gap-y-0 -> row-gap: 0px;
+    .
+    .
+    .
+```
+
+
+**[TailwindCSS spacing space between, gap]**
 
 https://tailwindcss.com/docs/space
+
+https://tailwindcss.com/docs/gap
 
 # `flexbox`로 화면 height 꽉 채우기
 
@@ -167,3 +183,63 @@ https://tailwindcss.com/docs/space
 **[@apply를 사용하여 클래스 추출]**
 
 https://tailwindcss.com/docs/reusing-styles#extracting-classes-with-apply
+
+
+# 사용자 정의 `font-family` 지정하기
+
+TailwindCSS가 제공하는 기본(`sans`, `serif`, `mono`) 폰트 패밀리 외에도 구글 폰트를 `<link>`로 로드하여 사용자 정의 폰트 패밀리 클래스로 명명하여 사용할 수 있다.
+
+로드된 구글 폰트를 `tailwind.config.js` 파일의 `theme.fontFamily` 프로퍼티에 넣어 사용한다. 이때 TailwindCSS 기본 폰트는 모두 덮어 씌워져 사라진다. 기존 설정 값들을 유지하면서 새 값을 정의하고 싶다면 `theme.extend`에 추가해주면 된다.
+
+```
+// index.html (폰트 명 Roboto Mono)
+<link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+----------------------  
+// tailwind.config.js
+module.exports = {
+  theme: {
+    fontFamily: {
+      pizza: 'Roboto Mono, monospace'
+      // === ['Roboto Mono', 'monospace']
+    }
+  }
+}
+----------------------
+// 기존 설정 값 유지
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      fontFamily: {
+      pizza: 'Roboto Mono, monospace'
+      // === ['Roboto Mono', 'monospace']
+    },
+      colors: {
+        test: #123456,
+      }
+    },
+  },
+  plugins: [],
+};
+----------------------
+// 실제 사용 예시
+<div className='font-pizza bg-pizza'>
+    pizza font
+</div>
+```
+
+만약 사용자 정의 폰트 패밀리를 `sans`로(TailwindCSS 기본 폰트중 하나) 지정하면 모든 폰트가 사용자 정의 폰트로 지정된다. 
+
+<!-- 이때 스페이스(공백) 같은 문자가 자동으로 이스케이프되지 않으므로 이런 경우 따옴표(`'`)로 묶어줘야 한다. -->
+
+TailwindCSS의 기본 설정은 다음 링크에서 확인할 수 있다.
+
+**[tailwindCSS config.full.js]**
+
+https://github.com/tailwindlabs/tailwindcss/blob/master/stubs/config.full.js#L302
+
+
+# `divide`로 자식 요소 테두리(border) 설정하기

@@ -2,6 +2,7 @@
 - [CSS 값과 단위](#css-값과-단위)
 - [절대 길이(`<length>`)단위](#절대-길이length단위)
 - [상대 길이 단위](#상대-길이-단위)
+  -[`dvh`, `dvw`?](#dvh-dvw)
     - [참고사항!](#참고사항)
   - [백분율(`<Percentage>`)](#백분율percentage)
   - [단위 참고](#단위-참고)
@@ -49,7 +50,41 @@ px 외에 값들은 웹 페이지 개발엔 사용하지 않고, 실제 인쇄�
 |`rem`|렘(root em)| `rem` 단위는 "루트 요소(<html>)의 글꼴 크기(16px) x배" 를 의미한다. 즉 하나의 글꼴 크기 기준으로 값을 계산하기 때문에 `em`보다 예측하기 쉽다.|
 |`vh`|view height|뷰포트 높이의 1%.| 
 |`vw`|viw width|뷰포트 너비의 1%.|
+|`dvh`|view height|동적인 뷰포트 높이의 1%.| 
+|`dvw`|viw width|동적인 뷰포트 너비의 1%.|
 
+## `dvh`, `dvw`?
+
+`vh` (viewport height)와 `vw`(viewport width)는 기존부터 존재하던 단위다.
+둘 다 뷰포트를 기준으로 측정되는 단위이다.
+
+이는 데스크탑 브라우저에서는 무리 없이 잘 동작하나 모바일에선 제대로 동작하지 않을 수 있다(스크롤 생성).
+
+위와 같은 문제를 해결하기 위해 새로운 단위들이 도입되었다.
+
+- `svh`, `svw` (small viewport)
+브라우저의 UI가 가장 크고, 컨텐츠가 가장 작을때를 가정한다.
+예를 들어, 모바일 브라우저에서 주소창이 보이는 경우를 기준으로 한다.
+정적인 값으로 브라우저의 UI가 변한다고 값이 늘어나거나 줄지 않는다.
+- `lvh`, `lvw` (large viewport)
+브라우저의 UI가 가장 작고, 컨텐츠가 가장 클때를 가정한다.
+예를 들어, 모바일 브라우저에서 주소창이 없는 경우를 기준으로 한다.
+정적인 값으로 브라우저의 UI가 변한다고 값이 늘어나거나 줄지 않는다.
+- `dvh`, `dvw` (dynamic viewport)
+브라우저 UI 크기에 따라 동적으로 변한다.
+그렇기에 사용자가 스크롤등을 할 경우(모바일에서 주소창 내려옴) 페이지의 크기가 갑자기 변해 안좋은 사용자 경험(layout shifting)을 주거나, 성능에 영향을 미칠 수 있으므로 주의해서 사용해야 한다.
+
+**[w3c workingdraft css-value-4]**
+
+https://www.w3.org/TR/css-values-4/
+
+**[w3c 동적 뷰포트?]**
+
+https://www.w3.org/TR/css-values-4/#dynamic-viewport-size
+
+**[[CSS] dvh, lvh, svh / dvw, lvw, svw 알아보기]**
+
+https://velog.io/@sanghyeon/CSS-dvh-lvh-svh-dvw-lvw-svw-%EC%95%8C%EC%95%84%EB%B3%B4%EA%B8%B0
 
 ### 참고사항!
 ```

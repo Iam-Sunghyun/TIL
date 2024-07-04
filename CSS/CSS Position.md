@@ -19,7 +19,7 @@
 
 # Position 프로퍼티
 
-문서 내에서 요소의 위치를 설정하기 위한 프로퍼티. `position` 프로퍼티 값과, 추가로 `top`, `left`, `right`, `bottom` 좌표 값을 설정해 최종 위치를 지정한다.
+문서 내에서 요소의 위치를 설정하기 위한 프로퍼티. `position` 프로퍼티 값과, 추가로 `top`, `left`, `right`, `bottom` 좌표 값을 설정해 최종 위치를 지정한다. 참고로 `top`, `left`, `right`, `bottom`의 단축 속성은 `inset`이다.
 
 # Position 프로퍼티 값
 

@@ -204,9 +204,9 @@ https://developer.mozilla.org/ko/docs/Web/CSS/Media_Queries/Using_media_queries
 ```
 
 
-## 미디어 쿼리 작업 시 유의할 점
+# 미디어 쿼리 작업 시 유의할 점
 
-### 미디어 쿼리 순서
+## 미디어 쿼리 순서
 
 아래 미디어 쿼리의 적용 조건은 화면 장치에서만, 그리고 너비가 `380px` 이상일 때와 `620px` 이상일 때 각각 적용되는 스타일이다.
 
@@ -244,11 +244,13 @@ https://developer.mozilla.org/ko/docs/Web/CSS/Media_Queries/Using_media_queries
 따라서 `min-`, `max-` 접두사가 붙는 조건처럼 범위를 지정하는 쿼리는 덮어씌워지지 않게 순서를 고려하여 작성해줘야 한다. 
 
 
-### 적절한 분기점(break points) 찾기
+## 적절한 분기점(break points) 찾기
 
 웹 사이트를 만들 때 적절한 분기점을 설정하는 것이 중요한데 mydevice.io에서 많이 사용하는 모바일, 태블릿의 css 픽셀 값을 참고할 수 있다.
 
 참고로 가장 많이 쓰이는 주 분기점 3가지는 너비 기준 480/768/1024 이다.
+
+참고로 특정 기기를 기준으로 중단점을 맞추는 것보다 웹 사이트의 디자인이 망가지기 직전 지점을 기준으로 미디어 쿼리 범위를 지정하는 것이 더 적절하다.
 
 **[mydevice.io]**
 
@@ -258,7 +260,7 @@ https://www.mydevice.io/
 
 https://poiemaweb.com/css3-responsive-web-design
 
-### 미디어 쿼리 작성 위치 
+## 미디어 쿼리 작성 위치 
 
 가독성을 위해 미디어 쿼리 작성을 css 스타일과 구분지어 맨 아래에 두는 것이 일반적이다.
 
