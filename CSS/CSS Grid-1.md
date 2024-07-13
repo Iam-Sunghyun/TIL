@@ -1,3 +1,5 @@
+<h2>목차</h2>
+
 - [`Grid`란?](#grid)
 - [열과 행 정의하기](#-)
   - [`fr`(fraction) 단위를 사용한 가변 그리드](#frfraction-)
@@ -34,45 +36,6 @@
 }
 ```
 
-# 그리드 셀 영역(area)에 이름 지정하여 사용하기
-
-그리드 컨테이너에 `grid-template-areas` 속성을 사용해 그리드 셀에 이름을 지을 수 있다(개발자 도구 layout 탭에서 확인 가능).
-
-다음 예시는 3행 4열의 총 12셀을 갖는 그리드에서 `grid-template-areas`를 사용해 각 셀에 이름을 지어준 예시이다.
-
-명명된 이름은 그리드 아이템에서 `grid-area` 속성으로 사용할 수 있으며 이름을 지정하고 싶지 않은 영역은 마침표(`.`)로 두면 된다. **이때 그리드 아이템 수만큼 반드시 이름을 지정해줘야 한다.**
-
-```
-// 3행 4열 그리드에서 각 영역에 이름 짓기
-.container {
-    display: grid;
-    height: 500px;
-    grid-template-columns: repeat(4, 25%);
-    grid-template-rows: [row-1]100px [row-2] minmax(15%, 25%) [row-3];
-    gap: 5px;
-    grid-template-areas: "header header header header"
-                         ". . main main"
-                         "footer footer footer footer";
-}
-
-.container .el3 {
-    /* grid-column: 3/-1;
-    grid-row-start: row-1;
-    grid-row-end: row-3; */
-    grid-area: header;
-}
-
-.container .el4 {
-    grid-area: footer;
-}
-```
-
-1행 전체(4칸)를 `header`로 명명한 다음 그리드 아이템(`.el3`)의 영역을 `grid-ared: header`로 지정해줌으로서 `.el3`는 1행 전체 칸을 차지하게 된다(참고로 `grid-area`는 `grid-*-start, grid-*-end`의 단축 속성이었다).
-
-또한 `.el4`의 경우 3행 전체를 차지하게 된다.
-
-이로서 `grid-*-start`, `grid-*-end` 혹은 `grid-area`에서 줄 번호를 통해 그리드 아이템의 범위를 지정하지 않고 더 간단하게 그리드 아이템의 영역을 지정해줄 수 있다.
-
 ## `fr`(fraction) 단위를 사용한 가변 그리드
 
 `<length>`나 `<percentage>`를 사용하는 것 외에 `fr`이란 단위를 사용해 그리드의 행과 열 크기를 조정할 수 있다. `fr`은 그리드 컨테이너 내에 그리드 아이템이 차지하는 비율을 설정한다.
@@ -86,6 +49,44 @@
 ```
 
 `fr` 단위와 나머지 단위를 혼합하여 사용할 수 있는데 이때 그리드 컨테이너 너비에서 지정한 모든 너비 만큼 제외한 공간에서 비율이 설정된다.
+
+## `min-content`, `max-content`
+
+- `min-content` : 그리드 아이템이 포함하는 내용(Contents)의 최소 크기를 의미한다.
+  콘텐츠에 한글을 사용할 경우 단어가 묶여있어 아이템의 영역을 벗어날 때는 `word-break: keep-all;`을 선언하여 단어를 쪼개 줄바꿈 할 수 있게 설정하면 정상적으로 작동한다.
+
+- `max-content` : 그리드 아이템이 포함하는 내용(Contents)의 최대 크기를 의미한다.
+
+```
+
+<style>
+  .container {
+    display: grid;
+    grid-template-columns: min-content 1fr;
+  }
+</style>
+
+<div class="container">
+  <div class="item">내용의 최소 크기</div>
+  <!-- ··· -->
+</div>
+------------------------------
+
+.container {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+}
+
+/*
+  그리드 함수들과 같이 더 유용하게 활용할 수 있다.
+  다음 예제는 총 3컬럼 그리드를 생성하며 각 열(Track)은 최대 1fr 크기를 가지지만,
+  max-content를 통해 포함된 그리드 아이템의 내용보다 작아질 수 없다.
+*/
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(max-content, 1fr));
+}
+```
 
 ## `repeat()` 함수로 행과 열 반복하기
 
@@ -109,6 +110,8 @@ CSS `repeat(반복 횟수, 패턴)` 함수로 행이나 열을 동일한 크기�
 ## `minmax()` 함수로 최소, 최대 값 설정하기
 
 `minmax(최소, 최대)` 함수를 사용하면 행의 경우 높이, 열의 경우 너비의 최소, 최대 값 범위를 설정할 수 있다.
+
+`grid-template-rows`, `grid-template-columns`,` grid-auto-rows`, `grid-auto-columns`에서 사용된다.
 
 ```
 // 4번 열의 너비 -> 그리드 컨테이너 15% ~ 45% 범위로 설정
@@ -141,9 +144,9 @@ CSS `repeat(반복 횟수, 패턴)` 함수로 행이나 열을 동일한 크기�
 }
 ```
 
-# 그리드 아이템 여러 셀에 표시되게 하기
+# 그리드 아이템 줄 번호로 여러 셀에 표시되게 하기
 
-그리드 아이템에 `grid-*-start`, `grid-*-end`속성으로 그리드 컨테이너 자식 요소의 셀 차지 범위를 설정할 수 있다(여러 셀에 걸쳐 표시 되게할 수 있다). 축약 표현은 `grid-*`이며 `시작/끝` 형태로 값을 넣어주면 된다.
+그리드 아이템에 `grid-*-start`, `grid-*-end`속성으로 그리드 컨테이너 자식 요소의 셀 차지 범위를 줄 번호로 설정할 수 있다(여러 셀에 걸쳐 표시 되게할 수 있다). 축약 표현은 `grid-*`이며 `시작/끝` 형태로 값을 넣어주면 된다.
 
 다음은 3번 그리드 아이템을 3번 열에서 4번 열까지 걸쳐 표시되게 하는 예시이다.
 
@@ -217,9 +220,58 @@ CSS `repeat(반복 횟수, 패턴)` 함수로 행이나 열을 동일한 크기�
 }
 ```
 
+# 그리드 셀 영역(area)에 이름 지정하여 사용하기
+
+그리드 컨테이너에 `grid-template-areas` 속성을 사용해 그리드 셀에 이름을 지을 수 있다(개발자 도구 layout 탭에서 확인 가능).
+
+다음 예시는 3행 4열의 총 12셀을 갖는 그리드에서 `grid-template-areas`를 사용해 각 셀에 이름을 지어준 예시이다.
+
+명명된 이름은 그리드 아이템에서 `grid-area` 속성으로 사용할 수 있으며 이름을 지정하고 싶지 않은 영역은 마침표(`.`)로 두면 된다. **이때 그리드 아이템 수만큼 반드시 이름을 지정해줘야 한다.**
+
+```
+// 3행 4열 그리드에서 각 영역에 이름 짓기
+.container {
+    display: grid;
+    height: 500px;
+    grid-template-columns: repeat(4, 25%);
+    grid-template-rows: [row-1]100px [row-2] minmax(15%, 25%) [row-3];
+    gap: 5px;
+    grid-template-areas: "header header header header"
+                         ". . main main"
+                         "footer footer footer footer";
+}
+
+.container .el3 {
+    /* grid-column: 3/-1;
+    grid-row-start: row-1;
+    grid-row-end: row-3; */
+    grid-area: header;
+}
+
+.container .el4 {
+    grid-area: footer;
+}
+```
+
+1행 전체(4칸)를 `header`로 명명한 다음 그리드 아이템(`.el3`)의 영역을 `grid-area: header`로 지정해줌으로서 `.el3`는 1행 전체 칸을 차지하게 된다(참고로 `grid-area`는 `grid-*-start, grid-*-end`의 단축 속성이었다).
+
+또한 `.el4`의 경우 3행 전체를 차지하게 된다.
+
+이로서 `grid-*-start`, `grid-*-end` 혹은 `grid-area`에서 줄 번호를 통해 그리드 아이템의 범위를 지정하지 않고 더 간단하게 그리드 아이템의 영역을 지정해줄 수 있다.
+
+## `grid-template` 속성
+
+`grid-template-xxx`의 단축 속성으로 `grid-template-{rows, columns, areas}`을 축약하여 사용할 수 있다.
+
+```
+.container {
+ grid-template: none | grid-template-rows | grid-template-columns | grid-template-areas;
+}
+```
+
 # 줄 번호 이름 명명하기
 
-`grid-template-columns`, `grid-template-rows`로 행, 열 생성 시 이름을 설정할 수 있다. 각 행 또는 열 크기 앞에 `[이름]`과 같이 대괄호로 묶어서 이름을 설정할 수 있고 공백을 구분자로 여러 값을 설정할 수도 있다.
+`grid-template-columns`, `grid-template-rows`로 행, 열 생성 시 셀 사이 줄 번호에 이름을 설정할 수 있다. 각 행 또는 열 크기 앞에 `[이름]`과 같이 대괄호로 묶어서 이름을 설정할 수 있고 공백을 구분자로 여러 값을 설정할 수도 있다.
 
 ```
 <div class="container">
@@ -268,7 +320,7 @@ CSS `repeat(반복 횟수, 패턴)` 함수로 행이나 열을 동일한 크기�
 .container {
     display: grid;
     height: 500px;
-    grid-template-columns: [header-start]repeat(4, [col-start] 25% [col-end]) [header-end];
+    grid-template-columns: [header-start] repeat(4, [col-start] 25% [col-end]) [header-end];
     grid-template-rows: [row-1]100px [row-2] minmax(15%, 25%) [row-3];
     gap: 5px;
 }
@@ -276,7 +328,7 @@ CSS `repeat(반복 횟수, 패턴)` 함수로 행이나 열을 동일한 크기�
 
 # 암시적 그리드, 명시적 그리드
 
-- 명시적 그리드(Explicit Grids): `grid-template-columns`, `grid-template-rows`, `grid-template-areas`를 명시하여 생성한 행과 열을 생성한 그리드를 말한다.
+- 명시적 그리드(Explicit Grids): `grid-template-columns`, `grid-template-rows`, `grid-template-areas`를 명시하여 행과 열을 생성한 그리드를 말한다.
 
 - 암시적 그리드(Implicit Grids): 그리드에 셀보다 많은 그리드 항목이 있거나 그리드 항목이 명시적 그리드 외부에 배치 될 때 그리드 컨테이너는 그리드에 그리드 선을 추가하여 그리드 트랙을 자동으로 생성하는데 이를 암시적 그리드라고 한다.
 
@@ -296,7 +348,7 @@ CSS `repeat(반복 횟수, 패턴)` 함수로 행이나 열을 동일한 크기�
 .container {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
-  grid-gap: 20px;
+  gap: 20px;
 }
 ```
 

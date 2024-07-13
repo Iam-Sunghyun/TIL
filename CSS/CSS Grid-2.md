@@ -1,3 +1,28 @@
+<h2>목차</h2>
+
+[그리드 컨테이너 정렬 속성](#-)
+
+- [`justify-items`](#justify-items)
+- [`align-items`](#align-items)
+- [`place-items`](#place-items)
+- [`justify-content`](#justify-content)
+- [`align-content`](#align-content)
+- [`place-content`](#place-content)
+
+* [그리드 아이템 속성](#--1)
+  - [`order`](#order)
+  - [`z-index`](#z-index)
+  - [`align-self`](#align-self)
+  - [`justify-self`](#justify-self)
+  - [`place-self`](#place-self)
+* [암시적 그리드 속성](#--2)
+  - [`grid-auto-rows`, `grid-auto-columns`,](#grid-auto-rows-grid-auto-columns)
+  - [`grid-auto-flow`](#grid-auto-flow)
+* [`repeat()` 함수 `auto-fill`과 `auto-fit`](#repeat-auto-fill-auto-fit)
+  - [`auto-fill`](#auto-fill)
+  - [`auto-fit`](#auto-fit)
+* [flexbox vs grid](#flexbox-vs-grid)
+
 # 그리드 컨테이너 정렬 속성
 
 그리드 컨테이너에 지정하여 트랙을 정렬할 수 있는 속성이다.
@@ -160,6 +185,7 @@ place-self: stretch auto;
 # 암시적 그리드 속성
 
 <!-- 사용 예 추가 -->
+
 ## `grid-auto-rows`, `grid-auto-columns`,
 
 암시적으로 추가되는 행, 열의 크기를 설정할 수 있다.
@@ -179,11 +205,16 @@ place-self: stretch auto;
     "footer footer footer footer";
   grid-auto-flow: column;
 }
-
 ```
 
-<!-- 수정 필요-->
-`dense`를 추가 값으로 사용할 수도 있는데 이는 작은 항목이 나중에 나오면 그리드의 공백을 빈 곳 없이 채운다. 이렇게 하면 더 큰 항목에 의해 남겨진 구멍을 채우게 되는데, 그러면 항목이 순서 없이 나타날 수 있습니다.
+`dense`를 추가 값으로 사용할 수도 있는데 이는 작은 항목이 나중에 나오면 그리드의 공백을 빈 곳 없이 채운다. 즉, 더 큰 항목에 의해 남겨진 구멍을 채우게 된다. 이런 경우 항목이 순서 없이 나타날 수 있으므로 주의.
+
+```
+.container {
+  display: grid;
+  grid-auto-flow: row | column | row dense | column dense;
+}
+```
 
 # `repeat()` 함수 `auto-fill`과 `auto-fit`
 
@@ -193,7 +224,7 @@ place-self: stretch auto;
 
 ## `auto-fill`
 
-현재 행을 최대한 많은 항목으로 채운 다음 줄바꿈하도록 설정한다.
+현재 행을 최대한 많은 항목으로 채운 다음 줄바꿈 하도록 설정한다.
 
 다음 예시 코드의 경우 `grid-template-columns: repeat(auto-fill, 15%);`으로 설정하여 15% 너비의 셀 6개가 열로 설정된다
 
@@ -214,8 +245,17 @@ place-self: stretch auto;
 ```
 
 ## `auto-fit`
+
 <!-- 수정 필요 -->
-전체 행, 열을 채울 만큼 아이템의 개수가 충분하지 않은 경우에 
+
+맞춤(fit)은 채움과 유사하게 작동하지만, 그리드 내부에 빈 트랙이 존재할 경우 반복 횟수만큼 반복된 트랙(셀)을 빈 트랙 공간을 나눠 핏팅(fitting)한다.
+
+```
+.container {
+  display: grid;
+  grid-template-rows: repeat(auto-fit, minmax(80px, auto));
+}
+```
 
 **[auto-fill, auto-fit]**
 
@@ -225,8 +265,6 @@ https://www.heropy.dev/p/c6ROLZ#h3_autofill_autofit
 
 https://uxkm.io/publishing/css/04-cssAdvanced/05-css_grid_part1#gsc.tab=0
 
-https://www.heropy.dev/p/c6ROLZ
-
-
-
 # flexbox vs grid
+
+요소를 행으로만, 혹은 열로만 나란히 배치할 땐 `flexbox`가 적절할 수 있고, 행, 열을 모두 사용해 좀 더 세밀하게 배치하고자 한다면 `grid`가 적절할 수 있다.
