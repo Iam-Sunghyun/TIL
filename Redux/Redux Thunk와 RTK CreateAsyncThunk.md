@@ -22,7 +22,7 @@ const asyncUpFetch = createAsyncThunk('counterSlice/asynUpFetch', async () => {
 
 비동기 처리 상태로는 프로미스와 마찬가지로 3가지가 있는데 `creator.pending`, `creator.fulfilled`, `creator.rejected`가 있다.
 
-이 3가지 상태에 대한 처리 로직은 다음과 같이 `createSlice`의 `extraReducers` 프로퍼티에 전달되는 함수 인수에 `addCase()` 로 전달해줘야 한다.
+이 3가지 상태에 대한 처리 로직은 다음과 같이 `createSlice`의 `extraReducers` 프로퍼티에 전달되는 함수 인수(`builder`)의 `addCase()`로 전달해줘야 한다.
 
 ```
 const counterSlice = createSlic({
@@ -30,22 +30,26 @@ const counterSlice = createSlic({
     initialState: {
         value: 0,
         status: 'test',
+        error: '',
     },
     extraReducers: (builder) => {
         builder.addCase(asyncUpFetch.pending, (state, action) => {   // pending 일때 동작
             state.status = 'Loading';
         })
         builder.addCase(asyncUpFetch.fulfilled, (state, action) => { // fulfilled 일때 동작
-            state.status = action.payload;   // action.payload에는 createAsyncThunk 로 액션 생성자 함수를 생성할 때 2번째 인수로 전달한 비동기 처리 로직의 반환 값이 담긴다.
+            state.value = action.payload;   // action.payload에는 createAsyncThunk 로 액션 생성자 함수를 생성할 때 2번째 인수로 전달한 비동기 처리 로직의 반환 값이 담긴다.
             state.status = 'complete';
         })
         builder.addCase(asyncUpFetch.rejected, (state, action) => {  // rejected 일때 동작
+            state.error = action.error.message
             state.status = 'fail';
         })
     }
 })
 ```
 
+비동기 함수가 성공적으로 `resolve` 하여 `fulfilled` 일때 프로미스 값은 `action.payload`에 담기고 `rejected` 일때 `action.error.message`에 담긴다(에러를 `resolve`한 경우 `action.payload`에 담긴다).
 
+**[RTK createAsyncThunk]**
 
-
+https://redux-toolkit.js.org/api/createAsyncThunk

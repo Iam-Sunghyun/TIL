@@ -286,7 +286,7 @@ export async function action({ request }) {
 
 # `<Form>` `submitting` 중 버튼 비활성화 하기
 
-리액트 라우터의 `Form`이 `submit`되면 리액트 라우터는 `action` 함수를 호출한다고 했다. `submit` 중일때 `useNavigation` 훅의 `state`가 `submitting`이 되는데(페이지가 로드중일 땐 `loading`) 이를 통해 버튼을 잠시 비활성화 해줄 수 있다.
+리액트 라우터의 `Form`이 `submit`되면 리액트 라우터는 `action` 함수를 호출한다고 했다. `submit` 중일때 `useNavigation` 훅의 `state`가 `submitting`이 되는데(로더 함수 호출 중일 땐 `loading`) 이를 통해 버튼을 잠시 비활성화 해줄 수 있다.
 
 ```
 function CreateOrder() {

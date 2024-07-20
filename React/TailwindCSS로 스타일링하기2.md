@@ -190,6 +190,11 @@ https://tailwindcss.com/docs/gap
 더 나은 방법은 컴포넌트 자체를 재사용 가능하게 구성하여 사용하는 것!
 
 ```
+// index.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 // 기존 유틸리티 클래스를 묶어서 새로운 클래스로 정의
 @layer components {
   .btn-primary {
@@ -250,7 +255,7 @@ export default {
 };
 ----------------------
 // 실제 사용 예시
-<div className='font-pizza bg-pizza'>
+<div className='font-pizza bg-test'>
     pizza font
 </div>
 ```

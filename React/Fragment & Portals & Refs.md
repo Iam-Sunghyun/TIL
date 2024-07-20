@@ -201,7 +201,7 @@ https://blog.logrocket.com/learn-react-portals-example/
 
 # `useRef` 훅
 
-`useRef` 훅은 렌더링이 필요하지 않은 값을 저장하기 위한 훅이다.
+`useRef` 훅은 렌더링이 필요하지 않은 값을 저장하거나 DOM 요소를 참조하기 위한 훅이다.
 
 `useRef`에 초기 값을 인수로 전달해 호출하면 `current`라는 이름의 단일 프로퍼티를 갖는 `ref` 객체를 반환한다. `current` 프로퍼티에는 인수로 전달한 값이 설정된다.
 
@@ -210,8 +210,6 @@ const ref = useRef(initialValue);
 
 ref -> { current: initialValue }
 ```
-
-`ref` 객체가 유용하게 사용되는 두 가지 경우가 있는데, 값을 저장하는 경우와 DOM을 참조하는 경우이다.
 
 ## `useRef`로 값 참조하기
 
@@ -340,6 +338,7 @@ ageInputRef.current.value = '';
 <!-- useRef 사용 예시 https://react.dev/reference/react/useRef#examples-dom -->
 <!--
 useRef()로 DOM 요소를 참조하여 값을 사용하는 경우...비제어 컴포넌트 -->
+
 ## Reference
 
 **[React docs Refs]**
@@ -356,7 +355,7 @@ https://meje.dev/blog/useref-not-queryselector
 
 `forwardRef`는 부모 컴포넌트에서 자녀 컴포넌트로 `ref`를 전달해주는 기능으로 부모 컴포넌트에서 자녀 컴포넌트의 요소에 접근해야될 때 사용한다.
 
-사용법은 아주 간단하다. `forwardRef`로 일반적인 `ref` 전달 방식으로 자녀 컴포넌트에 `ref`를 전달하며 `ref`를 전달받고자 하는 자녀 컴포넌트를 `export`할 때 `forwardRef()` 함수로 감싸주면 된다. 
+사용법은 아주 간단하다. `forwardRef`로 일반적인 `ref` 전달 방식으로 자녀 컴포넌트에 `ref`를 전달하며 `ref`를 전달받고자 하는 자녀 컴포넌트를 `export`할 때 `forwardRef()` 함수로 감싸주면 된다.
 
 해당 자녀 컴포넌트는 2번째 매개변수로 `ref`를 전달받는다.
 
