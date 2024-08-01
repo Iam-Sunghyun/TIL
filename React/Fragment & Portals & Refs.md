@@ -90,7 +90,7 @@ https://beta.reactjs.org/reference/react/Fragment
 
 # React Portals 이란?
 
-포탈(Portals)이란 HTML 요소를 DOM 트리의 다른 위치로 옮기는 기능이다.
+포탈(Portals)이란 HTML 요소를 DOM 계층 외부에 렌더링할 수 있는 기능이다.
 
 <!-- 내용 수정필? -->
 
@@ -98,9 +98,9 @@ https://beta.reactjs.org/reference/react/Fragment
 
 이는 페이지의 구조적으로도 좋지 않고 스크린 리더를 사용하는 경우 화면 최상위에 오버레이되는 모달인 것이 확실하지 않아져 접근성에도 좋지 않다.
 
-이런 경우 React 포탈을 사용해 요소를 DOM 트리의 다른 위치로 이동시킬 수 있다(EX) `<body>` 바로 밑).
+이런 경우 React 포탈을 사용해 요소를 DOM 트리의 다른 위치로 렌더링시킬 수 있다(EX) `<body>` 바로 밑).
 
-이외에도 부모 컴포넌트 외부로 이동한 요소는 버블링되는 이벤트를 수신하여 부모 컴포넌트와 통신할 수 있으며 `Context`를 사용해 데이터를 전달할 수도 있다.
+<!-- 이외에도 부모 컴포넌트 외부로 이동한 요소는 버블링되는 이벤트를 수신하여 부모 컴포넌트와 통신할 수 있으며 `Context`를 사용해 데이터를 전달할 수도 있다. -->
 
 포탈을 사용하기 위해서는 우선 요소를 이동시킬 위치를 지정해야하고 또 그것을 컴포넌트에게 알려야한다. 다음 챕터에서 실제 코드를 통해 그 절차를 확인해본다.
 
@@ -151,7 +151,7 @@ const ModalOverlay = (props) => {
   );
 };
 
-// 포탈용 래퍼 컴포넌트
+// ErrorModal이 렌더링될 때 createPortal로 감싸진 자식 요소들은 해당되는 위치에 렌더링된다.
 const ErrorModal = (props) => {
   return (
     <>
@@ -184,6 +184,10 @@ const ErrorModal = (props) => {
     <div id="root"></div>
   </body>
 ```
+
+또한 **Portal은 DOM 노드의 물리적 배치만 변경한다.** 즉, portal에 렌더링되는 JSX는 여전히 이를 렌더링하는 React 컴포넌트의 자식 노드 역할을 한다(컴포넌트 트리 상에서). 따라서 Portal로 이동되는 자식은 부모 요소가 제공하는 `context`에 액세스할 수 있으며 이벤트는 여전히 React 트리에 따라 자식에서 부모로 버블링된다.
+
+<!-- overflow: hidden인 컨테이너 내에서 콘텐츠가 짤리는 걸 피하기 위해서도 자주 사용하는듯 -->
 
 ## Reference
 

@@ -17,7 +17,7 @@
 
 앱의 규모가 커짐에 따라 생길 수 있는 `redux`의 문제점.
 
-- 기본 boilerplate를 위한 구성이 필요함(`action` 생성자, `reducer`, 필요에 따라 `redux-thunk` 같은 추가적인 미들웨어 설치 등
+- 기본 boilerplate를 위한 구성이 필요함(`action` 생성자, `reducer`, 필요에 따라 `redux-thunk` 같은 추가적인 미들웨어 설치 등)
 - 상태 객체의 크기가 커질수록 불변성을 위해 복사해야 되는 양도 많아지고, `reducer`의 내용도 매우 길어짐.
 - 액션 type 명 오타 및 충돌 가능성
 
@@ -394,3 +394,52 @@ https://ko.redux.js.org/introduction/why-rtk-is-redux-today
 **[store-setup-with-configurestore]**
 
 https://redux.js.org/usage/migrating-to-modern-redux#store-setup-with-configurestore
+
+# `Slice.caseReducers`로 리듀서 함수 호출하기
+
+`Slice.caseReducers`를 통해 특정 슬라이스의 리듀서 함수내에서 다른 리듀서 함수를 호출할 수 있다. 
+
+```
+const cartSlice = createSlice({
+  name: 'cart',
+  initialState,
+  reducers: {
+    addItem(state, action) {
+      // payload = new pizza object
+      const alreadyIn = state.cart.find(
+        (pizza) => pizza.pizzaId === action.payload.pizzaId
+      );
+      if (alreadyIn) {
+        alreadyIn.quantity += 1;
+        alreadyIn.totalPrice = alreadyIn.quantity * alreadyIn.unitPrice;
+      } else {
+        state.cart.push(action.payload);
+      }
+    },
+    deleteItem(state, action) {
+      // payload = pizzaId
+      state.cart = state.cart.filter(
+        (pizza) => pizza.pizzaId !== action.payload
+      );
+    },
+    clearCart(state) {
+      state.cart = [];
+    },
+    increaseItem(state, action) {
+      // payload = pizzaId
+      const item = state.cart.find((pizza) => pizza.pizzaId === action.payload);
+      item.quantity += 1;
+      item.totalPrice = item.quantity * item.unitPrice;
+    },
+    decreaseItem(state, action) {
+      // payload = pizzaId
+      const item = state.cart.find((pizza) => pizza.pizzaId === action.payload);
+      item.quantity -= 1;
+      item.totalPrice = item.quantity * item.unitPrice;
+
+      // cartSlice의 deleteItem 함수 호출
+      if(item.quantity === 0) cartSlice.caseReducers.deleteItem(state, action)
+    },
+  },
+});
+```

@@ -1,3 +1,10 @@
+<h2>목차</h2>
+
+- [`react-hook-form`으로 폼 데이터 유효성 검사하기](#react-hook-form----)
+- [`validate` 프로퍼티 - 사용자 정의 유효성 검사 함수로 유효성 검사하기](#validate----------)
+- [등록한 에러 메시지 참조하기](#---)
+- [`useForm` `defaultValues` 옵션으로 폼 기본 값 설정하기](#useform-defaultvalues-----)
+
 # `react-hook-form`으로 폼 데이터 유효성 검사하기
 
 `{...register()}`의 두 번째 인수로 옵션 객체를 전달해줄 수 있는데 옵션 객체의 `required`과 같은 프로퍼티를 전달하여 폼 요소 유효성 검사를 실시하고 에러가 발생한 상태에서 폼 submit 시 보여줄 에러 메시지를 설정할 수 있다.
@@ -232,4 +239,76 @@ const { register, handleSubmit, reset, getValues } = useForm();
     </Form>
   );
 }
+```
+
+# `useForm` `defaultValues` 옵션으로 폼 기본 값 설정하기
+
+`defaultValues` 옵션에 겍체를 전달하여 `register`로 등록한 폼 요소들의 기본 값을 설정할 수 있다.
+
+```
+function CreateCabinForm({ cabinToEdit = {} }) {
+  const { id: editId, ...editValues } = cabinToEdit;
+  const isEditSession = Boolean(editId);
+
+  const { register, handleSubmit, reset, getValues, formState } = useForm({
+    defaultValues: isEditSession ? editValues : {},
+  });
+  const { errors } = formState;
+
+  const queryClient = useQueryClient();
+  const { mutate, isLoading: isCreating } = useMutation({
+    mutationFn: createCabin,
+    onSuccess: () => {
+      toast.success("숙소 등록 성공");
+      queryClient.invalidateQueries({ queryKey: ["cabins"] });
+      reset();
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
+
+  function onSubmit(data) {
+    mutate({ ...data, image: data.image[0] });
+  }
+
+  function onError(err) {
+    console.log(err);
+  }
+
+  return (
+    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+      <FormRow id="name" label="cabin name" error={errors?.name?.message}>
+        <Input
+          type="text"
+          id="name"
+          disabled={isCreating}
+          {...register("name", {
+            required: "이름을 입력 해주세요.",
+          })}
+        />
+      </FormRow>
+
+      <FormRow id="maxCapacity" label="Maximum capacity" error={errors?.maxCapacity?.message}>
+        <Input
+          type="number"
+          id="maxCapacity"
+          disabled={isCreating}
+          {...register("maxCapacity", {
+            required: "내용을 입력 해주세요.",
+            min: {
+              value: 1,
+              message: "1 이상 값을 입력 해주세요",
+            },
+          })}
+        />
+      </FormRow>
+        .
+        .
+        .
+    </Form>
+  );
+}
+
+export default CreateCabinForm;
 ```

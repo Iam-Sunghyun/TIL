@@ -13,7 +13,7 @@
 
 중첩 라우트는 **부모 라우트 하위에 자식 라우트를 중첩시켜 부모 컴포넌트 내부에서 요청 경로에 따라 자식 컴포넌트를 변경하여 화면에 렌더링 해주고자 할 때** 사용하는 기능이다. **요청 경로는 상위 라우트의 경로를 기반으로 결정된다.**
 
-중첩 라우트를 사용하는 방법은 부모 `<Routes />` 하위에 자식 `<Routes />`를 정의해주고 부모 컴포넌트 내부에 경로와 매칭되는 자식 컴포넌트가 출력됐으면 하는 위치를 `<Outlet />` 컴포넌트를 사용하여 지정해준다.
+중첩 라우트를 사용하는 방법은 부모 `<Route />` 하위에 자식 `<Route />`를 정의해주고 부모 컴포넌트 내부에 경로와 매칭되는 자식 컴포넌트가 출력됐으면 하는 위치를 `<Outlet />` 컴포넌트를 사용하여 지정해준다.
 
 아래 예시 코드에선 `/app/cities`, `/app/countries`가 각각 `<Cities />`, `<Countries />` 컴포넌트를 반환하는 라우트와 매칭되고 해당 컴포넌트는 `SideBar.jsx`의 `<AppNav />` 컴포넌트 아래에 위치하게 된다.
 
@@ -100,7 +100,7 @@ https://www.robinwieruch.de/react-router-nested-routes/
 
 # Index Route
 
-라우트에 `index` 속성을 설정하여 부모 컴포넌트 내에서 기본으로 표시 될 자식 컴포넌트를 지정해줄 수 있다.
+라우트에 `index` 속성을 설정하여 부모 컴포넌트 내에 `<Outlet />`에 기본으로 표시 될 자식 컴포넌트를 지정해줄 수 있다.
 
 `index` 라우트에는 `path`를 지정하지 않아야 부모 컴포넌트 내에서 기본으로 렌더링된다. 아래 예시는 `/app`으로 요청 시 `<AppLayout />`의 내부의 `<Outlet />` 컴포넌트 위치에 `<Profile />` 컴포넌트가 기본으로 렌더링된다.
 
@@ -146,7 +146,7 @@ function App() {
     <Routes>
       <Route path='/app' element={<AppLayout />}>
         <Route index element={<CityList cities={cities} isLoading={isLoading} />} />
-        <Route path='cities' element={<CityList cities={cities} isLoading={isLoading} />} />     
+        <Route path='cities' element={<CityList cities={cities} isLoading={isLoading} />} />
         <Route path='cities/:id' element={<City />} />  // id 경로 매개변수 선언
       </Route>
       <Route path='*' element={<PageNotFound />} />
@@ -242,7 +242,7 @@ navigate(2);  // 앞으로 2번
 
 ## `<Navigate />` 컴포넌트
 
-`react-router`의 `<Navigate />` 컴포넌트를 사용해 좀 더 선언적으로 프로그래매틱 네비게이션을 구현할 수 있다. `useNavigate()` 훅에 비해 자주 사용되진 않으나, 중첩 라우트 내부에서 유용하게 쓸 수 있다.
+`react-router`의 `<Navigate />` 컴포넌트를 사용해 좀 더 선언적으로 프로그래매틱 네비게이션을 구현할 수 있다. `useNavigate()` 훅에 비해 자주 사용되진 않으나, 특정 페이지(Url)를 기본 페이지로 설정할 때 유용하다.
 
 다음 코드의 경우 `/app`으로 요청 시 `<AppLayout />` 컴포넌트가 화면에 렌더링된다. 그 후 하위에 `index` 라우트의 `<Navigate />` 컴포넌트와 매핑되는데 이때 `<Navigate />`는 `to`에 지정한 경로로 이동한다. 즉, `<Navigate />` 렌더링 될 때 지정한 경로로 이동시키는 기능을 한다.
 

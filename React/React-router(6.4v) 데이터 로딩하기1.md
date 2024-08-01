@@ -309,7 +309,7 @@ export default Menu;
 
 `useNavigation` 훅으로 애플리케이션의 페이지 상태를 식별할 수 있다(프로그래매틱 네비게이션의 `useNavigate` 훅과 다르다).
 
-`useNavigation` 훅이 반환하는 객체의 `state` 프로퍼티를 통해 페이지가 `idle`, `submitting`(폼 `submit` 실행 중), `loading`(`loader` 함수 실행 중) 상태인지 확인할 수 있으며 이때 `useNavigation`이 반환하는 객체의 상태는 한 페이지에만 적용되는 것이 아니라 라우터 전체에서(애플리케이션 전체 페이지) 확인할 수 있다.
+`useNavigation` 훅이 반환하는 객체의 `state` 프로퍼티를 통해 페이지가 `idle`, `submitting`(POST, PUT, PATCH 또는 DELETE를 통한 폼 submit), `loading`(일반 탐색 및 GET 폼 submit) 상태인지 확인할 수 있으며 이때 `useNavigation`이 반환하는 객체의 상태는 한 페이지에만 적용되는 것이 아니라 라우터 전체에서(애플리케이션 전체 페이지) 확인할 수 있다.
 
 라우트의 로더가 호출 중일 때 `loading` 상태가 되며 이를 통해 로딩 여부를 식별하여 화면에 표시 해줄 수 있다.
 
