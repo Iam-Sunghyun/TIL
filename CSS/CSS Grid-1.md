@@ -1,17 +1,20 @@
 <h2>목차</h2>
 
-- [`Grid`란?](#grid)
-- [열과 행 정의하기](#-)
-  - [`fr`(fraction) 단위를 사용한 가변 그리드](#frfraction-)
-  - [`repeat()` 함수로 행과 열 반복하기](#repeat-)
-  - [`minmax()` 함수로 최소, 최대 값 설정하기](#minmax-)
-- [`fit-content()`로 셀(트랙) 크기 설정하기](#fit-content-)
-- [그리드 아이템 여러 셀에 표시되게 하기](#--1)
-  - [`span` 키워드로 차지할 셀 명시하기](#span-)
-- [줄 번호 이름 명명하기](#--2)
-  - [`repeat()` 함수와 함께 이름 줄 번호 명명하기](#repeat--1)
-  - [암시적 그리드, 명시적 그리드](#--3)
-- [행과 열 사이 간격 설정](#--4)
+- [`Grid`란?](#grid란)
+- [열과 행 정의하기](#열과-행-정의하기)
+  - [`fr`(fraction) 단위를 사용한 가변 그리드](#frfraction-단위를-사용한-가변-그리드)
+  - [`min-content`, `max-content`](#min-content-max-content)
+  - [`repeat()` 함수로 행과 열 반복하기](#repeat-함수로-행과-열-반복하기)
+  - [`minmax()` 함수로 최소, 최대 값 설정하기](#minmax-함수로-최소-최대-값-설정하기)
+- [`fit-content()`로 셀(트랙) 크기 설정하기](#fit-content로-셀트랙-크기-설정하기)
+- [그리드 아이템 줄 번호로 여러 셀에 표시되게 하기](#그리드-아이템-줄-번호로-여러-셀에-표시되게-하기)
+  - [`span` 키워드로 차지할 셀 명시하기](#span-키워드로-차지할-셀-명시하기)
+- [그리드 셀 영역(area)에 이름 지정하여 사용하기](#그리드-셀-영역area에-이름-지정하여-사용하기)
+  - [`grid-template` 속성](#grid-template-속성)
+- [줄 번호 이름 명명하기](#줄-번호-이름-명명하기)
+  - [`repeat()` 함수와 함께 이름 줄 번호 명명하기](#repeat-함수와-함께-이름-줄-번호-명명하기)
+- [암시적 그리드, 명시적 그리드](#암시적-그리드-명시적-그리드)
+- [행과 열 사이 간격 설정](#행과-열-사이-간격-설정)
 
 # `Grid`란?
 
@@ -234,7 +237,7 @@ CSS `repeat(반복 횟수, 패턴)` 함수로 행이나 열을 동일한 크기�
     display: grid;
     height: 500px;
     grid-template-columns: repeat(4, 25%);
-    grid-template-rows: [row-1]100px [row-2] minmax(15%, 25%) [row-3];
+    grid-template-rows: [row-1] 100px [row-2] minmax(15%, 25%) [row-3];
     gap: 5px;
     grid-template-areas: "header header header header"
                          ". . main main"
@@ -257,7 +260,7 @@ CSS `repeat(반복 횟수, 패턴)` 함수로 행이나 열을 동일한 크기�
 
 또한 `.el4`의 경우 3행 전체를 차지하게 된다.
 
-이로서 `grid-*-start`, `grid-*-end` 혹은 `grid-area`에서 줄 번호를 통해 그리드 아이템의 범위를 지정하지 않고 더 간단하게 그리드 아이템의 영역을 지정해줄 수 있다.
+이로서 `grid-*-start`, `grid-*-end` 혹은 `grid-area`에서 셀 이름을 통해 그리드 아이템의 범위를 지정하지 않고 더 간단하게 그리드 아이템의 영역을 지정해줄 수 있다.
 
 ## `grid-template` 속성
 

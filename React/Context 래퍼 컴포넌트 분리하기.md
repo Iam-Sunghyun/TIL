@@ -2,7 +2,7 @@
 
 - [래퍼 컴포넌트로 컨텍스트 분리하기](#래퍼-컴포넌트로-컨텍스트-분리하기)
 - [컨텍스트로 객체를 전달할 시 주의할 점](#컨텍스트로-객체를-전달할-시-주의할-점)
-    - [주의할 점](#주의할-점)
+  - [주의할 점](#주의할-점)
 
 # 래퍼 컴포넌트로 컨텍스트 분리하기
 
@@ -79,7 +79,7 @@ function usePosts() {
 export { PostProvider, usePosts };
 ----------------------------------------
 // App.js -> PostContext를 공급하는 컴포넌트
-import { PostProvider, usePosts } from "./PostContext";
+import { PostProvider } from "./PostContext";
 
 function App() {
         .
@@ -125,7 +125,7 @@ function PostProvider({ children }) {
 }
 ```
 
-위와 같이 컨텍스트의 `value`에 객체를 직접 전달하게 되면 래퍼 컴포넌트(`PostContext`)에 리렌더링이 발생했을 경우 `value`에 전달한 객체도 재생성되기 때문에 컨텍스트를 사용하고있는 컴포넌트에 불필요한 렌더링이 발생할 수 있다.
+위와 같이 컨텍스트의 `value`에 객체를 직접 전달하게 되면 래퍼 컴포넌트(`PostContext`)에 리렌더링이 발생했을 경우 `value`에 전달한 객체도 재생성되기 때문에 컨텍스트를 사용하고 있는 컴포넌트에 불필요한 렌더링이 발생할 수 있다.
 
 따라서 혹시나 있을수 있는 불필요한 렌더링을 피하기 위해 다음과 같이 `useMemo()`를 사용하며 따로 객체를 생성하여 전달하는 것이 좋다.
 
@@ -157,5 +157,5 @@ function PostProvider({ children }) {
 ### 주의할 점
 
 ```
-useContext() 는 항상 호출하는 컴포넌트 상위에서 가장 가까운 provider를 찾는다. 즉, 조상 범위에서 찾고 useContext()를 호출하는 컴포넌트 안의 provider는 고려하지 않는다.
+useContext() 는 항상 호출하는 컴포넌트 상위에서 가장 가까운 provider를 찾는다. 즉, 조상 범위에서의 컨텍스트만을 참조하고 컴포넌트 안의 provider는 고려하지 않는다.
 ```

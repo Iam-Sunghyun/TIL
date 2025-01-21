@@ -1,27 +1,25 @@
 <h2>목차</h2>
 
-[그리드 컨테이너 정렬 속성](#-)
-
-- [`justify-items`](#justify-items)
-- [`align-items`](#align-items)
-- [`place-items`](#place-items)
-- [`justify-content`](#justify-content)
-- [`align-content`](#align-content)
-- [`place-content`](#place-content)
-
-* [그리드 아이템 속성](#--1)
+- [그리드 컨테이너 정렬 속성](#그리드-컨테이너-정렬-속성)
+  - [`justify-items`](#justify-items)
+  - [`align-items`](#align-items)
+  - [`place-items`](#place-items)
+  - [`justify-content`](#justify-content)
+  - [`align-content`](#align-content)
+  - [`place-content`](#place-content)
+- [그리드 아이템 속성](#그리드-아이템-속성)
   - [`order`](#order)
   - [`z-index`](#z-index)
   - [`align-self`](#align-self)
   - [`justify-self`](#justify-self)
   - [`place-self`](#place-self)
-* [암시적 그리드 속성](#--2)
+- [암시적 그리드 속성](#암시적-그리드-속성)
   - [`grid-auto-rows`, `grid-auto-columns`,](#grid-auto-rows-grid-auto-columns)
   - [`grid-auto-flow`](#grid-auto-flow)
-* [`repeat()` 함수 `auto-fill`과 `auto-fit`](#repeat-auto-fill-auto-fit)
+- [`repeat()` 함수 `auto-fill`과 `auto-fit`](#repeat-함수-auto-fill과-auto-fit)
   - [`auto-fill`](#auto-fill)
   - [`auto-fit`](#auto-fit)
-* [flexbox vs grid](#flexbox-vs-grid)
+- [flexbox vs grid](#flexbox-vs-grid)
 
 # 그리드 컨테이너 정렬 속성
 
@@ -99,7 +97,7 @@ place-items: stretch legacy;
 
 ## `place-content`
 
-`align-content`, `justify-content` 의 단축 속성 첫 번째 값이 `align-content`이고 두 번째 값이 `justify-content`의 값이 된다. 첫 번째 값만 지정되면 두 번째 값도 해당 값으로 지정된다.
+`align-content`, `justify-content`의 단축 속성. 첫 번째 값이 `align-content`이고 두 번째 값이 `justify-content`의 값이 된다. 첫 번째 값만 지정되면 두 번째 값도 해당 값으로 지정된다.
 
 ```
 /* 위치 정렬 */

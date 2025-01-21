@@ -13,6 +13,7 @@
   - [`useRef`로 DOM 참조하기](#useref로-dom-참조하기)
   - [Reference](#reference-2)
 - [`forwardRef`로 `ref` 전달하기](#forwardref로-ref-전달하기)
+- [19v forwardRef() 삭제!](#19v-forwardref-삭제)
   - [Reference](#reference-3)
 
 # JSX의 제한 사항
@@ -396,6 +397,10 @@ export default MyInput;
 ```
 
 공식 문서에서는 무분별한 `ref` 사용을 지양하라고 되어있다. `props`로 가능한 작업이라면 `ref`를 사용하지 말 것.
+
+# 19v forwardRef() 삭제!
+
+React 19에서는 함수형 컴포넌트에서 `ref`를 `prop`으로 직접 접근할 수 있게 되었다. 이전에는 `forwardRef API`를 사용해야 했으나, 이제는 자식 컴포넌트가 새로운 `ref` `prop`을 받아 사용할 수 있다.
 
 ## Reference
 

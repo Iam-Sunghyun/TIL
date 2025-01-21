@@ -3,9 +3,6 @@
 - [리덕스 리듀서에서 HTTP 요청 처리](#리덕스-리듀서에서-http-요청-처리)
 - [1. 특정 컴포넌트에 HTTP 요청(부수효과 로직) 집어넣기](#1-특정-컴포넌트에-http-요청부수효과-로직-집어넣기)
   - [에러 발생(`useEffect()` 순서 문제)](#에러-발생useeffect-순서-문제)
-- [2. 리덕스 리듀서에서 HTTP 요청 처리하기](#2-리덕스-리듀서에서-http-요청-처리하기)
-- [3. 사용자 정의 액션 생성자 함수](#3-사용자-정의-액션-생성자-함수)
-- [4. 미들웨어(redux-thunk, redux-saga ...)](#4-미들웨어redux-thunk-redux-saga-)
 
 # 리덕스 리듀서에서 HTTP 요청 처리
 
@@ -25,7 +22,6 @@
 
 4. 미들웨어 사용
 
-
 # 1. 특정 컴포넌트에 HTTP 요청(부수효과 로직) 집어넣기
 
 장바구니에 특정 상품을 추가하면 리덕스 `store`의 `state.myCart.cartList`가 업데이트 된다. 그러면 `useSelector()`로 상태를 사용 하고 있는 `cartButton.js` 컴포넌트가 리렌더링 되고, `cartList`를 의존성으로 사용 중인 `useEffect()`가 변경을 감지하여 실행되는데 이때 파이어베이스 실시간 DB에 `PUT`요청을 전송하여 데이터가 추가된다.
@@ -35,6 +31,7 @@
 `async/await`과 `try/catch`로 에러를 처리해주었다.
 
 <!-- 코드 문제 있음. useEffect() 처리 순서에 따른 백엔드 데이터 날라감 문제  -->
+
 ```
 // App.js
 // 애플리케이션 시작 시 백엔드에서 장바구니 목록 가져와 cartList 상태 변수에 저장
@@ -62,9 +59,9 @@ function App() {
           dispatch(myCartActions.fetchCartList(data));
         } else {
           throw new Error(`${cartList.status} ${cartList.statusText}`);
-        } 
+        }
       } catch (e) {
-        console.log(e); 
+        console.log(e);
       }
     }
     fetchCart();
@@ -115,7 +112,7 @@ const CartButton = (props) => {
     }
     addCart();
   }, [cartList]);
-  
+
   return (
     <button className={ classes.button } onClick={ cartButtonClickHandler }>
       { newItemAlert && <div className={ classes.alert } ></div> }
@@ -136,17 +133,16 @@ export default CartButton;
 
 -> 백엔드에 데이터를 저장하는 `effect`의 실행을 좀 더 제한할 필요가 있다.
 
-
 <!-- 일단 보류, useEffect 순서 문제, 경합 상태 문제? -> 짧은 시간에 요청이 많이 일어났을 때 문제인듯. 내가 겪은 것과 다른 문제-->
+
 ```
 Effects에서 직접 데이터 가져오기를 작성하는 것은 반복적이며 나중에 캐싱 및 서버 렌더링과 같은 최적화를 추가하기 어렵게 만듭니다. 자신의 것이든 커뮤니티에서 유지 관리하는 사용자 지정 Hook을 사용하는 것이 더 쉽습니다.
 ```
 
-
-
 참고로 `useEffect()`에 전달되는 `setup` 함수의 반환 값은 `cleanup` 함수만 가능하기 때문에, 항상 프로미스를 반환하는 `async` 함수의 경우 내부함수로 정의해줘야 한다.
 
 <!-- 일단 보류 -->
+
 **[`Effect`로 데이터 `Fetch`하기]**
 
 https://react.dev/reference/react/useEffect#fetching-data-with-effects
@@ -155,9 +151,10 @@ https://react.dev/reference/react/useEffect#fetching-data-with-effects
 
 https://react.dev/reference/react/useEffect#what-are-good-alternatives-to-data-fetching-in-effects
 
+<!--
 # 2. 리덕스 리듀서에서 HTTP 요청 처리하기
 
 
 # 3. 사용자 정의 액션 생성자 함수
 
-# 4. 미들웨어(redux-thunk, redux-saga ...)
+# 4. 미들웨어(redux-thunk, redux-saga ...) -->

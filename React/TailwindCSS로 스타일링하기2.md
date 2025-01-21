@@ -1,16 +1,17 @@
 <h2>목차</h2>
 
-- [width, height, margin, padding에 임의의 값(Arbitrary values) 설정하기](#width-height-margin-padding-arbitrary-values-)
-- [미디어 쿼리로 반응형 웹 디자인하기](#-)
-  - [미디어 쿼리 중단점 설정 참고](#--1)
-- [자식 요소 사이 margin 설정하기(Space between)](#-margin-space-between)
-  - [`flexbox`, `grid` 자식 요소 사이에 여백(margin) 설정하기](#flexbox-grid-margin-)
-- [`flexbox`로 화면 height 꽉 채우기](#flexbox-height-)
-- [`grid`로 화면 height 꽉 채우기](#grid-height-)
-- [@apply 지시어로 재사용 유틸리티 스타일 지정하기](#apply-)
-- [사용자 정의 기본 `font-family` 설정 값 변경하기](#-font-family-)
-- [`divide`로 자식 요소 테두리(border) 설정하기](#divide-border-)
-  - [자식 요소 순서가 바뀐 경우](#--2)
+- [width, height, margin, padding에 임의의 값(Arbitrary values) 설정하기](#width-height-margin-padding에-임의의-값arbitrary-values-설정하기)
+- [미디어 쿼리로 반응형 웹 디자인하기](#미디어-쿼리로-반응형-웹-디자인하기)
+  - [미디어 쿼리 중단점 설정 참고](#미디어-쿼리-중단점-설정-참고)
+- [자식 요소 사이 margin 설정하기(Space between)](#자식-요소-사이-margin-설정하기space-between)
+  - [`flexbox`, `grid` 자식 요소 사이에 여백(margin) 설정하기](#flexbox-grid-자식-요소-사이에-여백margin-설정하기)
+  - [요소 텍스트 간격(`letter-spacing`) 설정하기](#요소-텍스트-간격letter-spacing-설정하기)
+- [`flexbox`로 화면 height 꽉 채우기](#flexbox로-화면-height-꽉-채우기)
+- [`grid`로 화면 height 꽉 채우기](#grid로-화면-height-꽉-채우기)
+- [@apply 지시어로 재사용 유틸리티 스타일 지정하기](#apply-지시어로-재사용-유틸리티-스타일-지정하기)
+- [사용자 정의 `font-family` 설정하기](#사용자-정의-font-family-설정하기)
+- [`divide`로 자식 요소 테두리(border) 설정하기](#divide로-자식-요소-테두리border-설정하기)
+  - [자식 요소 순서가 바뀐 경우](#자식-요소-순서가-바뀐-경우)
 
 # width, height, margin, padding에 임의의 값(Arbitrary values) 설정하기
 
@@ -211,7 +212,13 @@ https://tailwindcss.com/docs/gap
 
 https://tailwindcss.com/docs/reusing-styles#extracting-classes-with-apply
 
-# 사용자 정의 기본 `font-family` 설정 값 변경하기
+**[Using CSS and @layer]**
+
+https://tailwindcss.com/docs/adding-custom-styles#using-css-and-layer
+
+https://tailwindcss.com/docs/functions-and-directives#apply
+
+# 사용자 정의 `font-family` 설정하기
 
 TailwindCSS가 제공하는 기본(`sans`, `serif`, `mono`) 폰트 패밀리 외에도 구글 폰트를 `<link>`로 로드하여 사용자 정의 폰트 패밀리 클래스로 명명하여 사용할 수 있다(폰트 패밀리 뿐아니라 다른 기존 유틸리티 클래스 값을 재정의할 수 있다).
 
@@ -260,7 +267,7 @@ export default {
 </div>
 ```
 
-만약 사용자 정의 폰트 패밀리를 `sans`로(TailwindCSS 기본 폰트중 우선 적용되는 폰트 패밀리) 지정하면 모든 폰트가 사용자가 정의한 폰트로 지정된다.
+만약 사용자 정의 폰트 패밀리를 `sans`로(TailwindCSS 기본 폰트 중 우선 적용되는 폰트 패밀리) 지정하면 모든 폰트가 사용자가 정의한 폰트로 지정된다.
 
 <!-- 이때 스페이스(공백) 같은 문자가 자동으로 이스케이프되지 않으므로 이런 경우 따옴표(`'`)로 묶어줘야 한다. -->
 
