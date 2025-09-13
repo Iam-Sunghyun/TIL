@@ -1,9 +1,11 @@
 <h2>목차</h2>
 
 - [`useEffect`](#useeffect)
-  - [컴포넌트가 순수 함수일 때 장점?](#컴포넌트가-순수-함수일-때-장점)
+  - [컴포넌트가 순수 함수이어야 하는 이유](#컴포넌트가-순수-함수이어야-하는-이유)
+  - [컴포넌트가 순수 함수가 아닐 경우 예시](#컴포넌트가-순수-함수가-아닐-경우-예시)
+  - [그렇다면 부수효과는 어디서?](#그렇다면-부수효과는-어디서)
   - [Reference](#reference)
-  - [`useEffect`에서 Cleanup 함수 사용하기](#useeffect에서-cleanup-함수-사용하기)
+- [`useEffect`에서 Cleanup 함수 사용하기](#useeffect에서-cleanup-함수-사용하기)
   - [Cleanup 함수로 디바운스(debounce) 구현하기](#cleanup-함수로-디바운스debounce-구현하기)
 - [`useEffect` 의존성 배열에 대한 규칙](#useeffect-의존성-배열에-대한-규칙)
   - [의존성 배열에 불필요한 종속성 최소화 하는법](#의존성-배열에-불필요한-종속성-최소화-하는법)
@@ -24,43 +26,11 @@ useEffect(() => { ... }, [ dependencies ]);
 
 첫 번째로 전달한 함수는 **컴포넌트가 마운트 되면(컴포넌트가 DOM에 처음 추가되면)실행되며, 이후에는 의존성 데이터가 변경된 다음 발생한 리렌더링 후에 실행된다**(`Object.is` 함수로 배열의 요소들을 이전 렌더링 값과 비교).
 
-<!-- 개념 추가 이해 필-->
-
 리액트의 범위를 벗어난 부수 효과(side effect, 부작용)를 일으키는 작업은 렌더링 로직과 분리되어야 하며 필요시 렌더링 이후에 수행되어야 한다. 이 말은 **컴포넌트가 순수함수이어야 한다는 것**인데 컴포넌트를 순수한 함수로만 엄격하게 작성하면 **코드베이스가 커짐에 따라 예측할 수 없는 버그와 동작을 막을 수 있고 또 리액트는 컴포넌트가 순수 함수일 것을 가정하여 설계되었기 때문에 반드시 순수 함수로 작성되어야 한다.**
-
-## 컴포넌트가 순수 함수일 때 장점?
-
-1. 예측 가능한 동작: 순수한 컴포넌트는 동일한 입력에 대해 항상 동일한 출력을 생성한다. 이는 컴포넌트의 동작을 예측 가능하게 만들어 준다. 같은 props를 전달하면 항상 같은 결과를 얻을 수 있기 때문에 디버깅과 테스트가 더 쉬워진다.
-
-2. 재사용성: 순수한 컴포넌트는 외부 의존성이 없고 입력에만 의존하므로 재사용성이 높아진다. 다른 프로젝트나 다른 부분에서 같은 컴포넌트를 사용할 수 있고 순수한 컴포넌트는 하나의 기능을 수행하기 때문에 다른 컴포넌트와 조합하여 더 복잡한 UI를 구성하는 데 유용하다.
-
-3. 성능 최적화(메모이제이션): 순수한 컴포넌트는 불필요한 렌더링을 방지하여 성능을 최적화할 수 있다. 리액트는 가상 DOM을 사용하여 컴포넌트의 변경사항을 비교하고 필요한 경우에만 업데이트를 수행하는데 순수한 컴포넌트는 동일한 props를 전달할 때 이전과 동일한 결과를 반환하기 때문에 변경사항이 없으면 불필요한 렌더링을 방지할 수 있다(`React.memo`).
-
-4. 테스트 용이성: 순수한 컴포넌트는 독립적으로 테스트할 수 있다. 외부 의존성이 없고 입력에만 의존하기 때문에 특정 상황에서의 동작을 쉽게 검증할 수 있다. 이는 테스트의 안정성과 신뢰성을 향상시키는 데 도움이 된다.
-
-컴포넌트의 순수성을 유지하는 것은 리액트 애플리케이션을 개발하고 유지보수하는 데 매우 중요하다. 이를 통해 코드의 가독성, 재사용성, 성능, 테스트 용이성 등을 향상시킬 수 있다.
-
-<!-- 1. 재사용성,
-2. 캐시에 안전(메모이제이션 가능 React.memo, )
-3. 버그 가능성 ↓ 예측하기 쉬우므로 테스트 용이 -->
-
-<!-- 자세한 추가 내용은 링크 참조. -->
-
-## Reference
-
-**[React docs 컴포넌트가 순수해야하는 이유]**
-
-https://react.dev/learn/keeping-components-pure#why-does-react-care-about-purity
-
-**[순수 함수의 장점]**
-
-https://www.learningjournal.guru/article/scala/functional-programming/benefits-of-pure-functions/
-
-https://alvinalexander.com/scala/fp-book/benefits-of-pure-functions/
 
 <br/>
 
-참고로 **공식 문서에선 부수 효과를 내는 작업은 이벤트 핸들러 내부에서 수행하는걸 권장하고 있다. 그러나 부수 효과를 처리할 적절한 이벤트 핸들러를 발견하지 못하는 경우도 있는데, 그런 경우 최후의 수단으로 useEffect를 사용하라고 되어있다**(공식 홈페이지에 'escape hatch'라고 표현되어있는 이유..).
+**공식 문서에선 부수 효과를 내는 작업은 이벤트 핸들러 내부에서 수행하는걸 권장하고 있다. 그러나 부수 효과를 처리할 적절한 이벤트 핸들러를 발견하지 못하는 경우도 있는데, 그런 경우 최후의 수단으로 useEffect를 사용하라고 되어있다**.
 
 다음은 브라우저 로컬 스토리지(localstorage)에 저장된 값을 이용해 로그인 여부를 확인하는 코드인데, `console.log()`를 통해 `useEffect`가 호출되는 횟수를 확인해볼 수 있다.
 
@@ -110,9 +80,114 @@ export default App;
 
 자주 사용되는 방법은 아니지만 만약 **의존성을 아예 전달하지 않는다면 해당 `useEffect()`는 매 렌더링마다 실행된다.**
 
-추가로 개발 환경에서 리액트 v18의 `<StrictMode>`가 활성화 되어있는 경우 컴포넌트 마운트 시 `setup` 함수와 `cleanup` 함수가 우선 한번씩 호출된 후 `setup` 함수가 호출된다. 이는 Effect의 로직이 올바르게 구현되었는지 확인하기 위한 테스트의 일환이다.
+추가로 개발 환경에서 리액트 v18의 `<StrictMode>`가 활성화 되어있는 경우 컴포넌트 마운트 시 `setup` 함수가 호출된 후 `cleanup` 함수와 `setup` 함수가 한번 더 호출된다(즉 컴포넌트를 두 번 호출함). 이는 Effect의 로직이 올바르게 구현되었는지 확인하기 위한 테스트의 일환이다.
 
-## `useEffect`에서 Cleanup 함수 사용하기
+## 컴포넌트가 순수 함수이어야 하는 이유
+
+<h3>1. 예측 가능한 렌더링</h3>
+
+순수한 컴포넌트는 동일한 입력에 대해 항상 동일한 출력을 생성한다. 이는 컴포넌트의 동작을 예측 가능하게 하며 같은 props를 전달하면 항상 같은 결과를 얻을 수 있기 때문에 불필요한 리렌더링이 발생하지 않는다.
+
+<h3>2. 재사용성</h3>
+
+순수한 컴포넌트는 외부 의존성이 없고 입력에만 의존하므로 재사용성이 높아진다. 다른 프로젝트나 다른 부분에서 같은 컴포넌트를 사용할 수 있고 순수한 컴포넌트는 하나의 기능을 수행하기 때문에 다른 컴포넌트와 조합하여 더 복잡한 UI를 구성하는 데 유용하다.
+
+<h3>3. 성능 최적화(메모이제이션)</h3>
+
+`React.memo`와 같은 최적화 함수는 컴포넌트가 순수 함수일 것이라 가정하고 있다. 만약 순수하지 않은 컴포넌트라면 props가 같아도 다른 결과를 반환할 가능성이 있기 때문에 캐시된 컴포넌트를 신뢰할 수 없다.
+
+<h3>4. 테스트 용이성</h3>
+
+순수한 컴포넌트는 독립적으로 테스트할 수 있다. 외부 의존성이 없고 입력에만 의존하기 때문에 특정 상황에서의 동작을 쉽게 검증할 수 있다. 반대로 부수 효과가 있다면 결과가 실행 시점마다 달라져 테스트가 어려워 진다.
+
+결국 컴포넌트의 순수성을 유지하는 것은 리액트 애플리케이션을 개발하고 유지보수하는 데 매우 중요하다. 이를 통해 코드의 가독성, 재사용성, 성능, 테스트 용이성 등을 향상시킬 수 있다.
+
+## 컴포넌트가 순수 함수가 아닐 경우 예시
+
+<h3>1. 랜덤 값</h3>
+
+```
+function RandomBox({ size }) {
+  const color = Math.random() > 0.5 ? "red" : "blue";
+  return <div style={{ width: size, height: size, background: color }} />;
+}
+
+export default function App() {
+  const [count, setCount] = React.useState(0);
+
+  return (
+    <>
+      <RandomBox size={100} />
+      <button onClick={() => setCount(count + 1)}>Re-render</button>
+    </>
+  );
+}
+
+// 같은 size props라도 다른 color가 나올 수 있음
+```
+
+<h3>2. 외부 전역 변수 의존</h3>
+
+```
+let theme = "light";
+
+function ThemedBox() {
+  return <div>{theme}</div>;
+}
+
+export default function App() {
+  const [count, setCount] = React.useState(0);
+
+  return (
+    <>
+      <ThemedBox />
+      <button onClick={() => (theme = theme === "light" ? "dark" : "light")}>
+        Toggle Theme
+      </button>
+      <button onClick={() => setCount(count + 1)}>Force Re-render</button>
+    </>
+  );
+}
+```
+
+<h3>3. 렌더링 중 부수 효과 실행</h3>
+
+```
+function UserProfile({ userId }: { userId: string }) {
+  // ❌ 잘못된 예시: 렌더링 중 부수효과
+  fetch(`/api/user/${userId}`)
+    .then(res => res.json())
+    .then(data => {
+      console.log("유저 데이터:", data);
+    });
+
+  return <div>유저 {userId}의 프로필</div>;
+}
+```
+
+리렌더링이 일어날 때마다 fetch가 다시 호출됨 → 같은 요청이 반복적으로 실행된다. React는 렌더링이 여러 번 실행될 수 있으므로(특히 StrictMode에서 2번 실행), 중복 네트워크 요청이 발생할 수 있음. 이런 작업은 useEffect 안에서 처리해야 안전하다.
+
+<!-- 챗 지피티 2. 렌더링 중 DOM 조작부터터 -->
+
+```
+
+```
+
+## 그렇다면 부수효과는 어디서?
+
+## Reference
+
+**[React docs 컴포넌트가 순수해야하는 이유]**
+
+https://react.dev/learn/keeping-components-pure#why-does-react-care-about-purity
+
+**[순수 함수의 장점]**
+
+https://www.learningjournal.guru/article/scala/functional-programming/benefits-of-pure-functions/
+
+https://alvinalexander.com/scala/fp-book/benefits-of-pure-functions/
+
+# `useEffect`에서 Cleanup 함수 사용하기
 
 `useEffect` 에서는 함수를 반환 할 수 있는데 이를 **cleanup 함수**라고 한다.
 
@@ -239,7 +314,7 @@ useEffect(() => {
    - (실제로 실습 프로젝트에서 effect로 가져오는 데이터의 순서가 달라지는 경우가 있어 화면에 데이터가 올바르게 표시되지 않은 경우가 있었다.)
 
 3. 상태(state) 변수로 다른 상태 변수를 업데이트
-   
+
    - 리렌더링이 여러 번 발생할 수 있다.
    - 파생 상태(derived state, 기본 상태로부터 직접적으로 계산된 상태)나 이벤트 핸들러를 사용하도록 한다.
 
