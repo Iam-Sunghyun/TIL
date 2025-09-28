@@ -13,6 +13,7 @@
 - [`<Image />` 태그로 이미지 최적화](#image--태그로-이미지-최적화)
   - [로컬 이미지 가져오기](#로컬-이미지-가져오기)
   - [외부 이미지 가져오기](#외부-이미지-가져오기)
+  - [`<Image />` fill 속성 사용하기](#image--fill-속성-사용하기)
 
 # 프로젝트 생성
 
@@ -301,6 +302,14 @@ const nextConfig = {
 
 export default nextConfig;
 ```
+
+## `<Image />` fill 속성 사용하기
+
+Next.js의 `<Image fill>` 속성은 position이 static이 아닌 부모 요소를 기준으로 `{ position: absolute; width: 100%; height: 100%; }`을 적용해 이미지를 채운다.
+
+이때 모든 조상 요소가 static이면 Image 컴포넌트 크기가 뷰포트 기준이 될 수 있다.
+
+따라서 적절한 부모 위치에 relative, absolute, fixed와 같은 값을 사용해줘야 한다
 
 **[Nextjs Image Optimization]**
 

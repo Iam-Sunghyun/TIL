@@ -27,14 +27,14 @@ function Greeting(props){
   return <GuestGreeting />;
 }
 ```
+
 <h3>엘리먼트 변수(Element variable)</h3>
 
 컴포넌트를 할당한 변수를 말한다. 엄밀히는 컴포넌트가 반환하는 엘리먼트를 변수에 담아 사용하는 것.
 
-
 # 인라인 조건(Inline condition)
 
-인라인 조건은 리액트 내에서 매우 자주 사용되는 패턴으로 `JSX` 내부에 중괄호(`{}`)를 사용하여 `&&`, `? :`과 같은 자바스크립트 논리 연산자로 렌더링 될 컴포넌트를 결정한다. 
+인라인 조건은 리액트 내에서 매우 자주 사용되는 패턴으로 `JSX` 내부에 중괄호(`{}`)를 사용하여 `&&`, `? :`과 같은 자바스크립트 논리 연산자로 렌더링 될 컴포넌트를 결정한다.
 
 다음 예시는 삼항 조건 연산자를 사용하여 기본 값은 모두 출력, 특정 년도가 입력되면 해당 년도 값의 엘리먼트들을 반환하는 컴포넌트이다.
 
@@ -48,11 +48,11 @@ function Expenses(props) {
   let expenseItems = props.expenseList.map((expense) => (
     <ExpenseItem key={expense.id} title={expense.title} amount={expense.amount} date={expense.date} />
   ));
-    
+
   if (year !== 'all') {
     expenseItems = expenseItems.filter((expense) => expense.props.date.split('-')[0] === year);
   }
-    
+
   // ExpenseFilter.js state 끌어올리기용 함수
   const getExpenseYear = (selectedYear) => {
     setYear(selectedYear);
@@ -75,7 +75,7 @@ export default Expenses;
 
 추가로 반환 값이 `false`, `null`, `undefined`인 경우에 리액트는 아무것도 출력하지 않는다
 
-`&&` 연산자 사용 예시는 아래 링크 참조. 
+`&&` 연산자 사용 예시는 아래 링크 참조.
 
 ## Reference
 
@@ -83,11 +83,6 @@ export default Expenses;
 
 https://beta.reactjs.org/learn/conditional-rendering
 
-
 **[React 조건부 렌더링에서 `&&` 사용하지 말아야하는 이유]**
 
 https://medium.com/geekculture/stop-using-for-conditional-rendering-in-react-a0f7b96200f8
-
-
-<!-- # 컴포넌트 렌더링 막기
-false, null, undefined 값들은 아무것도 출력하지 않는다-->

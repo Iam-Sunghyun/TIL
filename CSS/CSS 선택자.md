@@ -6,10 +6,10 @@
   - [다중 선택자](#다중-선택자)
   - [id 선택자(Id selectors)](#id-선택자id-selectors)
   - [클래스 선택자](#클래스-선택자)
-  - [자손 선택자 " " (Descendant selectors), 후손 선택자](#자손-선택자---descendant-selectors-후손-선택자)
-  - [자식 선택자 \> (Child selectors)](#자식-선택자--child-selectors)
-  - [인접 형제 선택자 + (Adjacent sibling selectors)](#인접-형제-선택자--adjacent-sibling-selectors)
-  - [일반 형제 선택자 ~ (General sibling selectors)](#일반-형제-선택자--general-sibling-selectors)
+  - [자손 결합자 " " (Descendant selectors), 후손 결합자](#자손-결합자---descendant-selectors-후손-결합자)
+  - [자식 결합자 \> (Child selectors)](#자식-결합자--child-selectors)
+  - [인접 형제 결합자 + (Adjacent sibling selectors)](#인접-형제-결합자--adjacent-sibling-selectors)
+  - [일반 형제 결합자 ~ (General sibling selectors)](#일반-형제-결합자--general-sibling-selectors)
   - [가상 클래스, 의사 클래스 (Pseudo class)](#가상-클래스-의사-클래스-pseudo-class)
     - [자주 쓰이는 가상 클래스 몇 가지](#자주-쓰이는-가상-클래스-몇-가지)
   - [가상 요소, 의사 요소(Pseudo element)](#가상-요소-의사-요소pseudo-element)
@@ -77,7 +77,7 @@ li.spacious {    // class가 spacious인 모든 li 요소
 
 클래스는 `id`와 달리 여러 요소에 사용해 그룹화할 수 있다. 가장 자주 사용.
 
-## 자손 선택자 " " (Descendant selectors), 후손 선택자
+## 자손 결합자 " " (Descendant selectors), 후손 결합자
 
 ```
 article p {
@@ -89,7 +89,7 @@ article p {
 
 첫 번째 선택자와 일치하는 조상 요소의 하위에서 두번째 선택자와 일치하는 모든 요소에게 스타일 적용됨.
 
-## 자식 선택자 > (Child selectors)
+## 자식 결합자 > (Child selectors)
 
 ```
 div > ol {
@@ -103,7 +103,7 @@ div > ol {
 
 두 선택자 사이 > 기호를 자식 결합자(child combinator)라 하고, 첫 번째 선택자와 일치하는 요소의 '직계 자식'인 두 번째 선택자와 일치하는 요소만 적용한다.
 
-## 인접 형제 선택자 + (Adjacent sibling selectors)
+## 인접 형제 결합자 + (Adjacent sibling selectors)
 
 ```
 <ul>
@@ -121,7 +121,7 @@ li:first-of-type + li {
 
 위의 경우 가상 클래스` li:first-of-type`의 바로 다음 요소인 Two!만 빨강색이 적용된다.
 
-## 일반 형제 선택자 ~ (General sibling selectors)
+## 일반 형제 결합자 ~ (General sibling selectors)
 
 ```
 /* Paragraphs that are siblings of and

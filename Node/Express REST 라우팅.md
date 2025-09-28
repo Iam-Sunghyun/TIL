@@ -1,4 +1,5 @@
 # 목차
+
 - [목차](#목차)
 - [HTTP 요청 메서드 GET vs POST](#http-요청-메서드-get-vs-post)
   - [GET](#get)
@@ -20,7 +21,7 @@
     - [`getter`에 문자열을 전달한 경우](#getter에-문자열을-전달한-경우)
   - [쿼리 문자열 값을 이용한 요청 메서드 재정의](#쿼리-문자열-값을-이용한-요청-메서드-재정의)
   - [HTTP 헤더를 이용한 요청 메서드 재정의](#http-헤더를-이용한-요청-메서드-재정의)
-  
+
 # HTTP 요청 메서드 GET vs POST
 
 ## GET
@@ -47,7 +48,6 @@
 ## PUT, PATCH
 
 보통 PUT은 데이터 전체를 업데이트(새 버전으로), PATCH는 부분적으로 업데이트(수정, 추가)할 때 사용한다.
-
 
 ## Reference
 
@@ -163,7 +163,6 @@ https://www.youtube.com/watch?v=RP_f5dMoHFc&ab_channel=naverd2
 **[REST 참고자료 +a]**
 
 https://en.wikipedia.org/wiki/Representational_state_transfer
-
 
 **[REST API 모범사례]**
 

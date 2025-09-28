@@ -10,6 +10,7 @@
   - [`action` `dispatch`하기](#action-dispatch하기)
   - [`action` `payload`에 여러 값 전달하는 방법(객체 미사용)](#action-payload에-여러-값-전달하는-방법객체-미사용)
   - [Reference](#reference)
+- [`Slice.caseReducers`로 리듀서 함수 호출하기](#slicecasereducers로-리듀서-함수-호출하기)
 
 # Redux toolkit(RTK)
 
@@ -322,7 +323,7 @@ export default Counter;
 
 액션 객체의 `payload`에 여러 값을 다음과 같이 전달하는 방법도 있다. 아래의 `requestLoan` 프로퍼티처럼 중첩 객체에 여러 인수를 받는 `prepare` 메서드를 정의하고, 그 다음 `reducer` 메서드를 정의 해준다.
 
-`prepare` 메서드는 여러 인수를 받아 `payload`의 값이 될 새 객체를 반환해야 한다. 반환한 `payload` 객체는 바로 아래 정의한 `reducer` 메서드의 `action` 객체 `payload`가 된다. 
+`prepare` 메서드는 여러 인수를 받아 `payload`의 값이 될 새 객체를 반환해야 한다. 반환한 `payload` 객체는 바로 아래 정의한 `reducer` 메서드의 `action` 객체 `payload`가 된다.
 
 ```
 const accountSlice = createSlice({
@@ -369,6 +370,7 @@ function handleRequestLoan() {
   setLoanPurpose("");
 }
 ```
+
 ---
 
 Redux Toolkit은 이 외에도, 다음과 같은 일반적인 Redux 작업을 수행할 수 있는 API를 제공합니다:
@@ -397,7 +399,7 @@ https://redux.js.org/usage/migrating-to-modern-redux#store-setup-with-configures
 
 # `Slice.caseReducers`로 리듀서 함수 호출하기
 
-`Slice.caseReducers`를 통해 특정 슬라이스의 리듀서 함수내에서 다른 리듀서 함수를 호출할 수 있다. 
+`Slice.caseReducers`를 통해 특정 슬라이스의 리듀서 함수내에서 다른 리듀서 함수를 호출할 수 있다.
 
 ```
 const cartSlice = createSlice({

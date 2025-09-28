@@ -113,7 +113,7 @@ function RandomBox({ size }) {
 }
 
 export default function App() {
-  const [count, setCount] = React.useState(0);
+  const [count, setCount] = useState(0);
 
   return (
     <>
@@ -136,7 +136,7 @@ function ThemedBox() {
 }
 
 export default function App() {
-  const [count, setCount] = React.useState(0);
+  const [count, setCount] = useState(0);
 
   return (
     <>
@@ -144,16 +144,18 @@ export default function App() {
       <button onClick={() => (theme = theme === "light" ? "dark" : "light")}>
         Toggle Theme
       </button>
-      <button onClick={() => setCount(count + 1)}>Force Re-render</button>
+      <button onClick={() => theme = theme === 'light' ? 'dark' : 'light' }>Force Re-render</button>
     </>
   );
 }
 ```
 
-<h3>3. 렌더링 중 부수 효과 실행</h3>
+이벤트 핸들러로 전역 변수 값을 변경해도 렌더링이 트리거 되지 않는다.
+
+<h3>3. 렌더링 중 API 호출</h3>
 
 ```
-function UserProfile({ userId }: { userId: string }) {
+function UserProfile({ userId }) {
   // ❌ 잘못된 예시: 렌더링 중 부수효과
   fetch(`/api/user/${userId}`)
     .then(res => res.json())
@@ -165,15 +167,11 @@ function UserProfile({ userId }: { userId: string }) {
 }
 ```
 
-리렌더링이 일어날 때마다 fetch가 다시 호출됨 → 같은 요청이 반복적으로 실행된다. React는 렌더링이 여러 번 실행될 수 있으므로(특히 StrictMode에서 2번 실행), 중복 네트워크 요청이 발생할 수 있음. 이런 작업은 useEffect 안에서 처리해야 안전하다.
-
-<!-- 챗 지피티 2. 렌더링 중 DOM 조작부터터 -->
-
-```
-
-```
+리렌더링이 일어날 때마다 fetch가 다시 호출됨 → 같은 요청이 반복적으로 실행된다. React는 렌더링이 여러 번 실행될 수 있으므로(`<StrictMode />`로 래핑한 경우 개발환 경에서는 렌더링 2번 실행), 중복 네트워크 요청이 발생할 수 있음. 이런 작업은 `useEffect` 안에서 처리해야 안전하다.
 
 ## 그렇다면 부수효과는 어디서?
+
+이벤트 핸들러 혹은 최후의 수단으로 `useEffect`를 사용.
 
 ## Reference
 

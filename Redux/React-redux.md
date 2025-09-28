@@ -153,10 +153,8 @@ export const Todos = () => {
 
 **[react-redux `useDispatch()`]** https://react-redux.js.org/api/hooks#usedispatch
 
-
 ## Reference
 
 **[Redux slice란]**
 
 https://redux.js.org/tutorials/essentials/part-2-app-structure#redux-slices
-

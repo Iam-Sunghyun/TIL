@@ -57,7 +57,7 @@ function Filter() {
   const router = useRouter();     // 프로그래매틱 네비게이션을 위한 훅
   const pathname = usePathname(); // 현재 경로 가져오기
 
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams(); // 현재 경로에서 쿼리 스트링 가져오기
   const activeFilter = searchParams.get("capacity") ?? "all";
 
   function handleSubmit(filter) {
@@ -105,11 +105,13 @@ https://nextjs.org/docs/app/api-reference/functions/use-router
 
 # 클라이언트 컴포넌트 안에 서버 컴포넌트 렌더링하기
 
-클라이언트 컴포넌트에는 서버 컴포넌트 import 불가능. 클라이언트 측에선 서버 컴포넌트를 실행할 수 없기 때문..?
+<!-- ??????????  -->
 
-따라서 서버 컴포넌트에 import된 클라이언트 컴포넌트의 children prop으로 서버 컴포넌트를 전달해주면 클라이언트 컴포넌트 내부에 서버 컴포넌트를 렌더링할 수 있다.
+클라이언트 컴포넌트에는 서버 컴포넌트 import 불가능. 클라이언트 측에선 서버 컴포넌트를 실행할 수 없기 때문.
 
-클라이언트 컴포넌트가 클라이언트에서 렌더링되기 전 서버에서 해당 서버 컴포넌트가 렌더링되기 떄문에 가능
+하지만 서버 컴포넌트에 import된 클라이언트 컴포넌트의 children prop으로 서버 컴포넌트를 전달해주면 클라이언트 컴포넌트 내부에 서버 컴포넌트를 렌더링할 수 있다.
+
+클라이언트 컴포넌트가 클라이언트에서 렌더링되기 전 서버에서 해당 서버 컴포넌트가 렌더링되기 때문에 가능.
 
 # 데이터 페칭 전략
 
