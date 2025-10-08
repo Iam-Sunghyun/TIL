@@ -6,8 +6,6 @@
 - [루트 레이아웃 정의하기](#루트-레이아웃-정의하기)
 - [페이지 메타데이터 정의하기](#페이지-메타데이터-정의하기)
   - [파비콘 설정하기](#파비콘-설정하기)
-- [페이지에서 데이터 Fetching 하기](#페이지에서-데이터-fetching-하기)
-- [데이터 Fetch 중 로딩 표시기 렌더링하기](#데이터-fetch-중-로딩-표시기-렌더링하기)
 - [Nextjs 네이밍 컨벤션으로 개인 폴더 만들기(라우트 생성 제외시키기)](#nextjs-네이밍-컨벤션으로-개인-폴더-만들기라우트-생성-제외시키기)
 - [폰트 추가하기](#폰트-추가하기)
 - [`<Image />` 태그로 이미지 최적화](#image--태그로-이미지-최적화)
@@ -146,14 +144,6 @@ https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons
 **[Nextjs docs Metadata]**
 
 https://nextjs.org/docs/app/building-your-application/optimizing/metadata
-
-# 페이지에서 데이터 Fetching 하기
-
-fetch API로 fetch. nextjs 컴포넌트는 기본이 서버 컴포넌트라 가능.
-
-# 데이터 Fetch 중 로딩 표시기 렌더링하기
-
-app 폴더에 `loading.js` 파일 생성. 전역 로딩 표시기로 모든 페이지에 로딩 시 적용됨. 세부적인 로딩 표시를 하고 싶으면 특정 디렉토리에 로딩 파일 생성하면 됨.
 
 # Nextjs 네이밍 컨벤션으로 개인 폴더 만들기(라우트 생성 제외시키기)
 
