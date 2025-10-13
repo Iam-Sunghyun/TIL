@@ -27,11 +27,11 @@
 
 서버 함수는 서버 컴포넌트 혹은 서버 파일 내에서만 정의할 수 있으며 클라이언트 컴포넌트의 `props`를 통해 전달한다(일반 함수는 서버 컴포넌트에서 클라이언트 컴포넌트로 전달할 수 없지만 서버 함수는 참조를 전달하는 것이기 때문에 가능하다).
 
-그렇게 되면 프레임워크(Nextjs)는 자동으로 서버 함수에 대한 참조를 생성하고 해당 참조 값을 클라이언트 컴포넌트에 전달한다. 서버 함수는 클라이언트 코드가 네트워크를 통해 서버 함수를 호출하는 것이므로, 서버 함수에 전달되는 모든 인수는 직렬화 가능해야 한다.
+그렇게 되면 프레임워크(Nextjs)는 자동으로 서버 함수에 대한 참조를 생성하고 해당 참조 값을 클라이언트 컴포넌트에 전달한다. 서버 함수는 클라이언트 코드가 네트워크 요청을 거쳐 서버 함수를 호출하는 것이므로, 서버 함수에 전달되는 모든 인수는 직렬화 가능해야 한다.
 
 별도의 파일에 정의하는 경우 서버, 클라이언트 상관 없이 `import` 하여 전달할 수 있다(권장).
 
-또한 서버 함수는 `startTransition` 안에서 호출하는 것을 권장하고 있다. 참고로 `<form action>` 또는 `<input type="image">` 혹은 `<input type="submit">`의 `formAction` 어트리뷰트에 전달된 서버 함수는 자동으로 `startTransition` 내에서 호출된다.
+또한 서버 함수는 `startTransition` 안에서 호출하는 것을 권장하고 있다. 참고로 `<form action>` 또는 `<input type="image">` 혹은 `<input type="submit">`의 `formaction` 어트리뷰트에 전달된 서버 함수는 자동으로 `startTransition` 내에서 호출된다.
 
 ```
 // 서버 컴포넌트
@@ -77,7 +77,9 @@ function EmptyNote() {
 
 리액트의 `<form />` 요소 `action` 값에는 URL 혹은 함수를 전달할 수 있다.
 
-URL을 `action`을 통해 전달하면, 폼은 HTML 폼 요소처럼 동작하며 서버 함수를 전달하면, 리액트는 폼을 통해 제출된 `formData`를 직렬화 하여 서버로 함수 호출을 요청한다(`POST`). 이때 함수는 자동으로 `startTransition` 내에서 호출된다.
+URL을 `action`을 통해 전달하면, 폼은 HTML 폼 요소처럼 동작하며 서버 함수를 전달하면, 리액트는 폼을 통해 제출된 `formData`를 직렬화 하여 서버로 함수 호출을 요청한다(`POST`). 이때 서버 함수는 자동으로 `startTransition` 내에서 호출된다.
+
+만약 `action`에 일반 함수를 전달하면 네트워크 요청없이 클라이언트 측에서 호출된다.
 
 ```
 // App.js
@@ -99,9 +101,9 @@ export default function App() {
 
 ## 폼 `action` 함수의 반환 값으로 `state` 업데이트하기(`useActionState`)
 
-`useActionState` 훅을 사용하여 폼 액션 함수가 반환하는 값으로 `state`를 업데이트할 수 있고 `state` 업데이트, 액션이 대기 중 인지도 확인할 수 있다. `state`는 폼이 submit 되기 전이라면 `initialState` 값으로 설정된다.
+`useActionState` 훅을 사용하여 `formAction` 함수가 반환하는 값으로 `state`를 업데이트할 수 있고 또 `state` 업데이트, 액션 함수가 처리중 인지 확인할 수 있다. `state`의 최초 값은 `initialState` 값으로 설정된다(18.3.1v 추가, 구 명칭은 `useFormState`).
 
-<!-- 3번째 인수 -> ?? -->
+<!-- state 업데이트, 액션 대기 -> ? 3번째 인수 -> ?? -->
 
 ```
 // [상태 값, 폼 액션 함수(fn)]
@@ -128,11 +130,53 @@ function StatefulForm({}) {
 }
 ```
 
+```
+// ./actions.js
+"use server";
+
+export async function addToCart(prevState, queryData) {
+  const itemID = queryData.get('itemID');
+  if (itemID === "1") {
+    return "Added to cart";
+  } else {
+    // Add a fake delay to make waiting noticeable.
+    await new Promise(resolve => {
+      setTimeout(resolve, 2000);
+    });
+    return "Couldn't add to cart: the item is sold out.";
+  }
+}
+-----------------------------------------
+import { useActionState } from "react";
+import { addToCart } from "./actions.js";
+
+function AddToCartForm({itemID, itemTitle}) {
+  const [message, formAction, isPending] = useActionState(addToCart, null);
+  return (
+    <form action={formAction}>
+      <h2>{itemTitle}</h2>
+      <input type="hidden" name="itemID" value={itemID} />
+      <button type="submit">Add to Cart</button>
+      {isPending ? "Loading..." : message}
+    </form>
+  );
+}
+
+export default function App() {
+  return (
+    <>
+      <AddToCartForm itemID="1" itemTitle="JavaScript: The Definitive Guide" />
+      <AddToCartForm itemID="2" itemTitle="JavaScript: The Good Parts" />
+    </>
+  );
+}
+```
+
 ## `useFormStatus` 훅으로 로딩 표시기 사용하기
 
 `useFormStatus`는 마지막 폼 제출의 상태 정보를 제공하는 `react-dom`에서 제공되는 Hook이다.
 
-반환 값을 통해 `<form>`의 제출 상태와 요청 메서드, 제출되는 데이터(`FormData`)를 사용할 수 있다.
+반환 값을 통해 상위 `<form>` 요소의 제출 상태와 요청 메서드, 제출되는 데이터(`FormData`)를 사용할 수 있다.
 
 <!-- 4번째 인수 -> ?? -->
 
@@ -169,6 +213,7 @@ export default function App() {
 만약 서버 함수가 서버 mutation이 없고, `<form action>` 혹은 `<input image or submit formaction>`으로 호출되는 것이 아닌 경우라면, `startTransition` 안에서 호출해야 한다. 다만 이건 강제 되는 규칙은 아니며, 필수에 가까운 권장 패턴이다.
 
 <!-- 왜 폼 외부에선 transition이 필수? -->
+<!-- transition 덕분에 React는 UI를 블락하지 않고 기존 UI 유지 + 로딩 상태를 표시 + 결과를 점진적으로 갱신 가능 -->
 
 ```
 import incrementLike from './actions';
@@ -213,8 +258,6 @@ export default async function incrementLike() {
 | **서버 Fetch 액션** (read-only 액션)                                           | 서버에서 데이터 fetch만 하는 액션           | ✅ 반드시 `startTransition()`으로 감싸야 함           |
 
 ## 추가 예시
-
-<!-- transition 덕분에 React는 UI를 블락하지 않고 기존 UI 유지 + 로딩 상태를 표시 + 결과를 점진적으로 갱신 가능 -->
 
 ```
 // 폼 외부에서 transition으로 래핑
