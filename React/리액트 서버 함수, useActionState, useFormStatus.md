@@ -15,7 +15,7 @@
 
 `Server Function`으로 클라이언트 측에서 사용자와 상호작용을 통해 서버 측 데이터 변이(데이터 생성, 업데이트, 삭제 등)가 가능해진다.
 
-리액트 공식 홈페이지에선 서버 함수는 서버 데이터 Mutation을 위해 설계되었기 때문에 데이터 가져오기(Fetching)에는 권장하지 않고 있다(Fetching 후 캐시 같은 최적화가 안 되어있는 듯).
+리액트 공식 홈페이지에선 서버 함수는 서버 데이터 Mutation을 위해 설계되었기 때문에 데이터 가져오기(Fetching)에는 권장하지 않고 있다(Fetching 후 캐시 같은 최적화가 안 되어있음 19.2v 기준).
 
 ```
 참고: 2024년 9월까지 모든 서버 함수를 "서버 액션"이라고 했다. 서버 함수가 액션 prop에 전달되거나 액션 내부에서 호출되면 서버 액션이지만 모든 서버 함수가 서버 액션은 아니다. 이 문서의 명명은 서버 함수가 여러 용도로 사용될 수 있음을 반영하도록 업데이트 되었다. - 공식 홈페이지
@@ -31,7 +31,7 @@
 
 별도의 파일에 정의하는 경우 서버, 클라이언트 상관 없이 `import` 하여 전달할 수 있다(권장).
 
-또한 서버 함수는 `startTransition` 안에서 호출하는 것을 권장하고 있다. 참고로 `<form action>` 또는 `<input type="image">` 혹은 `<input type="submit">`의 `formaction` 어트리뷰트에 전달된 서버 함수는 자동으로 `startTransition` 내에서 호출된다.
+또한 서버 함수는 `startTransition` 안에서 호출하는 것을 권장하고 있다. 참고로 `<form action>` 또는 `formaction` 어트리뷰트에 전달된 서버 함수는 자동으로 `startTransition` 내에서 호출된다(`formaction` 어트리뷰트를 갖는 요소는 `<input type="image">`, `<input type="submit">`, `<button>`가 있다).
 
 ```
 // 서버 컴포넌트
@@ -75,17 +75,17 @@ function EmptyNote() {
 
 # `<form>`에서의 서버 함수
 
-리액트의 `<form />` 요소 `action` 값에는 URL 혹은 함수를 전달할 수 있다.
+리액트의 `<form />` 요소 `action` 어트리뷰트에는 URL 혹은 함수를 전달할 수 있다.
 
-URL을 `action`을 통해 전달하면, 폼은 HTML 폼 요소처럼 동작하며 서버 함수를 전달하면, 리액트는 폼을 통해 제출된 `formData`를 직렬화 하여 서버로 함수 호출을 요청한다(`POST`). 이때 서버 함수는 자동으로 `startTransition` 내에서 호출된다.
+`action`에 URL을 전달하면, 폼은 HTML 폼 요소처럼 동작하며 서버 함수를 전달하면, 폼 `submit` 시 리액트는 폼을 통해 제출된 `formData`를 직렬화 하여 `POST` 요청으로 서버에 함수 호출을 요청한다. 이때 서버 함수는 자동으로 `startTransition` 내에서 호출된다.
 
-만약 `action`에 일반 함수를 전달하면 네트워크 요청없이 클라이언트 측에서 호출된다.
+만약 `action`에 일반 함수를 전달하면 네트워크 요청 없이 클라이언트 측에서 호출된다.
 
 ```
 // App.js
 async function requestUsername(formData) {
   'use server';
-  const username = formData.get('username');
+  const username = formData.get('username'); // FormData 객체
   // ...
 }
 
@@ -101,16 +101,53 @@ export default function App() {
 
 ## 폼 `action` 함수의 반환 값으로 `state` 업데이트하기(`useActionState`)
 
-`useActionState` 훅을 사용하여 `formAction` 함수가 반환하는 값으로 `state`를 업데이트할 수 있고 또 `state` 업데이트, 액션 함수가 처리중 인지 확인할 수 있다. `state`의 최초 값은 `initialState` 값으로 설정된다(18.3.1v 추가, 구 명칭은 `useFormState`).
+`useActionState` 훅을 사용하여 **`<form />` `action` 함수가 반환하는 값으로 `state`를 업데이트**할 수 있고 또 **`state` 업데이트, 액션 함수가 처리 중 인지 확인할 수 있다.** `state`의 최초 값은 `initialState` 값으로 설정된다(18.3.1v 추가, 구 명칭은 `useFormState`).
 
-<!-- state 업데이트, 액션 대기 -> ? 3번째 인수 -> ?? -->
+<!-- 3번째 인수는 폼이 수정하는 고유한 페이지 URL을 포함하는 문자열이다. -->
+<!-- ? 점진적 향상? -->
 
 ```
-// [상태 값, 폼 액션 함수(fn)]
+// [상태 값, 폼 액션 함수(fn), 진행 상태]
 const [state, formAction, isPending] = useActionState(fn, initialState, permalink?);
 ```
 
 `useActionState` 첫 번째 인수로 전달되는 함수의 첫 번째 인수는 이전 `state` 값 이며(처음엔 `initialState`) 두 번째는 폼 데이터가 전달된다.
+
+```
+// requestUsername.js
+'use server';
+
+export default async function requestUsername(formData) {
+  const username = formData.get('username');
+  if (canRequest(username)) {
+    // ...
+    return 'successful';
+  }
+  return 'failed';
+}
+-----------------------------------------
+// UsernameForm.js
+'use client';
+
+import { useActionState } from 'react';
+import requestUsername from './requestUsername';
+
+function UsernameForm() {
+  const [state, action] = useActionState(requestUsername, null, 'n/a');
+
+  return (
+    <>
+      <form action={action}>
+        <input type="text" name="username" />
+        <button type="submit">Request</button>
+      </form>
+      <p>Last submission request returned: {state}</p>
+    </>
+  );
+}
+```
+
+서버 함수가 아닌 일반 함수를 `action`에 전달 한 경우
 
 ```
 import { useActionState } from "react";
@@ -130,51 +167,9 @@ function StatefulForm({}) {
 }
 ```
 
-```
-// ./actions.js
-"use server";
-
-export async function addToCart(prevState, queryData) {
-  const itemID = queryData.get('itemID');
-  if (itemID === "1") {
-    return "Added to cart";
-  } else {
-    // Add a fake delay to make waiting noticeable.
-    await new Promise(resolve => {
-      setTimeout(resolve, 2000);
-    });
-    return "Couldn't add to cart: the item is sold out.";
-  }
-}
------------------------------------------
-import { useActionState } from "react";
-import { addToCart } from "./actions.js";
-
-function AddToCartForm({itemID, itemTitle}) {
-  const [message, formAction, isPending] = useActionState(addToCart, null);
-  return (
-    <form action={formAction}>
-      <h2>{itemTitle}</h2>
-      <input type="hidden" name="itemID" value={itemID} />
-      <button type="submit">Add to Cart</button>
-      {isPending ? "Loading..." : message}
-    </form>
-  );
-}
-
-export default function App() {
-  return (
-    <>
-      <AddToCartForm itemID="1" itemTitle="JavaScript: The Definitive Guide" />
-      <AddToCartForm itemID="2" itemTitle="JavaScript: The Good Parts" />
-    </>
-  );
-}
-```
-
 ## `useFormStatus` 훅으로 로딩 표시기 사용하기
 
-`useFormStatus`는 마지막 폼 제출의 상태 정보를 제공하는 `react-dom`에서 제공되는 Hook이다.
+`useFormStatus`는 **마지막 폼 제출의 상태 정보를 제공**하는 `react-dom`에서 제공되는 Hook이다.
 
 반환 값을 통해 상위 `<form>` 요소의 제출 상태와 요청 메서드, 제출되는 데이터(`FormData`)를 사용할 수 있다.
 
@@ -184,7 +179,7 @@ export default function App() {
 const { pending, data, method, action } = useFormStatus();
 ```
 
-`useFormStatus` 훅은 폼에 포함된 컴포넌트에서 사용할 수 있다. 즉, `<form>` 하위에서 렌더링되는 컴포넌트에서 호출해야 한다.
+`useFormStatus` 훅은 폼에 포함된 컴포넌트에서 사용할 수 있다. 즉, `<form>` 하위에서 렌더링 되는 컴포넌트에서 호출해야 한다.
 
 ```
 import { useFormStatus } from "react-dom";
@@ -210,7 +205,7 @@ export default function App() {
 
 # `<form>` 외부에서 서버 함수
 
-만약 서버 함수가 서버 mutation이 없고, `<form action>` 혹은 `<input image or submit formaction>`으로 호출되는 것이 아닌 경우라면, `startTransition` 안에서 호출해야 한다. 다만 이건 강제 되는 규칙은 아니며, 필수에 가까운 권장 패턴이다.
+만약 서버 함수가 서버 mutation이 없고, `<form action>` 혹은 `<input type="image or submit">`의 `formaction`으로 호출되는 것이 아닌 경우라면, `startTransition` 안에서 호출해야 한다. 다만 이건 강제 되는 규칙은 아니며, 필수에 가까운 권장 패턴이다.
 
 <!-- 왜 폼 외부에선 transition이 필수? -->
 <!-- transition 덕분에 React는 UI를 블락하지 않고 기존 UI 유지 + 로딩 상태를 표시 + 결과를 점진적으로 갱신 가능 -->
@@ -251,9 +246,11 @@ export default async function incrementLike() {
 
 ## 서버 함수의 호출 방식 3가지 정리
 
+<!--  -->
+
 | 호출 방식                                                                      | 설명                                        | Transition 필요성                                     |
 | ------------------------------------------------------------------------------ | ------------------------------------------- | ----------------------------------------------------- |
-| **Form Action** (`<form action={action}>`, `<input image, submit formAction>`) | HTML form 제출 시 자동으로 서버 액션 호출   | ❌ 필요 없음 (React가 내부적으로 transition 처리함)   |
+| **Form Action** (`<form action={action}>`, `<input image, submit formaction>`) | HTML form 제출 시 자동으로 서버 액션 호출   | ❌ 필요 없음 (React가 내부적으로 transition 처리함)   |
 | **서버 Mutation 액션** (DB, write 등)                                          | 서버 상태가 바뀌는 액션 (`POST/PUT/DELETE`) | ⚙️ 선택적 (보통 결과 후에 refresh 시 transition 필요) |
 | **서버 Fetch 액션** (read-only 액션)                                           | 서버에서 데이터 fetch만 하는 액션           | ✅ 반드시 `startTransition()`으로 감싸야 함           |
 
