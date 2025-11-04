@@ -68,7 +68,7 @@ Flux 패턴은 크게 4가지 구성 요소로(Store, Dispatcher, Action(Action 
 | **Store**                  | 실제 상태(state)와 비즈니스 로직이 존재하는 곳. Dispatcher로부터 Action을 받고 상태를 변경함.                                       |
 | **View (React Component)** | Store의 상태를 구독하고, 상태가 바뀌면 다시 렌더링 되며 유저 인터랙션이 일어나면 Action을 발생시킴.                                 |
 
-애플리케이션의 사용자 상호작용을 기반으로 Action이 생성되고, Dispatcher를 통해 store로 전달 된다. 이후 store에서 상를 업데이트한 뒤 View에 반영하는 식의 **단방향의 데이터 흐름을 가지는 소프트웨어 아키텍처**이다.
+애플리케이션의 사용자 상호작용을 기반으로 Action이 생성되고, Dispatcher를 통해 store로 전달 된다. 이후 store에서 상태를 업데이트한 뒤 View에 반영하는 식의 **단방향의 데이터 흐름을 가지는 소프트웨어 아키텍처**이다.
 
 </br>
 
@@ -90,11 +90,11 @@ https://haruair.github.io/flux/docs/overview.html
 
 ## Redux?
 
-Flux 패턴에 Dan Abramov이라는 개발자가 `reducer`를 결합하여 좀 더 단순화하여 만든 전역 상태 관리 라이브러리가 바로 `Redux`이다. `Redux`는 구체적인 부분에서 Flux와 약간 다르게 동작하는데 Dispatcher가 존재하지 않고 action을 Dispatch하면 `reducer`가 상태를 업데이트한다(상태는 단일 store에 저장된다).
+Dan Abramov이라는 개발자가 Flux 패턴에 `reducer`를 결합하여 좀 더 단순화하여 만든 전역 상태 관리 라이브러리가 바로 `Redux`이다. `Redux`는 구체적인 부분에서 Flux와 약간 다르게 동작하는데 `Dispatcher`가 존재하지 않고 `action`을 `Dispatch`하면 `reducer`가 상태를 업데이트한다(상태는 단일 `store`에 저장된다).
 
 `Redux`는 오픈 소스 자바스크립트 라이브러리이며 리액트 앱에서 가장 많이 사용하는 전역 상태 관리 라이브러리이다. `Redux`는 리액트에 종속된 라이브러리가 아니므로 순수 자바스크립트, 혹은 `Vue.js`나 `Angular.js`와 같은 뷰 프레임워크와도 사용할 수 있다.
 
-`Redux`는 상태를 하나의 중앙 저장소(store)에 저장하여 관리하고 Flux와 마찬가지로 데이터 흐름이 단방향이기 때문에 이해하고 예측하기 쉬우며 디버깅도 용이하다.
+`Redux`는 상태를 하나의 중앙 저장소(`store`)에 저장하여 관리하고 Flux와 마찬가지로 데이터 흐름이 단방향이기 때문에 이해하고 예측하기 쉬우며 디버깅도 용이하다.
 
 </br>
 
@@ -108,7 +108,7 @@ Flux 패턴에 Dan Abramov이라는 개발자가 `reducer`를 결합하여 좀 �
 
 리듀서(감속기, 감속기 함수)란 함수형 프로그래밍에서 사용되는 일반적인 개념으로 누적 값과 새 값을 받아 새로운 누적 값을 반환하는 함수를 말한다. 여러 값을 하나의 값으로 줄이는데 사용된다(자바스크립트 배열 내장 메서드(`Array.prototype.reduce()`)에서도 볼 수 있다).
 
-리듀서는 동기적으로 동작하며 부수 효과(side effect)가 없는 순수 함수 여야 한다.
+**리듀서는 동기적으로 동작하며 부수 효과(side effect)가 없는 순수 함수 여야 한다.**
 
 `Redux`에서 누적된 값은 이전 상태(state) 객체이고, 새 값은 `action`이다. 리듀서는 이전 상태와 `action`을 통해 새 누적 상태를 계산해 반환한다. 이때 `reducer` 함수는 순수 해야 한다!
 
@@ -120,12 +120,13 @@ Flux 패턴에 Dan Abramov이라는 개발자가 `reducer`를 결합하여 좀 �
 
 다음은 Flux와 `Redux`의 차이점이다.
 
+<!--  -->
+
 - Flux는 아키텍처 패턴이고 `Redux`는 Flux 패턴의 구현이다.
 
 - `Redux`는 일반적으로 단일 저장소(store)를 사용하고 Flux 패턴은 여러 개의 저장소를 사용한다.
-  - 여러 저장소마다 개별적인 처리 로직이 필요하기 때문에 내용 추적이 좀 더 까다로울 수 있다.
 
-<!-- + 디스패치 프로세스? -->
+  - 여러 저장소마다 개별적인 처리 로직이 필요하기 때문에 내용 추적이 좀 더 까다로울 수 있다.
 
 - Flux 패턴에는 싱글톤 객체인 단일 Dispather가 있으며 action을 전달하여 상태를 업데이트 한다. `Redux`에는 디스패처가 따로 없으며 `reducer`를 통해 상태 업데이트가 이루어진다(store 내부에 디스패치 프로세스가 내장 되어있다).
 
@@ -139,7 +140,7 @@ Flux 패턴에 Dan Abramov이라는 개발자가 `reducer`를 결합하여 좀 �
 | ------------- | ----------------------------------------- | -------------------------------------- |
 | Dispatcher    | 있음 (중앙 허브 역할)                     | 없음 (dispatch 함수가 그 역할을 대체)  |
 | Store         | 여러 개 가능                              | 단 하나만 존재                         |
-| State 변경    | Store 내부에서 직접 수행                  | **Reducer**를 통해 순수 함수로 변경    |
+| State 변경    | Store 내부에서 직접 수행                  | Reducer를 통해 순수 함수로 변경        |
 | 구조적 복잡도 | 비교적 복잡                               | 훨씬 단순화됨                          |
 | 데이터 흐름   | View → Action → Dispatcher → Store → View | View → Action → Reducer → Store → View |
 
