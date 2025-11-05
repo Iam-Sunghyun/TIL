@@ -1,19 +1,82 @@
 <h2>목차</h2>
 
-- [리덕스 리듀서에서 HTTP 요청 처리](#리덕스-리듀서에서-http-요청-처리)
-- [1. 특정 컴포넌트에 HTTP 요청(부수효과 로직) 집어넣기](#1-특정-컴포넌트에-http-요청부수효과-로직-집어넣기)
-  - [에러 발생(`useEffect()` 순서 문제)](#에러-발생useeffect-순서-문제)
+- [Redux Toolkit(RTK)에서 HTTP 요청 처리하는 방법](#redux-toolkitrtk에서-http-요청-처리하는-방법)
+- [`createAsyncThunk`를 사용한 방법](#createasyncthunk를-사용한-방법)
+  - [RTK API `createAsyncThunk`?](#rtk-api-createasyncthunk)
 
-# 리덕스 리듀서에서 HTTP 요청 처리
+# Redux Toolkit(RTK)에서 HTTP 요청 처리하는 방법
 
 리듀서에서 HTTP 요청과 같은 작업을 어디에서 처리해야 할까?
 
-리듀서 내부에서 부수효과를 내는 HTTP 요청을 처리할 경우 순수하지 않은 함수가 되고 동일한 입력에도 다른 결과가 나올 수 있게 된다. 이러한 코드는 애플리케이션이 커짐에 따라 복잡성이 증가하고 예측하기 어려워져 유지보수에 좋지 않다.
+리듀서 내부에서 부수 효과를 내는 HTTP 요청을 처리할 경우 순수하지 않은 함수가 되고 동일한 입력에도 다른 결과가 나올 수 있게 된다. 이러한 코드는 애플리케이션이 커짐에 따라 복잡성이 증가하고 예측하기 어려워져 유지 보수에 좋지 않다.
 
-또한 상태 업데이트가 목적인 리듀서에 HTTP 요청 같은 비동기 작업이 포함되면 코드가 혼잡해질 수 있다. 따라서 부수효과를 내는 작업들을 가독성이나 유지보수를 위해 따로 분리하는 것이 좋다.
+또한 상태 업데이트가 목적인 리듀서에 HTTP 요청 같은 비동기 작업이 포함되면 코드가 혼잡해질 수 있다. 따라서 부수 효과를 내는 작업들을 가독성이나 유지 보수를 위해 따로 분리하는 것이 좋다.
 
-분리하는 패턴으로는 크게 다음과 같은 것들이 있다.
+분리하는 패턴으로는 크게 다음과 같은 방식이 있다.
 
+1. `createAsyncThunk` (전통적인 `thunk` 방식)
+
+2. `RTK Query (@reduxjs/toolkit/query)` — 서버 상태 관리 전용(최신 권장 방식 v2.10.1)
+
+# `createAsyncThunk`를 사용한 방법
+
+## RTK API `createAsyncThunk`?
+
+`createAsyncThunk`는 비동기 처리를 위한 RTK의 API로 `Redux-thunk`에 전달할 비동기 함수(thunk)를 호출할 액션 객체를 생성하기 위한 생성자 함수를 생성하기 위해 사용한다.
+
+즉, `createAsyncThunk`은 비동기 작업을 처리하는 `action` 객체를 생성하는 action creator를 반환하는데 `createAsyncThunk`로 생성한 액션 생성자를 호출하여 `action` 객체를 생성해주고, `dispatch` 해주면 비동기 작업이 처리된다.
+
+`createAsyncThunk`는 3가지 인수를 받는다. 첫 번째는 액션 타입명과 두 번째로 리듀서에 대한 페이로드를 반환하는(비동기 처리 로직을 담은) 비동기 함수를, 세 번째로 필요에 따라 옵션 객체를 전달해준다. 이때 두 번째 인수는 프로미스를 반환해야 한다.
+
+다음은 간단한 사용 예시이다.
+
+```
+<button onClick={() => {
+    dispatch(asyncUpFetch());
+}}>+ async Thunk </button>
+-------------------------
+const asyncUpFetch = createAsyncThunk('counterSlice/asynUpFetch', async () => {
+    const response = await fetch('https://~~)
+    const data = await response.json()
+    return data.value
+})
+```
+
+비동기 처리 상태로는 프로미스와 마찬가지로 3가지가 있는데 `creator.pending`, `creator.fulfilled`, `creator.rejected`가 있다.
+
+이 3가지 상태에 대한 처리 로직은 다음과 같이 `createSlice`의 `extraReducers` 프로퍼티에 전달되는 함수 인수(`builder`)의 `addCase()`로 전달해줘야 한다.
+
+```
+const counterSlice = createSlice({
+    name: 'counterSlice',
+    initialState: {
+        value: 0,
+        status: 'test',
+        error: '',
+    },
+    extraReducers: (builder) => {
+        builder.addCase(asyncUpFetch.pending, (state, action) => {   // pending 일때 동작
+            state.status = 'Loading';
+        })
+        builder.addCase(asyncUpFetch.fulfilled, (state, action) => { // fulfilled 일때 동작
+            state.value = action.payload;   // action.payload에는 createAsyncThunk 로 액션 생성자 함수를 생성할 때 2번째 인수로 전달한 비동기 처리 로직의 반환 값이 담긴다.
+            state.status = 'complete';
+        })
+        builder.addCase(asyncUpFetch.rejected, (state, action) => {  // rejected 일때 동작
+            state.error = action.error.message
+            state.status = 'fail';
+        })
+    }
+})
+```
+
+비동기 함수가 성공적으로 `resolve` 하여 `fulfilled` 일때 프로미스 값은 `action.payload`에 담기고 `rejected` 일때 `action.error.message`에 담긴다(에러를 `resolve`한 경우 `action.payload`에 담긴다).
+
+**[RTK createAsyncThunk]**
+
+https://redux-toolkit.js.org/api/createAsyncThunk
+
+<!--
 1. 컴포넌트(useEffect)
 
 2. 리듀서
@@ -30,7 +93,7 @@
 
 `async/await`과 `try/catch`로 에러를 처리해주었다.
 
-<!-- 코드 문제 있음. useEffect() 처리 순서에 따른 백엔드 데이터 날라감 문제  -->
+코드 문제 있음. useEffect() 처리 순서에 따른 백엔드 데이터 날라감 문제
 
 ```
 // App.js
@@ -133,15 +196,11 @@ export default CartButton;
 
 -> 백엔드에 데이터를 저장하는 `effect`의 실행을 좀 더 제한할 필요가 있다.
 
-<!-- 일단 보류, useEffect 순서 문제, 경합 상태 문제? -> 짧은 시간에 요청이 많이 일어났을 때 문제인듯. 내가 겪은 것과 다른 문제-->
-
 ```
 Effects에서 직접 데이터 가져오기를 작성하는 것은 반복적이며 나중에 캐싱 및 서버 렌더링과 같은 최적화를 추가하기 어렵게 만듭니다. 자신의 것이든 커뮤니티에서 유지 관리하는 사용자 지정 Hook을 사용하는 것이 더 쉽습니다.
 ```
 
-참고로 `useEffect()`에 전달되는 `setup` 함수의 반환 값은 `cleanup` 함수만 가능하기 때문에, 항상 프로미스를 반환하는 `async` 함수의 경우 내부함수로 정의해줘야 한다.
-
-<!-- 일단 보류 -->
+참고로 `useEffect()`에 전달되는 `setup` 함수의 반환 값은 `cleanup` 함수만 가능하기 때문에, 항상 프로미스를 반환하는 `async` 함수의 경우 내부함수로 정의해줘야 한다. -->
 
 **[`Effect`로 데이터 `Fetch`하기]**
 
@@ -150,11 +209,3 @@ https://react.dev/reference/react/useEffect#fetching-data-with-effects
 **[`Effect`에서 데이터 `Fetch`에 대한 좋은 대안은?]**
 
 https://react.dev/reference/react/useEffect#what-are-good-alternatives-to-data-fetching-in-effects
-
-<!--
-# 2. 리덕스 리듀서에서 HTTP 요청 처리하기
-
-
-# 3. 사용자 정의 액션 생성자 함수
-
-# 4. 미들웨어(redux-thunk, redux-saga ...) -->
