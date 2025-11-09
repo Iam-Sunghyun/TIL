@@ -7,14 +7,14 @@
   - [여러 개의 슬라이스 사용하기](#여러-개의-슬라이스-사용하기)
   - [`slice.actions`로 `action` 객체 생성하기](#sliceactions로-action-객체-생성하기)
   - [`action` `dispatch`하기](#action-dispatch하기)
-  - [`action` `payload`에 여러 개의 인수를 전달하는 방법(객체 미사용)](#action-payload에-여러-개의-인수를-전달하는-방법객체-미사용)
+  - [`action` `payload`에 여러 개의 인수를 전달하는 방법(`,`로 나열 된 여러 값)](#action-payload에-여러-개의-인수를-전달하는-방법로-나열-된-여러-값)
   - [Reference](#reference)
 - [`Slice.caseReducers`로 리듀서 함수 호출하기](#slicecasereducers로-리듀서-함수-호출하기)
 - [Redux Toolkit의 장점](#redux-toolkit의-장점)
 
 # Redux toolkit(RTK)이란?
 
-`Redux Toolkit(RTK)`은 `Redux`를 더 간단하고 실용적으로 만든 공식 툴셋으로 `Redux`의 핵심 철학(**단방향 데이터 흐름, 순수 함수 기반 상태 관리)은 그대로 유지하면서, 불필요한 보일러플레이트(반복 코드) 를 대폭 줄이기 위해 만들어졌다.**
+`Redux Toolkit(RTK)`은 `Redux`를 더 간단하고 실용적으로 만든 공식 툴셋으로 `Redux`의 핵심 철학(**단방향 데이터 흐름, 순수 함수 기반 상태 관리)은 그대로 유지하면서, 불필요한 보일러플레이트(반복 코드)를 대폭 줄이기 위해 만들어졌다.**
 
 앱의 규모가 커짐에 따라 생길 수 있는 `redux`의 문제점은 다음과 같다.
 
@@ -24,6 +24,12 @@
 이러한 일반적인 문제를 해결하기 위해 만들어 진 것이 `Redux Toolkit` 이다.
 
 `Redux Toolkit` 패키지에서는 코어 `redux` 패키지에 추가로 필수적인 API 메서드와 모듈들을 포함하고 있으며(ex) `Redux Thunk` 및 `Reselect`) `store` 설정 편의성, 불변 리듀서 생성, `redux-thunk`, `Redux DevTools` 통합 같은 기능으로 `redux` 작업을 좀 더 단순화하고 실수를 방지하여 `redux` 코드 작성을 더 쉽게 만들어준다.
+
+**<h2>Redux 데이터 흐름</h2>**
+
+```
+View → Dispatch(Action) → Reducer → Store → View
+```
 
 **[redux-toolkit 공식 사이트]**
 
@@ -101,7 +107,7 @@ export const { increment, decrement, incrementByAmount } = counterSlice.actions;
 export default counterSlice.reducer;
 ```
 
-슬라이스의 `reducers`에 전달한 슬라이스 리듀서 함수의 로직은 상태 객체를 직접 변경하는 것처럼 보이지만, 내부적으로 `Immer` 라이브러리를 사용하기 때문에 전개 연산자로 복사하여 새 객체를 전달하는 것과 같이 동작한다(따로 복사가 필요 없으므로 편리하다).
+슬라이스의 `reducers`에 전달한 리듀서 함수의 로직은 상태 객체를 직접 변경하는 것처럼 보이지만, 내부적으로 `Immer` 라이브러리를 사용하기 때문에 전개 연산자로 복사하여 새 객체를 전달하는 것과 같이 동작한다(따로 복사가 필요 없으므로 편리하다).
 
 ## `configureStore()`로 `store` 생성하기
 
@@ -172,7 +178,7 @@ const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
 
 ## `slice.actions`로 `action` 객체 생성하기
 
-**`createSlice()`로 리듀서 슬라이스를 생성하면 `Redux Toolkit`에 의해 자동적으로 액션 객체를 생성하는 액션 생성자 함수를 갖게 된다.** 이것으로 개발자는 액션 생성자 함수와 `dispatch`시 액션 타입 오타 같은 사소한 문제를 신경쓰지 않아도 된다는 장점이 있다.
+**`createSlice`로 리듀서 슬라이스를 생성하면 `Redux Toolkit`에 의해 자동적으로 액션 객체를 생성하는 액션 생성자 함수를 갖게 된다.**(내부적으로 `createAction` 사용) 이것으로 개발자는 액션 생성자 함수와 `dispatch`시 액션 타입 오타 같은 사소한 문제를 신경쓰지 않아도 된다는 장점이 있다.
 
 `slice.actions` 프로퍼티를 통해 액션 생성자 함수가 담긴 객체를 참조할 수 있다.
 
@@ -283,11 +289,11 @@ export default Counter;
 
 `action` 객체의 `payload`는 `increaseByAmountHandler` 함수 내부처럼 액션 생성자 함수의 인수를 통해 전달할 수 있다. **이때 하나의 인수만 전달할 수 있으며 여러 개인 경우 객체에 담아 전달하거나 다음과 같이 작성해줘야 한다.**
 
-## `action` `payload`에 여러 개의 인수를 전달하는 방법(객체 미사용)
+## `action` `payload`에 여러 개의 인수를 전달하는 방법(`,`로 나열 된 여러 값)
 
 액션 객체의 `payload`에 여러 값을 다음과 같이 전달하는 방법도 있다. 아래의 `requestLoan` 프로퍼티처럼 **내부에 여러 개의 인수를 받는 `prepare` 메서드를 정의하고, 그 다음 `reducer` 메서드를 갖는 객체를 전달 해준다.**
 
-`prepare` 메서드는 여러 인수를 받아 `payload`의 값이 될 새 객체를 반환해야 한다. 반환 된 객체는 함께 정의한 `reducer` 메서드의 인수(`action`)의 `payload` 프로퍼티의 값이 된다.
+`prepare` 메서드는 여러 인수를 받아 `action` 객체의 `payload` 프로퍼티 값이 될 새 객체를 반환해야 한다. 반환 된 객체는 함께 정의한 `reducer` 메서드의 인수(`action`)의 `payload`에 할당 된다.
 
 ```
 const accountSlice = createSlice({
@@ -315,8 +321,8 @@ const accountSlice = createSlice({
         state.loanPurpose = action.payload.purpose;
         state.balance = state.balance + action.payload.amount;
       },
-
     },
+
     payLoan(state) {
       state.balance -= state.loan;
       state.loan = 0;
