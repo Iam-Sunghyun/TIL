@@ -1,7 +1,7 @@
 <h2>목차</h2>
 
 - [Redux Toolkit(RTK)에서 HTTP 요청 처리하는 방법](#redux-toolkitrtk에서-http-요청-처리하는-방법)
-- [`createAsyncThunk`를 사용한 방법](#createasyncthunk를-사용한-방법)
+- [`createAsyncThunk`로 비동기 로직 처리하기](#createasyncthunk로-비동기-로직-처리하기)
   - [RTK `createAsyncThunk`?](#rtk-createasyncthunk)
   - [비동기 로직 반환 값 처리하기](#비동기-로직-반환-값-처리하기)
   - [추가 예시](#추가-예시)
@@ -17,17 +17,19 @@
 
 분리하는 패턴으로는 크게 다음과 같은 방식이 있다.
 
+<!-- 추가적으로 알아야 할 방식이 더 있는지, 미들웨어 동작 방식, redux와 thunk만 쓰는 경우는 없는지(rtk 없이), createAsynThunk가 내부적으로 redux thunk 사용되는지 -->
+
 1. `createAsyncThunk` (전통적인 `thunk` 방식)
 
 2. `RTK Query (@reduxjs/toolkit/query)` — 서버 상태 관리 전용(최신 권장 방식 v2.10.1)
 
-# `createAsyncThunk`를 사용한 방법
+# `createAsyncThunk`로 비동기 로직 처리하기
 
 ## RTK `createAsyncThunk`?
 
-`createAsyncThunk`는 비동기 처리를 위한 RTK의 API로, 비동기 함수(thunk)를 호출할 액션 객체 생성자 함수를 반환한다. 반환 받은 액션 생성자 함수를 호출하여 `dispatch` 해주면 비동기 작업이 처리되며 간단한 비동기 작업(특정 액션 → API 호출 → 결과를 `slice`에서 처리)에 적합하며 로딩/성공/실패 상태를 직접 관리해야 할 때 유용하다.
+`createAsyncThunk`는 비동기 처리를 위한 RTK의 API로, 비동기 함수(thunk)를 호출할 액션 객체 생성자 함수를 반환한다. 반환 받은 액션 생성자 함수를 호출하여 `action` 객체를 생성해 `dispatch` 해주면 비동기 작업이 처리된다. 간단한 비동기 작업(특정 액션 → API 호출 → 결과를 `slice`에서 처리)에 적합하며 로딩/성공/실패 상태를 직접 관리해야 할 때 유용하다.
 
-`createAsyncThunk(actionType, payloadCreator, options)`는 다음과 같이 3가지 인수를 받는다.
+`createAsyncThunk(actionType, payloadCreator(arg, thunkAPI), options)`는 다음과 같이 3가지 인수를 받는다.
 
 ```
 const asyncUpFetch = createAsyncThunk(
