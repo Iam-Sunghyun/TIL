@@ -1,11 +1,10 @@
 - [RTK Query란?](#rtk-query란)
-- [서버 상태의 특징?](#서버-상태의-특징)
+  - [서버 상태의 특징?](#서버-상태의-특징)
   - [RTK Query APIs](#rtk-query-apis)
 - [RTK Query 기본 사용법](#rtk-query-기본-사용법)
   - [1. `createApi()`로 API 슬라이스 정의하기](#1-createapi로-api-슬라이스-정의하기)
     - [`createApi()`의 주요 기능 및 특징](#createapi의-주요-기능-및-특징)
     - [`createApi()`의 기본 구조](#createapi의-기본-구조)
-    - [엔드포인트 정의와 훅 `export`](#엔드포인트-정의와-훅-export)
   - [2. Redux store에 연결](#2-redux-store에-연결)
   - [3. 컴포넌트에서 사용하기](#3-컴포넌트에서-사용하기)
   - [쿼리 훅의 반환 객체](#쿼리-훅의-반환-객체)
@@ -20,7 +19,7 @@
 
 `Redux Toolkit` v1.6부터 공식적으로 포함된 기능으로 `Redux Toolkit` 코어 패키지에 포함되어 있으며 리액트가 아닌 환경에서도 사용할 수 있다.
 
-`RTK`를 사용한 애플리케이션이라면 서버 데이터 관리를 위해 사용할 것을 권장하고 있으며(v2.10.1 기준) 주요 기능과 API는 다음과 같다.
+`RTK`를 사용한 애플리케이션이라면 서버 데이터 관리를 위해 사용할 것을 권장하고 있으며(v2.10.1 기준) 주요 기능은 다음과 같다.
 
 <!-- 표 좀 더 내용 필요 -->
 
@@ -35,7 +34,7 @@
 
 </br>
 
-# 서버 상태의 특징?
+## 서버 상태의 특징?
 
 클라이언트의 상태와, 서버 상태에는 그 차이가 분명하며 대부분의 클라이언트 상태 관리 라이브러리로는 서버 상태 처리에 적합하지 않다. [Tanstack Query(React Query) "Motivation" 문서 페이지](https://tanstack.com/query/latest/docs/framework/react/overview)에서 설명하는 서버 상태의 특징은 다음과 같다.
 
@@ -85,7 +84,7 @@
 
 `createApi()`는 `RTK Query`의 핵심 기능으로 데이터 fetch 및 캐싱 로직을 획기적으로 단순화하는 **API 슬라이스**를 생성하는 함수다.
 
-`RTK Query`의 API 슬라이스란 웹 애플리케이션에서 **서버와의 데이터 통신(API 호출, 캐싱, 데이터 관리)에 필요한 모든 Redux 로직을 하나로 묶어놓은 단위**를 의미하며 API 통신과 관련된 모든 복잡한 로직을 캡슐화하고 자동화해주는 특별한 슬라이스라고 할 수 있다. 이를 통해 개발자는 데이터 페칭에 드는 상용구 코드를 최소화하고 비즈니스 로직에 집중할 수 있다.
+`RTK Query`의 API 슬라이스란 웹 애플리케이션에서 **서버와의 데이터 통신(API 호출, 캐싱, 데이터 관리)에 필요한 모든 Redux 로직을 하나로 묶어 놓은 단위**를 의미하며 API 통신과 관련된 모든 복잡한 로직을 캡슐화하고 자동화해주는 API 전용 슬라이스라고 할 수 있다. 이를 통해 개발자는 데이터 페칭에 드는 상용구 코드를 최소화하고 비즈니스 로직에 집중할 수 있다.
 
 `createApi()`는 아래와 같이 두 가지 방식으로 `import` 해줄 수 있다.
 
@@ -99,7 +98,9 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 
 ### `createApi()`의 주요 기능 및 특징
 
-`createApi()`로 생성된 API 슬라이스를 중심으로 모든 `RTK Query` 로직이 설정된다. 즉, 엔드포인트를 정의하고 그에 맞는 `redux` 로직, 캐싱 정책, 훅 자동 생성까지 전부 여기서 이루어진다. 다음은 `createApi`의 주요 기능과 API 슬라이스의 역할을 요약한 표다.
+`createApi()`로 생성된 API 슬라이스를 중심으로 모든 `RTK Query` 로직이 설정된다. 즉, 엔드포인트를 정의하고 그에 맞는 `redux` 로직, 캐싱 정책, 훅 자동 생성까지 전부 여기서 이루어진다.
+
+다음은 `createApi`의 주요 기능과 API 슬라이스의 역할을 요약한 표다.
 
 | 구분                              | 기능                                        | 설명                                                           |
 | --------------------------------- | ------------------------------------------- | -------------------------------------------------------------- |
@@ -114,21 +115,21 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 | **9️⃣ 쿼리/뮤테이션 분리**         | Query(GET) / Mutation(POST·PUT·DELETE) 구분 | 데이터 읽기와 쓰기를 명확히 분리하여 관리                      |
 | **🔟 확장성**                     | axios 등 커스텀 baseQuery 지원              | 기본 `fetchBaseQuery` 외에 axios 등 자유롭게 사용 가능         |
 
-`RTK Query`를 사용하면 캐시된 데이터를 관리하는 로직이 애플리케이션당 단일 "API 슬라이스"로 중앙 집중화되며 일반적으로 애플리케이션이 통신해야 하는 기본 URL당 하나의 API 슬라이스만 있어야 한다. 그 이유는 다음과 같다.
+`RTK Query`를 사용하면 캐시된 데이터를 관리하는 로직이 단일 "API 슬라이스"로 중앙 집중화되며 일반적으로 애플리케이션이 통신해야 하는 기본 URL당 하나의 API 슬라이스만 있어야 한다. 그 이유는 다음과 같다.
 
 <!-- ?? -->
 
-우선 자동 태그 무효화는 단일 API 슬라이스 내에서만 작동하는데 API 슬라이스가 여러 개인 경우 자동 무효화는 여러 슬라이스에서 작동하지 않는다.
+우선 자동 태그 무효화(캐싱 및 무효화)는 단일 API 슬라이스 내에서만 작동하는데 API 슬라이스가 여러 개인 경우 자동 무효화는 여러 슬라이스에서 작동하지 않는다.
 
 또한 모든 `createApi` 호출은 자체 미들웨어를 생성하며, 저장소에 추가된 각 미들웨어는 전달된 모든 작업에 대해 검사를 실행하기 때문에 성능 비용이 누적된다. 즉, `createApi`를 10번 호출하고 저장소에 10개의 개별 API 미들웨어를 추가하면 성능이 눈에 띄게 저하되게 된다.
 
-유지 관리를 위해 엔드포인트 정의를 여러 파일로 분할하면서도(코드 분할) `injectEndpoints` 속성을 통해 모든 엔드포인트를 포함하는 단일 API 슬라이스를 유지하는 것이 가능하다. 만약 앱이 여러 서버에서 데이터를 가져오는 경우 각 엔드포인트에 전체 URL을 지정하거나, 필요한 경우 각 서버에 대해 별도의 API 슬라이스를 만들 수 있다.
+유지 관리를 위해 엔드포인트 정의를 여러 파일로 분할하여도(코드 분할) API 슬라이스의 `api.injectEndpoints()` 함수를 통해 모든 엔드포인트를 포함하는 단일 API 슬라이스를 유지하는 것이 가능하다. 만약 앱이 여러 서버에서 데이터를 가져오는 경우 각 엔드포인트에 전체 URL을 지정하거나, 필요한 경우 각 서버에 대해 별도의 API 슬라이스를 만들 수 있다.
 
 ### `createApi()`의 기본 구조
 
-필수 매개변수 => `baseQuery`, `endpoints`
+`createApi()`를 호출할 때 인수로 객체를 전달해줘야 하는데, 이때 `baseQuery`, `endpoints` 프로퍼티를 필수로 포함시켜야 한다.
 
-`reducerPath` ??
+<!-- `reducerPath` 의 경우 값을 지정하지 않으면 api로 설정 됨. state.api-->
 
 ```
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
@@ -150,43 +151,56 @@ export const api = createApi({
     }),
   }),
 })
-```
-
-### 엔드포인트 정의와 훅 `export`
-
-<!--  -->
-
-```
-// src/services/postsApi.ts
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-export const postsApi = createApi({
-  reducerPath: 'postsApi', // slice 이름
-  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
-  endpoints: (builder) => ({
-    getPosts: builder.query({
-      query: () => '/posts',
-    }),
-    getPostById: builder.query({
-      query: (id) => `/posts/${id}`,
-    }),
-    addPost: builder.mutation({
-      query: (newPost) => ({
-        url: '/posts',
-        method: 'POST',
-        body: newPost,
-      }),
-    }),
-  }),
-})
 
 // 자동 생성되는 hooks
 export const {
   useGetPostsQuery,
-  useGetPostByIdQuery,
   useAddPostMutation,
 } = postsApi
 ```
+
+- `baseQuery`
+
+  기본적으로 fetchBaseQuery를 사용합니다. 이는 fetch()를 래핑한 경량화된 헬퍼 함수
+
+- `endpoints`
+
+  endpoints는 “builder 패턴”으로 정의되며, 각 엔드포인트는 query(조회용) 또는 mutation(변경용)으로 구분 된다.
+
+```
+// Query (GET 요청)
+getPosts: builder.query({
+  query: () => '/posts',
+})
+```
+
+데이터 조회용
+
+자동 캐싱 / 자동 re-fetch
+
+hook: useGetPostsQuery
+
+```
+// Mutation (POST/PUT/DELETE)
+addPost: builder.mutation({
+  query: (body) => ({
+    url: '/posts',
+    method: 'POST',
+    body,
+  }),
+})
+```
+
+데이터 변경용
+
+hook: useAddPostMutation
+
+<!--  -->
+
+이 코드 한 줄로 RTK Query는 자동으로 다음을 해줍니다:
+✅ Redux slice 생성
+✅ API 요청에 맞는 action, reducer, middleware 생성
+✅ React hook 자동 생성 (useGetPostsQuery, useAddPostMutation)
 
 ## 2. Redux store에 연결
 
