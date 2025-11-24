@@ -13,8 +13,6 @@
     - [그외 자주 사용되는 주요 프로퍼티](#그외-자주-사용되는-주요-프로퍼티)
   - [2. Redux store에 연결](#2-redux-store에-연결)
   - [3. 컴포넌트에서 사용하기](#3-컴포넌트에서-사용하기)
-  - [쿼리 훅의 반환 객체](#쿼리-훅의-반환-객체)
-- [기존 비동기 로직(`createAsyncThunk` + `createSlice`) RTK Query로 마이그레이션 예시](#기존-비동기-로직createasyncthunk--createslice-rtk-query로-마이그레이션-예시)
 - [RTK Query의 장단점](#rtk-query의-장단점)
 
 </br>
@@ -28,12 +26,12 @@
 `RTK Query`의 주요 특징은 다음과 같다.
 
 <!-- -->
-
+<!--
 - 데이터 페칭 및 캐싱 간소화: 데이터 로딩 및 캐싱 로직을 직접 작성하는 대신, API 엔드포인트를 정의하기만 하면 됩니다. RTK Query는 createApi 함수를 사용하여 API 슬라이스를 생성하고, 자동으로 React 훅을 만들어 데이터 요청 및 처리를 캡슐화합니다.
 - 자동 데이터 동기화: 컴포넌트가 마운트될 때 자동으로 데이터를 가져오고, 파라미터가 변경되면 데이터를 다시 가져옵니다. 이를 통해 항상 최신 데이터를 사용자에게 제공할 수 있습니다.
 - 서버 상태 관리: React-Query와 유사하게 서버 상태 관리를 수행합니다. data, isFetching과 같은 응답 값을 제공하여 로딩 상태를 쉽게 확인할 수 있습니다.
 - Redux Toolkit 기본 제공: Redux Toolkit의 일부이므로, 별도의 설치 없이 createApi와 fetchBaseQuery를 가져와 바로 사용할 수 있습니다.
-- 효율적인 코드 작성: 기존의 Redux에 비해 훨씬 적은 코드로 상태 관리가 가능합니다.
+- 효율적인 코드 작성: 기존의 Redux에 비해 훨씬 적은 코드로 상태 관리가 가능합니다. -->
 
 | 기능                     | 설명                                                                   |
 | ------------------------ | ---------------------------------------------------------------------- |
@@ -81,7 +79,7 @@
 
 - **`fetchBaseQuery()`**
 
-  `fetch` API를 래핑한 기본 쿼리 함수 (axios로 대체 가능)
+  `fetch` API를 래핑한 기본 쿼리 함수. `fetch`와 유사한 방식으로 요청 헤더와 응답 파싱을 자동으로 처리 (axios로 대체 가능)
 
 - `<ApiProvider />`
 - `setupListeners()`
@@ -174,11 +172,17 @@ RTK Query의 강력한 기능 중 하나는 **providesTags**와 **invalidatesTag
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 export const api = createApi({
-  reducerPath: 'api',              // 스토어에 등록될 slice 이름
-  baseQuery: fetchBaseQuery({ baseUrl: '/api' }), // 기본 fetch 설정
-  tagTypes: ['Posts', 'Users'],    // 캐시 태그 정의 (선택 사항)
-  endpoints: (builder) => ({       // 엔드포인트(요청 종류) 정의
+  // 1. 🔑 reducerPath (필수): 스토어의 키
+  reducerPath: 'api',
 
+  // 2. 🔑 baseQuery (필수): 모든 요청의 기본 설정
+  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+
+  // 캐시 태그 정의 (선택 사항)
+  tagTypes: ['Posts', 'Users'],
+
+  // 3. 🔑 endpoints (필수): API가 제공하는 작업 정의
+  endpoints: (builder) => ({
     // Query (GET 요청) 자동 캐싱 / 자동 re-fetch
     getPosts: builder.query({
       query: () => '/posts',
@@ -198,7 +202,7 @@ export const api = createApi({
 export const {
   useGetPostsQuery,
   useAddPostMutation,
-} = postsApi
+} = api
 ```
 
 `createApi()`를 호출할 때 인수로 객체를 전달해줘야 하는데, 이때 필수로 포함시켜줘야 하는 프로퍼티가 있다.
@@ -235,7 +239,7 @@ export const api = createApi({
 
 3. **`endpoints`**
 
-   API 요청(쿼리, 뮤테이션) 로직을 정의하는 함수. `builder`를 인자로 받아 각 endpoint를 정의할 수 있고 각 엔드포인트는 query(조회용), infiniteQuery 또는 mutation(변경용)으로 구분 된다.
+   API 요청(쿼리, 뮤테이션) 로직을 정의하는 함수. `builder`를 인자로 받아 각 endpoint를 정의할 수 있고 각 엔드포인트는 query(조회용), infiniteQuery 또는 mutation(변경용)으로 구분 된다. 또한 `RTK Query`에서 제공되는 리액트용 `createApi`를 사용한 경우 정의한 엔드포인트에 대한 리액트 훅이 자동으로 생성된다.
 
    | 함수                   | 용도                                                     |
    | ---------------------- | -------------------------------------------------------- |
@@ -259,6 +263,9 @@ endpoints: (builder) => ({
     invalidatesTags: ['User']
   })
 })
+// 훅 자동 생성
+-> { useGetUserQuery,
+     useUpdateUserMutation }
 ```
 
 ### 그외 자주 사용되는 주요 프로퍼티
@@ -280,9 +287,9 @@ endpoints: (builder) => ({
 
 ## 2. Redux store에 연결
 
-내부적으로 createApi는 Redux Toolkit의 createSlice API를 호출하여 가져온 데이터를 캐싱하는 적절한 로직을 갖춘 슬라이스 리듀서와 해당 액션 생성자를 생성합니다. 또한 구독 횟수와 캐시 수명을 관리하는 커스텀 Redux 미들웨어도 자동으로 생성합니다.
+내부적으로 `createApi`는 `Redux Toolkit`의 createSlice API를 호출하여 가져온 데이터를 캐싱하는 로직을 갖춘 슬라이스 리듀서와 해당 액션 생성자를 생성한다. 또한 구독 횟수와 캐시 수명을 관리하는 커스텀 Redux 미들웨어도 자동으로 생성한다.
 
-생성된 슬라이스 리듀서와 미들웨어는 모두 configureStore에서 Redux 스토어 설정에 추가되어야 제대로 작동합니다.
+생성된 슬라이스 리듀서와 미들웨어는 모두 configureStore에서 Redux 스토어 설정에 추가되어야 제대로 작동한다.
 
 ```
 // store.ts
@@ -328,17 +335,9 @@ export function PostsList() {
 
 </br>
 
-## 쿼리 훅의 반환 객체
+<!-- # 기존 비동기 로직(`createAsyncThunk` + `createSlice`) RTK Query로 마이그레이션 예시 -->
 
 <!--  -->
-
-</br>
-
-# 기존 비동기 로직(`createAsyncThunk` + `createSlice`) RTK Query로 마이그레이션 예시
-
-<!--  -->
-
-</br>
 
 # RTK Query의 장단점
 
