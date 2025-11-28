@@ -1,10 +1,14 @@
-- [RTK Query로 쿼리 해보기](#rtk-query로-쿼리-해보기)
+<h2>목차</h2>
+
+- [`RTK Query`로 쿼리 해보기](#rtk-query로-쿼리-해보기)
   - [쿼리 훅의 결과 객체](#쿼리-훅의-결과-객체)
   - [`isLoading`과 `isFetching`의 차이 (핵심 구분)](#isloading과-isfetching의-차이-핵심-구분)
   - [쿼리 훅에 인수 전달해 호출하기](#쿼리-훅에-인수-전달해-호출하기)
   - [Reference](#reference)
 
-# RTK Query로 쿼리 해보기
+</br>
+
+# `RTK Query`로 쿼리 해보기
 
 다음은 컴포넌트 내에서 쿼리 훅을 사용하는 일반적인 패턴이다.
 
@@ -78,6 +82,8 @@ const {
 
 ## `isLoading`과 `isFetching`의 차이 (핵심 구분)
 
+<!--  -->
+
 RTK Query에서 캐시된 데이터가 있을 때와 없을 때의 상태를 구분하기 위해 isLoading과 isFetching 두 가지 프로퍼티를 사용하는데
 
 두 프로퍼티의 차이를 이해하는 것이 중요합니다.
@@ -104,9 +110,36 @@ isFetching:
 
 ## 쿼리 훅에 인수 전달해 호출하기
 
-```
-// omit some imports
+`RTK Query`는 엔드포인트 + 인수 조합에 대해 각각의 캐시 키를 생성하고, 그 결과를 개별적으로 저장한다. 즉, 동일한 쿼리 훅에 서로 다른 매개변수를 사용했을 경우 개별적으로 캐시되는 것이다.
 
+만약 여러 컴포넌트에서 동일한 데이터가 필요한 경우 각 컴포넌트에서 동일한 인수의 쿼리 훅을 호출하기만 하면 된다. 그럼 `RTK Query`는 데이터를 한 번만 가져오고 나머지는 캐시된 데이터를 사용하여 불필요한 쿼리를 줄이고 결과 값에 따라 컴포넌트는 알아서 리렌더링 될 것이다.
+
+또한 쿼리 매개 변수는 단일 값이어야 한다. 여러 매개 변수를 전달해야 하는 경우 여러 필드가 포함된 객체를 전달해야 한다. 이때 `RTK Query`는 각 필드(프로퍼티)를 얕은 비교로 비교하여 변경을 감지하고 리페치(re-fetch)를 수행한다.
+
+```
+// features/api/apiSlice.js
+    .
+    .
+    .
+export const apiSlice = createApi({
+  reducerPath: 'api',
+  baseQuery: fetchBaseQuery({ baseUrl: '/fakeApi' }),
+  endpoints: builder => ({
+    getPosts: builder.query({
+      query: () => '/posts'
+    }),
+    getPost: builder.query({
+      query: postId => `/posts/${postId}`
+    })
+  })
+})
+
+export const { useGetPostsQuery, useGetPostQuery } = apiSlice
+------------------------------
+// features/posts/SinglePostPage.jsx
+    .
+    .
+    .
 import { useGetPostQuery } from '@/features/api/apiSlice'
 import { selectCurrentUsername } from '@/features/auth/authSlice'
 
@@ -114,10 +147,9 @@ export const SinglePostPage = () => {
   const { postId } = useParams()
 
   const currentUsername = useAppSelector(selectCurrentUsername)
-  const { data: post, isFetching, isSuccess } = useGetPostQuery(postId!)
+  const { data: post, isFetching, isSuccess } = useGetPostQuery(postId)
 
-  let content: React.ReactNode
-
+  let content
   const canEdit = currentUsername === post?.user
 
   if (isFetching) {
