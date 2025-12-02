@@ -80,6 +80,8 @@ const {
 | **`refetch`**     | `() => Promise<QueryActionCreatorResult<T>>`                | **수동으로** 해당 쿼리를 **다시 실행**하도록 트리거하는 함수다.                                                                                                                              |
 | **`currentData`** | `T`                                                         | 현재 캐시에 존재하는 **최신 데이터**다. `isFetching` 중일 때 (새 데이터를 가져오는 중), 이 값은 **이전 데이터**를 유지한다.                                                                  |
 
+</br>
+
 ## `isLoading`과 `isFetching`의 차이 (핵심 구분)
 
 <!--  -->
@@ -114,7 +116,7 @@ isFetching:
 
 만약 여러 컴포넌트에서 동일한 데이터가 필요한 경우 각 컴포넌트에서 동일한 인수의 쿼리 훅을 호출하기만 하면 된다. 그럼 `RTK Query`는 데이터를 한 번만 가져오고 나머지는 캐시된 데이터를 사용하여 불필요한 쿼리를 줄이고 결과 값에 따라 컴포넌트는 알아서 리렌더링 될 것이다.
 
-또한 쿼리 매개 변수는 단일 값이어야 한다. 여러 매개 변수를 전달해야 하는 경우 여러 필드가 포함된 객체를 전달해야 한다. 이때 `RTK Query`는 각 필드(프로퍼티)를 얕은 비교로 비교하여 변경을 감지하고 리페치(re-fetch)를 수행한다.
+또한 쿼리 매개 변수는 단일 값이어야 한다. 여러 매개 변수를 전달해야 하는 경우 여러 필드가 포함된 객체를 전달해야 한다. 이때 `RTK Query`는 각 필드(프로퍼티)를 얕은 비교로 변경을 감지하고 리페치(re-fetch)를 수행한다.
 
 ```
 // features/api/apiSlice.js
@@ -177,12 +179,10 @@ export const SinglePostPage = () => {
 }
 ```
 
-<!--  -->
-
 ## Reference
 
 **[RTK Query using query]**
 
 https://redux-toolkit.js.org/rtk-query/usage/queries
 
-https://redux.js.org/tutorials/essentials/part-7-rtk-query-basics#query-hook-result-objects
+https://redux.js.org/tutorials/essentials/part-7-rtk-query-basics

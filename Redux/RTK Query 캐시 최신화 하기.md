@@ -1,129 +1,14 @@
 <h2>목차</h2>
 
-- [`RTK Query` Mutation 엔드포인트 정의하기](#rtk-query-mutation-엔드포인트-정의하기)
-- [컴포넌트에서 Mutation 훅 사용하기](#컴포넌트에서-mutation-훅-사용하기)
 - [`RTK Query` 캐시 데이터 최신 값으로 업데이트 하기](#rtk-query-캐시-데이터-최신-값으로-업데이트-하기)
   - [수동으로 업데이트 하기](#수동으로-업데이트-하기)
   - [캐시 무효화(Cache Invalidation)로 자동 업데이트 하기](#캐시-무효화cache-invalidation로-자동-업데이트-하기)
-  - [Reference](#reference)
 
 </br>
 
-# `RTK Query` Mutation 엔드포인트 정의하기
-
-API 슬라이스를 정의할 때 데이터를 가져오는 쿼리 뿐 아니라 서버 상태를 변경하는 로직을 작성할 수도 있다.
-
-서버 데이터를 변경하는 mutation 엔드포인트는 쿼리 엔드포인트와 거의 비슷한데 `endpoints` 프로퍼티에 전달되는 함수의 인수(`builder`)로부터 `builder.query()` 대신 `builder.mutation()` 메서드를 사용하며, `query`에 정의한 함수가 URL과, `POST` HTTP 메서드, 요청 body를 포함한 객체(`{url, method, body}`)를 반환해야 한다는 차이가 있다.
-
-<!--  -->
-
-`fetchBaseQuery`를 사용하여 요청을 생성하므로 body 필드는 자동으로 JSON 직렬화된다.
-
-```
-// features/api/apiSlice.js
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-export const apiSlice = createApi({
-  reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: '/fakeApi' }),
-  endpoints: builder => ({
-    getPosts: builder.query({
-      query: () => '/posts'
-    }),
-    getPost: builder.query({
-      query: postId => `/posts/${postId}`
-    }),
-    addNewPost: builder.mutation({
-      query: initialPost => ({
-        // -> '/fakeApi/posts'
-        url: '/posts',
-        // HTTP 메서드
-        method: 'POST',
-        // 요청 body
-        body: initialPost
-      })
-    })
-  })
-})
-
-export const {
-  useGetPostsQuery,
-  useGetPostQuery,
-  useAddNewPostMutation  // 쿼리 엔드포인트와 마찬가지로 hook 자동 생성
-} = apiSlice
-```
-
-# 컴포넌트에서 Mutation 훅 사용하기
-
-```
-// features/posts/AddPostForm.jsx
-import React from 'react'
-
-import { useAppSelector } from '@/app/hooks'
-
-import { useAddNewPostMutation } from '@/features/api/apiSlice'
-import { selectCurrentUsername } from '@/features/auth/authSlice'
-
-// omit field types
-
-export const AddPostForm = () => {
-  const userId = useAppSelector(selectCurrentUsername)
-  const [addNewPost, { isLoading }] = useAddNewPostMutation()
-
-  const handleSubmit = async (e) => {
-    // Prevent server submission
-    e.preventDefault()
-
-    const { elements } = e.currentTarget
-    const title = elements.postTitle.value
-    const content = elements.postContent.value
-
-    const form = e.currentTarget
-
-    try {
-      await addNewPost({ title, content, user: userId }).unwrap()
-
-      form.reset()
-    } catch (err) {
-      console.error('Failed to save the post: ', err)
-    }
-  }
-
-  return (
-    <section>
-      <h2>Add a New Post</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="postTitle">Post Title:</label>
-        <input type="text" id="postTitle" defaultValue="" required />
-        <label htmlFor="postContent">Content:</label>
-        <textarea
-          id="postContent"
-          name="postContent"
-          defaultValue=""
-          required
-        />
-        <button disabled={isLoading}>Save Post</button>
-      </form>
-    </section>
-  )
-}
-```
-
-<!--  -->
-
-`<AddPostForm />`은 "Save Post" 버튼을 클릭할 때마다 게시물을 추가하는 비동기 썽크를 이미 전달하고 있습니다. 이를 위해서는 `useDispatch`와 `addNewPost` 썽크를 가져와야 합니다. 뮤테이션 후크는 두 가지를 모두 대체하며, 사용 패턴은 기본적으로 동일합니다.
-
-첫 번째 값은 트리거 함수 -> 호출되면 제공된 인수와 함께 서버에 요청을 보낸다, 두 번째 값은 현재 진행 중인 요청(있는 경우)에 대한 메타데이터를 포함하는 객체 -> 여기에는 요청이 진행 중인지 여부를 나타내는 isLoading 플래그가 포함되어 있다
-
-기존 썽크 디스패치와 컴포넌트 로딩 상태를 useAddNewPostMutation 후크의 트리거 함수와 isLoading 플래그로 대체할 수 있으며, 나머지 컴포넌트는 그대로 유지됩니다.
-
-이전 썽크 디스패치와 마찬가지로, 초기 post 객체를 사용하여 addNewPost를 호출합니다. 이는 .unwrap() 메서드를 가진 특수 Promise를 반환하며, addNewPost().unwrap()을 await하여 표준 try/catch 블록으로 잠재적 오류를 처리할 수 있습니다. (이는 createAsyncThunk에서 본 것과 동일해 보입니다. RTK Query는 내부적으로 createAsyncThunk를 사용하기 때문입니다.)
-
-<!-- createAsyncThunk : await addNewPost().unwrap() -> ?? -->
-
 # `RTK Query` 캐시 데이터 최신 값으로 업데이트 하기
 
-"게시물 저장"을 클릭하면 브라우저 DevTools의 네트워크 탭을 보고 HTTP POST 요청이 성공했는지 확인할 수 있습니다. 하지만 `<PostsList>`로 돌아가면 새 게시물이 표시되지 않습니다. Redux 저장소 상태는 변경되지 않았고, 메모리에는 여전히 동일한 캐시 데이터가 있습니다.
+'Save Post'를 클릭하면 브라우저 DevTools의 네트워크 탭을 보고 HTTP POST 요청이 성공했는지 확인할 수 있습니다. 하지만 `<PostsList>`로 돌아가면 새 게시물이 표시되지 않습니다. Redux 저장소 상태는 변경되지 않았고, 메모리에는 여전히 동일한 캐시 데이터가 있습니다.
 
 방금 추가한 새 게시물을 보려면 RTK Query에 캐시된 게시물 목록을 새로 고치도록 설정해야 합니다.
 
@@ -272,11 +157,3 @@ export const apiSlice = createApi({
   })
 })
 ```
-
-## Reference
-
-**[RTK Query basics, mutations]**
-
-https://redux.js.org/tutorials/essentials/part-7-rtk-query-basics
-
-https://redux-toolkit.js.org/rtk-query/usage/mutations

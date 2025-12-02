@@ -1,4 +1,6 @@
-- [RTK Query란?](#rtk-query란)
+<h2>목차</h2>
+
+- [`RTK Query`란?](#rtk-query란)
   - [서버 상태의 특징?](#서버-상태의-특징)
   - [RTK Query APIs](#rtk-query-apis)
 - [RTK Query 기본 사용법](#rtk-query-기본-사용법)
@@ -14,10 +16,11 @@
   - [2. Redux store에 연결](#2-redux-store에-연결)
   - [3. 컴포넌트에서 사용하기](#3-컴포넌트에서-사용하기)
 - [RTK Query의 장단점](#rtk-query의-장단점)
+  - [Reference](#reference)
 
 </br>
 
-# RTK Query란?
+# `RTK Query`란?
 
 `RTK Query(@reduxjs/toolkit/query)`는 `Redux Toolkit`에 내장된 **데이터 fetching 및 캐싱 라이브러리로 CRUD 요청, 로딩 상태 및 에러 관리, 캐싱, re-fetch, polling 등 서버에서 가져온 데이터 관리를 자동화해주는 도구다**(데이터 페칭 및 캐싱 로직은 Redux Toolkit `createSlice` 및 `createAsyncThunk` API를 기반으로 구축되었다).
 
@@ -105,6 +108,9 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 ```
 
 ### `createApi()`의 주요 기능 및 특징
+
+<!-- Redux Toolkit 데이터 페칭 및 캐싱 로직은  createSlice 및 createAsyncThunkAPI를 기반으로 구축되었습니다.
+ -->
 
 `createApi()`로 생성된 API 슬라이스를 중심으로 모든 `RTK Query` 로직이 설정된다. 즉, 엔드포인트 정의, `redux` 로직, 캐싱 정책, 훅 자동 생성까지 전부 여기서 이루어진다.
 
@@ -211,9 +217,11 @@ export const {
 
    리덕스 `store`에 저장될 고유 키(API 슬라이스 이름). 지정하지 않는 경우 'api'로 설정된다(`state.api`).
 
+<!--  -->
+
 2. **`baseQuery`**
 
-   모든 요청의 기본 설정 값을 설정하는 함수. 기본적으로 `RTK Query`에 포함되어 있으면서 `fetch()`를 래핑한 경량화된 헬퍼 함수 `fetchBaseQuery`를 사용하거나 `Axios`로 사용자 정의 로직을 사용해줄 수도 있다.
+   모든 요청의 기본 값을 설정하는 함수. 기본적으로 `RTK Query`에 포함되어 있으면서 `fetch()`를 래핑한 경량화된 헬퍼 함수 `fetchBaseQuery`를 사용하거나 `Axios`로 사용자 정의 로직을 사용해줄 수도 있다.
 
 ```
 // Axios 사용한 커스텀 baseQuery
@@ -287,6 +295,8 @@ endpoints: (builder) => ({
 
 ## 2. Redux store에 연결
 
+<!--  -->
+
 내부적으로 `createApi`는 `Redux Toolkit`의 createSlice API를 호출하여 가져온 데이터를 캐싱하는 로직을 갖춘 슬라이스 리듀서와 해당 액션 생성자를 생성한다. 또한 구독 횟수와 캐시 수명을 관리하는 커스텀 Redux 미들웨어도 자동으로 생성한다.
 
 생성된 슬라이스 리듀서와 미들웨어는 모두 configureStore에서 Redux 스토어 설정에 추가되어야 제대로 작동한다.
@@ -356,3 +366,9 @@ export function PostsList() {
 | 복잡한 커스터마이징 한계 | React Query보다 세밀한 캐시 제어나 리트라이 로직 구성은 제한적 |
 | Redux 미사용 시 과함     | 단독 프로젝트에서는 React Query가 더 간단할 수 있음            |
 | 서버 상태만 관리         | 클라이언트 로컬 상태는 여전히 별도의 slice로 관리 필요         |
+
+## Reference
+
+**[RTK Query 개요]**
+
+https://redux-toolkit.js.org/rtk-query/overview
