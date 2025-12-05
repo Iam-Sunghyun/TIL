@@ -1,52 +1,116 @@
 <h2>목차</h2>
 
-- [API 슬라이스가 하나만 있어야 되는 이유?](#api-슬라이스가-하나만-있어야-되는-이유)
+- [API 슬라이스가 URL 당 하나만 있어야 되는 이유?](#api-슬라이스가-url-당-하나만-있어야-되는-이유)
   - [1. 일관되지 않은 캐시](#1-일관되지-않은-캐시)
   - [2. Tag 기반 캐시 무효화 작동 안 됨](#2-tag-기반-캐시-무효화-작동-안-됨)
-  - [3. 미들웨어 중복 등록 및 성능 저하](#3-미들웨어-중복-등록-및-성능-저하)
-  - [4. 자동 refetch 이벤트가 API 슬라이스마다 독립적으로 동작](#4-자동-refetch-이벤트가-api-슬라이스마다-독립적으로-동작)
+  - [3. Redux store 복잡도 증가](#3-redux-store-복잡도-증가)
+  - [4. 메모리 사용량 증가](#4-메모리-사용량-증가)
+- [올바른 구조: URL 당 하나의 API 슬라이스](#올바른-구조-url-당-하나의-api-슬라이스)
+  - [코드 분할(code splitting)이 필요한 경우](#코드-분할code-splitting이-필요한-경우)
 
 <br>
 
-# API 슬라이스가 하나만 있어야 되는 이유?
+# API 슬라이스가 URL 당 하나만 있어야 되는 이유?
 
 `RTK Query`를 사용하면 캐시된 데이터를 관리하는 로직이 단일 "API 슬라이스"로 중앙 집중화 되며 **일반적으로 애플리케이션이 통신해야 하는 베이스 URL(Base URL) 당 하나의 API 슬라이스만 있어야 하는데** 그 이유는 **캐시 일관성 및 데이터 동기화 기능 때문이다.**
 
 만약 한 URL에 여러 API 슬라이스를 사용하게 되면 발생하는 문제는 다음과 같다.
 
-```
-// 모두 /api 같은 URL인데 slice를 따로 만든 상황
-authApi = createApi({ baseUrl: "/api" })
-userApi = createApi({ baseUrl: "/api" })
-postApi = createApi({ baseUrl: "/api" })
-```
-
-<!-- *** -->
-
 ## 1. 일관되지 않은 캐시
 
-캐시가 슬라이스 별로 분리되어 중복 저장되거나
+```
+// ❌ 나쁜 예: 같은 베이스 URL로 여러 API 슬라이스 생성
+const userApi = createApi({
+  reducerPath: 'userApi',
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://api.example.com' }),
+  endpoints: (builder) => ({
+    getUser: builder.query({
+      query: (id) => `/users/${id}`,
+    }),
+  }),
+});
 
--` RTK Query`는 기본적으로 **엔드포인트(endpoint)**와 **쿼리 매개변수(query parameters)**를 조합하여 고유한 캐시 키를 생성한다.
+const postsApi = createApi({
+  reducerPath: 'postsApi',
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://api.example.com' }),
+  endpoints: (builder) => ({
+    getPost: builder.query({
+      query: (id) => `/posts/${id}`,
+    }),
+  }),
+});
+```
 
-- 만약 여러 API 슬라이스가 동일한 URL(또는 엔드포인트 경로)을 관리하게 되면, 데이터가 중복 저장되거나, 서로 다른 슬라이스가 동일한 캐시 키를 덮어쓰거나 무효화(invalidate)하는 충돌이 발생할 수 있다.
-
-- 하나의 URL (자원) 당 하나의 슬라이스 원칙은 이 자원의 상태를 관리하는 **단일 진실 공급원(Single Source of Truth)**을 보장하여, 캐시 무효화 및 데이터 업데이트가 예측 가능하게 이루어지도록 한다.
+각 API 슬라이스는 독립적인 캐시 저장소를 갖는다. 즉, 같은 엔드포인트를 호출해도 각 슬라이스의 캐시는 서로 알지 못한다. 따라서 `https://api.example.com/users/1`을 `userApi`와 `postsApi` 양쪽에서 호출하면 중복 네트워크 요청이 발생하게 될 것.
 
 ## 2. Tag 기반 캐시 무효화 작동 안 됨
 
-우선 자동 태그 무효화(캐싱 및 무효화)는 단일 API 슬라이스 내에서만 작동하는데 API 슬라이스가 여러 개인 경우 자동 무효화는 여러 슬라이스에서 작동하지 않는다.
+```
+// userApi에서 사용자 정보 가져오기
+const userApi = createApi({
+  reducerPath: 'userApi',
+  tagTypes: ['User'],
+  endpoints: (builder) => ({
+    getUser: builder.query({
+      query: (id) => `/users/${id}`,
+      providesTags: ['User'],
+    }),
+  }),
+});
 
-RTK Query의 강력한 기능 중 하나는 **providesTags**와 **invalidatesTags**를 사용하여 데이터 변경 시 관련 쿼리들을 자동으로 다시 불러오게(refetch) 하는 것이다.
+// postsApi에서 사용자 정보 업데이트
+const postsApi = createApi({
+  reducerPath: 'postsApi',
+  tagTypes: ['User'],
+  endpoints: (builder) => ({
+    updateUser: builder.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `/users/${id}`,
+        method: 'PATCH',
+        body: patch,
+      }),
+      invalidatesTags: ['User'], // ❌ userApi의 캐시를 무효화하지 못함!
+    }),
+  }),
+});
+```
 
-특정 URL/자원에 대한 API 슬라이스가 하나일 때, 이 슬라이스가 제공하는 태그는 해당 자원에 대한 모든 쿼리를 명확하게 나타낸다.
+우선 자동 태그 무효화(캐싱 및 무효화)는 단일 API 슬라이스 내에서만 작동하며 API 슬라이스 간에 완전히 독립적이다.
 
-만약 두 개의 슬라이스가 같은 자원을 관리한다면, 한 슬라이스에서 발생한 뮤테이션(mutation)이 다른 슬라이스의 캐시를 무효화해야 할지 결정하기가 복잡해지며, 태그 시스템의 의도된 자동화 이점이 상실될 수 있다.
+위 예시를 보면 `postsApi`에서 `mutation`을 통해 사용자를 업데이트 해도 `userApi`의 캐시는 무효화되지 않는다. 결국 자동 refetch가 발생하지 않아 서버/클라이언트 간에 데이터 동기화가 깨지고 **stale data**(오래된 데이터) 문제가 발생하게 된다.
 
-## 3. 미들웨어 중복 등록 및 성능 저하
+## 3. Redux store 복잡도 증가
+
+```
+// store 설정이 복잡해짐
+const store = configureStore({
+  reducer: {
+    [userApi.reducerPath]: userApi.reducer,
+    [postsApi.reducerPath]: postsApi.reducer,
+    [commentsApi.reducerPath]: commentsApi.reducer,
+    // ... 계속 증가
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware()
+      .concat(userApi.middleware)
+      .concat(postsApi.middleware)
+      .concat(commentsApi.middleware),
+      // ... 계속 증가
+});
+```
+
+생성한 API 슬라이스만큼 `store`에 리듀서, 미들웨어를 등록해줘야 하기 때문에 불필요하게 `store`가 커지고 복잡해지게 된다. 또한 디버깅 시 추적해야 되는 리듀서가 많아 유지 보수가 어려워진다.
+
+## 4. 메모리 사용량 증가
 
 또한 모든 `createApi` 호출은 자체 미들웨어를 생성하며, 저장소에 추가된 각 미들웨어는 전달된 모든 작업에 대해 검사를 실행하기 때문에 성능 비용이 누적된다. 즉, `createApi`를 10번 호출하고 저장소에 10개의 개별 API 미들웨어를 추가하면 성능이 눈에 띄게 저하되게 된다.
 
-## 4. 자동 refetch 이벤트가 API 슬라이스마다 독립적으로 동작
+# 올바른 구조: URL 당 하나의 API 슬라이스
+
+```
+
+```
+
+## 코드 분할(code splitting)이 필요한 경우
 
 유지 관리를 위해 엔드포인트 정의를 여러 파일로 분할하여도(코드 분할) API 슬라이스의 `api.injectEndpoints()` 함수를 통해 모든 엔드포인트를 포함하는 단일 API 슬라이스를 유지하는 것이 가능하다. 만약 앱이 여러 서버에서 데이터를 가져오는 경우 각 엔드포인트에 전체 URL을 지정하거나, 필요한 경우 각 서버에 대해 별도의 API 슬라이스를 만들 수 있다.
