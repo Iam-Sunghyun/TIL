@@ -77,7 +77,7 @@ const postsApi = createApi({
 
 우선 자동 태그 무효화(캐싱 및 무효화)는 단일 API 슬라이스 내에서만 작동하며 API 슬라이스 간에 완전히 독립적이다.
 
-위 예시를 보면 `postsApi`에서 `mutation`을 통해 사용자를 업데이트 해도 `userApi`의 캐시는 무효화되지 않는다. 결국 자동 refetch가 발생하지 않아 서버/클라이언트 간에 데이터 동기화가 깨지고 **stale data**(오래된 데이터) 문제가 발생하게 된다.
+위 예시를 보면 `postsApi`에서 `mutation`을 통해 사용자를 업데이트 해도 `userApi`의 캐시는 무효화되지 않는다. 또한 자동 refetch가 발생하지 않아 서버/클라이언트 간에 데이터 동기화가 깨지고 **stale data**(오래된 데이터) 문제가 발생하게 된다.
 
 ## 3. Redux store 복잡도 증가
 
@@ -99,18 +99,112 @@ const store = configureStore({
 });
 ```
 
-생성한 API 슬라이스만큼 `store`에 리듀서, 미들웨어를 등록해줘야 하기 때문에 불필요하게 `store`가 커지고 복잡해지게 된다. 또한 디버깅 시 추적해야 되는 리듀서가 많아 유지 보수가 어려워진다.
+생성한 API 슬라이스만큼 `store`에 리듀서, 미들웨어를 등록해줘야 하기 때문에 불필요하게 `store`가 커지고 복잡해지게 된다. 또한 자동 생성되는 훅도 분산되어 디버깅 시 추적해야 되는 리듀서가 많아지게되고 결국 유지 보수가 매우 어려워진다.
 
 ## 4. 메모리 사용량 증가
 
-또한 모든 `createApi` 호출은 자체 미들웨어를 생성하며, 저장소에 추가된 각 미들웨어는 전달된 모든 작업에 대해 검사를 실행하기 때문에 성능 비용이 누적된다. 즉, `createApi`를 10번 호출하고 저장소에 10개의 개별 API 미들웨어를 추가하면 성능이 눈에 띄게 저하되게 된다.
+<!-- subscription..? -->
+
+각 API 슬라이스는 독립적인 캐시 저장소, 구독(subscription) 관리, query 상태 관리를 수행하기 때문에 데이터가 불필요하게 여러 슬라이스에 중복 혹은 나누어 저장되게 된다.
+
+또한 모든 `createApi` 호출은 자체 미들웨어를 생성하고, 저장소에 추가된 각 미들웨어는 전달된 모든 작업에 대해 검사를 실행하기 때문에 성능 비용이 누적된다. 즉, `createApi`를 10번 호출하고 저장소에 10개의 개별 API 미들웨어를 추가하면 여러 작업들이 불필요하게 중복되어 처리되기 때문에(로그 중복 등) 성능이 눈에 띄게 저하되게 된다.
 
 # 올바른 구조: URL 당 하나의 API 슬라이스
 
-```
+하나의 base URL(동일한 API 서버) 이라면 다음과 같이 `endpoints`에서 나우는 것이 바람직하다.
 
+```
+// ✅ 하나의 API 슬라이스에 모든 엔드포인트
+const api = createApi({
+  reducerPath: 'api',
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://api.example.com' }),
+  tagTypes: ['User', 'Post', 'Comment'],
+  endpoints: (builder) => ({
+    // User 관련 엔드포인트
+    getUser: builder.query({
+      query: (id) => `/users/${id}`,
+      providesTags: (result, error, id) => [{ type: 'User', id }],
+    }),
+    updateUser: builder.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `/users/${id}`,
+        method: 'PATCH',
+        body: patch,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'User', id }],
+    }),
+
+    // Post 관련 엔드포인트
+    getPosts: builder.query({
+      query: () => '/posts',
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: 'Post', id })),
+              { type: 'Post', id: 'LIST' },
+            ]
+          : [{ type: 'Post', id: 'LIST' }],
+    }),
+    createPost: builder.mutation({
+      query: (body) => ({
+        url: '/posts',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [{ type: 'Post', id: 'LIST' }],
+    }),
+
+    // Comment 관련 엔드포인트
+    getComments: builder.query({
+      query: (postId) => `/posts/${postId}/comments`,
+      providesTags: (result, error, postId) => [
+        { type: 'Comment', id: postId }
+      ],
+    }),
+  }),
+});
 ```
 
 ## 코드 분할(code splitting)이 필요한 경우
 
-유지 관리를 위해 엔드포인트 정의를 여러 파일로 분할하여도(코드 분할) API 슬라이스의 `api.injectEndpoints()` 함수를 통해 모든 엔드포인트를 포함하는 단일 API 슬라이스를 유지하는 것이 가능하다. 만약 앱이 여러 서버에서 데이터를 가져오는 경우 각 엔드포인트에 전체 URL을 지정하거나, 필요한 경우 각 서버에 대해 별도의 API 슬라이스를 만들 수 있다.
+유지 관리를 위해 엔드포인트 정의를 여러 파일로 분할하여도(코드 분할) API 슬라이스의 `api.injectEndpoints()` 함수를 통해 단일 API 슬라이스를 유지하는 것이 가능하다.
+
+만약 앱이 여러 서버에서 데이터를 가져오는 경우 각 엔드포인트에 전체 URL을 지정하거나, 필요한 경우 각 서버에 대해(다른 베이스 URL) 별도의 API 슬라이스를 만들 수 있다.
+
+<!-- injectEndpoints 추가 속성 -> overrideExisting, enhanceEndpoints -->
+
+```
+// api/baseApi.js - 기본 API 설정
+export const api = createApi({
+  reducerPath: 'api',
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://api.example.com' }),
+  tagTypes: ['User', 'Post', 'Comment'],
+  endpoints: () => ({}), // 빈 엔드포인트로 시작
+});
+
+// api/userApi.js - 엔드포인트 주입
+export const userApi = api.injectEndpoints({
+  endpoints: (builder) => ({
+    getUser: builder.query({
+      query: (id) => `/users/${id}`,
+      providesTags: ['User'],
+    }),
+  }),
+});
+
+// api/postApi.js - 엔드포인트 주입
+export const postApi = api.injectEndpoints({
+  endpoints: (builder) => ({
+    getPosts: builder.query({
+      query: () => '/posts',
+      providesTags: ['Post'],
+    }),
+  }),
+});
+```
+
+<br>
+
+**[RTK Query - Code splitting]**
+
+https://redux-toolkit.js.org/rtk-query/usage/code-splitting
