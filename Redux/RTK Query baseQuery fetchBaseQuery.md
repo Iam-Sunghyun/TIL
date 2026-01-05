@@ -3,23 +3,17 @@
 - [`createApi`의 `baseQuery`란?](#createapi의-basequery란)
 - [자주 사용되는 `baseQuery` 구현: `fetchBaseQuery`](#자주-사용되는-basequery-구현-fetchbasequery)
   - [`fetchBaseQuery` 함수 시그니처](#fetchbasequery-함수-시그니처)
-  - [`fetchBaseQuery`를 사용하는 이유?](#fetchbasequery를-사용하는-이유)
-  - [일반 `fetch API`와 `fetchBaseQuery` 비교 예제](#일반-fetch-api와-fetchbasequery-비교-예제)
 - [`fetchBaseQuery` 호출 옵션](#fetchbasequery-호출-옵션)
   - [`FetchBaseQueryArgs` : 전역 설정 객체](#fetchbasequeryargs--전역-설정-객체)
     - [`prepareHeaders` 속성의 `api` 객체](#prepareheaders-속성의-api-객체)
   - [`FetchArgs` : 엔드포인트 개별 요청 설정 객체](#fetchargs--엔드포인트-개별-요청-설정-객체)
     - [`responseHandler` 옵션 상세](#responsehandler-옵션-상세)
-- [`FetchBaseQueryArgs` vs `FetchArgs` 비교](#fetchbasequeryargs-vs-fetchargs-비교)
-  - [`FetchBaseQueryArgs` 활용 예제](#fetchbasequeryargs-활용-예제)
-  - [`FetchArgs` 활용 예제](#fetchargs-활용-예제)
+    - [+ `response.text()` 실무 팁](#-responsetext-실무-팁)
+- [자주 사용되는 `FetchBaseQueryArgs` 패턴](#자주-사용되는-fetchbasequeryargs-패턴)
+- [`FetchArgs` 사용 패턴](#fetchargs-사용-패턴)
+- [`FetchBaseQueryArgs` vs `FetchArgs` 차이 정리](#fetchbasequeryargs-vs-fetchargs-차이-정리)
   - [속성 적용 우선순위](#속성-적용-우선순위)
-    - [예시](#예시)
   - [주의사항](#주의사항)
-    - [1. body 자동 직렬화](#1-body-자동-직렬화)
-    - [2. params 처리](#2-params-처리)
-    - [3. timeout](#3-timeout)
-    - [4. credentials](#4-credentials)
 
 </br>
 
@@ -116,245 +110,7 @@ type FetchBaseQueryResult = Promise<
 >
 ```
 
-## `fetchBaseQuery`를 사용하는 이유?
-
-다음은 일반 `fetch API`가 아닌 `fetchBaseQuery`를 사용했을 때 주요 장점들을 나열한 것이다.
-
-<h3>1. RTK Query 에코시스템과의 통합</h3>
-
-<!--  -->
-
-```
-// fetch는 이렇게 반환
-const response = await fetch(url)
-const data = await response.json()
--------------------------------------
-// fetchBaseQuery는 이렇게 반환 (RTK Query 형식)
-// 성공 시
-{
-  data: any,
-  error?: undefined,
-  meta?: { request, response }
-}
-// 실패 시
-{
-  data?: undefined,
-  error: FetchBaseQueryError,
-  meta?: { request, response }
-}
-```
-
-이 형식을 지켜야만 `RTK Query`가 올바르게 타입을 추론하고 요청 상태를 관리할 수 있다. 만약 에러를 throw 하거나 반환 형식을 어기면, 내부 캐시/상태 관리가 올바르게 동작하지 않을 수 있다.
-
-<h3>2. 자동 JSON 처리</h3>
-
-`fetchBaseQuery`를 사용하여 요청을 생성하는 경우 자동으로 적절한 헤더 설정과 함께 body 필드도 `JSON` 직렬화된다. 응답도 자동으로 `JSON` 파싱되며 body가 없는 경우 `null`로 처리된다.
-
-```
-// 일반 fetch - 매번 수동으로 처리
-const response = await fetch(url, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify(data)  // 수동 직렬화
-})
-const result = await response.json()  // 수동 파싱
-
-// fetchBaseQuery - 자동 처리
-query: (data) => ({
-  url: '/users',
-  method: 'POST',
-  body: data  // 자동으로 JSON.stringify() + 헤더 설정
-})
-```
-
-<h3>3. 통일된 에러 처리</h3>
-
-<!-- validateStatus? -->
-
-일반 `fetch API`의 경우 상태 코드가 200~299가 아니어도 에러를 throw 하지 않는 반면 `fetchBaseQuery`는 응답 상태 코드가 200~299 외인 경우 `error`를 `reject` 한다.
-
-```
-// 일반 fetch - 200-299가 아니어도 에러를 throw하지 않음
-const response = await fetch(url)
-if (!response.ok) {  // 매번 체크 필요
-  throw new Error('Request failed')
-}
-
-// fetchBaseQuery - 자동으로 에러 형식 표준화
-{
-  error: {
-    status: 404,
-    data: { message: 'Not found' }
-  }
-}
-// 또는
-{
-  error: {
-    status: 'FETCH_ERROR',
-    error: 'Network error'
-  }
-}
-```
-
-<h3>4. Redux 스토어 접근</h3>
-
-일반 `fetch API`와 다르게 `fetchBaseQuery`는 `prepareHeaders` 프로퍼티를 통해 `Redux` 스토어에 접근할 수 있다.
-
-```
-// 일반 fetch - 스토어 접근 불가능..
-const token = fetch(url, {
-  headers: { authorization: `Bearer ${token}` }
-})
-
-// fetchBaseQuery - prepareHeaders로 스토어 접근 가능
-prepareHeaders: (headers, { getState }) => {
-  const token = getState().auth.token  // Redux 스토어에서 바로 가져옴
-  if (token) {
-    headers.set('authorization', `Bearer ${token}`)
-  }
-  return headers
-}
-```
-
-<h3>5. baseUrl 자동 결합</h3>
-
-```
-// 일반 fetch - 매번 전체 URL 작성
-fetch('https://api.example.com/users')
-fetch('https://api.example.com/posts')
-fetch('https://api.example.com/comments')
-
-// fetchBaseQuery - baseUrl 한 번만 설정
-fetchBaseQuery({ baseUrl: 'https://api.example.com' })
-
-// 엔드포인트에서는 경로만 작성
-query: () => '/users'
-query: () => '/posts'
-query: () => '/comments'
-```
-
-<h3>6. 타임아웃 기능 간소화</h3>
-
-```
-// 일반 fetch - 타임아웃 구현 복잡
-const controller = new AbortController()
-const timeoutId = setTimeout(() => controller.abort(), 5000)
-
-try {
-  const response = await fetch(url, { signal: controller.signal })
-} finally {
-  clearTimeout(timeoutId)
-}
-
-// fetchBaseQuery - 간단하게 설정
-fetchBaseQuery({
-  baseUrl: '/api',
-  timeout: 5000  // 끝!
-})
-```
-
-<h3>7. 쿼리 파라미터 자동 직렬화</h3>
-
-```
-// 일반 fetch - 수동으로 URL 생성
-const params = new URLSearchParams({ page: 1, limit: 10 })
-fetch(`/api/users?${params}`)
-
-// fetchBaseQuery - 객체만 전달
-query: () => ({
-  url: '/users',
-  params: { page: 1, limit: 10 }  // 자동으로 쿼리스트링 생성
-})
-```
-
-<h3>8. 커스텀 응답 검증</h3>
-
-```
-// 일반 fetch - 매번 수동 체크
-const response = await fetch(url)
-const data = await response.json()
-if (data.isError) {
-  throw new Error('API returned error')
-}
-
-// fetchBaseQuery endpoints 쿼리
-query: () => ({
-  url: '/users',
-  validateStatus: (response, result) =>
-    response.status === 200 && !result.isError
-})
-```
-
-## 일반 `fetch API`와 `fetchBaseQuery` 비교 예제
-
-```
-// ❌ 일반 fetch로 RTK Query 사용하려면
-const customBaseQuery = async (args, api, extraOptions) => {
-  const state = api.getState()
-  const token = state.auth.token
-
-  const url = typeof args === 'string' ? args : args.url
-  const method = typeof args === 'string' ? 'GET' : args.method
-  const body = typeof args === 'string' ? undefined : args.body
-
-  try {
-    const response = await fetch(`https://api.example.com${url}`, {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { authorization: `Bearer ${token}` })
-      },
-      body: body ? JSON.stringify(body) : undefined
-    })
-
-    if (!response.ok) {
-      return {
-        error: {
-          status: response.status,
-          data: await response.json()
-        }
-      }
-    }
-
-    const data = await response.json()
-    return { data }
-
-  } catch (error) {
-    return {
-      error: {
-        status: 'FETCH_ERROR',
-        error: error.message
-      }
-    }
-  }
-}
-------------------------------------------------
-// ✅ fetchBaseQuery 사용하면
-const baseQuery = fetchBaseQuery({
-  baseUrl: 'https://api.example.com',
-  prepareHeaders: (headers, { getState }) => {
-    const token = getState().auth.token
-    if (token) {
-      headers.set('authorization', `Bearer ${token}`)
-    }
-    return headers
-  }
-})
-// 끝! 위의 모든 로직이 내장되어 있음
-```
-
-결국 `fetchBaseQuery`는 `fetch API`로부터 다음과 같은 이점을 부여한 래퍼 객체인 셈이다.
-
-- `RTK Query` 생태계에 맞는 표준화된 인터페이스 제공
-- 반복적인 보일러플레이트 코드 제거
-- `Redux` 스토어와의 자연스러운 통합
-- 일관된 에러 처리 및 타입 안정성
-
-만약 일반 `fetch`를 직접 사용하면 위에 나열된 모든 기능을 매번 직접 구현해야 한다.
-
-</br>
+<br>
 
 # `fetchBaseQuery` 호출 옵션
 
@@ -432,8 +188,6 @@ type FetchBaseQueryArgs = {
 만약 `FetchArgs`에 없는 속성을 전달하면 TypeScript 사용 시 컴파일 에러가 발생하고,
 JavaScript 사용 시 에러 없이 무시된다.
 
-<!-- 커스텀 baseQuery 사용할 땐 해당 안되는듯.. -->
-
 ```
 interface FetchArgs extends RequestInit {
   url: string
@@ -492,37 +246,72 @@ const api = createApi({
 
 ### `responseHandler` 옵션 상세
 
-| 값                                     | 설명                                             |
-| -------------------------------------- | ------------------------------------------------ |
-| `'json'`                               | `response.json()`으로 파싱 (기본값)              |
-| `'text'`                               | `response.text()`로 파싱                         |
-| `'content-type'`                       | Content-Type 헤더를 보고 자동으로 json/text 선택 |
-| `(response: Response) => Promise<any>` | 커스텀 파싱 함수                                 |
+| 값                                     | 설명                                                 |
+| -------------------------------------- | ---------------------------------------------------- |
+| `'json'`                               | `response.json()`으로 파싱 (기본 값)                 |
+| `'text'`                               | `response.text()`로 파싱                             |
+| `'content-type'`                       | `Content-Type` 헤더를 보고 자동으로 `json/text` 선택 |
+| `(response: Response) => Promise<any>` | 커스텀 파싱 함수                                     |
+
+---
+
+### + `response.text()` 실무 팁
+
+`responseHandler`에서 제공되는 자동 파싱은 `json`, `text` 뿐이다. 다음은 기본 값인 `JSON` 데이터를 파싱하는 핸들러의 로직인데 `JSON`으로 예상되는 응답을 굳이 `res.text()`로 한번 파싱해주는 이유는 2가지가 있다.
+
+```
+const defaultResponseHandler = async (res: Response) => {
+  const text = await res.text()  -> !!
+  return text.length ? JSON.parse(text) : null
+}
+```
+
+1. **빈 응답 바디(Empty Body) 처리**
+
+   HTTP 상태 코드가 `204 No Content`이거나, 서버 설정에 따라 응답 바디가 아예 비어 있는 경우가 있다. `res.json()`을 바로 사용하는 경우 바디가 비어 있으면 `"Unexpected end of JSON input"` 같은 구문 에러(Syntax Error)를 던지며 프로그램이 죽어버린다. 하지만 위 코드는 `await res.text()`로 먼저 응답을 읽어 들여 내용이 있는 경우 `JSON.parse()`를 해주고, 바디가 비어있는 경우 빈 문자열(`""`)이 되어 안전하게 `null`이 반환 되는 것이다.
+
+2. **`JSON`이 아닌 응답에 대한 디버깅**
+
+   서버 에러(500 Error)나 프록시 서버(Nginx 등) 에러가 발생하면, JSON이 아니라 HTML 형식의 에러 페이지가 돌아올 때가 자주 있는데, `res.json()`은 HTML을 파싱 하려다 바로 에러를 내며 이때 에러 메시지만 봐서는 서버에서 무슨 일이 일어났는지 알기 어렵다. 하지만 위 코드처럼 `res.text()` 결과를 변수에 담아두면 필요에 따라 메시지를 띄워 확인할 수 있으므로 에러 처리가 더 쉬워진다(참고로 `fetch API` 바디는 스트림(stream) 형태라 한번 읽어들이면 다시 읽을 수 없다고 한다).
 
 <br>
 
-# `FetchBaseQueryArgs` vs `FetchArgs` 비교
-
-| 구분              | `FetchBaseQueryArgs`                  | `FetchArgs`                                    |
-| ----------------- | ------------------------------------- | ---------------------------------------------- |
-| **사용 위치**     | `fetchBaseQuery()` 호출 시            | 각 엔드포인트의 `query` 함수 반환 값           |
-| **적용 범위**     | 모든 요청에 공통 적용                 | 해당 엔드포인트에만 적용                       |
-| **url 필수 여부** | 선택 (`baseUrl`만 설정)               | 필수                                           |
-| **우선순위**      | 낮음 (기본 값)                        | 높음 (개별 설정이 `baseQuery` 설정 오버라이드) |
-| **주요 용도**     | 전역 설정 (인증, 기본 헤더, 타임아웃) | 개별 요청 설정 (경로, 메서드, 바디)            |
-
-## `FetchBaseQueryArgs` 활용 예제
+이 외의 경우, 예를 들어 응답에 `multipart/form-data`가 담겨온다면 다음과 같이 커스텀 핸들러가 필수이다.
 
 ```
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+responseHandler: async (response) => {
+  const contentType = response.headers.get('content-type')
+
+  if (contentType?.includes('multipart/form-data')) {
+    const buffer = await response.arrayBuffer()
+    // boundary 기준으로 직접 파싱
+    return parseMultipart(buffer, contentType)  -> 외부 함수
+  }
+
+  return response.json()
+}
+```
+
+그런데 이 경우는 프론트에 파싱 책임을 떠넘기는 설계인 건데, 실무에선 응답에 `multipart/form-data`가 전송되는 일이 없게 서버 선에서 처리하는 게 일반적이라고 한다.
+
+<br>
+
+# 자주 사용되는 `FetchBaseQueryArgs` 패턴
+
+다음은 `prepareHeaders`를 통해 모든 요청 헤더에 값을 추가하고, `paramsSerializer`를 설정해 요청에 전송되는 쿼리스트링을 파싱하는 예제이다.
+
+```
+import { fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import type { RootState } from './store'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: 'https://api.example.com/v1',
   timeout: 10000,
   credentials: 'include',
   prepareHeaders: (headers, { getState, endpoint }) => {
-    const token = getState().auth.token
+    const token = (getState() as RootState).auth.token
 
+    // Redux 상태에 token 값이 있는 경우 헤더 설정
     if (token) {
       headers.set('authorization', `Bearer ${token}`)
     }
@@ -534,7 +323,7 @@ const baseQuery = fetchBaseQuery({
     return headers
   },
   paramsSerializer: (params) => {
-    // 커스텀 쿼리 직렬화 (예: 배열을 콤마로 구분)
+    // 커스텀 쿼리스트링 직렬화 (예: 배열을 콤마로 구분)
     return Object.entries(params)
       .map(([key, value]) => {
         if (Array.isArray(value)) {
@@ -547,7 +336,11 @@ const baseQuery = fetchBaseQuery({
 })
 ```
 
-## `FetchArgs` 활용 예제
+<br>
+
+# `FetchArgs` 사용 패턴
+
+다음은 자주 사용되는 `FetchArgs` 옵션 예제이다.
 
 ```
 export const api = createApi({
@@ -572,7 +365,7 @@ export const api = createApi({
       query: (user) => ({
         url: '/users',
         method: 'POST',
-        body: user  // 자동으로 JSON.stringify()
+        body: user  // 기본 값은 자동으로 JSON.stringify()
       })
     }),
 
@@ -602,7 +395,7 @@ export const api = createApi({
       query: () => ({
         url: '/legacy-api',
         validateStatus: (response, result) => {
-          // 레거시 API는 항상 200을 반환하고 result.success로 성공 여부 판단
+          // 레거시 API는 항상 200을 반환하는 경우 result.success로 성공 여부 판단
           return response.status === 200 && result.success === true
         }
       })
@@ -610,6 +403,18 @@ export const api = createApi({
   })
 })
 ```
+
+<br>
+
+# `FetchBaseQueryArgs` vs `FetchArgs` 차이 정리
+
+| 구분              | `FetchBaseQueryArgs`                  | `FetchArgs`                                    |
+| ----------------- | ------------------------------------- | ---------------------------------------------- |
+| **사용 위치**     | `fetchBaseQuery()` 호출 시            | 각 엔드포인트의 `query` 함수 반환 값           |
+| **적용 범위**     | 모든 요청에 공통 적용                 | 해당 엔드포인트에만 적용                       |
+| **url 필수 여부** | 선택 (`baseUrl`만 설정)               | 필수                                           |
+| **우선순위**      | 낮음 (기본 값)                        | 높음 (개별 설정이 `baseQuery` 설정 오버라이드) |
+| **주요 용도**     | 전역 설정 (인증, 기본 헤더, 타임아웃) | 개별 요청 설정 (경로, 메서드, 바디)            |
 
 ## 속성 적용 우선순위
 
@@ -619,7 +424,7 @@ export const api = createApi({
 2. **`FetchBaseQueryArgs`** (`baseQuery` 설정)
 3. **기본 값** (`fetch API` 기본 값)
 
-### 예시
+우선순위 적용 예시
 
 ```
 // baseQuery에서 timeout 10초 설정
@@ -649,38 +454,30 @@ export const api = createApi({
 })
 ```
 
+<br>
+
 ## 주의사항
 
-<!--  -->
+<!-- ? -->
 
-### 1. body 자동 직렬화
+1. body 자동 직렬화
 
 - `FetchArgs`의 `body`는 객체나 배열일 경우 자동으로 `JSON.stringify()` 처리
 - `Content-Type: application/json` 헤더도 자동 추가
 - `FormData`나 `Blob`은 자동 직렬화 하지 않음
 
-### 2. params 처리
+2. params 처리
 
 - `params` 객체는 자동으로 URL 쿼리스트링으로 변환
 - `undefined` 값은 제거됨
 - 커스텀 직렬화가 필요하면 `paramsSerializer` 사용
 
-### 3. timeout
+3. timeout
 
 - `timeout: 0`은 타임아웃 없음을 의미하지 않음
 - 타임아웃을 해제하려면 `timeout` 속성을 설정하지 않아야 함
 
-### 4. credentials
+4. credentials
 
 - 쿠키를 포함하려면 `credentials: 'include'` 설정 필요
 - CORS 환경에서는 서버의 `Access-Control-Allow-Credentials: true` 헤더도 필요
-
-<br>
-
-type FetchBaseQuery = (
-args: FetchBaseQueryArgs,
-) => (
-args: string | FetchArgs,
-api: BaseQueryApi,
-extraOptions: ExtraOptions,
-) => FetchBaseQueryResult
