@@ -1,5 +1,6 @@
 <h2>목차</h2>
 
+- [`RTK Query` 기본 쿼리 커스터마이징하기](#rtk-query-기본-쿼리-커스터마이징하기)
 - [`baseQuery` 커스터마이징](#basequery-커스터마이징)
   - [`baseQuery` 커스텀 함수 시그니처](#basequery-커스텀-함수-시그니처)
   - [1. 커스텀 `baseQuery` 함수 사용하기](#1-커스텀-basequery-함수-사용하기)
@@ -8,6 +9,13 @@
 
 <br>
 
+# `RTK Query` 기본 쿼리 커스터마이징하기
+
+다음과 같은 2가지 방법 존재.
+
+1. `baseQuery` 사용자 정의 함수 할당
+2. `endpoints` 내부 `queryFn` 정의
+
 # `baseQuery` 커스터마이징
 
 기본 `fetchBaseQuery`가 충분치 않다고 느껴질 때, 다음과 같은 방법으로 로직을 보완해줄 수 있다.
@@ -15,13 +23,17 @@
 - `baseQuery` 커스터마이징 방식
 
 1. **새롭게 `baseQuery`를 정의하여 사용**
-2. **`fetchBaseQuery`를 래핑(wrapper)하여 로직을 작성**
+2. **`fetchBaseQuery`를 래핑(wrapper)한 함수 작성**
 
 - `queryFn` 커스터마이징 방식
 
 ## `baseQuery` 커스텀 함수 시그니처
 
 `baseQuery`에 커스텀 함수를 정의하는 경우 다음과 같은 타입을 갖는다. 참고로 `api`와 `extraOptions`는 커스텀 `baseQuery`를 직접 구현할 때만 접근할 수 있는 인자들이다.
+
+또한 정해진 `query` 반환 값만 허용됐던 `fetchBaseQuery`와 달리 첫 번째 인수로 모든 값이 가능하다. 하지만 `RTK Query`는 이 `args`를 기반으로 캐시 키를 만들기 때문에 **직렬화 가능한 구조의 값만 가능하다(함수, 클래스 객체, 순환 참조 객체 불가능).**
+
+<!-- 일반 객체와 달리 함수, 클래스, 순환 참조 객체는 왜 JSON 직렬화 안됐지? -->
 
 <!--  -->
 
@@ -33,7 +45,7 @@ export type BaseQueryFn<
   DefinitionExtraOptions = {},
   Meta = {},
 > = (
-  args: Args,
+  args: Args,   // fetchBaseQuery와 달리 아무 값이나 가능
   api: BaseQueryApi,
   extraOptions: DefinitionExtraOptions,
 ) => MaybePromise<QueryReturnValue<Result, Error, Meta>>
@@ -148,6 +160,51 @@ export const api = createApi({
 ``` -->
 
 ## 2. `fetchBaseQuery` 래핑한 함수 사용하기
+
+아래는 `fetchBaseQuery` 함수 시그니처
+
+```
+type FetchBaseQuery = (
+  args: FetchBaseQueryArgs,
+) => (
+  args: string | FetchArgs,
+  api: BaseQueryApi,
+  extraOptions: ExtraOptions,
+) => FetchBaseQueryResult
+
+type FetchBaseQueryArgs = {
+  baseUrl?: string
+  prepareHeaders?: (
+    headers: Headers,
+    api: Pick<
+      BaseQueryApi,
+      'getState' | 'extra' | 'endpoint' | 'type' | 'forced'
+    > & { arg: string | FetchArgs },
+  ) => MaybePromise<Headers | void>
+  fetchFn?: (
+    input: RequestInfo,
+    init?: RequestInit | undefined,
+  ) => Promise<Response>
+  paramsSerializer?: (params: Record<string, any>) => string
+  isJsonContentType?: (headers: Headers) => boolean
+  jsonContentType?: string
+  timeout?: number
+} & RequestInit   ----> fetch API의 RequestInit 상속
+
+// 반환 값
+type FetchBaseQueryResult = Promise<
+  | {
+      data: any
+      error?: undefined
+      meta?: { request: Request; response: Response }
+    }
+  | {
+      error: FetchBaseQueryError // 공식 문서 참조
+      data?: undefined
+      meta?: { request: Request; response: Response }
+    }
+>
+```
 
 ```
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react'

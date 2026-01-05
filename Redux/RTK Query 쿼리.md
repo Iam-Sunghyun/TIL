@@ -1,6 +1,6 @@
 <h2>목차</h2>
 
-- [`RTK Query`로 쿼리 해보기](#rtk-query로-쿼리-해보기)
+- [`RTK Query`로 쿼리 하기](#rtk-query로-쿼리-하기)
   - [쿼리 훅의 결과 객체](#쿼리-훅의-결과-객체)
   - [`isLoading`과 `isFetching`의 차이 (핵심 구분)](#isloading과-isfetching의-차이-핵심-구분)
   - [쿼리 훅에 인수 전달해 호출하기](#쿼리-훅에-인수-전달해-호출하기)
@@ -8,9 +8,11 @@
 
 </br>
 
-# `RTK Query`로 쿼리 해보기
+# `RTK Query`로 쿼리 하기
 
 다음은 컴포넌트 내에서 쿼리 훅을 사용하는 일반적인 패턴이다.
+
+<!-- builder.query 로도 POST, PUT..etc, body 포함 가능한듯? -->
 
 ```
 // API 슬라이스 정의
@@ -22,7 +24,7 @@ export const apiSlice = createApi({
   endpoints: builder => ({
 
     // query 엔드포인트 정의
-    getPosts: builder.query<Post[], void>({
+    getPosts: builder.query({
       query: () => '/posts'
     })
   })

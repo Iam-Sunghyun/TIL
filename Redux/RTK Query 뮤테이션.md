@@ -2,12 +2,12 @@
 
 - [`RTK Query` Mutation 엔드포인트 정의하기](#rtk-query-mutation-엔드포인트-정의하기)
 - [컴포넌트에서 Mutation 훅 사용하기](#컴포넌트에서-mutation-훅-사용하기)
-  - [`useMutation` 훅](#usemutation-훅)
-    - [**뮤테이션 트리거 함수(Trigger Function)**](#뮤테이션-트리거-함수trigger-function)
-    - [**결과 객체(Result Object)**](#결과-객체result-object)
-  - [뮤테이션 트리거 함수 호출 결과 값](#뮤테이션-트리거-함수-호출-결과-값)
-    - [1. 기본 Promise 반환 값 구조](#1-기본-promise-반환-값-구조)
-    - [2. `.unwrap()` 사용 시 반환 값 구조 (권장)](#2-unwrap-사용-시-반환-값-구조-권장)
+- [`useMutation` 훅](#usemutation-훅)
+  - [**뮤테이션 트리거 함수(Trigger Function)**](#뮤테이션-트리거-함수trigger-function)
+  - [**결과 객체(Result Object)**](#결과-객체result-object)
+- [뮤테이션 트리거 함수 호출 결과 값](#뮤테이션-트리거-함수-호출-결과-값)
+  - [1. 기본 반환 값(`Promise`) 구조](#1-기본-반환-값promise-구조)
+  - [2. `.unwrap()` 사용 시 반환 값 구조 (권장)](#2-unwrap-사용-시-반환-값-구조-권장)
   - [Reference](#reference)
 
 </br>
@@ -17,6 +17,8 @@
 API 슬라이스를 정의할 때 데이터를 가져오는 쿼리 뿐 아니라 서버 상태를 변경(수정, 생성, 삭제)하는 로직을 작성할 수도 있다.
 
 서버 데이터를 변경하는 mutation 엔드포인트는 쿼리 엔드포인트와 거의 비슷한데 `endpoints` 프로퍼티에 전달되는 함수의 인수(`builder`)로부터 `builder.query()` 대신 `builder.mutation()` 메서드를 사용하며, `query`에 정의한 함수가 URL과, `POST`, `PUT`, `DELETE` 등의 HTTP 메서드, 요청 body를 포함한 객체(`{url, method, body}`)를 반환해야 한다는 차이가 있다.
+
+<!-- builder.query 로도 POST, PUT..etc, body 포함 가능한듯 내용추가 필 -->
 
 `fetchBaseQuery`를 사용하여 요청을 생성하는 경우 body 필드는 자동으로 JSON 직렬화된다.
 
@@ -114,15 +116,15 @@ export const AddPostForm = () => {
 
 `<AddPostForm />` 컴포넌트에는 'Save Post' 버튼을 클릭할 때마다 게시물을 추가하는 비동기 함수가 `<form />` 요소의 이벤트 핸들러로 등록 되어있다. 원래는 `useDispatch`와 `addNewPost` 함수를 가져와야 하는데 `RTK Query`의 `useMutation` hook은 두 가지를 모두 대체한다.
 
-## `useMutation` 훅
+# `useMutation` 훅
 
 뮤테이션 훅은 다음 두 값을 요소로 갖는 배열을 반환한다.
 
-### **뮤테이션 트리거 함수(Trigger Function)**
+## **뮤테이션 트리거 함수(Trigger Function)**
 
 API 슬라이스 엔드포인트에 정의한 mutation 함수로 전달한 인수와 함께 서버에 mutation을 요청하며 몇몇 프로퍼티가 추가된 `Promise`를 반환한다.
 
-### **결과 객체(Result Object)**
+## **결과 객체(Result Object)**
 
 현재 요청의 상태 및 결과를 담고 있는 객체.
 
@@ -142,9 +144,9 @@ API 슬라이스 엔드포인트에 정의한 mutation 함수로 전달한 인�
 
 </br>
 
-## 뮤테이션 트리거 함수 호출 결과 값
+# 뮤테이션 트리거 함수 호출 결과 값
 
-### 1. 기본 Promise 반환 값 구조
+## 1. 기본 반환 값(`Promise`) 구조
 
 `useMutation` 훅이 반환하는 트리거 함수를 호출하면 `Promise`를 반환 하는데 성공/실패와 관계없이 응답 데이터와 메타 정보를 포함하는 `resolve` 프로미스를 반환한다.
 
@@ -159,9 +161,9 @@ API 슬라이스 엔드포인트에 정의한 mutation 함수로 전달한 인�
 
 이 외에도 여러 메타데이터를 설명하는 `meta` 속성이 존재한다. 하지만 공식 문서에는 표시되어 있지 않은데 이는 실무에서 `meta`를 사용할 일이 거의 없으며 `createApi`의 `baseQuery`의 값이 `fetchBaseQuery`로 이루어져 있는지, 커스텀 `baseQuery`인지에 따라 `meta` 속성이 달라질 수도 있다고 한다. 즉, `meta`는 사실상 내부의 값이고, 안정성이 보장되지 않으며, 실무에서 거의 사용되지 않기 때문에 불필요한 혼란을 방지하기 위해 타입 명시에는 노출되지 않는 것이다.
 
-</br>
+-> 참고로 `meta` 속성은 `fetchBaseQuery`를 사용했을때 반환되는 객체의 프로퍼티이다.
 
-### 2. `.unwrap()` 사용 시 반환 값 구조 (권장)
+## 2. `.unwrap()` 사용 시 반환 값 구조 (권장)
 
 `Promise` 체인에 `.unwrap()`을 사용하면, 성공/실패와 관련 없이 `resolve` 프로미스를 반환하던 것과 달리 성공/실패에 따라 `resolve`/`reject`한 프로미스를 반환한다. 또한 결과 값만으로 이루어진 프로미스를 반환하기 때문에 응답 처리 방식이 간결해진다.
 
