@@ -14,6 +14,8 @@
 다음과 같은 2가지 방법 존재.
 
 1. `baseQuery` 사용자 정의 함수 할당
+   1. **새롭게 `baseQuery`를 정의하여 사용**
+   2. **`fetchBaseQuery`를 래핑(wrapper)한 함수 작성**
 2. `endpoints` 내부 `queryFn` 정의
 
 # `baseQuery` 커스터마이징

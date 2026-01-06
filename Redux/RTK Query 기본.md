@@ -167,7 +167,7 @@ export const {
 
 2. **`baseQuery`** (필수)
 
-   모든 요청의 기본 값을 설정하는 함수. 기본적으로 `RTK Query`에 포함되어 있으면서 `fetch()`를 래핑한 경량화된 헬퍼 함수 `fetchBaseQuery`를 사용하거나 `Axios`로 사용자 정의 로직을 사용해줄 수도 있다.
+   모든 요청의 기본 값을 설정하는 함수. 기본적으로 `RTK Query`에 포함되어 있으면서 `fetch()`를 래핑한 경량화된 헬퍼 함수 `fetchBaseQuery`를 사용하거나 사용자 정의 함수를 사용하는 방법도 있다.
 
    ```
    // Axios 사용한 커스텀 baseQuery
