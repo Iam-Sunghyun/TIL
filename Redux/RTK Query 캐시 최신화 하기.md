@@ -3,6 +3,7 @@
 - [`RTK Query` 캐시 데이터 최신 값으로 업데이트 하기](#rtk-query-캐시-데이터-최신-값으로-업데이트-하기)
   - [수동으로 업데이트 하기](#수동으로-업데이트-하기)
   - [태그 기반 캐시 무효화(Cache Invalidation)로 자동 업데이트 하기](#태그-기반-캐시-무효화cache-invalidation로-자동-업데이트-하기)
+  - [Reference](#reference)
 
 </br>
 
@@ -212,3 +213,11 @@ export const apiSlice = createApi({
   })
 })
 ```
+
+<br>
+
+## Reference
+
+**[Query `providesTags` 태그 명 매칭 예]**
+
+https://redux-toolkit.js.org/rtk-query/api/createApi#providestags

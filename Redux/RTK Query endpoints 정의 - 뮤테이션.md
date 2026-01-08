@@ -16,11 +16,13 @@
 
 API 슬라이스를 정의할 때 데이터를 가져오는 쿼리 뿐 아니라 서버 상태를 변경(수정, 생성, 삭제)하는 로직을 작성할 수도 있다.
 
-서버 데이터를 변경하는 mutation 엔드포인트는 쿼리 엔드포인트와 거의 비슷한데 `endpoints` 프로퍼티에 전달되는 함수의 인수(`builder`)로부터 `builder.query()` 대신 `builder.mutation()` 메서드를 사용하며, `query`에 정의한 함수가 URL과, `POST`, `PUT`, `DELETE` 등의 HTTP 메서드, 요청 body를 포함한 객체(`{url, method, body}`)를 반환해야 한다는 차이가 있다.
+서버 데이터를 변경하는 mutation 엔드포인트는 쿼리 엔드포인트와 거의 비슷한데 `endpoints` 프로퍼티에 전달되는 함수의 인수(`builder`혹은 `build`)로부터 `builder.query()` 대신 `builder.mutation()` 메서드를 사용하며, **서버에 변경사항을 전송하고 캐시를 무효화하여 쿼리 엔드포인트의 refetch를 위해 사용된다.**
 
-<!-- builder.query 로도 POST, PUT..etc, body 포함 가능한듯 내용추가 필 -->
+또한 쿼리 엔드포인트와 마찬가지로 `query` 혹은 비동기 로직의 `queryFn`을 반드시 정의해줘야 한다.
 
-`fetchBaseQuery`를 사용하여 요청을 생성하는 경우 body 필드는 자동으로 JSON 직렬화된다.
+<!-- 뮤테이션도 결과 저장? -->
+
+`fetchBaseQuery`를 사용하여 요청을 생성하는 경우 body 필드는 자동으로 `JSON` 직렬화된다(기본 값).
 
 ```
 // features/api/apiSlice.js

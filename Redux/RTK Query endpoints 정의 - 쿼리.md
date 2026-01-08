@@ -1,45 +1,87 @@
 <h2>목차</h2>
 
 - [`RTK Query` Query 엔드포인트 정의하기](#rtk-query-query-엔드포인트-정의하기)
-  - [쿼리 훅의 결과 객체](#쿼리-훅의-결과-객체)
+  - [쿼리 훅(`useQuery`) 결과 객체](#쿼리-훅usequery-결과-객체)
   - [`isLoading`과 `isFetching`의 차이 (핵심 구분)](#isloading과-isfetching의-차이-핵심-구분)
-  - [쿼리 훅에 인수 전달해 호출하기](#쿼리-훅에-인수-전달해-호출하기)
+- [쿼리 훅에 인수 전달하기](#쿼리-훅에-인수-전달하기)
+- [`builder.query`에서 POST 등 다른 메서드 사용 가능 여부](#builderquery에서-post-등-다른-메서드-사용-가능-여부)
   - [Reference](#reference)
 
 </br>
 
 # `RTK Query` Query 엔드포인트 정의하기
 
-`RTK Query`의 쿼리 엔드포인트는 **서버로부터 데이터를 가져와 캐시 하기 위해 사용되며** `build.query()` 구문을 사용해 정의한다.
+`RTK Query`의 쿼리 엔드포인트는 **`build.query()` 구문으로 정의 되며 서버로부터 데이터를 가져와 캐시 하기 위해 사용된다.** 이때 `build.query()`에 전달되는 객체에 `query` 혹은 비동기 로직을 담은 `queryFn` 필드를 반드시 포함해야 한다.
 
-다음은 컴포넌트 내에서 쿼리 훅을 사용하는 일반적인 패턴이다.
+엔드포인트의 쿼리를 정의할 때(`build.query`, `build.mutation` 모두) 캐시되기 전 데이터를 조작할 수 있고, 태그를 이용해 캐시를 무효화 할수도 있으며 캐시가 추가/수정될 때 실행할 로직을 정의할 수도 있다.
 
-<!-- builder.query 로도 POST, PUT..etc, body 포함 가능한듯? -->
-
-https://redux-toolkit.js.org/rtk-query/api/createApi#endpoints
-
-참고
+다음은 API 슬라이스에 엔드포인트를 정의하고 컴포넌트 내에서 쿼리 훅을 사용하는 일반적인 패턴이다.
 
 ```
 // API 슬라이스 정의
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import type { Post } from './types'
 
-export const apiSlice = createApi({
-  reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: '/fakeApi' }),
-  endpoints: builder => ({
+const api = createApi({
+  baseQuery: fetchBaseQuery({
+    baseUrl: '/',
+  }),
+  tagTypes: ['Post'],
+  endpoints: (build) => ({
 
-    // query 엔드포인트 정의
-    getPosts: builder.query({
-      query: () => '/posts'
-    })
-  })
+    getPost: build.query<Post, number>({
+
+      query: (id) => ({ url: `post/${id}` }),
+
+      // 쿼리 결과 캐시하기 전 조작
+      transformResponse: (response: { data: Post }, meta, arg) => response.data,
+
+      // 쿼리 결과가 에러인 경우 캐시하기 전 수정
+      transformErrorResponse: (
+        response: { status: string | number },
+        meta,
+        arg,
+      ) => response.status,
+
+      // build.query에서만 가능한 태그 옵션
+      providesTags: (result, error, id) => [{ type: 'Post', id }],
+
+      // The 2nd parameter is the destructured `QueryLifecycleApi`
+      async onQueryStarted(
+        arg,
+        {
+          dispatch,
+          getState,
+          extra,
+          requestId,
+          queryFulfilled,
+          getCacheEntry,
+          updateCachedData,
+        },
+      ) {},
+
+      // The 2nd parameter is the destructured `QueryCacheLifecycleApi`
+      async onCacheEntryAdded(
+        arg,
+        {
+          dispatch,
+          getState,
+          extra,
+          requestId,
+          cacheEntryRemoved,
+          cacheDataLoaded,
+          getCacheEntry,
+          updateCachedData,
+        },
+      ) {},
+    }),
+  }),
 })
 
-export const { useGetPostsQuery } = apiSlice
+export const { useGetPostQuery } = apiSlice
 ---------------------------------
 // 컴포넌트 내에서 쿼리 훅 사용
-import { useGetPostsQuery } from './postsApi';
+import { useGetPostQuery } from './postsApi';
 
 function PostList() {
   const {
@@ -49,7 +91,7 @@ function PostList() {
     isFetching,
     isSuccess,
     refetch
-  } = useGetPostsQuery();
+  } = useGetPostQuery();
 
   // 1. 초기 로딩 상태 처리
   if (isLoading) {
@@ -77,11 +119,11 @@ function PostList() {
 }
 ```
 
-`useQuery`는 컴포넌트가 마운트 될 때 자동으로 호출된다.
+**`useQuery`는 컴포넌트가 마운트 될 때 자동으로 호출된다.**
 
-<!-- 캐시가 있을 떄, 없을 때 호출 차이? 백그라운드 페칭?-->
+<!-- 캐시가 있을 때, 없을 때 호출 차이? 백그라운드 페칭?-->
 
-## 쿼리 훅의 결과 객체
+## 쿼리 훅(`useQuery`) 결과 객체
 
 `RTK Query`에서 `createApi`로 정의된 쿼리(Query) 엔드포인트를 사용할 때, 자동 생성되는 훅(`useGetXxxQuery`)을 호출하면 요청 상태와 데이터를 포함하는 결과 객체를 반환한다.
 
@@ -141,9 +183,9 @@ const {
 
 예를 들면 `isLoading`은 처음 로드할 때 스켈레톤을 표시하는 데 사용할 수 있고, `isFetching`은 1페이지에서 2페이지로 전환하거나 데이터가 무효화되어 다시 가져올 때 이전 데이터를 회색으로 표시하는 데 사용할 수 있다.
 
-## 쿼리 훅에 인수 전달해 호출하기
+# 쿼리 훅에 인수 전달하기
 
-`RTK Query`는 엔드포인트 + 인수 조합에 대해 각각의 캐시 키를 생성하고, 그 결과를 개별적으로 저장한다. 즉, 동일한 쿼리 훅에 서로 다른 매개변수를 사용했을 경우 개별적으로 캐시되는 것이다.
+`RTK Query`는 고유한 엔드포인트 + 인수 조합에 대해 각각의 캐시 키를 생성하고, 그 결과를 개별적으로 저장한다. 즉, 동일한 쿼리 훅에 서로 다른 인수를 사용했을 경우 `Redux` 스토어에 개별적으로 캐시되는 것이다.
 
 만약 여러 컴포넌트에서 동일한 데이터가 필요한 경우 각 컴포넌트에서 동일한 인수의 쿼리 훅을 호출하기만 하면 된다. 그럼 `RTK Query`는 데이터를 한 번만 가져오고 나머지는 캐시된 데이터를 사용하여 불필요한 쿼리를 줄이고 결과 값에 따라 컴포넌트는 알아서 리렌더링 될 것이다.
 
@@ -210,6 +252,10 @@ export const SinglePostPage = () => {
 }
 ```
 
+# `builder.query`에서 POST 등 다른 메서드 사용 가능 여부
+
+<br>
+
 ## Reference
 
 **[RTK Query using query]**
@@ -217,3 +263,7 @@ export const SinglePostPage = () => {
 https://redux-toolkit.js.org/rtk-query/usage/queries
 
 https://redux.js.org/tutorials/essentials/part-7-rtk-query-basics
+
+**[RTK Query endpoint parameters]**
+
+https://redux-toolkit.js.org/rtk-query/api/createApi#endpoint-definition-parameters

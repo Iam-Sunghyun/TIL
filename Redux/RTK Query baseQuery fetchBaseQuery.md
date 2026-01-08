@@ -7,7 +7,7 @@
   - [`FetchBaseQueryArgs` : 전역 설정 객체](#fetchbasequeryargs--전역-설정-객체)
     - [`prepareHeaders` 속성의 `api` 객체](#prepareheaders-속성의-api-객체)
   - [`FetchArgs` : 엔드포인트 개별 요청 설정 객체](#fetchargs--엔드포인트-개별-요청-설정-객체)
-    - [`responseHandler` 옵션 상세](#responsehandler-옵션-상세)
+  - [`responseHandler` 옵션 상세](#responsehandler-옵션-상세)
     - [+ `response.text()` 실무 팁](#-responsetext-실무-팁)
 - [자주 사용되는 `FetchBaseQueryArgs` 패턴](#자주-사용되는-fetchbasequeryargs-패턴)
 - [`FetchArgs` 사용 패턴](#fetchargs-사용-패턴)
@@ -244,7 +244,7 @@ const api = createApi({
 | `timeout`                | `number`                                              | 선택     | `baseQuery의 timeout` | 이 요청의 타임아웃 (밀리초). baseQuery 설정 오버라이드 |
 | **+ `RequestInit` 상속** |                                                       |          |                       |                                                        |
 
-### `responseHandler` 옵션 상세
+## `responseHandler` 옵션 상세
 
 | 값                                     | 설명                                                 |
 | -------------------------------------- | ---------------------------------------------------- |
@@ -252,6 +252,12 @@ const api = createApi({
 | `'text'`                               | `response.text()`로 파싱                             |
 | `'content-type'`                       | `Content-Type` 헤더를 보고 자동으로 `json/text` 선택 |
 | `(response: Response) => Promise<any>` | 커스텀 파싱 함수                                     |
+
+---
+
+참고로 엔드포인트에 정의한 개별 쿼리의 옵션 `responseHandler`와 `endpoints` 필드 자체에 적용되는 `transformResponse`의 차이는 `responseHandler`의 경우 파싱 방식을 결정하는 것이고 `transformResponse`는 파싱된 후의 값이 전달되어 캐시되기 전 추가 조작을 위한 옵션이다.
+
+<br>
 
 ---
 

@@ -239,7 +239,7 @@ export const {
 
 ## 2. Redux store에 연결
 
-<!--  -->
+<!--  미들웨어에 대하여 -->
 
 내부적으로 `createApi`는 `Redux Toolkit`의 `createSlice` API를 호출하여 가져온 데이터를 캐싱하는 로직을 갖춘 슬라이스 리듀서와 해당 액션 생성자를 생성한다. 또한 구독 횟수와 캐시 수명을 관리하는 커스텀 Redux 미들웨어도 자동으로 생성한다.
 
@@ -298,7 +298,3 @@ export function PostsList() {
 **[RTK Query 개요]**
 
 https://redux-toolkit.js.org/rtk-query/overview
-
-**[Query `providesTags` 태그 명 매칭 예]**
-
-https://redux-toolkit.js.org/rtk-query/api/createApi#providestags
