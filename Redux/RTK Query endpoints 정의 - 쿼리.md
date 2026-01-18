@@ -8,9 +8,9 @@
   - [`useQuery` 호출 주요 옵션](#usequery-호출-주요-옵션)
   - [`useQuery` 반환 객체](#usequery-반환-객체)
 - [`isLoading`과 `isFetching`의 차이 (핵심 구분)](#isloading과-isfetching의-차이-핵심-구분)
-- [쿼리 훅에 인수 전달하기](#쿼리-훅에-인수-전달하기)
+- [쿼리 훅(`useQuery`)에 인수 전달하기](#쿼리-훅usequery에-인수-전달하기)
 - [고급 기능 및 최적화 예시](#고급-기능-및-최적화-예시)
-- [`builder.query`에서 GET 이외 다른 메서드 사용 가능 여부?](#builderquery에서-get-이외-다른-메서드-사용-가능-여부)
+- [`query` 엔드포인트 정의 시 `GET` 외 메서드 사용 가능 여부?](#query-엔드포인트-정의-시-get-외-메서드-사용-가능-여부)
   - [Reference](#reference)
 
 </br>
@@ -19,7 +19,7 @@
 
 `RTK Query`의 쿼리 엔드포인트는 **`build.query()` 구문으로 정의 되며 서버로부터 데이터를 가져와 캐시 하기 위해 사용된다.** 이때 `build.query()`에 전달되는 객체에 `query` 혹은 비동기 로직을 담은 `queryFn` 필드를 반드시 포함해야 한다.
 
-엔드포인트의 쿼리를 정의할 때(`build.query`, `build.mutation` 모두) 캐시되기 전 데이터를 조작할 수 있고, 태그를 이용해 캐시를 무효화 할수도 있으며 캐시가 추가/수정될 때 실행할 로직을 정의할 수도 있다.
+또한 `endpoints`를 정의할 때 옵션을 추가하여 캐시 되기 전 데이터를 조작할 수 있고, 태그를 이용해 캐시를 무효화 할 수도 있으며 캐시가 추가/제거될 때 실행할 로직을 정의할 수도 있다.
 
 다음은 API 슬라이스에 엔드포인트를 정의하고 컴포넌트 내에서 쿼리 훅(`useQuery`)을 사용하는 일반적인 패턴이다.
 
@@ -125,6 +125,12 @@ function PostList() {
 }
 ```
 
+**[RTK Query endpoint parameters]**
+
+https://redux-toolkit.js.org/rtk-query/api/createApi#endpoint-definition-parameters
+
+<br>
+
 # `RTK Query`: React Hooks를 이용해 쿼리하기
 
 ## 1. 쿼리 훅(hook)의 특징
@@ -148,7 +154,7 @@ function PostList() {
 
 데이터를 가져오기 위한 `query` 훅으로는 다음과 같이 5가지가 있는데, 대부분의 경우 `useQuery`를 사용하는 것이 일반적이다.
 
-<!-- 표 정리 필요성 -->
+<!-- 표 정리 필요성 -> refetch, trigger 함수 차이는? -->
 
 | 훅 이름                        | 주요 역할 및 특징               | 사용 시점                                                                                                  |
 | :----------------------------- | :------------------------------ | :--------------------------------------------------------------------------------------------------------- |
@@ -331,7 +337,7 @@ function App() {
 
 <br>
 
-# 쿼리 훅에 인수 전달하기
+# 쿼리 훅(`useQuery`)에 인수 전달하기
 
 **`RTK Query`는 고유한 엔드포인트 + 인수 조합에 대해 각각의 캐시 키를 생성하고, 그 결과를 개별적으로 저장한다**. 즉, 동일한 쿼리 훅에 서로 다른 인수를 사용했을 경우 `Redux` 스토어에 개별적으로 캐시되는 것이다.
 
@@ -436,10 +442,47 @@ const { data } = useGetStatusQuery(undefined, { pollingInterval: 3000 });
 
 <br>
 
-# `builder.query`에서 GET 이외 다른 메서드 사용 가능 여부?
+# `query` 엔드포인트 정의 시 `GET` 외 메서드 사용 가능 여부?
+
+`builder.query()`를 사용해 쿼리를 정의할 때 `GET`만 사용할 수 있을 것 같지만, `POST`/`PUT`/`DELETE`과 같은 다른 메서드도 가능하다.
+
+일반적인 REST API는 아니지만, 다음과 같은 상황에서 `builder.query`에 `POST` 메서드와 같은 다른 메서드를 사용하기도 한다.
+
+- 검색(Search) API: 보안 상 혹은 검색 조건이 너무 복잡하여 body에 데이터를 담아 `POST`로 조회해야 할 때.
+
+- `GraphQL API`: 모든 요청이 `POST`로 이루어지는 환경에서 데이터를 조회할 때.
+
+만약 `fetchBaseQuery`를 사용하여 기본 요청을 생성하는 경우 body 필드는 자동으로 `JSON` 직렬화 된다(기본 값)
+
+```
+const apiSlice = createApi({
+    .
+    .
+endpoints: (builder) => ({
+  // 검색 결과는 캐싱되어야 하므로 query를 사용
+  searchProducts: builder.query({
+    query: (searchArgs) => ({
+      url: '/products/search',
+      method: 'POST', // GET이 아닌 POST 사용 가능!
+      body: searchArgs,
+    }),
+    // 검색어가 같으면 서버에 다시 묻지 않고 캐시된 데이터를 사용함
+  }),
+
+  // 데이터 추가는 서버 상태를 바꾸는 것이므로 mutation 사용
+  addProduct: builder.mutation({
+      query: (newProduct) => ({
+        url: '/products',
+        method: 'POST',
+        body: newProduct,
+      }),
+    }),
+  }),
+});
+```
 
 <br>
-
+ 
 ## Reference
 
 **[RTK Query using query]**
@@ -447,7 +490,3 @@ const { data } = useGetStatusQuery(undefined, { pollingInterval: 3000 });
 https://redux-toolkit.js.org/rtk-query/usage/queries
 
 https://redux.js.org/tutorials/essentials/part-7-rtk-query-basics
-
-**[RTK Query endpoint parameters]**
-
-https://redux-toolkit.js.org/rtk-query/api/createApi#endpoint-definition-parameters

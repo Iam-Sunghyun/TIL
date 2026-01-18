@@ -2,16 +2,17 @@
 
 - [`createApi`의 `baseQuery`란?](#createapi의-basequery란)
 - [자주 사용되는 `baseQuery` 구현: `fetchBaseQuery`](#자주-사용되는-basequery-구현-fetchbasequery)
-  - [`fetchBaseQuery` 함수 시그니처](#fetchbasequery-함수-시그니처)
+  - [`fetchBaseQuery` 함수 타입](#fetchbasequery-함수-타입)
 - [`fetchBaseQuery` 호출 옵션](#fetchbasequery-호출-옵션)
   - [`FetchBaseQueryArgs` : 전역 설정 객체](#fetchbasequeryargs--전역-설정-객체)
-    - [`prepareHeaders` 속성의 `api` 객체](#prepareheaders-속성의-api-객체)
+    - [`FetchBaseQueryArgs` 옵션 상세](#fetchbasequeryargs-옵션-상세)
   - [`FetchArgs` : 엔드포인트 개별 요청 설정 객체](#fetchargs--엔드포인트-개별-요청-설정-객체)
-  - [`responseHandler` 옵션 상세](#responsehandler-옵션-상세)
-    - [+ `response.text()` 실무 팁](#-responsetext-실무-팁)
-- [자주 사용되는 `FetchBaseQueryArgs` 패턴](#자주-사용되는-fetchbasequeryargs-패턴)
-- [`FetchArgs` 사용 패턴](#fetchargs-사용-패턴)
-- [`FetchBaseQueryArgs` vs `FetchArgs` 차이 정리](#fetchbasequeryargs-vs-fetchargs-차이-정리)
+    - [`FetchArgs` 옵션 상세](#fetchargs-옵션-상세)
+    - [`responseHandler` 기본 값 함수에서 알아보는 `response.text()`을 이용한 실무 팁](#responsehandler-기본-값-함수에서-알아보는-responsetext을-이용한-실무-팁)
+- [자주 사용되는 `FetchBaseQueryArgs` 예제](#자주-사용되는-fetchbasequeryargs-예제)
+- [자주 사용되는 `FetchArgs` 사용 예제](#자주-사용되는-fetchargs-사용-예제)
+  - [`FetchArgs` : `JSON`이 아닌 `body` 직렬화 예제](#fetchargs--json이-아닌-body-직렬화-예제)
+    - [`FormData` 전송 (가장 흔한 경우)](#formdata-전송-가장-흔한-경우)
   - [속성 적용 우선순위](#속성-적용-우선순위)
   - [주의사항](#주의사항)
 
@@ -63,7 +64,7 @@ const api = createApi({
 });
 ```
 
-## `fetchBaseQuery` 함수 시그니처
+## `fetchBaseQuery` 함수 타입
 
 아래는 `fetchBaseQuery`의 타입이고, `FetchBaseQuery`의 `BaseQueryApi`와 `ExtraOptions`는 커스텀 `baseQuery`를 직접 구현할 때만 접근할 수 있는 인자들이다.
 
@@ -72,8 +73,8 @@ type FetchBaseQuery = (
   args: FetchBaseQueryArgs,
 ) => (
   args: string | FetchArgs,
-  api: BaseQueryApi,
-  extraOptions: ExtraOptions,
+  api: BaseQueryApi,             // only 사용자 정의 baseQuery
+  extraOptions: ExtraOptions,    // only 사용자 정의 baseQuery
 ) => FetchBaseQueryResult
 
 type FetchBaseQueryArgs = {
@@ -114,16 +115,18 @@ type FetchBaseQueryResult = Promise<
 
 # `fetchBaseQuery` 호출 옵션
 
-`RTK Query`의 `fetchBaseQuery` 사용할 때 두 가지 방식으로 추가 옵션들을 전달하여 HTTP 요청 시 동작을 조정할 수 있다. 둘 다 `RequestInit`의 프로퍼티를 상속받는다.
+`RTK Query`의 `fetchBaseQuery` 사용할 때 두 가지 방식으로 추가 옵션을 전달하여 HTTP 요청 시 동작을 조정할 수 있다. 둘 다 `RequestInit`의 프로퍼티를 상속받는다.
 
-- **FetchBaseQueryArgs**: `fetchBaseQuery()` 함수 자체를 구성할 때 사용하는 옵션(`fetchBaseQuery()` 호출 시 전역 설정용)
-- **FetchArgs**: 각 `endpoints`의 `query` 함수에서 개별 요청을 정의할 때 사용하는 옵션(각 엔드포인트별 개별 요청 설정용)
+- **FetchBaseQueryArgs**: `fetchBaseQuery()` 함수 자체를 구성할 때 사용하는 옵션(`fetchBaseQuery()` 호출 시 전역 설정 용)
+
+- **FetchArgs**: 각 `endpoints`의 `query` 함수에서 개별 요청을 정의할 때 사용하는 옵션(각 엔드포인트 개별 요청 설정 용)
 
 ## `FetchBaseQueryArgs` : 전역 설정 객체
 
 `fetchBaseQuery`를 호출할 때 전달하는 모든 요청의 전역 설정 객체 `FetchBaseQueryArgs`의 타입은 다음과 같다.
 
 ```
+// FetchBaseQueryArgs 타입
 type FetchBaseQueryArgs = {
   baseUrl?: string
   prepareHeaders?: (
@@ -144,7 +147,9 @@ type FetchBaseQueryArgs = {
 } & RequestInit
 ```
 
-| 속성                   | 타입                                                            | 필수 | 기본값               | 설명                                                              |
+### `FetchBaseQueryArgs` 옵션 상세
+
+| 속성                   | 타입                                                            | 필수 | 기본 값              | 설명                                                              |
 | ---------------------- | --------------------------------------------------------------- | ---- | -------------------- | ----------------------------------------------------------------- |
 | `baseUrl`              | `string`                                                        | 선택 | `''`                 | 모든 요청에 사용될 기본 URL. 상대 경로가 이 URL에 추가됨          |
 | `prepareHeaders`       | `(headers: Headers, api) => Headers \| void`                    | 선택 | `undefined`          | 모든 요청 전에 헤더를 수정할 수 있는 함수. Redux 상태에 접근 가능 |
@@ -163,8 +168,7 @@ type FetchBaseQueryArgs = {
 | `integrity`            | `string`                                                        | 선택 | `''`                 | Subresource Integrity 값                                          |
 | `keepalive`            | `boolean`                                                       | 선택 | `false`              | 페이지 수명을 넘어 요청을 유지할지 여부                           |
 | `signal`               | `AbortSignal`                                                   | 선택 | `undefined`          | 요청을 중단하기 위한 AbortSignal                                  |
-
-### `prepareHeaders` 속성의 `api` 객체
+| 이하 생략              |
 
 `prepareHeaders`의 두 번째 인자로 전달되는 `api` 객체의 속성은 다음과 같다.
 
@@ -183,12 +187,12 @@ type FetchBaseQueryArgs = {
 
 ## `FetchArgs` : 엔드포인트 개별 요청 설정 객체
 
-`FetchArgs`는 `endpoints` 내부에 정의된 각 엔드포인트의 `query` 함수가 반환하는 값으로 개별 요청에 사용되는 옵션 객체이며 다음과 같은 타입을 갖는다.
+`FetchArgs`는 `endpoints` 내부에 정의된 각 엔드포인트의 `query` 함수가 반환하는 값으로, 개별 요청에 사용되는 옵션 객체이며 만약 `FetchArgs`에 없는 속성을 전달하면 TypeScript 사용 시 컴파일 에러가 발생하고, JavaScript 사용 시 에러 없이 무시된다.
 
-만약 `FetchArgs`에 없는 속성을 전달하면 TypeScript 사용 시 컴파일 에러가 발생하고,
-JavaScript 사용 시 에러 없이 무시된다.
+아래는 `FetchArgs`의 타입이다.
 
 ```
+// FetchArgs 객체 타입
 interface FetchArgs extends RequestInit {
   url: string
   params?: Record<string, any>
@@ -202,7 +206,7 @@ interface FetchArgs extends RequestInit {
   timeout?: number
 }
 
-// 기본 응답 유효성 체크
+// validateStatus 기본 함수
 const defaultValidateStatus = (response: Response) =>
   response.status >= 200 && response.status <= 299
 ------------------------------------------------------
@@ -234,17 +238,19 @@ const api = createApi({
 });
 ```
 
-| 속성                     | 타입                                                  | 필수     | 기본값                | 설명                                                   |
+### `FetchArgs` 옵션 상세
+
+| 속성                     | 타입                                                  | 필수     | 기본 값               | 설명                                                   |
 | ------------------------ | ----------------------------------------------------- | -------- | --------------------- | ------------------------------------------------------ |
 | `url`                    | `string`                                              | **필수** | -                     | 요청할 URL 경로 (`baseUrl`에 추가됨)                   |
-| `body`                   | `any`                                                 | 선택     | `undefined`           | 요청 본문. 자동으로 `JSON.stringify()` 처리됨          |
+| `body`                   | `any`                                                 | 선택     | `undefined`           | 요청 본문. 자동으로 `JSON.stringify()` 처리 됨         |
 | `params`                 | `Record<string, any>`                                 | 선택     | `undefined`           | URL 쿼리 파라미터 객체                                 |
 | `responseHandler`        | `'json' \| 'text' \| 'content-type' \| CustomHandler` | 선택     | `'json'`              | 응답 파싱 방식                                         |
-| `validateStatus`         | `(response: Response, body: any) => boolean`          | 선택     | 기본 구현             | 응답을 성공으로 처리할지 결정하는 함수                 |
+| `validateStatus`         | `(response: Response, body: any) => boolean`          | 선택     | 기본 구현             | 응답을 성공으로 처리할 지 결정하는 함수                |
 | `timeout`                | `number`                                              | 선택     | `baseQuery의 timeout` | 이 요청의 타임아웃 (밀리초). baseQuery 설정 오버라이드 |
 | **+ `RequestInit` 상속** |                                                       |          |                       |                                                        |
 
-## `responseHandler` 옵션 상세
+아래는 `responseHandler` 속성 옵션 상세 값이다.
 
 | 값                                     | 설명                                                 |
 | -------------------------------------- | ---------------------------------------------------- |
@@ -255,15 +261,15 @@ const api = createApi({
 
 ---
 
-참고로 엔드포인트에 정의한 개별 쿼리의 옵션 `responseHandler`와 `endpoints` 필드 자체에 적용되는 `transformResponse`의 차이는 `responseHandler`의 경우 파싱 방식을 결정하는 것이고 `transformResponse`는 파싱된 후의 값이 전달되어 캐시되기 전 추가 조작을 위한 옵션이다.
+추가로 엔드포인트에 정의한 개별 쿼리의 옵션 `responseHandler`와 `endpoints` 필드 자체에 적용되는 `transformResponse`의 차이는 `responseHandler`의 경우 파싱 방식을 결정하는 것이고 `transformResponse`는 파싱된 후의 값이 전달되어 캐시되기 전 추가 조작을 위한 옵션이다.
 
 <br>
 
 ---
 
-### + `response.text()` 실무 팁
+### `responseHandler` 기본 값 함수에서 알아보는 `response.text()`을 이용한 실무 팁
 
-`responseHandler`에서 제공되는 자동 파싱은 `json`, `text` 뿐이다. 다음은 기본 값인 `JSON` 데이터를 파싱하는 핸들러의 로직인데 `JSON`으로 예상되는 응답을 굳이 `res.text()`로 한번 파싱해주는 이유는 2가지가 있다.
+`responseHandler`에서 제공되는 자동 파싱은 `json`, `text` 뿐이다. 다음은 기본 값인 `JSON` 데이터를 파싱하는 핸들러의 로직인데 `JSON`으로 예상되는 응답을 굳이 `res.text()`로 한번 파싱 해주는 이유는 2가지가 있다.
 
 ```
 const defaultResponseHandler = async (res: Response) => {
@@ -278,7 +284,7 @@ const defaultResponseHandler = async (res: Response) => {
 
 2. **`JSON`이 아닌 응답에 대한 디버깅**
 
-   서버 에러(500 Error)나 프록시 서버(Nginx 등) 에러가 발생하면, JSON이 아니라 HTML 형식의 에러 페이지가 돌아올 때가 자주 있는데, `res.json()`은 HTML을 파싱 하려다 바로 에러를 내며 이때 에러 메시지만 봐서는 서버에서 무슨 일이 일어났는지 알기 어렵다. 하지만 위 코드처럼 `res.text()` 결과를 변수에 담아두면 필요에 따라 메시지를 띄워 확인할 수 있으므로 에러 처리가 더 쉬워진다(참고로 `fetch API` 바디는 스트림(stream) 형태라 한번 읽어들이면 다시 읽을 수 없다고 한다).
+   서버 에러(500 Error)나 프록시 서버(Nginx 등) 에러가 발생하면, JSON이 아니라 HTML 형식의 에러 페이지가 돌아올 때가 자주 있는데, `res.json()`은 HTML을 파싱 하려다 바로 에러를 내며 이때 에러 메시지만 봐서는 서버에서 무슨 일이 일어났는지 알기 어렵다. 하지만 위 코드처럼 `res.text()` 결과를 변수에 담아두면 필요에 따라 메시지를 띄워 확인할 수 있으므로 에러 처리가 더 쉬워진다(참고로 `fetch API` 바디는 스트림(stream) 형태라 한번 읽어 들이면 다시 읽을 수 없다고 한다).
 
 <br>
 
@@ -302,9 +308,9 @@ responseHandler: async (response) => {
 
 <br>
 
-# 자주 사용되는 `FetchBaseQueryArgs` 패턴
+# 자주 사용되는 `FetchBaseQueryArgs` 예제
 
-다음은 `prepareHeaders`를 통해 모든 요청 헤더에 값을 추가하고, `paramsSerializer`를 설정해 요청에 전송되는 쿼리스트링을 파싱하는 예제이다.
+다음은 `prepareHeaders`를 통해 모든 요청 헤더에 기본 값을 추가하고, `paramsSerializer`를 설정해 요청에 전송되는 쿼리스트링을 직렬화하는 예제이다.
 
 ```
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react'
@@ -329,7 +335,7 @@ const baseQuery = fetchBaseQuery({
     return headers
   },
   paramsSerializer: (params) => {
-    // 커스텀 쿼리스트링 직렬화 (예: 배열을 콤마로 구분)
+    // 커스텀 쿼리스트링 직렬화 (예: 배열 요소를 콤마로 구분)
     return Object.entries(params)
       .map(([key, value]) => {
         if (Array.isArray(value)) {
@@ -344,7 +350,7 @@ const baseQuery = fetchBaseQuery({
 
 <br>
 
-# `FetchArgs` 사용 패턴
+# 자주 사용되는 `FetchArgs` 사용 예제
 
 다음은 자주 사용되는 `FetchArgs` 옵션 예제이다.
 
@@ -388,7 +394,7 @@ export const api = createApi({
       })
     }),
 
-    // 텍스트 응답 처리
+    // 텍스트(text/plain) 응답 처리
     getReport: builder.query({
       query: (reportId) => ({
         url: `/reports/${reportId}`,
@@ -412,25 +418,29 @@ export const api = createApi({
 
 <br>
 
-# `FetchBaseQueryArgs` vs `FetchArgs` 차이 정리
+## `FetchArgs` : `JSON`이 아닌 `body` 직렬화 예제
 
-| 구분              | `FetchBaseQueryArgs`                  | `FetchArgs`                                    |
-| ----------------- | ------------------------------------- | ---------------------------------------------- |
-| **사용 위치**     | `fetchBaseQuery()` 호출 시            | 각 엔드포인트의 `query` 함수 반환 값           |
-| **적용 범위**     | 모든 요청에 공통 적용                 | 해당 엔드포인트에만 적용                       |
-| **url 필수 여부** | 선택 (`baseUrl`만 설정)               | 필수                                           |
-| **우선순위**      | 낮음 (기본 값)                        | 높음 (개별 설정이 `baseQuery` 설정 오버라이드) |
-| **주요 용도**     | 전역 설정 (인증, 기본 헤더, 타임아웃) | 개별 요청 설정 (경로, 메서드, 바디)            |
+`RTK Query`는 `FetchArgs`의 body 같은 경우 기본적으로 `JSON` 일 거라 가정하여 `JSON.stringify()`을 사용해 직렬화 하고 `Content-Type: application/json` 헤더도 자동으로 추가 한다. 만약 다른 타입인 경우 아래와 같은 방법을 사용 해주면 된다.
+
+### `FormData` 전송 (가장 흔한 경우)
+
+<!--  -->
+
+```
+
+```
+
+<br>
 
 ## 속성 적용 우선순위
 
 동일한 속성이 여러 곳에 정의된 경우 우선순위는 다음과 같다.
 
 1. **`FetchArgs`** (개별 엔드포인트의 `query` 반환 값) - 최우선
-2. **`FetchBaseQueryArgs`** (`baseQuery` 설정)
+2. **`FetchBaseQueryArgs`** (`fetchBaseQuery` 설정)
 3. **기본 값** (`fetch API` 기본 값)
 
-우선순위 적용 예시
+아래는 우선순위 적용 예시이다.
 
 ```
 // baseQuery에서 timeout 10초 설정
