@@ -12,9 +12,12 @@
 - [자주 사용되는 `FetchBaseQueryArgs` 예제](#자주-사용되는-fetchbasequeryargs-예제)
 - [자주 사용되는 `FetchArgs` 사용 예제](#자주-사용되는-fetchargs-사용-예제)
   - [`FetchArgs` : `JSON`이 아닌 `body` 직렬화 예제](#fetchargs--json이-아닌-body-직렬화-예제)
-    - [`FormData` 전송 (가장 흔한 경우)](#formdata-전송-가장-흔한-경우)
+    - [1. `FormData` 전송 (가장 흔한 경우)](#1-formdata-전송-가장-흔한-경우)
+    - [2. Plain Text 또는 기타 데이터 전송](#2-plain-text-또는-기타-데이터-전송)
+    - [3. 전역 설정에서 제어하기(`FetchBaseQueryArgs`)](#3-전역-설정에서-제어하기fetchbasequeryargs)
+    - [4. 응답(`Response`) 타입이 `JSON`이 아닐 때](#4-응답response-타입이-json이-아닐-때)
   - [속성 적용 우선순위](#속성-적용-우선순위)
-  - [주의사항](#주의사항)
+  - [디테일한 주의사항](#디테일한-주의사항)
 
 </br>
 
@@ -284,7 +287,7 @@ const defaultResponseHandler = async (res: Response) => {
 
 2. **`JSON`이 아닌 응답에 대한 디버깅**
 
-   서버 에러(500 Error)나 프록시 서버(Nginx 등) 에러가 발생하면, JSON이 아니라 HTML 형식의 에러 페이지가 돌아올 때가 자주 있는데, `res.json()`은 HTML을 파싱 하려다 바로 에러를 내며 이때 에러 메시지만 봐서는 서버에서 무슨 일이 일어났는지 알기 어렵다. 하지만 위 코드처럼 `res.text()` 결과를 변수에 담아두면 필요에 따라 메시지를 띄워 확인할 수 있으므로 에러 처리가 더 쉬워진다(참고로 `fetch API` 바디는 스트림(stream) 형태라 한번 읽어 들이면 다시 읽을 수 없다고 한다).
+   서버 에러(500 Error)나 프록시 서버(Nginx 등) 에러가 발생하면, `JSON`이 아니라 HTML 형식의 에러 페이지가 돌아올 때가 자주 있는데, `res.json()`은 HTML을 파싱 하려다 바로 에러를 내며 이때 에러 메시지만 봐서는 서버에서 무슨 일이 일어났는지 알기 어렵다. 하지만 위 코드처럼 `res.text()` 결과를 변수에 담아두면 필요에 따라 메시지를 띄워 확인할 수 있으므로 에러 처리가 더 쉬워진다(참고로 `fetch API` 바디는 스트림(stream) 형태라 한번 읽어 들이면 다시 읽을 수 없다고 한다).
 
 <br>
 
@@ -420,14 +423,80 @@ export const api = createApi({
 
 ## `FetchArgs` : `JSON`이 아닌 `body` 직렬화 예제
 
-`RTK Query`는 `FetchArgs`의 body 같은 경우 기본적으로 `JSON` 일 거라 가정하여 `JSON.stringify()`을 사용해 직렬화 하고 `Content-Type: application/json` 헤더도 자동으로 추가 한다. 만약 다른 타입인 경우 아래와 같은 방법을 사용 해주면 된다.
+`RTK Query`는 `FetchArgs`의 `body` 같은 경우 기본적으로 `JSON` 일 거라 가정하여 `JSON.stringify()`을 사용해 직렬화 하고 `Content-Type: application/json` 헤더도 자동으로 설정 한다. 만약 다른 타입(`FormData`(이미지 등), `text/plain`, `Blob` 등)인 경우 아래와 같은 방법을 사용해주면 된다.
 
-### `FormData` 전송 (가장 흔한 경우)
+### 1. `FormData` 전송 (가장 흔한 경우)
 
-<!--  -->
+파일 업로드 등을 위해 `FormData` 객체를 `body`에 전달하면, `RTK Query`는 이를 자동으로 감지한다. 이 경우 브라우저가 자동으로 `boundary`를 포함한 헤더를 생성해야 하기 때문에 `Content-Type` 헤더를 수동으로 설정하지 않는 것이 중요하다.
 
 ```
+// API 서비스 정의
+uploadImage: builder.mutation({
+  query: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('description', '프로필 사진');
 
+    return {
+      url: '/upload',
+      method: 'POST',
+      body: formData,
+      // 주의: 여기서 'Content-Type'을 직접 지정하면 안 된다!
+    };
+  },
+}),
+```
+
+### 2. Plain Text 또는 기타 데이터 전송
+
+`JSON`이 아닌 일반 문자열이나 바이너리 데이터를 보낼 때는 `FetchBaseQueryArgs`의 `prepareHeaders`나 요청 객체(`FetchArgs`)의 `headers` 속성을 통해 `Content-Type`을 명시해줘야 한다.
+
+```
+sendRawText: builder.mutation({
+  query: (textData) => ({
+    url: '/raw-data',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain', // 서버가 받을 형식을 명시
+    },
+    body: textData, // JSON.stringify가 되지 않고 그대로 전송됨
+  }),
+}),
+```
+
+### 3. 전역 설정에서 제어하기(`FetchBaseQueryArgs`)
+
+특정 API 전체가 `JSON`이 아닌 다른 포맷(예: `XML`)을 사용한다면, `createApi` 설정 시 `prepareHeaders`를 통해 공통적으로 처리할 수 있다.
+
+```
+const api = createApi({
+  baseQuery: fetchBaseQuery({
+    baseUrl: '/',
+    prepareHeaders: (headers) => {
+      // 필요한 경우 공통 헤더 설정
+      // headers.set('Content-Type', 'application/x-www-form-urlencoded');
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    // ...
+  }),
+});
+```
+
+### 4. 응답(`Response`) 타입이 `JSON`이 아닐 때
+
+보내는 것뿐만 아니라 받는 데이터가 JSON이 아닐 경우(예: 이미지 파일, PDF 다운로드)에는 `responseHandler`를 사용해야 한다.
+
+```
+downloadPdf: builder.query({
+  query: (id) => ({
+    url: `/documents/${id}`,
+    method: 'GET',
+    // 응답을 어떻게 처리할지 명시 (기본 값은 'json')
+    responseHandler: (response) => response.blob(),
+  }),
+});
 ```
 
 <br>
@@ -472,28 +541,26 @@ export const api = createApi({
 
 <br>
 
-## 주의사항
+## 디테일한 주의사항
 
-<!-- ? -->
-
-1. body 자동 직렬화
+1. `body` 자동 직렬화
 
 - `FetchArgs`의 `body`는 객체나 배열일 경우 자동으로 `JSON.stringify()` 처리
 - `Content-Type: application/json` 헤더도 자동 추가
-- `FormData`나 `Blob`은 자동 직렬화 하지 않음
+- `FormData`나 `Blob`은 자동 직렬화 하지 않음 주의!
 
-2. params 처리
+2. `params` 처리
 
 - `params` 객체는 자동으로 URL 쿼리스트링으로 변환
 - `undefined` 값은 제거됨
 - 커스텀 직렬화가 필요하면 `paramsSerializer` 사용
 
-3. timeout
+3. `timeout`
 
 - `timeout: 0`은 타임아웃 없음을 의미하지 않음
 - 타임아웃을 해제하려면 `timeout` 속성을 설정하지 않아야 함
 
-4. credentials
+4. `credentials`
 
 - 쿠키를 포함하려면 `credentials: 'include'` 설정 필요
 - CORS 환경에서는 서버의 `Access-Control-Allow-Credentials: true` 헤더도 필요
