@@ -1,7 +1,7 @@
 <h2>목차</h2>
 
 - [`RTK Query` Query 엔드포인트 정의하기](#rtk-query-query-엔드포인트-정의하기)
-    - [쿼리 `endpoints` 옵션 상세](#쿼리-endpoints-옵션-상세)
+  - [`endpoints` 옵션 상세](#endpoints-옵션-상세)
 - [React Hooks를 이용해 쿼리하기](#react-hooks를-이용해-쿼리하기)
   - [`RTK Query` 쿼리 훅(hook)의 특징](#rtk-query-쿼리-훅hook의-특징)
     - [1. 자동 생성](#1-자동-생성)
@@ -133,7 +133,7 @@ function PostList() {
 }
 ```
 
-### 쿼리 `endpoints` 옵션 상세
+### `endpoints` 옵션 상세
 
 **[RTK Query endpoint parameters]**
 
@@ -153,7 +153,7 @@ https://redux-toolkit.js.org/rtk-query/api/createApi#endpoint-definition-paramet
 
 - **파생 상태 기반의 세밀한 제어**
 
-  데이터 로딩 상태에 따른 파생 상태(derived booleans)를 불리언 값으로 제공해 세밀하게 하위 요소 렌더링을 컨트롤 할 수 있다.
+  데이터 로딩 상태를 나타내는 파생 상태(derived booleans)를 불리언 값으로 제공해 세밀하게 하위 요소 렌더링을 컨트롤 할 수 있다.
 
 - **`selectFromResult`를 통한 선택적 구독**
 
@@ -191,14 +191,28 @@ https://redux-toolkit.js.org/rtk-query/api/createApi#endpoint-definition-paramet
 
 ### `refetch` vs `trigger` 함수의 차이?
 
-| 구분           | `refetch`                                       | `trigger`                                       |
-| -------------- | ----------------------------------------------- | ----------------------------------------------- |
-| 주요 목적      | 데이터 갱신: 이미 보여지고 있는 데이터를 최신화 | 명령형 실행: 특정 시점에 쿼리 시작              |
-| 인수(Arg) 변경 | 불가능 (훅 호출 시 전달된 인자 고정)            | 가능 (호출 시 새로운 인자 전달 가능)            |
-| 반환 값        | `Promise` (결과 상태는 훅의 결과 객체에 반영)   | `Promise` (결과 데이터를 직접 포함한 객체 반환) |
-| 캐시 동작      | 기존 캐시를 무시하고 서버에 강제 요청           | 캐시가 있으면 캐시를 반환하거나 설정을 따름     |
+| 구분           | `refetch`                                           | `trigger`                                       |
+| -------------- | --------------------------------------------------- | ----------------------------------------------- |
+| 주요 목적      | 데이터 새로고침: 이미 보여지고 있는 데이터를 최신화 | 수동 쿼리: 특정 시점에 쿼리 시작                |
+| 인수(Arg) 변경 | ❌ (원본 재사용)                                    | ✅ (호출 시 새로운 인자 전달 가능)              |
+| 반환 값        | `Promise` (결과 상태는 훅의 결과 객체에 반영)       | `Promise` (결과 데이터를 직접 포함한 객체 반환) |
+| 캐시 동작      | 기존 캐시를 무시하고 서버에 강제 요청               | 캐시가 있으면 캐시를 반환하거나 설정을 따름     |
 
 <br>
+
+```
+const { data, refetch } = useQuery(userId);  // useQuery - 컴포넌트 마운트 시 자동 실행
+
+// 동일한 userId로 재실행
+// 기존 캐시 키 유지, 값만 업데이트
+refetch();
+
+const [trigger, { data }] = useLazyQuery();  // useLazyQuery - 수동으로만 실행
+
+// trigger 호출 전까지 실행 안 되며, 다른 인수로 실행 가능
+// 만약 다른 인수면 별도 캐시
+trigger(newUserId);
+```
 
 <br>
 
@@ -211,49 +225,49 @@ type UseQuery = (
 ) => UseQueryResult
 
 type UseQueryOptions = {
-  pollingInterval?: number // 폴링 간격 (밀리초)
-  skipPollingIfUnfocused?: boolean // 포커스가 없을 때 폴링 건너뛰기
-  refetchOnReconnect?: boolean // 재연결 시 다시 가져오기
-  refetchOnFocus?: boolean // 포커스 시 다시 가져오기
-  skip?: boolean // 쿼리 건너뛰기
-  refetchOnMountOrArgChange?: boolean | number // 마운트 또는 인자 변경 시 다시 가져오기
-  selectFromResult?: (result: UseQueryStateDefaultResult) => any // 결과에서 선택
+  pollingInterval?: number // 자동으로 데이터를 다시 가져오는 주기 (밀리초 단위, 예: 3000 = 3초마다)
+  skipPollingIfUnfocused?: boolean // 브라우저 탭이 백그라운드일 때 폴링 멈추기
+  refetchOnReconnect?: boolean // 인터넷 재연결되면 자동으로 다시 가져오기
+  refetchOnFocus?: boolean // 브라우저 탭으로 돌아오면 자동으로 다시 가져오기
+  skip?: boolean // 이 쿼리를 실행하지 않음 (조건부 실행에 유용)
+  refetchOnMountOrArgChange?: boolean | number // 컴포넌트가 새로 마운트되거나 인수가 바뀌면 다시 가져오기 (숫자면 초 단위)
+  selectFromResult?: (result: UseQueryStateDefaultResult) => any // 결과에서 필요한 부분만 선택하는 함수
 }
 
 type UseQueryResult<T> = {
   // 기본 쿼리 상태
 
-  // 쿼리에 전달된 인자
+  // 쿼리를 호출할 때 전달한 인자 (예: 사용자 ID)
   originalArgs?: unknown
-  // 훅 인자와 관계없이 최신으로 반환된 결과 (있는 경우)
+  // 가장 최근에 받은 데이터 (다른 컴포넌트에서 같은 쿼리를 호출해도 공유됨)
   data?: T
-  // 현재 훅 인자에 대한 최신 반환 결과 (있는 경우)
+  // 현재 이 컴포넌트의 인자로 받은 데이터 (이 컴포넌트에만 해당)
   currentData?: T
-  // 에러 결과 (있는 경우)
+  // 에러가 발생했을 때의 에러 정보
   error?: unknown
-  // RTK Query에서 생성한 문자열
+  // 이번 요청의 고유 ID
   requestId?: string
-  // 쿼리에 대한 엔드포인트 이름
+  // 이 쿼리의 이름 (예: 'getUser')
   endpointName?: string
-  // 쿼리가 시작된 타임스탬프
+  // 쿼리를 시작한 시간
   startedTimeStamp?: number
-  // 쿼리가 완료된 타임스탬프
+  // 쿼리가 완료된 시간
   fulfilledTimeStamp?: number
 
-  // 파생된 요청 상태 불리언
+  // 현재 상태를 나타내는 boolean 값들
 
-  // 쿼리가 아직 시작되지 않음
+  // 아직 한 번도 실행되지 않음
   isUninitialized: boolean
-  // 쿼리가 처음으로 로딩 중. 아직 데이터 없음
+  // 처음 데이터를 가져오는 중 (아직 데이터 없음)
   isLoading: boolean
-  // 쿼리가 현재 가져오는 중이지만, 이전 요청의 데이터가 있을 수 있음
+  // 데이터를 가져오는 중 (이전 데이터가 있을 수 있음)
   isFetching: boolean
-  // 쿼리가 성공적인 로드에서 데이터를 가지고 있음
+  // 성공적으로 데이터를 받아옴
   isSuccess: boolean
-  // 쿼리가 현재 "에러" 상태임
+  // 에러 발생
   isError: boolean
 
-  // 쿼리를 강제로 다시 가져오는 함수 - 추가 메서드가 있는 Promise를 반환
+  // 수동으로 데이터를 다시 가져오는 함수 (새로고침 버튼 만들 때 사용)
   refetch: () => QueryActionCreatorResult
 }
 ```
@@ -262,9 +276,9 @@ type UseQueryResult<T> = {
 
 ## `useQuery` 호출 주요 옵션
 
-쿼리 훅은 `use[EndpointName]Query(queryArg?, queryOptions?)` 형태로 2가지 인수를 전달할 수 있는데, 2 번째 인수인 `queryOptions` 객체의 속성으로 다음과 같은 옵션을 전달할 수 있다.
+쿼리 훅은 `use[EndpointName]Query(queryArg?, queryOptions?)` 형태로 2가지 인수를 전달할 수 있는데, 2번째 인수인 `queryOptions` 객체의 속성으로 다음과 같은 옵션을 전달할 수 있다.
 
-| 옵션                        | 의미                                                                                          | 기본값   |                             |
+| 옵션                        | 의미                                                                                          | 기본 값  |                             |
 | --------------------------- | --------------------------------------------------------------------------------------------- | -------- | --------------------------- |
 | `skip`                      | 컴포넌트 렌더링마다 자동 호출을 건너뜀(조건부 페칭에 유용)                                    | `false`  |                             |
 | `pollingInterval`           | 지정된 밀리초(ms) 간격으로 자동 재요청                                                        | `0`(off) |                             |
@@ -318,7 +332,7 @@ const {
 | **`isFetching`**  | `boolean`                                                   | **백그라운드에서 데이터를 가져오는 중**인지를 나타낸다. 초기 로딩(`isLoading: true`)을 포함하여, 캐시된 데이터가 있지만 재검증(revalidation) 또는 재요청(refetching) 중인 경우에도 `true`다. |
 | **`isSuccess`**   | `boolean`                                                   | 요청이 **성공적으로 완료**되었고, 유효한 **데이터(`data`)** 를 가지고 있음을 나타낸다.                                                                                                       |
 | **`isError`**     | `boolean`                                                   | 요청이 **에러**와 함께 완료되었음을 나타낸다.                                                                                                                                                |
-| **`status`**      | `'uninitialized' \| 'pending' \| 'fulfilled' \| 'rejected'` | 요청의 현재 **상태**를 나타내는 열거형 값이다.                                                                                                                                               |
+| **`status`**      | `'uninitialized' \| 'pending' \| 'fulfilled' \| 'rejected'` | 요청의 현재 **상태**를 나타내는 값이다.                                                                                                                                                      |
 | **`refetch`**     | `() => Promise<QueryActionCreatorResult<T>>`                | **수동으로** 해당 쿼리를 **다시 실행**하도록 트리거하는 함수다.                                                                                                                              |
 
 ---
@@ -479,15 +493,13 @@ const { data } = useGetStatusQuery(undefined, { pollingInterval: 3000 });
 
 # `query` 엔드포인트 정의 시 `GET` 외 메서드 사용 가능 여부?
 
-`builder.query()`를 사용해 쿼리를 정의할 때 `GET`만 사용할 수 있을 것 같지만, `POST`, `PUT`, `DELETE`와 같은 다른 메서드도 가능하다. 일반적인 REST API는 아니지만, 다음과 같은 상황에서 `builder.query`에 `POST` 메서드와 같은 다른 메서드를 사용하기도 한다.
+`builder.query()`를 사용해 쿼리를 정의할 때 `GET`만 사용할 수 있을 것 같지만, **`POST`, `PUT`, `DELETE`와 같은 다른 메서드도 가능하다.** 일반적인 REST API는 아니지만, 다음과 같은 상황에서 `builder.query`에 `POST` 메서드와 같은 다른 메서드를 사용하기도 한다.
 
 - 검색(Search) API: 보안 상 혹은 검색 조건이 너무 복잡하여 body에 데이터를 담아 `POST`로 조회해야 할 때.
 
 - `GraphQL API`: 모든 요청이 `POST`로 이루어지는 환경에서 데이터를 조회할 때.
 
 <br>
-
-만약 `fetchBaseQuery`를 사용하여 기본 요청을 생성하는 경우 body 필드는 자동으로 `JSON` 직렬화 된다(기본 값)
 
 ```
 const apiSlice = createApi({
