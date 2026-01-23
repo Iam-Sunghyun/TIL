@@ -192,7 +192,7 @@ query: () => ({
 })
 ```
 
-5. 재시도 로직(Retry)과의 연동 (신규 추가 추천)
+<!-- 5. 재시도 로직(Retry)과의 연동 (신규 추가 추천)
    fetchBaseQuery는 retry 유틸리티와 함께 사용하기 매우 쉽습니다. 특정 에러 발생 시 자동으로 재요청을 보내는 로직을 구현할 때 일반 fetch보다 훨씬 간결합니다.
 
 ```
@@ -201,7 +201,7 @@ const baseQuery = retry(fetchBaseQuery({ baseUrl: '/' }), { maxRetries: 3 });
 ```
 
 6. 가벼운 용량 (Lightweight)
-   Axios와 같은 외부 라이브러리를 추가하지 않고도, 브라우저의 fetch 위에서 핵심적인 편리함만 뽑아낸 무게감 없는(Bundle size) 해결책이라는 점도 큰 장점입니다.
+   Axios와 같은 외부 라이브러리를 추가하지 않고도, 브라우저의 fetch 위에서 핵심적인 편리함만 뽑아낸 무게감 없는(Bundle size) 해결책이라는 점도 큰 장점입니다. -->
 
 <br>
 

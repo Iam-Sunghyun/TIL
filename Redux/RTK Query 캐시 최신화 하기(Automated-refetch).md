@@ -164,6 +164,8 @@ export const PostsList = () => {
 
 ## 태그 기반 캐시 무효화(Cache Invalidation)로 자동 업데이트 하기
 
+<!--  -->
+
 사용자 동작에 따라 가끔씩 수동으로 데이터를 다시 가져오도록 강제해야 할 수도 있지만, 일반적인 사용에는 확실히 좋은 해결책이 아니다.
 
 이상적으로는 뮤테이션 요청이 완료되는 즉시 앱에서 업데이트된 게시물 목록을 자동으로 다시 가져오도록 설정하는 것이 일반적이다. 이렇게 하면 클라이언트 측 캐시 데이터가 서버에 있는 데이터와 동기화된다는 것을 확인할 수 있다.
@@ -217,6 +219,10 @@ export const apiSlice = createApi({
 <br>
 
 ## Reference
+
+**[RTK Query Automated Re-fetchung]**
+
+https://redux-toolkit.js.org/rtk-query/usage/automated-refetching#invalidating-cache-data
 
 **[Query `providesTags` 태그 명 매칭 예]**
 
