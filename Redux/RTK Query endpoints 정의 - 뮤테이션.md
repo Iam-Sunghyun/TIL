@@ -4,7 +4,8 @@
     - [`endpoints` 옵션 상세](#endpoints-옵션-상세)
 - [`useMutation` 훅 타입](#usemutation-훅-타입)
 - [`useMutation` 훅 반환 값(`[trigger, result]`)](#usemutation-훅-반환-값trigger-result)
-  - [Mutation 결과 객체(`result`)](#mutation-결과-객체result)
+  - [`useMutation` 훅 결과 객체(`result`)](#usemutation-훅-결과-객체result)
+  - [`selectFromResult` 옵션으로 `useMutation` 렌더링 억제하기](#selectfromresult-옵션으로-usemutation-렌더링-억제하기)
 - [뮤테이션 `trigger` 함수 반환 값](#뮤테이션-trigger-함수-반환-값)
   - [1. 기본 반환 값(`Promise`) 구조](#1-기본-반환-값promise-구조)
   - [**2. `.unwrap()` 사용 시 반환 값 구조 (권장)**](#2-unwrap-사용-시-반환-값-구조-권장)
@@ -19,11 +20,12 @@
 
 API 슬라이스를 정의할 때 데이터를 가져오는 쿼리 뿐 아니라 서버 상태를 변경(수정, 생성, 삭제)하는 요청을 작성할 수도 있다.
 
-서버 데이터를 변경하는 mutation 엔드포인트는 쿼리 엔드포인트와 거의 비슷한데 `endpoints` 프로퍼티에 전달되는 함수의 인수(보통 `builder`혹은 `build`로 명명)로부터 `builder.query()` 대신 `builder.mutation()` 메서드를 사용하며, **서버에 변경 사항을 전송하고 캐시를 무효화하여 쿼리 엔드포인트의 refetch를 위해 사용된다**. 또한 **mutation은 수동으로 호출해야 하며 결과 데이터를 캐시하지 않는다.**
+서버 데이터를 변경하는 mutation 엔드포인트는 쿼리 엔드포인트와 거의 비슷한데 `endpoints` 프로퍼티에 전달되는 함수의 인수(보통 `builder`혹은 `build`로 명명)로부터 `builder.query()` 대신 `builder.mutation()` 메서드를 사용하며, **서버에 변경 사항을 전송하고 태그 시스템으로 캐시를 무효화하여 쿼리 엔드포인트의 refetch를 위해 사용된다**. 또한 **mutation은 수동으로 호출해야 하며 결과 데이터를 캐시하지 않는다.**
 
 추가로 쿼리 엔드포인트와 마찬가지로 `query` 혹은 비동기 로직의 `queryFn`을 반드시 정의해줘야 한다.
 
 ```
+// mutation 정의 예제
 // features/api/apiSlice.js
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import type { Post } from './types'
@@ -40,25 +42,25 @@ export const apiSlice = createApi({
       query: postId => `/posts/${postId}`
     }),
 
-    // 뮤테이션 정의
-    addNewPost: builder.mutation<Post, Partial<Post> & Pick<Post, 'id'>>({
+    // mutation 정의
+    updatePost: build.mutation<void, Pick<Post, 'id'> & Partial<Post>>({
       query: ({ id, ...patch }) => ({
-      url: `post/${id}`,
-      method: 'PATCH',
-      body: patch,
-    }),
+        url: `post/${id}`,
+        method: 'PATCH',
+        body: patch,
+      }),
 
-    // 훅이나 셀렉터에서 data를 추출하고 중첩 속성 방지
+    // 쿼리 반환 값 캐시 하기 전 조작
     transformResponse: (response: { data: Post }, meta, arg) => response.data,
 
-    // 훅이나 셀렉터에서 에러를 추출하고 중첩 속성 방지
+    // 쿼리 반환 값이 에러인 경우 캐시 하기 전 조작
     transformErrorResponse: (
       response: { status: string | number },
       meta,
       arg,
     ) => response.status,
 
-    // 무효화 할 태그 명
+    // 데이터 변경 후 'Post' 태그가 달린 모든 쿼리를 무효화하여 최신화 함
     invalidatesTags: ['Post'],
 
     // onQueryStarted는 낙관적 업데이트에 유용함
@@ -108,7 +110,8 @@ type UseMutation = (
 ) => [UseMutationTrigger, UseMutationResult | SelectedUseMutationResult]
 
 type UseMutationStateOptions = {
-  // 결과에서 필요한 부분만 선택하는 함수
+  // useMutation 훅의 결과 객체(UseMutationResult)에서 필요한 부분만 선택하는 함수
+  // 선택한 값을 이전 값과 얕은 비교로 비교하고, 다른 경우 렌더링 트리거
   selectFromResult?: (result: UseMutationStateDefaultResult) => any
   // 여러 컴포넌트에서 같은 mutation 결과를 공유하고 싶을 때 사용하는 고유 키
   fixedCacheKey?: string
@@ -159,15 +162,13 @@ type UseMutationResult<T> = {
 
 # `useMutation` 훅 반환 값(`[trigger, result]`)
 
-`useMutation` 훅이 반환하는 첫 번째 요소인 `trigger` 함수는 API 슬라이스 엔드포인트에 정의한 mutation 함수로, 호출 시 전달한 인수와 함께 서버에 mutation을 요청하며 몇몇 프로퍼티가 추가된 `Promise`를 반환한다. 또한 이때마다 컴포넌트 렌더링을 일으키는데, 다음과 같이 `selectFromResult` 옵션에 빈 객체를 전달하면 처음 한 번만 렌더링이 일어난다.
+`useMutation` 훅이 반환하는 첫 번째 요소인 `trigger` 함수는 API 슬라이스 엔드포인트에 정의한 mutation 함수로, 호출 시 전달한 인수와 함께 서버에 mutation을 요청하며 몇몇 프로퍼티가 추가된 `Promise`를 반환한다.
 
-```
-selectFromResult: () => ({})
-```
+## `useMutation` 훅 결과 객체(`result`)
 
-## Mutation 결과 객체(`result`)
+현재 뮤테이션 요청의 상태 및 결과를 담고 있는 객체로 다음과 같은 속성을 갖고 있다. mutation 요청 상태가 변경되거나 응답 데이터가 사용 가능해지면 컴포넌트 리렌더링이 일어난다.
 
-현재 요청의 상태 및 결과를 담고 있는 객체로 다음과 같은 속성을 갖고 있다.
+<br>
 
 | 프로퍼티                 | 타입                                                        | 설명                                                                                                                              |
 | :----------------------- | :---------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
@@ -183,9 +184,17 @@ selectFromResult: () => ({})
 | **`fulfilledTimeStamp`** | `number \| undefined`                                       | 요청이 완료(성공)된 시점의 timestamp. 실패한 경우 `undefined`.                                                                    |
 | **`reset`**              | `() => void`                                                | 뮤테이션 상태 객체를 **초기 상태('uninitialized')로 되돌리는 함수**. 새로운 뮤테이션 시나리오를 시작할 때 사용한다.               |
 
-</br>
+<br>
 
-추가로 mutation 요청 상태가 변경되거나 응답 데이터가 사용 가능해지면 컴포넌트 리렌더링이 일어난다.
+## `selectFromResult` 옵션으로 `useMutation` 렌더링 억제하기
+
+<!-- ???? -->
+
+다음과 같이 `useMutation` 훅의 `selectFromResult` 옵션에 빈 객체를 반환하게 하면, mutation 호출이 렌더링을 일으키지 않는다. 즉, `trigger` 함수를 호출해도 요청 상태 변화에 따른 리렌더링이 아예 일어나지 않게 되는 것인데, 이러한 패턴은 성능 최적화가 극도로 중요한 상황에 사용한다.
+
+```
+const [trigger, result] = usexxxMutation(selectFromResult: () => ({}));
+```
 
 <br>
 
@@ -193,7 +202,7 @@ selectFromResult: () => ({})
 
 ## 1. 기본 반환 값(`Promise`) 구조
 
-`useMutation` 훅이 반환하는 트리거 함수를 호출하면 `Promise`를 반환 하는데 성공/실패와 관계없이 응답 데이터와 메타 정보를 포함하는 `resolve` 프로미스를 반환한다.
+`useMutation` 훅이 반환하는 트리거 함수를 호출하면 `Promise`를 반환 하는데 **성공/실패와 관계없이 응답 데이터와 메타 정보를 포함하는 `resolve` 프로미스를 반환한다.**
 
 | 프로퍼티 / 메서드           | 타입                                | 설명                                                                                         |
 | --------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -206,11 +215,9 @@ selectFromResult: () => ({})
 
 <br>
 
-<!-- 맞는지 확인 필  -->
+이 외에도 여러 메타데이터를 설명하는 `meta` 속성이 존재한다. 하지만 공식 문서에는 표시되어 있지 않은데 이는 실무에서 `meta`를 사용할 일이 거의 없으며 `createApi`의 `baseQuery`의 값이 `fetchBaseQuery`로 이루어져 있는지, 커스텀 `baseQuery`인지에 따라 `meta` 속성이 달라질 수도 있기 떄문이라고 한다. 즉, `meta`는 사실상 내부의 값이고, 안정성이 보장되지 않으며, 실무에서 거의 사용되지 않기 때문에 불필요한 혼란을 방지하기 위해 타입 명시에는 노출되지 않는 것이다.
 
-이 외에도 여러 메타데이터를 설명하는 `meta` 속성이 존재한다. 하지만 공식 문서에는 표시되어 있지 않은데 이는 실무에서 `meta`를 사용할 일이 거의 없으며 `createApi`의 `baseQuery`의 값이 `fetchBaseQuery`로 이루어져 있는지, 커스텀 `baseQuery`인지에 따라 `meta` 속성이 달라질 수도 있다고 한다. 즉, `meta`는 사실상 내부의 값이고, 안정성이 보장되지 않으며, 실무에서 거의 사용되지 않기 때문에 불필요한 혼란을 방지하기 위해 타입 명시에는 노출되지 않는 것이다.
-
--> 참고로 `meta` 속성은 `fetchBaseQuery`를 사용했을때 반환되는 객체의 프로퍼티이다.
+<!-- -> 참고로 `meta` 속성은 `fetchBaseQuery`를 사용했을때 반환되는 객체의 프로퍼티이다. -->
 
 </br>
 
@@ -225,11 +232,30 @@ selectFromResult: () => ({})
 
 <br>
 
+```
+// 예제
+// 방법 1: unwrap() 사용 (깔끔한 에러 처리)
+try {
+  const payload = await addNewPost(data).unwrap();
+  console.log('성공:', payload);
+} catch (err) {
+  console.error('실패:', err); // 이제 여기서 에러가 잡힙니다.
+}
+
+// 방법 2: unwrap 미사용 (수동 체크)
+const result = await addNewPost(data);
+if ('data' in result) {
+  console.log('성공');
+} else {
+  console.error('실패:', result.error);
+}
+```
+
+<br>
+
 # Query vs Mutation 캐싱 차이
 
-<!-- 맞는지 확인 필  -->
-
-mutation의 경우 query와 달리 결과를 캐시하지 않기 때문에 요청과 결과가 컴포넌트 별로 독립적이다.
+mutation의 경우 query와 달리 멱등하지 않기 때문에 동일한 요청도 매번 새롭게 실행돼야 한다. 따라서 결과를 캐시 하지 않으며 요청에 대한 결과가 컴포넌트 별로 독립적이기 때문에 호출된 컴포넌트 내에서만 결과가 유효하다.
 
 ```
 // 동일한 인수로 여러 컴포넌트에서 호출 시 캐시 재사용
@@ -239,19 +265,21 @@ const { data } = useGetUserQuery(1); // 캐시에서 가져옴 (네트워크 요
 // 매번 새로운 요청 실행
 const [updateUser] = useUpdateUserMutation();
 updateUser({ id: 1, name: 'John' }); // 요청 1
-updateUser({ id: 1, name: 'John' }); // 요청 2 (캐시 사용 안 함)
+updateUser({ id: 1, name: 'John' }); // 요청 2 (캐시 사용 안 함 -> 캐시 사용 시 서버 요청 안 함 → 문제!)
 ```
 
 <br>
 
-| **특징**  | **Query**          | **Mutation**  |
-| :-------- | :----------------- | :------------ |
-| 캐싱      | ✅ 자동            | ❌ 없음       |
-| 목적      | 데이터 읽기        | 데이터 변경   |
-| 중복 요청 | 캐시 재사용        | 매번 실행     |
-| 결과 공유 | 여러 컴포넌트 공유 | 호출한 곳에만 |
+| **특징**  | **Query**          | **Mutation**   |
+| :-------- | :----------------- | :------------- |
+| 캐싱      | ✅ 자동            | ❌ 없음        |
+| 목적      | 데이터 읽기        | 데이터 변경    |
+| 중복 요청 | 캐시 재사용        | 매번 실행 필요 |
+| 결과 공유 | 여러 컴포넌트 공유 | 호출한 곳에만  |
 
 <br>
+
+<!-- 결과 변경 시 다른 컴포넌트도 렌더링 된다는 얘기? -->
 
 만약 결과를 공유하고 싶다면 `fixedCacheKey` 속성을 설정해 mutation이 있는 컴포넌트 간에 결과를 공유할 수 있다.
 
@@ -259,23 +287,56 @@ updateUser({ id: 1, name: 'John' }); // 요청 2 (캐시 사용 안 함)
 
 # `onQueryStarted`로 낙관적 업데이트
 
-<!-- 내용 추가 필 -->
+`onQueryStarted`는 mutation이 시작될 때 실행되는 라이프사이클 메서드로, **낙관적 업데이트(Optimistic Update)**를 구현할 때 주로 사용된다. 낙관적 업데이트란 서버 응답을 기다리지 않고 **미리 UI를 업데이트한 뒤, 요청이 실패하면 롤백하는 기법**을 말한다.
+
+즉각적인 상호작용으로 앱이 더 빠르게 느껴지는 장점이 있는데, 요청 실패 시 롤백 로직이 필수적이며 다소 복잡한 상태 관리가 필요할 수 있다.
 
 ```
-async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-  // Mutation 전에 Query 캐시를 직접 업데이트
-  const patchResult = dispatch(
-    api.util.updateQueryData('getUser', id, (draft) => {
-      Object.assign(draft, patch);
-    })
-  );
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query'
+import type { Post } from './types'
 
-  try {
-    await queryFulfilled;
-  } catch {
-    patchResult.undo(); // 실패 시 롤백
-  }
-},
+const api = createApi({
+  baseQuery: fetchBaseQuery({
+    baseUrl: '/',
+  }),
+  tagTypes: ['Post'],
+  endpoints: (build) => ({
+    getPost: build.query<Post, number>({
+      query: (id) => `post/${id}`,
+      providesTags: ['Post'],
+    }),
+    updatePost: build.mutation<void, Pick<Post, 'id'> & Partial<Post>>({
+      query: ({ id, ...patch }) => ({
+        url: `post/${id}`,
+        method: 'PATCH',
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        // 1. 기존 'getPosts' 쿼리의 캐시를 수동으로 업데이트 (낙관적)
+          const patchResult = dispatch(
+            apiSlice.util.updateQueryData('getPosts', undefined, (draft) => {
+              const post = draft.find(p => p.id === id);
+              if (post) Object.assign(post, patch);
+            })
+          );
+
+          try {
+            // 2. 실제 서버 요청 대기
+            await queryFulfilled;
+          } catch {
+            // 3. 실패 시 이전 상태로 롤백
+            patchResult.undo();
+
+          /**
+           * 요청 실패 후 다른 방법으로, 해당 캐시 무효화를 통해
+           * 리페치를 트리거할 수도 있다.
+           * dispatch(api.util.invalidateTags(['Post']))
+           */
+        }
+      },
+    }),
+  }),
+})
 ```
 
 </br>
@@ -283,7 +344,7 @@ async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
 # `useMutation` 훅 사용 예제
 
 ```
-// features/posts/AddPostForm.jsx
+// features/posts/AddPostForm.tsx
 import React from 'react'
 
 import { useAppSelector } from '@/app/hooks'
@@ -297,22 +358,24 @@ export const AddPostForm = () => {
   const userId = useAppSelector(selectCurrentUsername)
   const [addNewPost, { isLoading }] = useAddNewPostMutation()
 
-  const handleSubmit = async (e) => {
-    // Prevent server submission
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const { elements } = e.currentTarget
-    const title = elements.postTitle.value
-    const content = elements.postContent.value
-
     const form = e.currentTarget
+    const formData = new FormData(form)
+
+    const title = formData.get('postTitle') as string
+    const content = formData.get('postContent') as string
 
     try {
+      // unwrap()으로 성공/실패 명확하게 처리
       await addNewPost({ title, content, user: userId }).unwrap()
 
       form.reset()
+      // 성공 토스트 등 추가 가능
     } catch (err) {
-      console.error('Failed to save the post: ', err)
+      console.error('Failed to save the post:', err)
+      // 에러 토스트 등 추가 가능
     }
   }
 
@@ -321,15 +384,23 @@ export const AddPostForm = () => {
       <h2>Add a New Post</h2>
       <form onSubmit={handleSubmit}>
         <label htmlFor="postTitle">Post Title:</label>
-        <input type="text" id="postTitle" defaultValue="" required />
+        <input
+          type="text"
+          id="postTitle"
+          name="postTitle"  // name 속성 추가
+          required
+        />
+
         <label htmlFor="postContent">Content:</label>
         <textarea
           id="postContent"
           name="postContent"
-          defaultValue=""
           required
         />
-        <button disabled={isLoading}>Save Post</button>
+
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Saving...' : 'Save Post'}
+        </button>
       </form>
     </section>
   )
