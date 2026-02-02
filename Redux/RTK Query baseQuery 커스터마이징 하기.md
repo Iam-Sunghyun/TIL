@@ -90,6 +90,7 @@ export type QueryReturnValue<T = unknown, E = unknown, M = unknown> =
 ## 1. 커스텀 `baseQuery` 함수 사용하기
 
 <!--  -->
+<!--  -->
 
 ```
 // ✅ 커스텀 baseQuery에서는 직접 접근 가능
