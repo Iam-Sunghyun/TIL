@@ -243,10 +243,12 @@ const api = createApi({
 
 ### `FetchArgs` 옵션 상세
 
+**`fetchBaseQuery`를 사용하여 기본 요청을 생성하는 경우 `FetchArgs`의 `body` 필드는 자동으로 `JSON` 직렬화 된다(기본 값).**
+
 | 속성                     | 타입                                                  | 필수     | 기본 값               | 설명                                                   |
 | ------------------------ | ----------------------------------------------------- | -------- | --------------------- | ------------------------------------------------------ |
 | `url`                    | `string`                                              | **필수** | -                     | 요청할 URL 경로 (`baseUrl`에 추가됨)                   |
-| `body`                   | `any`                                                 | 선택     | `undefined`           | 요청 본문. 자동으로 `JSON.stringify()` 처리 됨         |
+| `body`                   | `any`                                                 | 선택     | `undefined`           | 요청 본문. **자동으로 `JSON.stringify()` 처리 됨**     |
 | `params`                 | `Record<string, any>`                                 | 선택     | `undefined`           | URL 쿼리 파라미터 객체                                 |
 | `responseHandler`        | `'json' \| 'text' \| 'content-type' \| CustomHandler` | 선택     | `'json'`              | 응답 파싱 방식                                         |
 | `validateStatus`         | `(response: Response, body: any) => boolean`          | 선택     | 기본 구현             | 응답을 성공으로 처리할 지 결정하는 함수                |
@@ -262,7 +264,7 @@ const api = createApi({
 | `'content-type'`                       | `Content-Type` 헤더를 보고 자동으로 `json/text` 선택 |
 | `(response: Response) => Promise<any>` | 커스텀 파싱 함수                                     |
 
----
+<br>
 
 추가로 엔드포인트에 정의한 개별 쿼리의 옵션 `responseHandler`와 `endpoints` 필드 자체에 적용되는 `transformResponse`의 차이는 `responseHandler`의 경우 파싱 방식을 결정하는 것이고 `transformResponse`는 파싱된 후의 값이 전달되어 캐시되기 전 추가 조작을 위한 옵션이다.
 
@@ -272,7 +274,7 @@ const api = createApi({
 
 ### `responseHandler` 기본 값 함수에서 알아보는 `response.text()`을 이용한 실무 팁
 
-`responseHandler`에서 제공되는 자동 파싱은 `json`, `text` 뿐이다. 다음은 기본 값인 `JSON` 데이터를 파싱하는 핸들러의 로직인데 `JSON`으로 예상되는 응답을 굳이 `res.text()`로 한번 파싱 해주는 이유는 2가지가 있다.
+**`responseHandler`에서 제공되는 자동 파싱은 `json`, `text` 뿐이다.** 다음은 기본 값인 `JSON` 데이터를 파싱하는 핸들러의 로직인데 `JSON`으로 예상되는 응답을 굳이 `res.text()`로 한번 파싱 해주는 이유는 2가지가 있다.
 
 ```
 const defaultResponseHandler = async (res: Response) => {
