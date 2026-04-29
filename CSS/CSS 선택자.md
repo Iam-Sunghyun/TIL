@@ -8,8 +8,8 @@
   - [클래스 선택자](#클래스-선택자)
   - [자손 결합자 " " (Descendant selectors), 후손 결합자](#자손-결합자---descendant-selectors-후손-결합자)
   - [자식 결합자 \> (Child selectors)](#자식-결합자--child-selectors)
-  - [인접 형제 결합자 + (Adjacent sibling selectors)](#인접-형제-결합자--adjacent-sibling-selectors)
-  - [일반 형제 결합자 ~ (General sibling selectors)](#일반-형제-결합자--general-sibling-selectors)
+  - [인접 형제 결합자 + (Adjacent sibling selectors, next-sibling combinator)](#인접-형제-결합자--adjacent-sibling-selectors-next-sibling-combinator)
+  - [일반 형제 결합자 ~ (General sibling selectors, subsequent-sibling combinator)](#일반-형제-결합자--general-sibling-selectors-subsequent-sibling-combinator)
   - [가상 클래스, 의사 클래스 (Pseudo class)](#가상-클래스-의사-클래스-pseudo-class)
     - [자주 쓰이는 가상 클래스 몇 가지](#자주-쓰이는-가상-클래스-몇-가지)
   - [가상 요소, 의사 요소(Pseudo element)](#가상-요소-의사-요소pseudo-element)
@@ -103,7 +103,7 @@ div > ol {
 
 두 선택자 사이 > 기호를 자식 결합자(child combinator)라 하고, 첫 번째 선택자와 일치하는 요소의 '직계 자식'인 두 번째 선택자와 일치하는 요소만 적용한다.
 
-## 인접 형제 결합자 + (Adjacent sibling selectors)
+## 인접 형제 결합자 + (Adjacent sibling selectors, next-sibling combinator)
 
 ```
 <ul>
@@ -121,24 +121,34 @@ li:first-of-type + li {
 
 위의 경우 가상 클래스` li:first-of-type`의 바로 다음 요소인 Two!만 빨강색이 적용된다.
 
-## 일반 형제 결합자 ~ (General sibling selectors)
+## 일반 형제 결합자 ~ (General sibling selectors, subsequent-sibling combinator)
 
 ```
-/* Paragraphs that are siblings of and
-   subsequent to any image */
-img ~ p {
+p ~ span {
   color: red;
 }
 -------------------------
-<span>이건 빨강이 아닙니다.</span>
-<p>여기 문단이 있습니다.</p>
-<code>그리고 코드도 있습니다.</code>
-<span>이제 빨강입니다!</span>   // 2번째
-<code>더 많은 코드가 있습니다.</code>
-<span>이것도 빨강입니다!</span> // 4번째
+<article>
+  <span>This is not red because it appears before any paragraph.</span>
+  <p>Here is a paragraph.</p>
+  <code>Here is some code.</code>
+  <span>
+    This span is red because it appears after the paragraph, even though there
+    are other nodes in between.
+  </span>  // color: red;
+  <p>Whatever it may be, keep smiling.</p>
+  <h1>Dream big</h1>
+  <span>
+    Doesn't matter how many or what kind of nodes are in between, all spans from
+    the same parent after a paragraph are red.
+  </span>  // color: red;
+</article>
+<span>
+  This span is not red because it doesn't share a parent with a paragraph.
+</span>
 ```
 
-형제 요소 중 첫 번째 선택자 요소 뒤에 오는 모든 두 번째(2,4,6...) 선택자 요소들을 선택한다.
+형제 요소 중 첫 번째 선택자 요소 뒤에 오는 모든 두 번째 선택자 요소들을 선택한다.
 
 - `" " > + ~` 이 4개의 기호를 다른 선택자와 결합해서 사용하는 선택자라 해서 결합자(Combinator)라고 한다.
 
