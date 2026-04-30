@@ -1,9 +1,22 @@
-# 목차
+<h2>목차</h2>
 
-- [HTML이란?](https://github.com/Iam-Sunghyun/TIL/blob/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html%EC%9D%B4%EB%9E%80)
-- [HTML 문서의 구조](https://github.com/Iam-Sunghyun/TIL/blob/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html-%EB%AC%B8%EC%84%9C%EC%9D%98-%EA%B5%AC%EC%A1%B0)
-- [HTML 시맨틱 요소(Sementic Elements)](https://github.com/Iam-Sunghyun/TIL/blob/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html-%EC%8B%9C%EB%A7%A8%ED%8B%B1-%EC%9A%94%EC%86%8Csementic-elements)
-- [HTML 테이블(table)](https://github.com/Iam-Sunghyun/TIL/blob/main/HTML/HTML%20%EA%B8%B0%EB%B3%B8.md#html-%ED%85%8C%EC%9D%B4%EB%B8%94table)
+- [HTML이란?](#html이란)
+  - [HTML과 HTML5의 차이점?](#html과-html5의-차이점)
+- [HTML 문서의 구조](#html-문서의-구조)
+    - [요소 몇가지](#요소-몇가지)
+  - [블록 레벨 요소 vs 인라인 요소](#블록-레벨-요소-vs-인라인-요소)
+  - [`<span>` vs `<div>`](#span-vs-div)
+  - [엔티티 코드(Entity Code)](#엔티티-코드entity-code)
+  - [Emmet 플러그인](#emmet-플러그인)
+- [HTML 시맨틱 요소(Sementic Elements)](#html-시맨틱-요소sementic-elements)
+  - [시맨틱 요소(태그)의 필요성](#시맨틱-요소태그의-필요성)
+    - [1. 검색 엔진 최적화(Search Engine Optimization)](#1-검색-엔진-최적화search-engine-optimization)
+    - [2. 웹 접근성](#2-웹-접근성)
+    - [3. 가독성](#3-가독성)
+- [HTML 테이블(table)](#html-테이블table)
+  - [테이블 요소의 콘텐츠](#테이블-요소의-콘텐츠)
+
+<br>
 
 # HTML이란?
 
@@ -82,7 +95,6 @@ https://www.javatpoint.com/html-vs-html5
 HTML에는 크게 2가지 종류의 요소가 있다.
 
 - **블록 레벨 요소(Block-level elements)** - 블록을 생성하는 요소. 한 라인을 다 차지한다. 블록 레벨 요소에는 중첩 될 수 있지만, 인라인 요소에는 중첩 될 수 없다.
-
   - **ex)** `<h1~6>`, `<p>`, `<div>` ...
 
 - **인라인 요소** - 한 라인 안에 포함되는 요소. 줄바꿈이 발생하지 않음. 인라인 요소는 블록 레벨 요소를 자식 요소로 포함시킬 수 없다.
