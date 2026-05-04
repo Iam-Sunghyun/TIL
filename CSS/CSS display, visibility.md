@@ -29,7 +29,7 @@ visibility: hidden; // 레이아웃은 사라지지 않고 숨김.
 visibility: collapse;
 ```
 
-`display: none;`의 경우 레이아웃에서도 사라지지만 `visibility: hidden;`은 출력은 숨기지만 레이아웃은 유지된다.
+**`display: none;`의 경우 레이아웃에서도 사라지지만 `visibility: hidden;`은 출력은 숨기지만 레이아웃은 유지된다.**
 
 **[CSS display, visibility 속성]** <br>
 https://developer.mozilla.org/en-US/docs/Web/CSS/display
